@@ -23,9 +23,13 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      order: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
     })
   },
-  down: (queryInterface, Sequelize) => {
+  down: queryInterface => {
     return queryInterface.dropTable("AuthorsReferences")
   },
 }
