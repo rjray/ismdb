@@ -8,8 +8,6 @@ module.exports = {
         model: "MagazineIssues",
         key: "id",
       },
-      onUpdate: "CASCADE",
-      onDelete: "CASCADE",
     })
   },
 

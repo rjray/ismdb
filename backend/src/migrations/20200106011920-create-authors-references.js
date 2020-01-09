@@ -10,8 +10,6 @@ module.exports = {
           model: "Authors",
           key: "id",
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       referenceId: {
         type: Sequelize.INTEGER,
@@ -20,8 +18,6 @@ module.exports = {
           model: "References",
           key: "id",
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       order: {
         type: Sequelize.INTEGER,

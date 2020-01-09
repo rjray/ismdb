@@ -10,8 +10,6 @@ module.exports = {
             model: "Magazines",
             key: "id",
           },
-          onUpdate: "CASCADE",
-          onDelete: "CASCADE",
         })
         .then(() => {
           queryInterface.changeColumn("MagazineIssues", "magazineId", {
@@ -27,8 +25,6 @@ module.exports = {
           key: "id",
         },
         allowNull: false,
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       })
     }
   },

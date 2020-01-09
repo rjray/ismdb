@@ -10,8 +10,6 @@ module.exports = {
             model: "RecordTypes",
             key: "id",
           },
-          onUpdate: "CASCADE",
-          onDelete: "CASCADE",
         })
         .then(() => {
           queryInterface.changeColumn("References", "recordTypeId", {
@@ -27,8 +25,6 @@ module.exports = {
           key: "id",
         },
         allowNull: false,
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       })
     }
   },
