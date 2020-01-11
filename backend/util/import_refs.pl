@@ -22,6 +22,9 @@ my $outdsn = $dbout =~ /[.]db$/ ?
     "dbi:SQLite:$dbout" :
     "dbi:mysql:database=$dbout;host=$opts{host};port=$opts{port}";
 my $dbho = DBI->connect($outdsn, $opts{user}, $opts{password}, $attrs);
+if ($outdsn =~ /SQLite/) {
+    $dbho->do('PRAGMA foreign_keys = ON');
+}
 
 migrate_record_types($dbhi, $dbho);
 migrate_authors($dbhi, $dbho);
@@ -144,6 +147,8 @@ sub migrate_reference_table {
     my $data = $sth->fetchall_arrayref;
     $sth->finish;
 
+    my $authors = $dbhout->selectall_hashref('SELECT * FROM Authors', 'id');
+
     my $sth_ish = $dbhout->prepare(
         'INSERT INTO `MagazineIssues` (`id`, `magazineId`, `number`, ' .
         '`createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?)'
@@ -183,6 +188,10 @@ sub migrate_reference_table {
         my $order = 0;
         for my $author (@{$row}[9..12]) {
             last if ! $author;
+            if (! $authors->{$author}) {
+                print "  Invalid author ($author) for reference $base[0]\n";
+                next;
+            }
             $order++;
             $sth_auth->execute($author, $base[0], $order);
         }
