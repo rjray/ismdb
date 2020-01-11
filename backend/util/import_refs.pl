@@ -1,14 +1,16 @@
 #!/usr/bin/perl
 
+use 5.022;
 use strict;
 use warnings;
+use utf8;
 
 use Getopt::Long 'GetOptions';
 
 use DBI;
 
 my %opts;
-GetOptions(\%opts, qw(database=s host=s port=i user=s password=s)) or
+GetOptions(\%opts, qw(host=s port=i user=s password=s)) or
     die "Error in command line\n";
 my ($dbin, $dbout) = @ARGV;
 
@@ -17,13 +19,17 @@ my $attrs = {
     RaiseError => 1,
 };
 
-my $dbhi = DBI->connect("dbi:SQLite:$dbin", q{}, q{});
+my $dbhi = DBI->connect("dbi:SQLite:$dbin", q{}, q{}, { sqlite_unicode => 1 });
 my $outdsn = $dbout =~ /[.]db$/ ?
     "dbi:SQLite:$dbout" :
     "dbi:mysql:database=$dbout;host=$opts{host};port=$opts{port}";
 my $dbho = DBI->connect($outdsn, $opts{user}, $opts{password}, $attrs);
 if ($outdsn =~ /SQLite/) {
+    $dbho->{sqlite_unicode} = 1;
     $dbho->do('PRAGMA foreign_keys = ON');
+} else {
+    $dbho->{mysql_enable_utf8} = 1;
+    $dbho->do('set names "UTF8"');
 }
 
 migrate_record_types($dbhi, $dbho);
