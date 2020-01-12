@@ -1,12 +1,12 @@
 require("dotenv").config({
-  path: `.env.${process.env.NODE_ENV}`,
-})
+  path: `.env.${process.env.NODE_ENV}`
+});
 
 module.exports = {
   development: {
     dialect: "sqlite",
     storage: "mymodb.db",
-    logging: false,
+    logging: false
   },
   test: {
     username: process.env.DB_USERNAME,
@@ -15,10 +15,10 @@ module.exports = {
     host: process.env.DB_HOST,
     dialect: "mysql",
     define: {
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: "utf8mb4",
+      collate: "utf8mb4_unicode_ci"
     },
-    logging: false,
+    logging: false
   },
   production: {
     username: process.env.DB_USERNAME,
@@ -27,9 +27,9 @@ module.exports = {
     host: process.env.DB_HOST,
     dialect: "mysql",
     define: {
-      charset: "utf8",
-      collate: "utf8_general_ci",
+      charset: "utf8mb4",
+      collate: "utf8mb4_unicode_ci"
     },
-    logging: false,
-  },
-}
+    logging: false
+  }
+};
