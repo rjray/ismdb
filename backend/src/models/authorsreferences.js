@@ -1,6 +1,6 @@
 "use strict"
 
-module.exports = sequelize => {
+module.exports = (sequelize, DataTypes) => {
   const AuthorsReferences = sequelize.define(
     "AuthorsReferences",
     {
