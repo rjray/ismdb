@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-    {},
+    { timestamps: false },
   )
   MagazineIssue.associate = function(models) {
     MagazineIssue.belongsTo(models.Magazine)

@@ -156,8 +156,8 @@ sub migrate_reference_table {
     my $authors = $dbhout->selectall_hashref('SELECT * FROM Authors', 'id');
 
     my $sth_ish = $dbhout->prepare(
-        'INSERT INTO `MagazineIssues` (`id`, `magazineId`, `number`, ' .
-        '`createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?)'
+        'INSERT INTO `MagazineIssues` (`id`, `magazineId`, `number`) ' .
+        'VALUES (?, ?, ?)'
     );
     my $sth_auth = $dbhout->prepare(
         'INSERT INTO `AuthorsReferences` (`authorId`, `referenceId`, ' .
@@ -180,9 +180,7 @@ sub migrate_reference_table {
                 $base[9] = $ish_map{$key};
             } else {
                 $ish_id++;
-                $sth_ish->execute(
-                    $ish_id, $row->[13], $row->[14], $base[7], $base[8]
-                );
+                $sth_ish->execute($ish_id, $row->[13], $row->[14]);
                 $base[9] = $ish_map{$key} = $ish_id;
             }
         } else {
