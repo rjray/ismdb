@@ -17,7 +17,7 @@ router.get("/:id(\\d+)", (req, res) => {
       res.send({ author })
     } else {
       let error = { message: `No author with id "${id}" found` }
-      res.send({ error })
+      res.send({ status: "error", error })
     }
   })
 })

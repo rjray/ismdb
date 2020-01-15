@@ -18,7 +18,7 @@ router.get("/:id(\\d+)", (req, res) => {
         res.send({ reference })
       } else {
         let error = { message: `No reference with id "${id}" found` }
-        res.send({ error })
+        res.send({ status: "error", error })
       }
     },
   )

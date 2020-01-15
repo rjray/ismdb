@@ -17,7 +17,7 @@ router.get("/:id(\\d+)", (req, res) => {
       res.send({ magazine })
     } else {
       let error = { message: `No magazine with id "${id}" found` }
-      res.send({ error })
+      res.send({ status: "error", error })
     }
   })
 })

@@ -45,7 +45,14 @@ router.get("/:id", (req, res) => {
         reference.Magazine = magazine.get()
       }
 
-      res.send({ reference })
+      res.send({ status: "success", reference })
+    })
+    .catch(error => {
+      error = {
+        message: `No reference found for id ${id}`,
+      }
+
+      res.send({ status: "error", error })
     })
 })
 

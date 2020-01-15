@@ -27,7 +27,14 @@ router.get("/:id", (req, res) => {
         return item
       })
 
-      res.send({ author })
+      res.send({ status: "success", author })
+    })
+    .catch(error => {
+      error = {
+        message: `No author found for id ${id}`,
+      }
+
+      res.send({ status: "error", error })
     })
 })
 
