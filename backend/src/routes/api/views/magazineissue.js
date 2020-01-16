@@ -15,8 +15,12 @@ router.get("/:id", (req, res) => {
 
   MagazineIssue.findByPk(id, { include: [Magazine, Reference] })
     .then(result => {
-      magazineissue = result
-      magazineissue = magazineissue.get()
+      magazineissue = result.get()
+
+      magazineissue.Magazine = magazineissue.Magazine.get()
+      magazineissue.References = magazineissue.References.map(item => {
+        return item.get()
+      })
 
       res.send({ status: "success", magazineissue })
     })

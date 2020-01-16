@@ -18,20 +18,21 @@ router.get("/:id", (req, res) => {
   let id = req.params.id
   let reference
 
-  Reference.findByPk(id, { include: [RecordType, MagazineIssue] })
+  Reference.findByPk(id, {
+    include: [
+      RecordType,
+      {
+        model: MagazineIssue,
+        include: [Magazine],
+      },
+    ],
+  })
     .then(result => {
       reference = result
 
-      let promises = [reference.getAuthors()]
-      if (reference.MagazineIssue) {
-        promises.push(
-          Magazine.findByPk(reference.MagazineIssue.get("MagazineId")),
-        )
-      }
-
-      return Promise.all(promises)
+      return reference.getAuthors()
     })
-    .then(([authors, magazine]) => {
+    .then(authors => {
       reference = reference.get()
 
       reference.Authors = authors
@@ -42,8 +43,10 @@ router.get("/:id", (req, res) => {
           return attr
         })
 
-      if (magazine) {
-        reference.Magazine = magazine.get()
+      if (reference.MagazineIssue) {
+        reference.Magazine = reference.MagazineIssue.Magazine.get()
+        reference.MagazineIssue = reference.MagazineIssue.get()
+        delete reference.MagazineIssue.Magazine
       }
 
       res.send({ status: "success", reference })
