@@ -3,6 +3,7 @@
  */
 
 const express = require("express")
+const _ = require("lodash")
 
 const {
   Reference,
@@ -48,8 +49,10 @@ router.get("/:id", (req, res) => {
       res.send({ status: "success", reference })
     })
     .catch(error => {
-      error = {
-        message: `No reference found for id ${id}`,
+      if (_.isEmpty(error)) {
+        error = {
+          message: `No reference found for id ${id}`,
+        }
       }
 
       res.send({ status: "error", error })

@@ -3,6 +3,7 @@
  */
 
 const express = require("express")
+const _ = require("lodash")
 
 const { Author } = require("../../../models")
 
@@ -30,8 +31,10 @@ router.get("/:id", (req, res) => {
       res.send({ status: "success", author })
     })
     .catch(error => {
-      error = {
-        message: `No author found for id ${id}`,
+      if (_.isEmpty(error)) {
+        error = {
+          message: `No author found for id ${id}`,
+        }
       }
 
       res.send({ status: "error", error })

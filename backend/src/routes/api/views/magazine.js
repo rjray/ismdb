@@ -3,6 +3,7 @@
  */
 
 const express = require("express")
+const _ = require("lodash")
 
 const { MagazineIssue, Magazine } = require("../../../models")
 const { compareVersion } = require("../../../lib/utils")
@@ -26,8 +27,10 @@ router.get("/:id", (req, res) => {
       res.send({ status: "success", magazine })
     })
     .catch(error => {
-      error = {
-        message: `No magazine found for id ${id}`,
+      if (_.isEmpty(error)) {
+        error = {
+          message: `No magazine found for id ${id}`,
+        }
       }
 
       res.send({ status: "error", error })
