@@ -17,8 +17,12 @@ module.exports = (sequelize, DataTypes) => {
   )
   Reference.associate = function(models) {
     Reference.belongsTo(models.RecordType)
-    Reference.belongsToMany(models.Author, { through: "AuthorsReferences" })
     Reference.belongsTo(models.MagazineIssue)
+    Reference.belongsToMany(models.Author, {
+      as: "Authors",
+      through: { model: models.AuthorsReferences },
+      foreignKey: "referenceId",
+    })
   }
 
   return Reference

@@ -10,6 +10,7 @@ const {
   RecordType,
   MagazineIssue,
   Magazine,
+  Author,
 } = require("../../../models")
 
 let router = express.Router()
@@ -25,23 +26,22 @@ router.get("/:id", (req, res) => {
         model: MagazineIssue,
         include: [Magazine],
       },
+      {
+        model: Author,
+        as: "Authors",
+      },
     ],
   })
     .then(result => {
-      reference = result
+      reference = result.get()
 
-      return reference.getAuthors()
-    })
-    .then(authors => {
-      reference = reference.get()
-
-      reference.Authors = authors
-        .sort((a, b) => a.AuthorsReferences.order - b.AuthorsReferences.order)
-        .map(attr => {
-          attr = attr.get()
-          delete attr.AuthorsReferences
-          return attr
-        })
+      reference.Authors = reference.Authors.sort(
+        (a, b) => a.AuthorsReferences.order - b.AuthorsReferences.order,
+      ).map(attr => {
+        attr = attr.get()
+        delete attr.AuthorsReferences
+        return attr
+      })
 
       if (reference.MagazineIssue) {
         reference.Magazine = reference.MagazineIssue.Magazine.get()

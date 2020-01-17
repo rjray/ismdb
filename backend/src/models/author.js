@@ -13,7 +13,11 @@ module.exports = (sequelize, DataTypes) => {
     { timestamps: false },
   )
   Author.associate = function(models) {
-    Author.belongsToMany(models.Reference, { through: "AuthorsReferences" })
+    Author.belongsToMany(models.Reference, {
+      as: "References",
+      through: { model: models.AuthorsReferences },
+      foreignKey: "authorId",
+    })
   }
 
   return Author
