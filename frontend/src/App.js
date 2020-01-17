@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react"
+import Container from "react-bootstrap/Container"
+import Button from "react-bootstrap/Button"
+import Navbar from "react-bootstrap/Navbar"
+import Nav from "react-bootstrap/Nav"
+import NavDropdown from "react-bootstrap/NavDropdown"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => (
+  <Container fluid>
+    <Navbar bg="light" expand="sm">
+      <Navbar.Brand href="#home">My Modeling DB</Navbar.Brand>
+      <Navbar.Toggle aria-controls="basic-navbar-nav" />
+      <Navbar.Collapse id="basic-navbar-nav">
+        <Nav className="mr-auto">
+          <NavDropdown title="Browse" id="basic-nav-dropdown">
+            <NavDropdown.Item href="#references">References</NavDropdown.Item>
+            <NavDropdown.Item href="#authors">Authors</NavDropdown.Item>
+            <NavDropdown.Item href="#magazines">Magazines</NavDropdown.Item>
+          </NavDropdown>
+        </Nav>
+      </Navbar.Collapse>
+      <Nav>
+        <Button variant="link">login</Button>
+      </Nav>
+    </Navbar>
+  </Container>
+)
 
-export default App;
+export default App
