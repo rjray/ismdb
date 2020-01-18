@@ -4,18 +4,29 @@ import Container from "react-bootstrap/Container"
 
 import Header from "./Header"
 import Authors from "./Authors"
+import Magazines from "./Magazines"
+import References from "./References"
 
 const App = () => (
   <Router>
     <Container>
       <Header />
-
-      <Switch>
-        <Route path="/authors">
-          <Authors />
-        </Route>
-      </Switch>
     </Container>
+
+    <Switch>
+      <Route path="/references">
+        <References />
+      </Route>
+      <Route path="/authors">
+        <Authors />
+      </Route>
+      <Route path="/magazines">
+        <Magazines />
+      </Route>
+      <Route path="/">
+        <h1>Home</h1>
+      </Route>
+    </Switch>
   </Router>
 )
 
