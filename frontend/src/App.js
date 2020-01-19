@@ -11,7 +11,7 @@ const App = () => (
   <Router>
     <Header />
 
-    <Container>
+    <Container fluid>
       <Switch>
         <Route path="/references">
           <References />
