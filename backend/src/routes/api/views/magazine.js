@@ -12,7 +12,7 @@ let router = express.Router()
 
 router.get("/all", (req, res) => {
   let query = `
-    SELECT m.id, m.name, m.createdAt, COUNT(mi.id) AS issues
+    SELECT m.*, COUNT(mi.id) AS issues
     FROM Magazines m LEFT JOIN MagazineIssues mi ON m.id = mi.magazineId
     GROUP BY m.id
   `
