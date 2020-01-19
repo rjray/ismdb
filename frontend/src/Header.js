@@ -8,7 +8,7 @@ import { LinkContainer } from "react-router-bootstrap"
 
 const Header = () => (
   <Container>
-    <Navbar bg="light" expand="sm" fixed="top">
+    <Navbar bg="light" expand="sm">
       <LinkContainer to="/">
         <Navbar.Brand>My Modeling DB</Navbar.Brand>
       </LinkContainer>
@@ -16,20 +16,20 @@ const Header = () => (
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <NavDropdown title="View" id="basic-nav-dropdown">
-            <LinkContainer to="/references">
+            <LinkContainer to="references">
               <NavDropdown.Item>References</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to="/authors">
+            <LinkContainer to="authors">
               <NavDropdown.Item>Authors</NavDropdown.Item>
             </LinkContainer>
-            <LinkContainer to="/magazines">
+            <LinkContainer to="magazines">
               <NavDropdown.Item>Magazines</NavDropdown.Item>
             </LinkContainer>
           </NavDropdown>
         </Nav>
       </Navbar.Collapse>
       <Nav>
-        <LinkContainer to="/login">
+        <LinkContainer to="login">
           <Button variant="link">login</Button>
         </LinkContainer>
       </Nav>
