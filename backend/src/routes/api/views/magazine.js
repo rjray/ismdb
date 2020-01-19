@@ -5,12 +5,32 @@
 const express = require("express")
 const _ = require("lodash")
 
-const { MagazineIssue, Magazine } = require("../../../models")
+const { MagazineIssue, Magazine, sequelize } = require("../../../models")
 const { compareVersion } = require("../../../lib/utils")
 
 let router = express.Router()
 
-router.get("/:id", (req, res) => {
+router.get("/all", (req, res) => {
+  let query = `
+    SELECT m.id, m.name, m.createdAt, COUNT(mi.id) AS issues
+    FROM Magazines m LEFT JOIN MagazineIssues mi ON m.id = mi.magazineId
+    GROUP BY m.id
+  `
+  let options = {
+    type: sequelize.QueryTypes.SELECT,
+  }
+
+  sequelize
+    .query(query, options)
+    .then(magazines => {
+      res.send({ status: "success", magazines })
+    })
+    .catch(error => {
+      res.send({ status: "error", error })
+    })
+})
+
+router.get("/:id(\\d+)", (req, res) => {
   let id = req.params.id
   let magazine
 
