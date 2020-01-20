@@ -78,7 +78,7 @@ const ExpandMagazine = props => {
   }
 
   return (
-    <Container fluid className="mt-2">
+    <Container fluid className="mt-2 mb-3">
       {content}
     </Container>
   )
