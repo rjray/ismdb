@@ -15,6 +15,31 @@ const {
 
 let router = express.Router()
 
+router.get("/all", (req, res) => {
+  Reference.findAll({
+    include: [RecordType, { model: MagazineIssue, include: [Magazine] }],
+  })
+    .then(references => {
+      references = references.map(item => {
+        let reference = item.get()
+
+        if (reference.MagazineIssue) {
+          reference.Magazine = reference.MagazineIssue.Magazine.get()
+          reference.MagazineIssue = reference.MagazineIssue.get()
+          delete reference.MagazineIssue.Magazine
+        }
+        reference.RecordType = reference.RecordType.get()
+
+        return reference
+      })
+
+      res.send({ status: "success", references })
+    })
+    .catch(error => {
+      res.send({ status: "error", error })
+    })
+})
+
 router.get("/:id", (req, res) => {
   let id = req.params.id
   let reference
@@ -36,7 +61,7 @@ router.get("/:id", (req, res) => {
       reference = result.get()
 
       reference.Authors = reference.Authors.sort(
-        (a, b) => a.AuthorsReferences.order - b.AuthorsReferences.order,
+        (a, b) => a.AuthorsReferences.order - b.AuthorsReferences.order
       ).map(attr => {
         attr = attr.get()
         delete attr.AuthorsReferences
