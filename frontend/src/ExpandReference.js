@@ -1,10 +1,27 @@
 import React from "react"
+import { Link } from "react-router-dom"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import ScaleLoader from "react-spinners/ScaleLoader"
 
 import useDataApi from "./utils/data-api"
+
+const FormatAuthors = props => {
+  let reference = props.reference
+  let content
+
+  if (reference.Authors.length > 0) {
+    content = [reference.Authors.length === 1 ? "Author: " : "Authors: "]
+    for (let author of reference.Authors) {
+      content.push(<Link to={`/authors/${author.id}`}>{author.name}</Link>)
+      content.push(", ")
+    }
+    content.pop()
+  }
+
+  return <div>{content}</div>
+}
 
 const ExpandReference = props => {
   const [
@@ -32,19 +49,26 @@ const ExpandReference = props => {
     content = (
       <>
         <Row>
-          <Col>{reference.type}</Col>
-          <Col className="text-center">{reference.language}</Col>
+          <Col>Type: {reference.type}</Col>
+          <Col className="text-center">
+            {reference.language && `Language: ${reference.language}`}
+          </Col>
           <Col className="text-right">edit</Col>
         </Row>
         <Row>
-          <Col>{reference.keywords}</Col>
+          <Col>
+            <FormatAuthors reference={reference} />
+          </Col>
+        </Row>
+        <Row>
+          <Col>Keywords: {reference.keywords}</Col>
         </Row>
       </>
     )
   }
 
   return (
-    <Container fluid className="mt-2">
+    <Container fluid className="mt-2 mb-3">
       {content}
     </Container>
   )
