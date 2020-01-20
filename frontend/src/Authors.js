@@ -4,6 +4,7 @@ import ScaleLoader from "react-spinners/ScaleLoader"
 import DataTable from "react-data-table-component"
 
 import useDataApi from "./utils/data-api"
+import ExpandAuthor from "./ExpandAuthor"
 
 const lastNameFirst = name => {
   if (!name) {
@@ -75,6 +76,9 @@ const Authors = () => {
         pointerOnHover
         pagination
         paginationPerPage={25}
+        expandableRows
+        expandOnRowClicked
+        expandableRowsComponent={<ExpandAuthor />}
         defaultSortField="name"
         columns={columns}
         data={authors}
