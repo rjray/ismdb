@@ -34,6 +34,7 @@ const References = () => {
         name: <b>Name</b>,
         selector: "name",
         sortable: true,
+        width: "30%",
       },
       {
         name: <b>Source</b>,
@@ -52,6 +53,7 @@ const References = () => {
 
           return str
         },
+        width: "25%",
         sortable: true,
       },
       {
@@ -95,7 +97,6 @@ const References = () => {
         expandableRows
         expandOnRowClicked
         expandableRowsComponent={<ExpandReference />}
-        expandableIcon={{ collapsed: null, expanded: null }}
         defaultSortField="name"
         columns={columns}
         data={references}
