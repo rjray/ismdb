@@ -5,7 +5,14 @@
 const express = require("express")
 const _ = require("lodash")
 
-const { Author, Reference, sequelize } = require("../../../models")
+const {
+  Author,
+  Reference,
+  RecordType,
+  Magazine,
+  MagazineIssue,
+  sequelize,
+} = require("../../../models")
 
 let router = express.Router()
 
@@ -33,12 +40,25 @@ router.get("/:id", (req, res) => {
   let id = req.params.id
   let author
 
-  Author.findByPk(id, { include: [{ model: Reference, as: "References" }] })
+  Author.findByPk(id, {
+    include: [
+      {
+        model: Reference,
+        as: "References",
+        include: [RecordType, { model: MagazineIssue, include: [Magazine] }],
+      },
+    ],
+  })
     .then(result => {
       author = result.get()
       author.References = author.References.map(item => {
         item = item.get()
         delete item.AuthorsReferences
+        if (item.MagazineIssue) {
+          item.Magazine = item.MagazineIssue.Magazine.get()
+          item.MagazineIssue = item.MagazineIssue.get()
+          delete item.MagazineIssue.Magazine
+        }
         return item
       })
 
