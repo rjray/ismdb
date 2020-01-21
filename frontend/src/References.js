@@ -29,11 +29,18 @@ const References = () => {
     )
   } else {
     content = (
-      <Row>
-        <Col>
-          <ReferenceTable title="References" data={data.references} />
-        </Col>
-      </Row>
+      <>
+        <Row>
+          <Col>
+            <h2>References</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <ReferenceTable data={data.references} />
+          </Col>
+        </Row>
+      </>
     )
   }
 

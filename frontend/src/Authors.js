@@ -1,5 +1,7 @@
 import React from "react"
 import Container from "react-bootstrap/Container"
+import Row from "react-bootstrap/Row"
+import Col from "react-bootstrap/Col"
 import ScaleLoader from "react-spinners/ScaleLoader"
 import DataTable from "react-data-table-component"
 
@@ -61,22 +63,32 @@ const Authors = () => {
     ]
 
     content = (
-      <DataTable
-        title="Authors"
-        striped
-        responsive
-        dense
-        highlightOnHover
-        pointerOnHover
-        pagination
-        paginationPerPage={25}
-        expandableRows
-        expandOnRowClicked
-        expandableRowsComponent={<AuthorExpand />}
-        defaultSortField="name"
-        columns={columns}
-        data={authors}
-      />
+      <>
+        <Row>
+          <Col>
+            <h2>Authors</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <DataTable
+              striped
+              responsive
+              dense
+              highlightOnHover
+              pointerOnHover
+              pagination
+              paginationPerPage={25}
+              expandableRows
+              expandOnRowClicked
+              expandableRowsComponent={<AuthorExpand />}
+              defaultSortField="name"
+              columns={columns}
+              data={authors}
+            />
+          </Col>
+        </Row>
+      </>
     )
   }
 

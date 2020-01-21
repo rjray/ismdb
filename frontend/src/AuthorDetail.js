@@ -34,6 +34,13 @@ const AuthorDetail = props => {
 
     content.push(
       <Row>
+        <Col>
+          <h2>Author Detail</h2>
+        </Col>
+      </Row>
+    )
+    content.push(
+      <Row className="mt-3">
         <Col>Name: {author.name}</Col>
         <Col className="text-right">edit</Col>
       </Row>

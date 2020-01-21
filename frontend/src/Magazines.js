@@ -1,5 +1,7 @@
 import React from "react"
 import Container from "react-bootstrap/Container"
+import Row from "react-bootstrap/Row"
+import Col from "react-bootstrap/Col"
 import ScaleLoader from "react-spinners/ScaleLoader"
 import { formatDistanceToNow } from "date-fns"
 import DataTable from "react-data-table-component"
@@ -69,22 +71,32 @@ const Magazines = () => {
     ]
 
     content = (
-      <DataTable
-        title="Magazines"
-        striped
-        responsive
-        dense
-        highlightOnHover
-        pointerOnHover
-        pagination
-        paginationPerPage={25}
-        expandableRows
-        expandOnRowClicked
-        expandableRowsComponent={<MagazineExpand />}
-        defaultSortField="name"
-        columns={columns}
-        data={magazines}
-      />
+      <>
+        <Row>
+          <Col>
+            <h2>Magazines</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <DataTable
+              striped
+              responsive
+              dense
+              highlightOnHover
+              pointerOnHover
+              pagination
+              paginationPerPage={25}
+              expandableRows
+              expandOnRowClicked
+              expandableRowsComponent={<MagazineExpand />}
+              defaultSortField="name"
+              columns={columns}
+              data={magazines}
+            />
+          </Col>
+        </Row>
+      </>
     )
   }
 
