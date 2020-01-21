@@ -10,7 +10,8 @@ const ReferenceTable = props => {
       name: <b>Name</b>,
       selector: "name",
       sortable: true,
-      width: "30%",
+      wrap: true,
+      minWidth: "40%",
     },
     {
       name: <b>Source</b>,
@@ -29,8 +30,9 @@ const ReferenceTable = props => {
 
         return str
       },
-      width: "25%",
       sortable: true,
+      wrap: true,
+      minWidth: "25%",
     },
     {
       name: <b>Added</b>,
@@ -41,7 +43,6 @@ const ReferenceTable = props => {
         const now = new Date(row.createdAt)
         return <span title={now}>{formatDistanceToNow(new Date(now))} ago</span>
       },
-      width: "15%",
     },
     {
       name: <b>Updated</b>,
@@ -52,7 +53,6 @@ const ReferenceTable = props => {
         const now = new Date(row.updatedAt)
         return <span title={now}>{formatDistanceToNow(new Date(now))} ago</span>
       },
-      width: "15%",
     },
   ]
 
