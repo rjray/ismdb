@@ -1,4 +1,5 @@
 import React from "react"
+import { Helmet } from "react-helmet"
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom"
 import Container from "react-bootstrap/Container"
 
@@ -10,6 +11,10 @@ import References from "./References"
 
 const App = () => (
   <Router>
+    <Helmet titleTemplate="MyMoDB - %s">
+      <title>Home</title>
+    </Helmet>
+
     <Header />
 
     <Container fluid>

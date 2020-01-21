@@ -1,4 +1,5 @@
 import React from "react"
+import { Helmet } from "react-helmet"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
@@ -92,7 +93,14 @@ const Authors = () => {
     )
   }
 
-  return <Container className="mt-2">{content}</Container>
+  return (
+    <>
+      <Helmet>
+        <title>Authors</title>
+      </Helmet>
+      <Container className="mt-2">{content}</Container>
+    </>
+  )
 }
 
 export default Authors
