@@ -58,13 +58,13 @@ const MagazineExpand = props => {
 
     if (magazine.notes) {
       rows.push(
-        <Row className="mt-1">
+        <Row key="notes" className="mt-1">
           <Col>Notes: {magazine.notes}</Col>
         </Row>
       )
     }
     rows.unshift(
-      <Row className="mb-1">
+      <Row key="title" className="mb-1">
         <Col>
           <Link to={`/magazines/${magazine.id}`}>View magazine</Link>
         </Col>
