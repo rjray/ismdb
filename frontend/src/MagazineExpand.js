@@ -57,18 +57,17 @@ const MagazineExpand = props => {
     })
 
     if (magazine.notes) {
-      rows.unshift(
-        <Row>
-          <Col>
-            Notes:
-            <br />
-            {magazine.notes}
-          </Col>
+      rows.push(
+        <Row className="mt-1">
+          <Col>Notes: {magazine.notes}</Col>
         </Row>
       )
     }
     rows.unshift(
-      <Row>
+      <Row className="mb-1">
+        <Col>
+          <Link to={`/magazines/${magazine.id}`}>View magazine</Link>
+        </Col>
         <Col>{magazine.language && `Language: ${magazine.language}`}</Col>
         <Col className="text-right">edit</Col>
       </Row>

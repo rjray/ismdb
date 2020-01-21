@@ -12,13 +12,13 @@ const AuthorExpand = props => {
   return (
     <Container fluid className="mt-2 mb-3">
       <Row>
-        <Col>{aliases}</Col>
+        <Col>
+          <Link to={`/authors/${props.data.id}`}>View author</Link>
+        </Col>
         <Col className="text-right">edit</Col>
       </Row>
       <Row>
-        <Col>
-          <Link to={`/authors/${props.data.id}`}>All references</Link>
-        </Col>
+        <Col>{aliases}</Col>
       </Row>
     </Container>
   )

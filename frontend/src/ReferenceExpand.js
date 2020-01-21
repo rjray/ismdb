@@ -52,12 +52,17 @@ const ReferenceExpand = props => {
 
     content = (
       <>
-        <Row>
-          <Col>Type: {reference.type}</Col>
+        <Row className="mb-1">
+          <Col>
+            <Link to={`/references/${reference.id}`}>View reference</Link>
+          </Col>
           <Col className="text-center">
             {reference.language && `Language: ${reference.language}`}
           </Col>
           <Col className="text-right">edit</Col>
+        </Row>
+        <Row>
+          <Col>Type: {reference.type}</Col>
         </Row>
         <Row>
           <Col>
