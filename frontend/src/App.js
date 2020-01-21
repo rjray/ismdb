@@ -23,7 +23,9 @@ const App = () => (
           <Magazines />
         </Route>
         <Route path="/">
-          <h1>Home</h1>
+          <Container>
+            <h1>Home</h1>
+          </Container>
         </Route>
       </Switch>
     </Container>

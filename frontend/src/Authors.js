@@ -53,12 +53,6 @@ const Authors = () => {
         sortable: true,
       },
       {
-        name: <b>Aliases</b>,
-        selector: "aliases",
-        hide: "sm",
-        sortable: false,
-      },
-      {
         name: <b>References</b>,
         selector: "refcount",
         sortable: true,
