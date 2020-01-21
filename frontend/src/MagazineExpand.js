@@ -28,7 +28,7 @@ const createIssueRow = (mId, elements) => {
   ))
 }
 
-const ExpandMagazine = props => {
+const MagazineExpand = props => {
   const [
     { data, loading, error },
   ] = useDataApi(`/api/views/magazine/${props.data.id}`, { data: {} })
@@ -84,4 +84,4 @@ const ExpandMagazine = props => {
   )
 }
 
-export default ExpandMagazine
+export default MagazineExpand

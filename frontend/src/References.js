@@ -5,7 +5,7 @@ import { formatDistanceToNow } from "date-fns"
 import DataTable from "react-data-table-component"
 
 import useDataApi from "./utils/data-api"
-import ExpandReference from "./ExpandReference"
+import ReferenceExpand from "./ReferenceExpand"
 
 const References = () => {
   const [{ data, loading, error }] = useDataApi("/api/views/reference/all", {
@@ -96,7 +96,7 @@ const References = () => {
         paginationPerPage={25}
         expandableRows
         expandOnRowClicked
-        expandableRowsComponent={<ExpandReference />}
+        expandableRowsComponent={<ReferenceExpand />}
         defaultSortField="name"
         columns={columns}
         data={references}

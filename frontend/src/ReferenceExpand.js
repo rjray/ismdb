@@ -23,7 +23,7 @@ const FormatAuthors = props => {
   return <div>{content}</div>
 }
 
-const ExpandReference = props => {
+const ReferenceExpand = props => {
   const [
     { data, loading, error },
   ] = useDataApi(`/api/views/reference/${props.data.id}`, { data: {} })
@@ -74,4 +74,4 @@ const ExpandReference = props => {
   )
 }
 
-export default ExpandReference
+export default ReferenceExpand

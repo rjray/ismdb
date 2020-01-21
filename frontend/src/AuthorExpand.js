@@ -4,7 +4,7 @@ import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 
-const ExpandAuthor = props => {
+const AuthorExpand = props => {
   let aliases = props.data.aliases
     ? `Aliases: ${props.data.aliases.replace(/\|/g, ", ")}`
     : ""
@@ -24,4 +24,4 @@ const ExpandAuthor = props => {
   )
 }
 
-export default ExpandAuthor
+export default AuthorExpand

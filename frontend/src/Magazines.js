@@ -5,7 +5,7 @@ import { formatDistanceToNow } from "date-fns"
 import DataTable from "react-data-table-component"
 
 import useDataApi from "./utils/data-api"
-import ExpandMagazine from "./ExpandMagazine"
+import MagazineExpand from "./MagazineExpand"
 
 const Magazines = () => {
   const [{ data, loading, error }] = useDataApi("/api/views/magazine/all", {
@@ -80,7 +80,7 @@ const Magazines = () => {
         paginationPerPage={25}
         expandableRows
         expandOnRowClicked
-        expandableRowsComponent={<ExpandMagazine />}
+        expandableRowsComponent={<MagazineExpand />}
         defaultSortField="name"
         columns={columns}
         data={magazines}
