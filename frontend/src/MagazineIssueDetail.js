@@ -53,7 +53,11 @@ const MagazineDetail = props => {
         </Row>
         <Row>
           <Col>
-            <ReferenceTable title="References" data={mi.References} />
+            <ReferenceTable
+              title="References"
+              pagination={false}
+              data={mi.References}
+            />
           </Col>
         </Row>
       </>
