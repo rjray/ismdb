@@ -6,8 +6,6 @@ import Col from "react-bootstrap/Col"
 
 const AuthorExpand = props => {
   let aliases = props.data.aliases
-    ? `Aliases: ${props.data.aliases.replace(/\|/g, ", ")}`
-    : ""
 
   return (
     <Container fluid className="mt-2 mb-3">
@@ -18,7 +16,7 @@ const AuthorExpand = props => {
         <Col className="text-right">edit</Col>
       </Row>
       <Row>
-        <Col>{aliases}</Col>
+        <Col>{aliases && `Aliases: ${aliases.replace(/\|/g, ", ")}`}</Col>
       </Row>
     </Container>
   )

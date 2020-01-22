@@ -131,9 +131,7 @@ const MagazineDetail = props => {
       {
         name: <b>References</b>,
         selector: "References",
-        format: row => {
-          return row.References.length
-        },
+        format: row => row.References.length,
       },
       /*
       {

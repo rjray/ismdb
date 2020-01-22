@@ -31,34 +31,30 @@ const AuthorDetail = props => {
     )
   } else {
     let author = data.author
-    content = []
 
-    content.push(
-      <Row>
-        <Col>
-          <h2>Author Detail</h2>
-        </Col>
-      </Row>
-    )
-    content.push(
-      <Row className="mt-3">
-        <Col>Name: {author.name}</Col>
-        <Col className="text-right">edit</Col>
-      </Row>
-    )
-    if (author.aliases) {
-      content.push(
+    content = (
+      <>
         <Row>
-          <Col>{`Aliases: ${author.aliases.replace(/\|/g, ", ")}`}</Col>
+          <Col>
+            <h2>Author Detail</h2>
+          </Col>
         </Row>
-      )
-    }
-    content.push(
-      <Row>
-        <Col>
-          <ReferenceTable data={author.References} />
-        </Col>
-      </Row>
+        <Row className="mt-3">
+          <Col>Name: {author.name}</Col>
+          <Col className="text-right">edit</Col>
+        </Row>
+        <Row>
+          <Col>
+            {author.aliases &&
+              `Aliases: ${author.aliases.replace(/\|/g, ", ")}`}
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <ReferenceTable data={author.References} />
+          </Col>
+        </Row>
+      </>
     )
   }
 

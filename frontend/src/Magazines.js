@@ -51,9 +51,7 @@ const Magazines = () => {
         hide: "sm",
         format: row => {
           const now = new Date(row.createdAt)
-          return (
-            <span title={now}>{formatDistanceToNow(new Date(now))} ago</span>
-          )
+          return <span title={now}>{formatDistanceToNow(now)} ago</span>
         },
       },
       {
@@ -64,9 +62,7 @@ const Magazines = () => {
         hide: "md",
         format: row => {
           const now = new Date(row.updatedAt)
-          return (
-            <span title={now}>{formatDistanceToNow(new Date(now))} ago</span>
-          )
+          return <span title={now}>{formatDistanceToNow(now)} ago</span>
         },
       },
     ]
