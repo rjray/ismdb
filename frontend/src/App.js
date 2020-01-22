@@ -10,6 +10,7 @@ import Magazines from "./Magazines"
 import MagazineDetail from "./MagazineDetail"
 import MagazineIssueDetail from "./MagazineIssueDetail"
 import References from "./References"
+import ReferenceDetail from "./ReferenceDetail"
 
 const App = () => (
   <Router>
@@ -26,6 +27,7 @@ const App = () => (
             <h1>Home</h1>
           </Container>
         </Route>
+        <Route path="/references/:id" component={ReferenceDetail} />
         <Route path="/references" component={References} />
         <Route path="/authors/:id" component={AuthorDetail} />
         <Route path="/authors" component={Authors} />
