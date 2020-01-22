@@ -124,7 +124,7 @@ const MagazineDetail = props => {
     let updated = new Date(magazine.updatedAt)
     let columns = [
       {
-        name: <b>Issue</b>,
+        name: <b>Number</b>,
         selector: "number",
         sortable: true,
       },
@@ -189,6 +189,7 @@ const MagazineDetail = props => {
         <Row>
           <Col>
             <DataTable
+              title="Issues"
               striped
               responsive
               dense
