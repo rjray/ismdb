@@ -8,6 +8,7 @@ import Authors from "./Authors"
 import AuthorDetail from "./AuthorDetail"
 import Magazines from "./Magazines"
 import MagazineDetail from "./MagazineDetail"
+import MagazineIssueDetail from "./MagazineIssueDetail"
 import References from "./References"
 
 const App = () => (
@@ -28,6 +29,7 @@ const App = () => (
         <Route path="/references" component={References} />
         <Route path="/authors/:id" component={AuthorDetail} />
         <Route path="/authors" component={Authors} />
+        <Route path="/magazines/:mid/:id" component={MagazineIssueDetail} />
         <Route path="/magazines/:id" component={MagazineDetail} />
         <Route path="/magazines" component={Magazines} />
       </Switch>
