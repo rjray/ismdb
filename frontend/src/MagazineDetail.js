@@ -1,12 +1,12 @@
 import React from "react"
+import { Link } from "react-router-dom"
 import { Helmet } from "react-helmet"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import ScaleLoader from "react-spinners/ScaleLoader"
-import { formatDistanceToNow } from "date-fns"
+import { formatDistanceToNow, compareAsc, compareDesc } from "date-fns"
 import DataTable from "react-data-table-component"
-import { compareAsc, compareDesc } from "date-fns"
 
 import useDataApi from "./utils/data-api"
 import compareVersion from "./utils/compare-version"
@@ -36,6 +36,65 @@ const sortRows = (rows, field, direction) => {
   }
 
   return rows
+}
+
+const MagazineDetailExpand = props => {
+  let references = props.data.References
+
+  let columns = [
+    {
+      name: <b>Name</b>,
+      selector: "name",
+      wrap: true,
+      format: row => <Link to={`/references/${row.id}`}>{row.name}</Link>,
+    },
+    {
+      name: <b>Type</b>,
+      selector: "type",
+      wrap: true,
+    },
+    {
+      name: <b>Keywords</b>,
+      selector: "keywords",
+      wrap: true,
+    },
+    {
+      name: <b>Added</b>,
+      selector: "createdAt",
+      hide: "sm",
+      format: row => {
+        const now = new Date(row.createdAt)
+        return <span title={now}>{formatDistanceToNow(now)} ago</span>
+      },
+    },
+    {
+      name: <b>Updated</b>,
+      selector: "updatedAt",
+      hide: "md",
+      format: row => {
+        const now = new Date(row.updatedAt)
+        return <span title={now}>{formatDistanceToNow(now)} ago</span>
+      },
+    },
+  ]
+
+  let content = (
+    <DataTable
+      responsive
+      dense
+      highlightOnHover
+      pointerOnHover
+      noHeader
+      columns={columns}
+      data={references}
+    />
+  )
+
+  return (
+    <Container fluid className="mt-2 mb-3">
+      {content}
+    </Container>
+  )
 }
 
 const MagazineDetail = props => {
@@ -68,6 +127,13 @@ const MagazineDetail = props => {
         name: <b>Issue</b>,
         selector: "number",
         sortable: true,
+      },
+      {
+        name: <b>References</b>,
+        selector: "References",
+        format: row => {
+          return row.References.length
+        },
       },
       /*
       {
@@ -134,6 +200,9 @@ const MagazineDetail = props => {
               paginationPerPage={25}
               defaultSortField="number"
               sortFunction={sortRows}
+              expandableRows
+              expandOnRowClicked
+              expandableRowsComponent={<MagazineDetailExpand />}
               columns={columns}
               data={magazine.MagazineIssues}
             />
