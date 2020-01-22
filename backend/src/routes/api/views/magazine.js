@@ -5,7 +5,12 @@
 const express = require("express")
 const _ = require("lodash")
 
-const { MagazineIssue, Magazine, sequelize } = require("../../../models")
+const {
+  MagazineIssue,
+  Magazine,
+  Reference,
+  sequelize,
+} = require("../../../models")
 const { compareVersion } = require("../../../lib/utils")
 
 let router = express.Router()
@@ -34,7 +39,9 @@ router.get("/:id(\\d+)", (req, res) => {
   let id = req.params.id
   let magazine
 
-  Magazine.findByPk(id, { include: [MagazineIssue] })
+  Magazine.findByPk(id, {
+    include: [{ model: MagazineIssue, include: [Reference] }],
+  })
     .then(result => {
       magazine = result.get()
 
