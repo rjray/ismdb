@@ -1,8 +1,10 @@
 import React from "react"
+import { LinkContainer } from "react-router-bootstrap"
 import { Helmet } from "react-helmet"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
+import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 import DataTable from "react-data-table-component"
 
@@ -68,6 +70,11 @@ const Authors = () => {
         <Row>
           <Col>
             <h2>Authors</h2>
+          </Col>
+          <Col className="text-right">
+            <LinkContainer to="/authors/create">
+              <Button>New</Button>
+            </LinkContainer>
           </Col>
         </Row>
         <Row>

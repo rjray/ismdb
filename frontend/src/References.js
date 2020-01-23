@@ -1,8 +1,10 @@
 import React from "react"
+import { LinkContainer } from "react-router-bootstrap"
 import { Helmet } from "react-helmet"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
+import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 
 import useDataApi from "./utils/data-api"
@@ -34,6 +36,11 @@ const References = () => {
         <Row>
           <Col>
             <h2>References</h2>
+          </Col>
+          <Col className="text-right">
+            <LinkContainer to="/references/create">
+              <Button>New</Button>
+            </LinkContainer>
           </Col>
         </Row>
         <Row>

@@ -1,8 +1,10 @@
 import React from "react"
+import { LinkContainer } from "react-router-bootstrap"
 import { Helmet } from "react-helmet"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
+import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 import { formatDistanceToNow } from "date-fns"
 import DataTable from "react-data-table-component"
@@ -72,6 +74,11 @@ const Magazines = () => {
         <Row>
           <Col>
             <h2>Magazines</h2>
+          </Col>
+          <Col className="text-right">
+            <LinkContainer to="/magazines/create">
+              <Button>New</Button>
+            </LinkContainer>
           </Col>
         </Row>
         <Row>
