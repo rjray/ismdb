@@ -1,9 +1,11 @@
 import React from "react"
 import { Link } from "react-router-dom"
+import { LinkContainer } from "react-router-bootstrap"
 import { Helmet } from "react-helmet"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
+import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 import { formatDistanceToNow } from "date-fns"
 
@@ -71,7 +73,11 @@ const ReferenceDetail = props => {
           <Col>
             <h2>Reference Detail</h2>
           </Col>
-          <Col className="text-right">edit</Col>
+          <Col className="text-right">
+            <LinkContainer to={`/references/edit/${reference.id}`}>
+              <Button>Edit</Button>
+            </LinkContainer>
+          </Col>
         </Row>
         <Row className="mt-3">
           <Col xs lg="1">

@@ -7,6 +7,8 @@ import ScaleLoader from "react-spinners/ScaleLoader"
 
 import useDataApi from "./utils/data-api"
 import ReferenceTable from "./ReferenceTable"
+import Button from "react-bootstrap/Button"
+import { LinkContainer } from "react-router-bootstrap"
 
 const AuthorDetail = props => {
   let id = props.match.params.id
@@ -41,7 +43,11 @@ const AuthorDetail = props => {
         </Row>
         <Row className="mt-3">
           <Col>Name: {author.name}</Col>
-          <Col className="text-right">edit</Col>
+          <Col className="text-right">
+            <LinkContainer to={`/authors/edit/${author.id}`}>
+              <Button>Edit</Button>
+            </LinkContainer>
+          </Col>
         </Row>
         <Row>
           <Col>

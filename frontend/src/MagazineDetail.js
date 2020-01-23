@@ -1,9 +1,11 @@
 import React from "react"
 import { Link } from "react-router-dom"
+import { LinkContainer } from "react-router-bootstrap"
 import { Helmet } from "react-helmet"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
+import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 import { formatDistanceToNow, compareAsc, compareDesc } from "date-fns"
 import DataTable from "react-data-table-component"
@@ -165,7 +167,11 @@ const MagazineDetail = props => {
         </Row>
         <Row className="mt-3">
           <Col>Name: {magazine.name}</Col>
-          <Col className="text-right">edit</Col>
+          <Col className="text-right">
+            <LinkContainer to={`/magazines/edit/${magazine.id}`}>
+              <Button>Edit</Button>
+            </LinkContainer>
+          </Col>
         </Row>
         <Row>
           <Col>{magazine.language && `Language: ${magazine.language}`}</Col>

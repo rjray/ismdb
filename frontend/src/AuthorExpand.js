@@ -1,8 +1,9 @@
 import React from "react"
-import { Link } from "react-router-dom"
+import { LinkContainer } from "react-router-bootstrap"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
+import Button from "react-bootstrap/Button"
 
 const AuthorExpand = props => {
   let aliases = props.data.aliases
@@ -11,9 +12,15 @@ const AuthorExpand = props => {
     <Container fluid className="mt-2 mb-3">
       <Row>
         <Col>
-          <Link to={`/authors/${props.data.id}`}>View author</Link>
+          <LinkContainer to={`/authors/${props.data.id}`}>
+            <Button>View</Button>
+          </LinkContainer>
         </Col>
-        <Col className="text-right">edit</Col>
+        <Col className="text-right">
+          <LinkContainer to={`/magazines/edit/${props.data.id}`}>
+            <Button>Edit</Button>
+          </LinkContainer>
+        </Col>
       </Row>
       <Row>
         <Col>{aliases && `Aliases: ${aliases.replace(/\|/g, ", ")}`}</Col>

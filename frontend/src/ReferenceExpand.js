@@ -1,8 +1,10 @@
 import React from "react"
 import { Link } from "react-router-dom"
+import { LinkContainer } from "react-router-bootstrap"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
+import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 
 import useDataApi from "./utils/data-api"
@@ -54,12 +56,18 @@ const ReferenceExpand = props => {
       <>
         <Row className="mb-1">
           <Col>
-            <Link to={`/references/${reference.id}`}>View reference</Link>
+            <LinkContainer to={`/references/${reference.id}`}>
+              <Button>View</Button>
+            </LinkContainer>
           </Col>
           <Col className="text-center">
             {reference.language && `Language: ${reference.language}`}
           </Col>
-          <Col className="text-right">edit</Col>
+          <Col className="text-right">
+            <LinkContainer to={`/references/edit/${reference.id}`}>
+              <Button>edit</Button>
+            </LinkContainer>
+          </Col>
         </Row>
         <Row>
           <Col>Type: {reference.type}</Col>

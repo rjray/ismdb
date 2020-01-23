@@ -1,8 +1,10 @@
 import React from "react"
 import { Link } from "react-router-dom"
+import { LinkContainer } from "react-router-bootstrap"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
+import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 import _ from "lodash"
 
@@ -66,10 +68,16 @@ const MagazineExpand = props => {
     rows.unshift(
       <Row key="title" className="mb-1">
         <Col>
-          <Link to={`/magazines/${magazine.id}`}>View magazine</Link>
+          <LinkContainer to={`/magazines/${magazine.id}`}>
+            <Button>View</Button>
+          </LinkContainer>
         </Col>
         <Col>{magazine.language && `Language: ${magazine.language}`}</Col>
-        <Col className="text-right">edit</Col>
+        <Col className="text-right">
+          <LinkContainer to={`/magazines/edit/${magazine.id}`}>
+            <Button>Edit</Button>
+          </LinkContainer>
+        </Col>
       </Row>
     )
 

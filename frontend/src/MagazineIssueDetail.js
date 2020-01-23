@@ -1,8 +1,10 @@
 import React from "react"
+import { LinkContainer } from "react-router-bootstrap"
 import { Helmet } from "react-helmet"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
+import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 
 import useDataApi from "./utils/data-api"
@@ -44,7 +46,11 @@ const MagazineDetail = props => {
         </Row>
         <Row className="mt-3">
           <Col>Name: {`${mi.Magazine.name} ${mi.number}`}</Col>
-          <Col className="text-right">edit</Col>
+          <Col className="text-right">
+            <LinkContainer to={`/magazines/editissue/${mi.id}`}>
+              <Button>Edit</Button>
+            </LinkContainer>
+          </Col>
         </Row>
         <Row>
           <Col>
