@@ -80,58 +80,58 @@ const ReferenceDetail = props => {
           </Col>
         </Row>
         <Row className="mt-3">
-          <Col xs lg="1">
+          <Col xs lg="2">
             <b>Name:</b>
           </Col>
-          <Col md="auto">{reference.name}</Col>
+          <Col lg="8">{reference.name}</Col>
         </Row>
         {reference.language && (
           <Row>
-            <Col xs lg="1">
+            <Col xs lg="2">
               <b>Language:</b>
             </Col>
-            <Col md="auto">{reference.language}</Col>
+            <Col lg="8">{reference.language}</Col>
           </Row>
         )}
         <Row>
-          <Col xs lg="1">
+          <Col xs lg="2">
             <b>Source:</b>
           </Col>
-          <Col md="auto">{recType}</Col>
+          <Col lg="8">{recType}</Col>
         </Row>
         <Row>
-          <Col xs lg="1">
+          <Col xs lg="2">
             <b>Type/Series:</b>
           </Col>
-          <Col md="auto">{reference.type}</Col>
+          <Col lg="8">{reference.type}</Col>
         </Row>
         <Row>
-          <Col xs lg="1">
+          <Col xs lg="2">
             <b>{reference.Authors.length === 1 ? "Author: " : "Authors:"}</b>
           </Col>
-          <Col md="auto">
+          <Col lg="8">
             <FormatAuthors reference={reference} />
           </Col>
         </Row>
         <Row>
-          <Col xs lg="1">
+          <Col xs lg="2">
             <b>Keywords:</b>
           </Col>
-          <Col md="auto">{reference.keywords}</Col>
+          <Col lg="8">{reference.keywords}</Col>
         </Row>
         <Row>
-          <Col xs lg="1">
+          <Col xs lg="2">
             <b>Added:</b>
           </Col>
-          <Col md="auto">
+          <Col lg="8">
             <span title={created}>{formatDistanceToNow(created)} ago</span>
           </Col>
         </Row>
         <Row>
-          <Col xs lg="1">
+          <Col xs lg="2">
             <b>Updated:</b>
           </Col>
-          <Col md="auto">
+          <Col lg="8">
             <span title={updated}>{formatDistanceToNow(updated)} ago</span>
           </Col>
         </Row>
