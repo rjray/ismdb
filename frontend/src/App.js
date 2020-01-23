@@ -27,12 +27,15 @@ const App = () => (
             <h1>Home</h1>
           </Container>
         </Route>
-        <Route path="/references/:id" component={ReferenceDetail} />
+        <Route path="/references/:id(\\d+)" component={ReferenceDetail} />
         <Route path="/references" component={References} />
-        <Route path="/authors/:id" component={AuthorDetail} />
+        <Route path="/authors/:id(\\d+)" component={AuthorDetail} />
         <Route path="/authors" component={Authors} />
-        <Route path="/magazines/:mid/:id" component={MagazineIssueDetail} />
-        <Route path="/magazines/:id" component={MagazineDetail} />
+        <Route
+          path="/magazines/:mid(\\d+)/:id(\\d+)"
+          component={MagazineIssueDetail}
+        />
+        <Route path="/magazines/:id(\\d+)" component={MagazineDetail} />
         <Route path="/magazines" component={Magazines} />
       </Switch>
     </Container>
