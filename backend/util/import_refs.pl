@@ -37,6 +37,7 @@ migrate_authors($dbhi, $dbho);
 migrate_periodicals($dbhi, $dbho);
 migrate_reference_table($dbhi, $dbho);
 fix_placeholders($dbho);
+fix_magazine_issue_dates($dbho);
 
 $dbhi->disconnect;
 $dbho->disconnect;
@@ -156,8 +157,8 @@ sub migrate_reference_table {
     my $authors = $dbhout->selectall_hashref('SELECT * FROM Authors', 'id');
 
     my $sth_ish = $dbhout->prepare(
-        'INSERT INTO `MagazineIssues` (`id`, `magazineId`, `number`) ' .
-        'VALUES (?, ?, ?)'
+        'INSERT INTO `MagazineIssues` (`id`, `magazineId`, `number`, ' .
+        '`createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?)'
     );
     my $sth_auth = $dbhout->prepare(
         'INSERT INTO `AuthorsReferences` (`authorId`, `referenceId`, ' .
@@ -180,7 +181,8 @@ sub migrate_reference_table {
                 $base[9] = $ish_map{$key};
             } else {
                 $ish_id++;
-                $sth_ish->execute($ish_id, $row->[13], $row->[14]);
+                $sth_ish->execute($ish_id, $row->[13], $row->[14],
+                                  $base[7], $base[8]);
                 $base[9] = $ish_map{$key} = $ish_id;
             }
         } else {
@@ -217,6 +219,49 @@ sub fix_placeholders {
         '`type` = "placeholder"'
     );
     $dbh->commit;
+
+    return;
+}
+
+sub fix_magazine_issue_dates {
+    my $dbh = shift;
+    my ($fixed, $skipped);
+
+    my $refs = $dbh->selectall_arrayref(
+        'SELECT * FROM `References` WHERE `magazineIssueId` IS NOT NULL',
+        { Slice => {} }
+    );
+    my $sth = $dbh->prepare(
+        'UPDATE `MagazineIssues` SET `createdAt` = ?, `updatedAt` = ? ' .
+        'WHERE `id` = ?'
+    );
+
+    my %issues = ();
+    for my $ref (@{$refs}) {
+        my $mid = $ref->{magazineIssueId};
+        push @{$issues{$mid}}, $ref
+    }
+
+    for my $mid (sort { $a <=> $b } keys %issues) {
+        my $irefs = $issues{$mid};
+        if (1 == @{$irefs}) {
+            $skipped++;
+            next;
+        }
+
+        my @lo_created =
+            sort { $a->{createdAt} cmp $b->{createdAt} }  @{$irefs};
+        my $lo_created = $lo_created[0]->{createdAt};
+        my @hi_updated =
+            reverse sort { $a->{updatedAt} cmp $b->{updatedAt} }  @{$irefs};
+        my $hi_updated = $hi_updated[0]->{updatedAt};
+        $sth->execute($lo_created, $hi_updated, $mid);
+        $fixed++;
+    }
+
+    $dbh->commit;
+    print "$fixed magazine issues' dates adjusted ($skipped had only one " .
+        "reference)\n";
 
     return;
 }

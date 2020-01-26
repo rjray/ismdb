@@ -135,7 +135,6 @@ const MagazineDetail = props => {
         selector: "References",
         format: row => row.References.length,
       },
-      /*
       {
         name: <b>Added</b>,
         selector: "createdAt",
@@ -155,8 +154,12 @@ const MagazineDetail = props => {
           const now = new Date(row.updatedAt)
           return <span title={now}>{formatDistanceToNow(now)} ago</span>
         },
-      }, */
+      },
     ]
+    let pagination =
+      magazine.MagazineIssues.length < 26
+        ? {}
+        : { pagination: true, paginationPerPage: 25 }
 
     content = (
       <>
@@ -201,8 +204,6 @@ const MagazineDetail = props => {
               dense
               highlightOnHover
               pointerOnHover
-              pagination
-              paginationPerPage={25}
               defaultSortField="number"
               sortFunction={sortRows}
               expandableRows
@@ -210,6 +211,7 @@ const MagazineDetail = props => {
               expandableRowsComponent={<MagazineDetailExpand />}
               columns={columns}
               data={magazine.MagazineIssues}
+              {...pagination}
             />
           </Col>
         </Row>
