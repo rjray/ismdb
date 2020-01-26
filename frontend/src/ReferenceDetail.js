@@ -30,8 +30,7 @@ const FormatAuthors = props => {
   return <span>{content}</span>
 }
 
-const ReferenceDetail = props => {
-  let id = props.match.params.id
+const ReferenceDetail = ({ id }) => {
   const [{ data, loading, error }] = useDataApi(`/api/views/reference/${id}`, {
     data: {},
   })

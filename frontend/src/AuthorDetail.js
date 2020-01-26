@@ -10,8 +10,7 @@ import ReferenceTable from "./ReferenceTable"
 import Button from "react-bootstrap/Button"
 import { LinkContainer } from "react-router-bootstrap"
 
-const AuthorDetail = props => {
-  let id = props.match.params.id
+const AuthorDetail = ({ id }) => {
   const [{ data, loading, error }] = useDataApi(`/api/views/author/${id}`, {
     data: {},
   })

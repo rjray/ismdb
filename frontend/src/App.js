@@ -5,12 +5,8 @@ import Container from "react-bootstrap/Container"
 
 import Header from "./Header"
 import Authors from "./Authors"
-import AuthorDetail from "./AuthorDetail"
 import Magazines from "./Magazines"
-import MagazineDetail from "./MagazineDetail"
-import MagazineIssueDetail from "./MagazineIssueDetail"
 import References from "./References"
-import ReferenceDetail from "./ReferenceDetail"
 
 const App = () => (
   <Router>
@@ -27,16 +23,18 @@ const App = () => (
             <h1>Home</h1>
           </Container>
         </Route>
-        <Route path="/references/:id(\d+)" component={ReferenceDetail} />
-        <Route path="/references" component={References} />
-        <Route path="/authors/:id(\d+)" component={AuthorDetail} />
-        <Route path="/authors" component={Authors} />
         <Route
-          path="/magazines/:mid(\d+)/:id(\d+)"
-          component={MagazineIssueDetail}
+          path="/references/:view(create|retrieve|update|delete)?/:id(\d+)?"
+          component={References}
         />
-        <Route path="/magazines/:id(\d+)" component={MagazineDetail} />
-        <Route path="/magazines" component={Magazines} />
+        <Route
+          path="/authors/:view(create|retrieve|update|delete)?/:id(\d+)?"
+          component={Authors}
+        />
+        <Route
+          path="/magazines/:view(create|retrieve|update|delete)?/:id(\d+)?/:iid(\d+)?"
+          component={Magazines}
+        />
       </Switch>
     </Container>
   </Router>

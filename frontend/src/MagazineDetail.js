@@ -99,8 +99,7 @@ const MagazineDetailExpand = props => {
   )
 }
 
-const MagazineDetail = props => {
-  let id = props.match.params.id
+const MagazineDetail = ({ id }) => {
   const [{ data, loading, error }] = useDataApi(`/api/views/magazine/${id}`, {
     data: {},
   })
