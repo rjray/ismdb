@@ -60,9 +60,21 @@ const ReferenceDetail = props => {
     if (reference.RecordType.description === "book") {
       recType = reference.isbn ? `ISBN ${reference.isbn}` : "Book"
     } else if (reference.RecordType.description === "article") {
-      recType = `${reference.Magazine.name} ${reference.MagazineIssue.number}`
+      recType = (
+        <Link
+          to={`/magazines/${reference.Magazine.id}/${reference.MagazineIssue.id}`}
+        >
+          {`${reference.Magazine.name} ${reference.MagazineIssue.number}`}
+        </Link>
+      )
     } else if (reference.RecordType.description === "placeholder") {
-      recType = `${reference.Magazine.name} ${reference.MagazineIssue.number} (placeholder)`
+      recType = (
+        <Link
+          to={`/magazines/${reference.Magazine.id}/${reference.MagazineIssue.id}`}
+        >
+          {`${reference.Magazine.name} ${reference.MagazineIssue.number} (placeholder)`}
+        </Link>
+      )
     } else {
       recType = reference.RecordType.notes
     }
