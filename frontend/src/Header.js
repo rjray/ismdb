@@ -7,7 +7,7 @@ import NavDropdown from "react-bootstrap/NavDropdown"
 import { LinkContainer } from "react-router-bootstrap"
 
 const Header = () => (
-  <Container>
+  <Container fluid>
     <Navbar bg="light" expand="sm">
       <LinkContainer to="/">
         <Navbar.Brand>My Modeling DB</Navbar.Brand>
