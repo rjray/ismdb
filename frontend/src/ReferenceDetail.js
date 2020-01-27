@@ -85,7 +85,7 @@ const ReferenceDetail = ({ id }) => {
             <h2>Reference Detail</h2>
           </Col>
           <Col className="text-right">
-            <LinkContainer to={`/references/edit/${reference.id}`}>
+            <LinkContainer to={`/references/update/${reference.id}`}>
               <Button>Edit</Button>
             </LinkContainer>
           </Col>

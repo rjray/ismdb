@@ -74,7 +74,7 @@ const MagazineExpand = props => {
         </Col>
         <Col>{magazine.language && `Language: ${magazine.language}`}</Col>
         <Col className="text-right">
-          <LinkContainer to={`/magazines/edit/${magazine.id}`}>
+          <LinkContainer to={`/magazines/update/${magazine.id}`}>
             <Button>Edit</Button>
           </LinkContainer>
         </Col>

@@ -43,7 +43,7 @@ const AuthorDetail = ({ id }) => {
         <Row className="mt-3">
           <Col>Name: {author.name}</Col>
           <Col className="text-right">
-            <LinkContainer to={`/authors/edit/${author.id}`}>
+            <LinkContainer to={`/authors/update/${author.id}`}>
               <Button>Edit</Button>
             </LinkContainer>
           </Col>

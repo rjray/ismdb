@@ -17,7 +17,7 @@ const AuthorExpand = props => {
           </LinkContainer>
         </Col>
         <Col className="text-right">
-          <LinkContainer to={`/magazines/edit/${props.data.id}`}>
+          <LinkContainer to={`/authors/update/${props.data.id}`}>
             <Button>Edit</Button>
           </LinkContainer>
         </Col>

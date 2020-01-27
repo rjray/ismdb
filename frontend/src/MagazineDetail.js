@@ -170,7 +170,7 @@ const MagazineDetail = ({ id }) => {
         <Row className="mt-3">
           <Col>Name: {magazine.name}</Col>
           <Col className="text-right">
-            <LinkContainer to={`/magazines/edit/${magazine.id}`}>
+            <LinkContainer to={`/magazines/update/${magazine.id}`}>
               <Button>Edit</Button>
             </LinkContainer>
           </Col>
