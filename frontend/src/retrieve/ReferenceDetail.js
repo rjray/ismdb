@@ -9,7 +9,7 @@ import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 import { formatDistanceToNow } from "date-fns"
 
-import useDataApi from "./utils/data-api"
+import useDataApi from "../utils/data-api"
 
 const FormatAuthors = props => {
   let reference = props.reference

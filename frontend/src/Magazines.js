@@ -1,6 +1,6 @@
 import React from "react"
 
-import MagazineRetrieve from "./MagazineRetrieve"
+import MagazineRetrieve from "./retrieve/MagazineRetrieve"
 
 const Magazines = props => {
   let content

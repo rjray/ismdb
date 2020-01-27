@@ -5,7 +5,7 @@ import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import ScaleLoader from "react-spinners/ScaleLoader"
 
-import useDataApi from "./utils/data-api"
+import useDataApi from "../utils/data-api"
 import ReferenceTable from "./ReferenceTable"
 import Button from "react-bootstrap/Button"
 import { LinkContainer } from "react-router-bootstrap"

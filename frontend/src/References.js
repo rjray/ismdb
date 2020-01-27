@@ -1,6 +1,6 @@
 import React from "react"
 
-import ReferenceRetrieve from "./ReferenceRetrieve"
+import ReferenceRetrieve from "./retrieve/ReferenceRetrieve"
 
 const References = props => {
   let content

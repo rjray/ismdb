@@ -7,23 +7,20 @@ import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 
-import useDataApi from "./utils/data-api"
+import useDataApi from "../utils/data-api"
 import ReferenceTable from "./ReferenceTable"
 
-const MagazineDetail = ({ id }) => {
-  const [{ data, loading, error }] = useDataApi(
-    `/api/views/magazineissue/${id}`,
-    {
-      data: {},
-    }
-  )
+const ReferenceAll = () => {
+  const [{ data, loading, error }] = useDataApi("/api/views/reference/all", {
+    data: {},
+  })
   let content
 
   if (error) {
     content = (
       <>
         <h3>An Error Occurred</h3>
-        <p>An error occurred trying to load the magazine issue:</p>
+        <p>An error occurred trying to load all the references:</p>
         <p>{error.message}</p>
       </>
     )
@@ -34,35 +31,21 @@ const MagazineDetail = ({ id }) => {
       </div>
     )
   } else {
-    let mi = data.magazineissue
-
     content = (
       <>
         <Row>
           <Col>
-            <h2>Magazine Issue Detail</h2>
+            <h2>References</h2>
           </Col>
-        </Row>
-        <Row className="mt-3">
-          <Col>Name: {`${mi.Magazine.name} ${mi.number}`}</Col>
           <Col className="text-right">
-            <LinkContainer to={`/magazines/editissue/${mi.id}`}>
-              <Button>Edit</Button>
+            <LinkContainer to="/references/create">
+              <Button>New</Button>
             </LinkContainer>
           </Col>
         </Row>
         <Row>
           <Col>
-            {mi.Magazine.language && `Language: ${mi.Magazine.language}`}
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <ReferenceTable
-              title="References"
-              pagination={false}
-              data={mi.References}
-            />
+            <ReferenceTable data={data.references} />
           </Col>
         </Row>
       </>
@@ -72,11 +55,11 @@ const MagazineDetail = ({ id }) => {
   return (
     <>
       <Helmet>
-        <title>Magazine Issue Detail</title>
+        <title>References</title>
       </Helmet>
       <Container className="mt-2">{content}</Container>
     </>
   )
 }
 
-export default MagazineDetail
+export default ReferenceAll

@@ -6,14 +6,28 @@ import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
-import { formatDistanceToNow } from "date-fns"
 import DataTable from "react-data-table-component"
 
-import useDataApi from "./utils/data-api"
-import MagazineExpand from "./MagazineExpand"
+import useDataApi from "../utils/data-api"
+import AuthorExpand from "./AuthorExpand"
 
-const MagazineAll = () => {
-  const [{ data, loading, error }] = useDataApi("/api/views/magazine/all", {
+const lastNameFirst = name => {
+  if (!name) {
+    return ""
+  }
+
+  let parts = name.replace(/,/, "").split(" ")
+  let lastName = parts.pop()
+  if (lastName.match(/^jr[.]?$/i)) {
+    lastName = parts.pop()
+    parts.push("Jr.")
+  }
+
+  return `${lastName}, ${parts.join(" ")}`
+}
+
+const AuthorAll = () => {
+  const [{ data, loading, error }] = useDataApi("/api/views/author/all", {
     data: {},
   })
   let content
@@ -22,7 +36,7 @@ const MagazineAll = () => {
     content = (
       <>
         <h3>An Error Occurred</h3>
-        <p>An error occurred trying to load all the magazines:</p>
+        <p>An error occurred trying to load all the authors:</p>
         <p>{error.message}</p>
       </>
     )
@@ -33,7 +47,10 @@ const MagazineAll = () => {
       </div>
     )
   } else {
-    let magazines = data.magazines
+    let authors = data.authors.map(item => {
+      item.name = lastNameFirst(item.name)
+      return item
+    })
     let columns = [
       {
         name: <b>Name</b>,
@@ -41,31 +58,10 @@ const MagazineAll = () => {
         sortable: true,
       },
       {
-        name: <b>Issues</b>,
-        selector: "issues",
+        name: <b>References</b>,
+        selector: "refcount",
         sortable: true,
-      },
-      {
-        name: <b>Added</b>,
-        selector: "createdAt",
-        sortable: true,
-        maxWidth: "20%",
-        hide: "sm",
-        format: row => {
-          const now = new Date(row.createdAt)
-          return <span title={now}>{formatDistanceToNow(now)} ago</span>
-        },
-      },
-      {
-        name: <b>Updated</b>,
-        selector: "updatedAt",
-        sortable: true,
-        maxWidth: "20%",
-        hide: "md",
-        format: row => {
-          const now = new Date(row.updatedAt)
-          return <span title={now}>{formatDistanceToNow(now)} ago</span>
-        },
+        maxWidth: "10%",
       },
     ]
 
@@ -73,10 +69,10 @@ const MagazineAll = () => {
       <>
         <Row>
           <Col>
-            <h2>Magazines</h2>
+            <h2>Authors</h2>
           </Col>
           <Col className="text-right">
-            <LinkContainer to="/magazines/create">
+            <LinkContainer to="/authors/create">
               <Button>New</Button>
             </LinkContainer>
           </Col>
@@ -93,10 +89,10 @@ const MagazineAll = () => {
               paginationPerPage={25}
               expandableRows
               expandOnRowClicked
-              expandableRowsComponent={<MagazineExpand />}
+              expandableRowsComponent={<AuthorExpand />}
               defaultSortField="name"
               columns={columns}
-              data={magazines}
+              data={authors}
             />
           </Col>
         </Row>
@@ -107,11 +103,11 @@ const MagazineAll = () => {
   return (
     <>
       <Helmet>
-        <title>Magazines</title>
+        <title>Authors</title>
       </Helmet>
       <Container className="mt-2">{content}</Container>
     </>
   )
 }
 
-export default MagazineAll
+export default AuthorAll

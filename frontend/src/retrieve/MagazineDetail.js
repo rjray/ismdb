@@ -10,8 +10,8 @@ import ScaleLoader from "react-spinners/ScaleLoader"
 import { formatDistanceToNow, compareAsc, compareDesc } from "date-fns"
 import DataTable from "react-data-table-component"
 
-import useDataApi from "./utils/data-api"
-import compareVersion from "./utils/compare-version"
+import useDataApi from "../utils/data-api"
+import compareVersion from "../utils/compare-version"
 
 const sortRows = (rows, field, direction) => {
   switch (field) {

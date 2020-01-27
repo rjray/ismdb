@@ -1,6 +1,6 @@
 import React from "react"
 
-import AuthorRetrieve from "./AuthorRetrieve"
+import AuthorRetrieve from "./retrieve/AuthorRetrieve"
 
 const Authors = props => {
   let content

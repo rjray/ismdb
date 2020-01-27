@@ -8,7 +8,7 @@ import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 import _ from "lodash"
 
-import useDataApi from "./utils/data-api"
+import useDataApi from "../utils/data-api"
 
 const createIssueRow = (mId, elements) => {
   if (elements.length < 10) {
