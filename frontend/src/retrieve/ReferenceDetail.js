@@ -7,7 +7,7 @@ import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
-import { formatDistanceToNow } from "date-fns"
+import { formatDistanceToNow, format } from "date-fns"
 
 import useDataApi from "../utils/data-api"
 
@@ -135,7 +135,9 @@ const ReferenceDetail = ({ id }) => {
             <b>Added:</b>
           </Col>
           <Col lg="8">
-            <span title={created}>{formatDistanceToNow(created)} ago</span>
+            <span title={`${formatDistanceToNow(created)} ago`}>
+              {format(created, "PPpp")}
+            </span>
           </Col>
         </Row>
         <Row>
@@ -143,7 +145,9 @@ const ReferenceDetail = ({ id }) => {
             <b>Updated:</b>
           </Col>
           <Col lg="8">
-            <span title={updated}>{formatDistanceToNow(updated)} ago</span>
+            <span title={`${formatDistanceToNow(updated)} ago`}>
+              {format(updated, "PPpp")}
+            </span>
           </Col>
         </Row>
       </>

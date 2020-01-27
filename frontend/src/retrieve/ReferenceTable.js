@@ -1,5 +1,5 @@
 import React from "react"
-import { formatDistanceToNow } from "date-fns"
+import { format, formatDistanceToNow } from "date-fns"
 import DataTable from "react-data-table-component"
 
 import ReferenceExpand from "./ReferenceExpand"
@@ -11,7 +11,7 @@ const ReferenceTable = props => {
       selector: "name",
       sortable: true,
       wrap: true,
-      minWidth: "40%",
+      minWidth: "30%",
     },
     {
       name: <b>Source</b>,
@@ -32,26 +32,32 @@ const ReferenceTable = props => {
       },
       sortable: true,
       wrap: true,
-      minWidth: "25%",
+      minWidth: "20%",
     },
     {
       name: <b>Added</b>,
       selector: "createdAt",
       sortable: true,
+      minWidth: "20%",
       hide: "sm",
       format: row => {
         const now = new Date(row.createdAt)
-        return <span title={now}>{formatDistanceToNow(now)} ago</span>
+        const show = format(now, "PPpp")
+        const title = formatDistanceToNow(now)
+        return <span title={`${title} ago`}>{show}</span>
       },
     },
     {
       name: <b>Updated</b>,
       selector: "updatedAt",
       sortable: true,
+      minWidth: "20%",
       hide: "md",
       format: row => {
         const now = new Date(row.updatedAt)
-        return <span title={now}>{formatDistanceToNow(now)} ago</span>
+        const show = format(now, "PPpp")
+        const title = formatDistanceToNow(now)
+        return <span title={`${title} ago`}>{show}</span>
       },
     },
   ]

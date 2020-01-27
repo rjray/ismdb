@@ -7,7 +7,7 @@ import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
-import { formatDistanceToNow, compareAsc, compareDesc } from "date-fns"
+import { formatDistanceToNow, compareAsc, compareDesc, format } from "date-fns"
 import DataTable from "react-data-table-component"
 
 import useDataApi from "../utils/data-api"
@@ -66,7 +66,9 @@ const MagazineDetailExpand = props => {
       hide: "sm",
       format: row => {
         const now = new Date(row.createdAt)
-        return <span title={now}>{formatDistanceToNow(now)} ago</span>
+        const show = format(now, "PPpp")
+        const title = formatDistanceToNow(now)
+        return <span title={`${title} ago`}>{show}</span>
       },
     },
     {
@@ -75,7 +77,9 @@ const MagazineDetailExpand = props => {
       hide: "md",
       format: row => {
         const now = new Date(row.updatedAt)
-        return <span title={now}>{formatDistanceToNow(now)} ago</span>
+        const show = format(now, "PPpp")
+        const title = formatDistanceToNow(now)
+        return <span title={`${title} ago`}>{show}</span>
       },
     },
   ]
@@ -141,7 +145,9 @@ const MagazineDetail = ({ id }) => {
         hide: "sm",
         format: row => {
           const now = new Date(row.createdAt)
-          return <span title={now}>{formatDistanceToNow(now)} ago</span>
+          const show = format(now, "PPpp")
+          const title = formatDistanceToNow(now)
+          return <span title={`${title} ago`}>{show}</span>
         },
       },
       {
@@ -151,7 +157,9 @@ const MagazineDetail = ({ id }) => {
         hide: "md",
         format: row => {
           const now = new Date(row.updatedAt)
-          return <span title={now}>{formatDistanceToNow(now)} ago</span>
+          const show = format(now, "PPpp")
+          const title = formatDistanceToNow(now)
+          return <span title={`${title} ago`}>{show}</span>
         },
       },
     ]
@@ -187,11 +195,15 @@ const MagazineDetail = ({ id }) => {
         <Row>
           <Col>
             Added:{" "}
-            <span title={created}>{formatDistanceToNow(created)} ago</span>
+            <span title={`${formatDistanceToNow(created)} ago`}>
+              {format(created, "PPpp")}
+            </span>
           </Col>
           <Col>
             Last updated:{" "}
-            <span title={updated}>{formatDistanceToNow(updated)} ago</span>
+            <span title={`${formatDistanceToNow(updated)} ago`}>
+              {format(updated, "PPpp")}
+            </span>
           </Col>
         </Row>
         <Row>
