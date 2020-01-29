@@ -22,7 +22,7 @@ const MagazineUpdate = props => {
     content = (
       <>
         <h3>An Error Occurred</h3>
-        <p>An error occurred trying to load the magazine issue:</p>
+        <p>An error occurred trying to load the magazine:</p>
         <p>{error.message}</p>
       </>
     )
