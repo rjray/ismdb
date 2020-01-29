@@ -1,6 +1,7 @@
 import React from "react"
 
 import MagazineRetrieve from "./retrieve/MagazineRetrieve"
+import MagazineUpdate from "./update/MagazineUpdate"
 
 const Magazines = props => {
   let content
@@ -9,6 +10,7 @@ const Magazines = props => {
     case "create":
       break
     case "update":
+      content = <MagazineUpdate {...props} />
       break
     case "delete":
       break
