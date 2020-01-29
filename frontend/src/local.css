@@ -1,0 +1,11 @@
+/* Overriding styles */
+
+::-webkit-input-placeholder {
+  font-size: 0.8rem !important;
+  font-style: italic;
+}
+
+::-moz-placeholder {
+  font-size: 0.8rem !important;
+  font-style: italic;
+}
