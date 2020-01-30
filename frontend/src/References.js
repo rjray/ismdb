@@ -1,6 +1,7 @@
 import React from "react"
 
 import ReferenceRetrieve from "./retrieve/ReferenceRetrieve"
+import ReferenceUpdate from "./update/ReferenceUpdate"
 
 const References = props => {
   let content
@@ -9,6 +10,7 @@ const References = props => {
     case "create":
       break
     case "update":
+      content = <ReferenceUpdate {...props} />
       break
     case "delete":
       break
