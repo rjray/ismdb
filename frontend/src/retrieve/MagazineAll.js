@@ -77,7 +77,9 @@ const MagazineAll = () => {
       <>
         <Row>
           <Col>
-            <h2>Magazines</h2>
+            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
+              Magazines
+            </header>
           </Col>
           <Col className="text-right">
             <LinkContainer to="/magazines/create">

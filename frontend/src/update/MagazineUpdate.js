@@ -39,7 +39,9 @@ const MagazineUpdate = props => {
       <>
         <Row>
           <Col>
-            <h2>Magazine Update</h2>
+            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
+              Magazine Update
+            </header>
           </Col>
           <Col className="text-right">
             <LinkContainer to={`/magazines/delete/${magazine.id}`}>

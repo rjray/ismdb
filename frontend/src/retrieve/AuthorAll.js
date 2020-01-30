@@ -69,7 +69,9 @@ const AuthorAll = () => {
       <>
         <Row>
           <Col>
-            <h2>Authors</h2>
+            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
+              Authors
+            </header>
           </Col>
           <Col className="text-right">
             <LinkContainer to="/authors/create">

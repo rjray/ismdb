@@ -39,7 +39,9 @@ const AuthorUpdate = props => {
       <>
         <Row>
           <Col>
-            <h2>Author Update</h2>
+            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
+              Author Update
+            </header>
           </Col>
           <Col className="text-right">
             <LinkContainer to={`/authors/delete/${author.id}`}>

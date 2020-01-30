@@ -37,7 +37,9 @@ const AuthorDetail = ({ id }) => {
       <>
         <Row>
           <Col>
-            <h2>Author Detail</h2>
+            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
+              Author Detail
+            </header>
           </Col>
         </Row>
         <Row className="mt-3">

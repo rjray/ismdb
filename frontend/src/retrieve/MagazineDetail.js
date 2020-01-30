@@ -172,7 +172,9 @@ const MagazineDetail = ({ id }) => {
       <>
         <Row>
           <Col>
-            <h2>Magazine Detail</h2>
+            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
+              Magazine Detail
+            </header>
           </Col>
         </Row>
         <Row className="mt-3">

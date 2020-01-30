@@ -35,7 +35,9 @@ const ReferenceAll = () => {
       <>
         <Row>
           <Col>
-            <h2>References</h2>
+            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
+              References
+            </header>
           </Col>
           <Col className="text-right">
             <LinkContainer to="/references/create">

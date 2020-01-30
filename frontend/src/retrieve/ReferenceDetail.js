@@ -82,7 +82,9 @@ const ReferenceDetail = ({ id }) => {
       <>
         <Row>
           <Col>
-            <h2>Reference Detail</h2>
+            <hheader className="font-weight-bold" style={{ fontSize: "200%" }}>
+              Reference Detail
+            </hheader>
           </Col>
           <Col className="text-right">
             <LinkContainer to={`/references/update/${reference.id}`}>
