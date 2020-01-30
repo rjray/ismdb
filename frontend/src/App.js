@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet"
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom"
 import Container from "react-bootstrap/Container"
 
-import Header from "./Header"
+import NavHeader from "./NavHeader"
 import Authors from "./Authors"
 import Magazines from "./Magazines"
 import References from "./References"
@@ -14,7 +14,7 @@ const App = () => (
       <title>Home</title>
     </Helmet>
 
-    <Header />
+    <NavHeader />
 
     <Container fluid>
       <Switch>

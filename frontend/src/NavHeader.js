@@ -6,7 +6,7 @@ import Nav from "react-bootstrap/Nav"
 import NavDropdown from "react-bootstrap/NavDropdown"
 import { LinkContainer } from "react-router-bootstrap"
 
-const Header = () => (
+const NavHeader = () => (
   <Container fluid>
     <Navbar bg="light" expand="sm">
       <LinkContainer to="/">
@@ -37,4 +37,4 @@ const Header = () => (
   </Container>
 )
 
-export default Header
+export default NavHeader

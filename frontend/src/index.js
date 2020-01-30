@@ -3,7 +3,7 @@ import ReactDOM from "react-dom"
 import "bootstrap/dist/css/bootstrap-reboot.min.css"
 import "bootstrap/dist/css/bootstrap.min.css"
 
-import "./local.css"
+import "./styles/local.css"
 import App from "./App"
 import * as serviceWorker from "./serviceWorker"
 
