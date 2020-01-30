@@ -9,6 +9,7 @@ import ScaleLoader from "react-spinners/ScaleLoader"
 import DataTable from "react-data-table-component"
 
 import useDataApi from "../utils/data-api"
+import Header from "../styles/Header"
 import AuthorExpand from "./AuthorExpand"
 
 const lastNameFirst = name => {
@@ -69,9 +70,7 @@ const AuthorAll = () => {
       <>
         <Row>
           <Col>
-            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
-              Authors
-            </header>
+            <Header>Authors</Header>
           </Col>
           <Col className="text-right">
             <LinkContainer to="/authors/create">

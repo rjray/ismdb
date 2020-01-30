@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 
 import useDataApi from "../utils/data-api"
+import Header from "../styles/Header"
 import ReferenceTable from "./ReferenceTable"
 
 const MagazineDetail = ({ id }) => {
@@ -40,9 +41,7 @@ const MagazineDetail = ({ id }) => {
       <>
         <Row>
           <Col>
-            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
-              Magazine Issue Detail
-            </header>
+            <Header>Magazine Issue Detail</Header>
           </Col>
         </Row>
         <Row className="mt-3">

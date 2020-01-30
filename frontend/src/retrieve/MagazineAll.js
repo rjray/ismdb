@@ -10,6 +10,7 @@ import { formatDistanceToNow, format } from "date-fns"
 import DataTable from "react-data-table-component"
 
 import useDataApi from "../utils/data-api"
+import Header from "../styles/Header"
 import MagazineExpand from "./MagazineExpand"
 
 const MagazineAll = () => {
@@ -77,9 +78,7 @@ const MagazineAll = () => {
       <>
         <Row>
           <Col>
-            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
-              Magazines
-            </header>
+            <Header>Magazines</Header>
           </Col>
           <Col className="text-right">
             <LinkContainer to="/magazines/create">

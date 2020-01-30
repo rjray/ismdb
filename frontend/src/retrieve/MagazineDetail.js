@@ -12,6 +12,7 @@ import DataTable from "react-data-table-component"
 
 import useDataApi from "../utils/data-api"
 import compareVersion from "../utils/compare-version"
+import Header from "../styles/Header"
 
 const sortRows = (rows, field, direction) => {
   switch (field) {
@@ -172,9 +173,7 @@ const MagazineDetail = ({ id }) => {
       <>
         <Row>
           <Col>
-            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
-              Magazine Detail
-            </header>
+            <Header>Magazine Detail</Header>
           </Col>
         </Row>
         <Row className="mt-3">

@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 
 import useDataApi from "../utils/data-api"
+import Header from "../styles/Header"
 import AuthorForm from "../forms/AuthorForm"
 
 const AuthorUpdate = props => {
@@ -39,9 +40,7 @@ const AuthorUpdate = props => {
       <>
         <Row>
           <Col>
-            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
-              Author Update
-            </header>
+            <Header>Author Update</Header>
           </Col>
           <Col className="text-right">
             <LinkContainer to={`/authors/delete/${author.id}`}>

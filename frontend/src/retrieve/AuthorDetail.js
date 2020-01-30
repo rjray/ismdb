@@ -1,14 +1,15 @@
 import React from "react"
+import { LinkContainer } from "react-router-bootstrap"
 import { Helmet } from "react-helmet"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
+import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 
 import useDataApi from "../utils/data-api"
+import Header from "../styles/Header"
 import ReferenceTable from "./ReferenceTable"
-import Button from "react-bootstrap/Button"
-import { LinkContainer } from "react-router-bootstrap"
 
 const AuthorDetail = ({ id }) => {
   const [{ data, loading, error }] = useDataApi(`/api/views/author/${id}`, {
@@ -37,9 +38,7 @@ const AuthorDetail = ({ id }) => {
       <>
         <Row>
           <Col>
-            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
-              Author Detail
-            </header>
+            <Header>Author Detail</Header>
           </Col>
         </Row>
         <Row className="mt-3">

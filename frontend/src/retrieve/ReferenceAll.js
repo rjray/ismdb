@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 
 import useDataApi from "../utils/data-api"
+import Header from "../styles/Header"
 import ReferenceTable from "./ReferenceTable"
 
 const ReferenceAll = () => {
@@ -35,9 +36,7 @@ const ReferenceAll = () => {
       <>
         <Row>
           <Col>
-            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
-              References
-            </header>
+            <Header>References</Header>
           </Col>
           <Col className="text-right">
             <LinkContainer to="/references/create">

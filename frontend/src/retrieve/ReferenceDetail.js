@@ -10,6 +10,7 @@ import ScaleLoader from "react-spinners/ScaleLoader"
 import { formatDistanceToNow, format } from "date-fns"
 
 import useDataApi from "../utils/data-api"
+import Header from "../styles/Header"
 
 const FormatAuthors = props => {
   let reference = props.reference
@@ -82,9 +83,7 @@ const ReferenceDetail = ({ id }) => {
       <>
         <Row>
           <Col>
-            <hheader className="font-weight-bold" style={{ fontSize: "200%" }}>
-              Reference Detail
-            </hheader>
+            <Header>Reference Detail</Header>
           </Col>
           <Col className="text-right">
             <LinkContainer to={`/references/update/${reference.id}`}>

@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 
 import useDataApi from "../utils/data-api"
+import Header from "../styles/Header"
 import MagazineForm from "../forms/MagazineForm"
 
 const MagazineUpdate = props => {
@@ -39,9 +40,7 @@ const MagazineUpdate = props => {
       <>
         <Row>
           <Col>
-            <header className="font-weight-bold" style={{ fontSize: "200%" }}>
-              Magazine Update
-            </header>
+            <Header>Magazine Update</Header>
           </Col>
           <Col className="text-right">
             <LinkContainer to={`/magazines/delete/${magazine.id}`}>
