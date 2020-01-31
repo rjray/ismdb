@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import Container from "react-bootstrap/Container"
-import { MdLink } from "react-icons/md"
+import { MdLink, MdDelete } from "react-icons/md"
 
 const ReferenceRecordType = ({ reference }) => {
   const isBook = reference.RecordType.description === "book"
@@ -73,6 +73,9 @@ const ReferenceAuthor = ({ author, key }) => {
       <Form.Label column sm={1}>
         <span title="Author info">
           <MdLink />
+        </span>{" "}
+        <span title="Delete this author">
+          <MdDelete />
         </span>
       </Form.Label>
     </Form.Group>
