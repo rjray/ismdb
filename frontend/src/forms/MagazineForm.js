@@ -70,6 +70,7 @@ const MagazineForm = props => {
           <Col sm={10}>
             <Form.Control
               type="text"
+              tabIndex={-1}
               readOnly
               plaintext
               defaultValue={created}
@@ -85,6 +86,7 @@ const MagazineForm = props => {
           <Col sm={10}>
             <Form.Control
               type="text"
+              tabIndex={-1}
               readOnly
               plaintext
               defaultValue={updated}
