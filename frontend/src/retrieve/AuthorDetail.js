@@ -32,7 +32,9 @@ const AuthorDetail = ({ id }) => {
       </div>
     )
   } else {
-    let author = data.author
+    const author = data.author
+    const references = author.References
+    const pagination = references.length < 26 ? { pagination: false } : {}
 
     content = (
       <>
@@ -57,7 +59,7 @@ const AuthorDetail = ({ id }) => {
         </Row>
         <Row>
           <Col>
-            <ReferenceTable data={author.References} />
+            <ReferenceTable data={references} {...pagination} />
           </Col>
         </Row>
       </>
