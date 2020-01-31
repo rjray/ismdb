@@ -1,4 +1,5 @@
 import React from "react"
+import { Link } from "react-router-dom"
 import Form from "react-bootstrap/Form"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
@@ -59,9 +60,9 @@ const ReferenceRecordType = ({ reference }) => {
   )
 }
 
-const ReferenceAuthor = ({ author, key }) => {
+const ReferenceAuthor = ({ author, index }) => {
   return (
-    <Form.Group as={Form.Row} controlId={`author${key}`} className="mb-2">
+    <Form.Group as={Form.Row} controlId={`author${index}`} className="mb-2">
       <Col sm={3}>
         <Form.Control
           type="text"
@@ -70,14 +71,20 @@ const ReferenceAuthor = ({ author, key }) => {
           data-lpignore="true"
         />
       </Col>
-      <Form.Label column sm={1}>
-        <span title="Author info">
-          <MdLink />
-        </span>{" "}
-        <span title="Delete this author">
-          <MdDelete />
+      <Col sm>
+        <span>
+          <Link to={`/authors/${author.id}`} className="text-reset">
+            <MdLink title="Author info" />
+          </Link>{" "}
+          <Button
+            id={`authordelete${index}`}
+            variant="link"
+            className="text-reset"
+          >
+            <MdDelete title="Delete this author" />
+          </Button>
         </span>
-      </Form.Label>
+      </Col>
     </Form.Group>
   )
 }
@@ -86,7 +93,7 @@ const ReferenceAuthors = ({ reference }) => {
   const authors = reference.Authors
 
   return (
-    <Form.Group as={Form.Row} controlId="name" className="mb-2">
+    <Form.Group as={Form.Row} controlId="authors" className="mb-2">
       <Form.Label column sm={2} className="text-md-right text-sm-left">
         Authors:
       </Form.Label>
@@ -96,7 +103,7 @@ const ReferenceAuthors = ({ reference }) => {
           className="mb-2 pb-0 px-0 d-flex flex-column justify-content-start"
         >
           {authors.map((author, index) => (
-            <ReferenceAuthor key={index} author={author} />
+            <ReferenceAuthor key={index} index={index} author={author} />
           ))}
           <Form.Row>
             <Col>
@@ -178,6 +185,7 @@ const ReferenceForm = props => {
           <Col sm={10}>
             <Form.Control
               type="text"
+              tabIndex={-1}
               readOnly
               plaintext
               defaultValue={created}
@@ -193,6 +201,7 @@ const ReferenceForm = props => {
           <Col sm={10}>
             <Form.Control
               type="text"
+              tabIndex={-1}
               readOnly
               plaintext
               defaultValue={updated}
