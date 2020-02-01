@@ -81,6 +81,7 @@ sub migrate_record_types {
 
 sub migrate_authors {
     my ($dbhin, $dbhout) = @_;
+    my ($authors_count, $aliases_count) = (0, 0);
 
     my $sth = $dbhin->prepare('SELECT id, name, aliases FROM authors');
     $sth->execute;
@@ -88,11 +89,24 @@ sub migrate_authors {
     $sth->finish;
 
     $sth = $dbhout->prepare(
-        'INSERT INTO `Authors` (`id`, `name`, `aliases`) VALUES (?, ?, ?)'
+        'INSERT INTO `Authors` (`id`, `name`) VALUES (?, ?)'
+    );
+    my $stha = $dbhout->prepare(
+        'INSERT INTO `AuthorAliases` (`authorId`, `name`) VALUES (?, ?)'
     );
     my $result = eval {
         for my $row (@{$data}) {
-            $sth->execute(@{$row});
+            my ($id, $name, $aliases) = @{$row};
+            $sth->execute($id, $name);
+            $authors_count++;
+
+            if ($aliases) {
+                my @aliases = split /[|]/, $aliases;
+                for my $alias (@aliases) {
+                    $stha->execute($id, $alias);
+                    $aliases_count++;
+                }
+            }
         }
 
         $dbhout->commit;
@@ -103,7 +117,8 @@ sub migrate_authors {
         die "failure in migrate_authors: $err\n";
     }
 
-    print scalar(@{$data}) . " rows added to Authors\n";
+    print "$authors_count rows added to Authors\n";
+    print "$aliases_count author aliases added\n";
 
     return;
 }
