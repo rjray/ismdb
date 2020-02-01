@@ -8,11 +8,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(100),
         allowNull: false,
       },
-      aliases: DataTypes.STRING(1000),
     },
-    { timestamps: false },
+    { timestamps: false }
   )
   Author.associate = function(models) {
+    Author.hasMany(models.AuthorAlias)
     Author.belongsToMany(models.Reference, {
       as: "References",
       through: { model: models.AuthorsReferences },
