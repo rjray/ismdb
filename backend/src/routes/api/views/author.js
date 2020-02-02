@@ -7,28 +7,33 @@ const _ = require("lodash")
 
 const {
   Author,
+  AuthorAlias,
   Reference,
   RecordType,
   Magazine,
   MagazineIssue,
-  sequelize,
 } = require("../../../models")
 
 let router = express.Router()
 
 router.get("/all", (req, res) => {
-  let query = `
-    SELECT a.*, COUNT(ar.authorId) AS refcount
-    FROM Authors a LEFT JOIN AuthorsReferences ar ON a.id = ar.authorId
-    GROUP BY a.id
-  `
-  let options = {
-    type: sequelize.QueryTypes.SELECT,
-  }
-
-  sequelize
-    .query(query, options)
+  Author.findAll({
+    include: [AuthorAlias, { model: Reference, as: "References" }],
+  })
     .then(authors => {
+      authors = authors.map(author => {
+        author = author.get()
+        author.AuthorAliases = author.AuthorAliases.map(alias => {
+          alias = alias.get()
+          delete alias.AuthorId
+          return alias
+        })
+        author.refcount = author.References.length
+        delete author.References
+
+        return author
+      })
+
       res.send({ status: "success", authors })
     })
     .catch(error => {
@@ -37,11 +42,11 @@ router.get("/all", (req, res) => {
 })
 
 router.get("/:id", (req, res) => {
-  let id = req.params.id
-  let author
+  const id = req.params.id
 
   Author.findByPk(id, {
     include: [
+      AuthorAlias,
       {
         model: Reference,
         as: "References",
@@ -49,8 +54,13 @@ router.get("/:id", (req, res) => {
       },
     ],
   })
-    .then(result => {
-      author = result.get()
+    .then(author => {
+      author = author.get()
+      author.AuthorAliases = author.AuthorAliases.map(item => {
+        item = item.get()
+        delete item.AuthorId
+        return item
+      })
       author.References = author.References.map(item => {
         item = item.get()
         delete item.AuthorsReferences
