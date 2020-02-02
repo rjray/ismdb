@@ -9,6 +9,7 @@ import ScaleLoader from "react-spinners/ScaleLoader"
 
 import useDataApi from "../utils/data-api"
 import Header from "../styles/Header"
+import AuthorAliases from "./AuthorAliases"
 import ReferenceTable from "./ReferenceTable"
 
 const AuthorDetail = ({ id }) => {
@@ -51,12 +52,7 @@ const AuthorDetail = ({ id }) => {
             </LinkContainer>
           </Col>
         </Row>
-        <Row>
-          <Col>
-            {author.aliases &&
-              `Aliases: ${author.aliases.replace(/\|/g, ", ")}`}
-          </Col>
-        </Row>
+        {author.AuthorAliases.length > 0 && <AuthorAliases author={author} />}
         <Row>
           <Col>
             <ReferenceTable data={references} {...pagination} />
