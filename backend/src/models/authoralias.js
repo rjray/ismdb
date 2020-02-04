@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     "AuthorAlias",
     {
       name: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(60),
         allowNull: false,
       },
     },
