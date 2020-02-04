@@ -9,3 +9,7 @@
   font-size: 0.8rem !important;
   font-style: italic;
 }
+
+.strikethrough {
+  text-decoration: line-through;
+}

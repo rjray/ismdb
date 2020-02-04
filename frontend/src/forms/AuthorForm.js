@@ -3,90 +3,76 @@ import Form from "react-bootstrap/Form"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import Container from "react-bootstrap/Container"
-import { Formik, Field, FieldArray } from "formik"
-import { MdDelete } from "react-icons/md"
+import { Formik, Field, FieldArray, ErrorMessage } from "formik"
+import { MdDelete, MdSettingsBackupRestore } from "react-icons/md"
 import _ from "lodash"
+import * as Yup from "yup"
 
-const AuthorAlias = ({ alias, index }) => {
-  return (
-    <Form.Group as={Form.Row} controlId={`alias${index}`} className="mb-2">
-      <Col sm={3}>
-        <Form.Control
-          type="text"
-          defaultValue={alias.name}
-          placeholder="Alias"
-          data-lpignore="true"
-        />
-      </Col>
-      <Col sm>
-        <span>
-          <Button
-            id={`aliasdelete${index}`}
-            variant="link"
-            className="text-reset"
-          >
-            <MdDelete title="Delete this alias" />
-          </Button>
-        </span>
-      </Col>
-    </Form.Group>
-  )
-}
-
-const AuthorAliases = ({ author }) => {
-  const aliases = _.sortBy(author.AuthorAliases, o => o.name)
-
-  return (
-    <Form.Group as={Form.Row} controlId="aliases" className="mb-2">
-      <Form.Label column sm={2} className="text-md-right text-sm-left">
-        Aliases:
-      </Form.Label>
-      <Col sm={10}>
-        <Container
-          fluid
-          className="mb-2 pb-0 px-0 d-flex flex-column justify-content-start"
-        >
-          {aliases.map((alias, index) => (
-            <AuthorAlias key={index} index={index} alias={alias} />
-          ))}
-          <Form.Row>
-            <Col>
-              <Button>Add</Button>
-            </Col>
-          </Form.Row>
-        </Container>
-      </Col>
-    </Form.Group>
-  )
-}
+const validationSchema = Yup.object().shape({
+  name: Yup.string()
+    .max(
+      60,
+      <em style={{ fontSize: "75%", color: "red" }}>
+        Name cannot exceed 60 characters
+      </em>
+    )
+    .required(
+      <em style={{ fontSize: "75%", color: "red" }}>Name cannot be empty</em>
+    ),
+  aliases: Yup.array().of(
+    Yup.object().shape({
+      name: Yup.string()
+        .max(
+          60,
+          <em style={{ fontSize: "75%", color: "red" }}>
+            Name cannot exceed 60 characters
+          </em>
+        )
+        .required(
+          <em style={{ fontSize: "75%", color: "red" }}>
+            Name cannot be empty
+          </em>
+        ),
+    })
+  ),
+})
 
 const AuthorForm = ({ author }) => {
   let initialValues = {
     name: author.name,
-    aliases: author.AuthorAliases.map(item => {
-      return { name: item.name, id: item.id }
+    aliases: _.sortBy(author.AuthorAliases, o => o.name).map(item => {
+      return { name: item.name, id: item.id, deleted: false }
     }),
   }
 
   return (
-    <Formik initialValues={initialValues}>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={(values, actions) => {
+        alert(JSON.stringify(values, null, 2))
+        actions.setSubmitting(false)
+      }}
+    >
       {({
         values,
-        errors,
-        touched,
         handleChange,
         handleBlur,
         handleSubmit,
+        handleReset,
         isSubmitting,
       }) => (
         <Form className="mt-3">
-          <Form.Group as={Form.Row} controlId="formName">
-            <Form.Label column sm={2} className="text-md-right text-sm-left">
-              Name:
-            </Form.Label>
+          <Form.Group as={Form.Row} controlId="name">
+            <Col sm={2} className="text-md-right text-sm-left">
+              <Form.Label>Name:</Form.Label>
+              <ErrorMessage name="name" component="p" />
+            </Col>
             <Col sm={10}>
               <Field
                 as={Form.Control}
+                onBlur={handleBlur}
+                onChange={handleChange}
                 type="text"
                 name="name"
                 placeholder="Name"
@@ -94,11 +80,97 @@ const AuthorForm = ({ author }) => {
               />
             </Col>
           </Form.Group>
-          <AuthorAliases author={author} />
+          <Form.Group as={Form.Row} controlId="aliases" className="mb-2">
+            <Col sm={2} className="text-md-right text-sm-left">
+              <Form.Label>Aliases:</Form.Label>
+            </Col>
+            <Col sm={10}>
+              <Container
+                fluid
+                className="mb-2 pb-0 px-0 d-flex flex-column justify-content-start"
+              >
+                <FieldArray name="aliases">
+                  {helpers => (
+                    <>
+                      {values.aliases.map((alias, index) => (
+                        <Form.Group
+                          key={index}
+                          as={Form.Row}
+                          controlId={`alias${index}`}
+                          className="mb-2"
+                        >
+                          <Col sm={3}>
+                            <Field
+                              as={Form.Control}
+                              type="text"
+                              name={`aliases.${index}.name`}
+                              placeholder="Alias"
+                              disabled={alias.deleted}
+                              className={alias.deleted && "strikethrough"}
+                              data-lpignore="true"
+                            />
+                            <ErrorMessage
+                              name={`aliases.${index}.name`}
+                              component="p"
+                            />
+                          </Col>
+                          <Col sm>
+                            <span>
+                              <Button
+                                variant="link"
+                                className="text-reset"
+                                tabIndex={-1}
+                                onClick={() => {
+                                  if (alias.id === 0 && alias.name === "") {
+                                    helpers.remove(index)
+                                  } else {
+                                    helpers.replace(index, {
+                                      name: alias.name,
+                                      id: alias.id,
+                                      deleted: !alias.deleted,
+                                    })
+                                  }
+                                }}
+                              >
+                                {alias.deleted ? (
+                                  <MdSettingsBackupRestore title="Restore this alias" />
+                                ) : (
+                                  <MdDelete title="Delete this alias" />
+                                )}
+                              </Button>
+                            </span>
+                          </Col>
+                        </Form.Group>
+                      ))}
+                      <Form.Row>
+                        <Col>
+                          <Button
+                            onClick={() =>
+                              helpers.push({ name: "", id: 0, deleted: false })
+                            }
+                          >
+                            Add
+                          </Button>
+                        </Col>
+                      </Form.Row>
+                    </>
+                  )}
+                </FieldArray>
+              </Container>
+            </Col>
+          </Form.Group>
           <Form.Group as={Form.Row} className="mt-3">
             <Col sm={{ span: 10, offset: 2 }}>
-              <Button type="submit">Submit</Button>{" "}
-              <Button type="reset">Reset</Button>
+              <Button
+                type="submit"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+              >
+                Submit
+              </Button>{" "}
+              <Button type="reset" onClick={handleReset}>
+                Reset
+              </Button>
             </Col>
           </Form.Group>
         </Form>
