@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import Container from "react-bootstrap/Container"
+import { Formik, Field, FieldArray } from "formik"
 import { MdDelete } from "react-icons/md"
 import _ from "lodash"
 
@@ -59,32 +60,50 @@ const AuthorAliases = ({ author }) => {
   )
 }
 
-const AuthorForm = props => {
-  const author = props.author
+const AuthorForm = ({ author }) => {
+  let initialValues = {
+    name: author.name,
+    aliases: author.AuthorAliases.map(item => {
+      return { name: item.name, id: item.id }
+    }),
+  }
 
   return (
-    <Form className="mt-3">
-      <Form.Group as={Form.Row} controlId="name">
-        <Form.Label column sm={2} className="text-md-right text-sm-left">
-          Name:
-        </Form.Label>
-        <Col sm={10}>
-          <Form.Control
-            type="text"
-            defaultValue={author.name}
-            placeholder="Name"
-            data-lpignore="true"
-          />
-        </Col>
-      </Form.Group>
-      <AuthorAliases author={author} />
-      <Form.Group as={Form.Row} className="mt-3">
-        <Col sm={{ span: 10, offset: 2 }}>
-          <Button type="submit">Submit</Button>{" "}
-          <Button type="reset">Reset</Button>
-        </Col>
-      </Form.Group>
-    </Form>
+    <Formik initialValues={initialValues}>
+      {({
+        values,
+        errors,
+        touched,
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        isSubmitting,
+      }) => (
+        <Form className="mt-3">
+          <Form.Group as={Form.Row} controlId="formName">
+            <Form.Label column sm={2} className="text-md-right text-sm-left">
+              Name:
+            </Form.Label>
+            <Col sm={10}>
+              <Field
+                as={Form.Control}
+                type="text"
+                name="name"
+                placeholder="Name"
+                data-lpignore="true"
+              />
+            </Col>
+          </Form.Group>
+          <AuthorAliases author={author} />
+          <Form.Group as={Form.Row} className="mt-3">
+            <Col sm={{ span: 10, offset: 2 }}>
+              <Button type="submit">Submit</Button>{" "}
+              <Button type="reset">Reset</Button>
+            </Col>
+          </Form.Group>
+        </Form>
+      )}
+    </Formik>
   )
 }
 
