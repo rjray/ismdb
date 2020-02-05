@@ -4,12 +4,74 @@ import Form from "react-bootstrap/Form"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import Container from "react-bootstrap/Container"
-import { MdLink, MdDelete } from "react-icons/md"
+import { Formik, Field, FieldArray, ErrorMessage } from "formik"
+import { MdLink, MdDelete, MdSettingsBackupRestore } from "react-icons/md"
+import _ from "lodash"
+import * as Yup from "yup"
 
-const ReferenceRecordType = ({ reference }) => {
-  const isBook = reference.RecordType.description === "book"
-  const isArticle = reference.RecordType.description === "article"
-  const isPlaceholder = reference.RecordType.description === "placeholder"
+const validationSchema = Yup.object().shape({
+  name: Yup.string()
+    .max(
+      255,
+      <em style={{ fontSize: "75%", color: "red" }}>
+        Name cannot exceed 255 characters
+      </em>
+    )
+    .required(
+      <em style={{ fontSize: "75%", color: "red" }}>Name cannot be empty</em>
+    ),
+  authors: Yup.array().of(
+    Yup.object().shape({
+      name: Yup.string()
+        .max(
+          60,
+          <em style={{ fontSize: "75%", color: "red" }}>
+            Name cannot exceed 60 characters
+          </em>
+        )
+        .required(
+          <em style={{ fontSize: "75%", color: "red" }}>
+            Name cannot be empty
+          </em>
+        ),
+    })
+  ),
+  type: Yup.string()
+    .max(
+      75,
+      <em style={{ fontSize: "75%", color: "red" }}>
+        Type cannot exceed 75 characters
+      </em>
+    )
+    .required(
+      <em style={{ fontSize: "75%", color: "red" }}>Type cannot be empty</em>
+    ),
+  language: Yup.string()
+    .max(
+      50,
+      <em style={{ fontSize: "75%", color: "red" }}>
+        Language cannot exceed 50 characters
+      </em>
+    )
+    .nullable(),
+  keywords: Yup.string()
+    .max(
+      1000,
+      <em style={{ fontSize: "75%", color: "red" }}>
+        Keywords cannot exceed 1000 characters
+      </em>
+    )
+    .required(
+      <em style={{ fontSize: "75%", color: "red" }}>
+        Keywords cannot be empty
+      </em>
+    ),
+})
+
+const ReferenceRecordType = ({ recordType, isbn, magazine, magazineIssue }) => {
+  const isBook = recordType.description === "book"
+  const isArticle = recordType.description === "article"
+  const isPlaceholder = recordType.description === "placeholder"
 
   return (
     <>
@@ -20,7 +82,7 @@ const ReferenceRecordType = ({ reference }) => {
         <Col sm={10}>
           <Form.Control
             type="text"
-            defaultValue={reference.RecordType.notes}
+            defaultValue={recordType.notes}
             readOnly
             plaintext
           />
@@ -34,7 +96,7 @@ const ReferenceRecordType = ({ reference }) => {
           <Col sm={10}>
             <Form.Control
               type="text"
-              defaultValue={reference.isbn}
+              defaultValue={isbn}
               placeholder="Name"
               data-lpignore="true"
             />
@@ -49,7 +111,7 @@ const ReferenceRecordType = ({ reference }) => {
           <Col sm={10}>
             <Form.Control
               type="text"
-              defaultValue={`${reference.Magazine.name} ${reference.MagazineIssue.number}`}
+              defaultValue={`${magazine.name} ${magazineIssue.number}`}
               readOnly
               plaintext
             />
@@ -116,106 +178,158 @@ const ReferenceAuthors = ({ reference }) => {
   )
 }
 
-const ReferenceForm = props => {
-  const reference = props.reference
-  const created = new Date(reference.createdAt)
-  const updated = new Date(reference.updatedAt)
+const ReferenceForm = ({ reference }) => {
+  let initialValues = { ...reference }
+  initialValues.createdAt = new Date(initialValues.createdAt)
+  initialValues.updatedAt = new Date(initialValues.updatedAt)
+  delete initialValues.Magazine
+  delete initialValues.MagazineIssue
+  delete initialValues.RecordType
 
   return (
-    <Form className="mt-3">
-      <Form.Group as={Form.Row} controlId="name" className="mb-2">
-        <Form.Label column sm={2} className="text-md-right text-sm-left">
-          Name:
-        </Form.Label>
-        <Col sm={10}>
-          <Form.Control
-            type="text"
-            defaultValue={reference.name}
-            placeholder="Name"
-            data-lpignore="true"
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={(values, actions) => {
+        alert(JSON.stringify(values, null, 2))
+        actions.setSubmitting(false)
+      }}
+    >
+      {({
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        handleReset,
+        isSubmitting,
+      }) => (
+        <Form className="mt-3">
+          <Form.Group as={Form.Row} controlId="name" className="mb-2">
+            <Form.Label column sm={2} className="text-md-right text-sm-left">
+              Name:
+              <ErrorMessage name="name" component="p" />
+            </Form.Label>
+            <Col sm={10}>
+              <Field
+                as={Form.Control}
+                type="text"
+                name="name"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                placeholder="Name"
+                data-lpignore="true"
+              />
+            </Col>
+          </Form.Group>
+          <ReferenceRecordType
+            recordType={reference.RecordType}
+            isbn={reference.isbn}
+            magazine={reference.Magazine}
+            magazineIssue={reference.MagazineIssue}
           />
-        </Col>
-      </Form.Group>
-      <ReferenceRecordType reference={reference} />
-      <ReferenceAuthors reference={reference} />
-      <Form.Group as={Form.Row} controlId="type" className="mb-2">
-        <Form.Label column sm={2} className="text-md-right text-sm-left">
-          Type:
-        </Form.Label>
-        <Col sm={10}>
-          <Form.Control
-            type="text"
-            defaultValue={reference.type}
-            placeholder="Type"
-            data-lpignore="true"
-          />
-        </Col>
-      </Form.Group>
-      <Form.Group as={Form.Row} controlId="language" className="mb-2">
-        <Form.Label column sm={2} className="text-md-right text-sm-left">
-          Language:
-        </Form.Label>
-        <Col sm={10}>
-          <Form.Control
-            type="text"
-            defaultValue={reference.language}
-            placeholder="Language"
-            data-lpignore="true"
-          />
-        </Col>
-      </Form.Group>
-      <Form.Group as={Form.Row} controlId="keywords" className="mb-2">
-        <Form.Label column sm={2} className="text-md-right text-sm-left">
-          Keywords:
-        </Form.Label>
-        <Col sm={10}>
-          <Form.Control
-            as="textarea"
-            rows={4}
-            defaultValue={reference.keywords}
-            placeholder="Keywords"
-          />
-        </Col>
-      </Form.Group>
-      {reference.createdAt && (
-        <Form.Group as={Form.Row} controlId="createdAt" className="mb-2">
-          <Form.Label column sm={2} className="text-md-right text-sm-left">
-            Created:
-          </Form.Label>
-          <Col sm={10}>
-            <Form.Control
-              type="text"
-              tabIndex={-1}
-              readOnly
-              plaintext
-              defaultValue={created}
-            />
-          </Col>
-        </Form.Group>
+          <ReferenceAuthors reference={reference} />
+          <Form.Group as={Form.Row} controlId="type" className="mb-2">
+            <Form.Label column sm={2} className="text-md-right text-sm-left">
+              Type:
+              <ErrorMessage name="type" component="p" />
+            </Form.Label>
+            <Col sm={10}>
+              <Field
+                as={Form.Control}
+                type="text"
+                name="type"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                placeholder="Type"
+                data-lpignore="true"
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group as={Form.Row} controlId="language" className="mb-2">
+            <Form.Label column sm={2} className="text-md-right text-sm-left">
+              Language:
+              <ErrorMessage name="language" component="p" />
+            </Form.Label>
+            <Col sm={10}>
+              <Field
+                as={Form.Control}
+                type="text"
+                name="language"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                placeholder="Language"
+                data-lpignore="true"
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group as={Form.Row} controlId="keywords" className="mb-2">
+            <Form.Label column sm={2} className="text-md-right text-sm-left">
+              Keywords:
+              <ErrorMessage name="keywords" component="p" />
+            </Form.Label>
+            <Col sm={10}>
+              <Field
+                as={Form.Control}
+                component="textarea"
+                className="form-control"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                rows={4}
+                name="keywords"
+                placeholder="Keywords"
+              />
+            </Col>
+          </Form.Group>
+          {reference.createdAt && (
+            <Form.Group as={Form.Row} controlId="createdAt" className="mb-2">
+              <Form.Label column sm={2} className="text-md-right text-sm-left">
+                Created:
+              </Form.Label>
+              <Col sm={10}>
+                <Field
+                  as={Form.Control}
+                  type="text"
+                  name="createdAt"
+                  tabIndex={-1}
+                  readOnly
+                  plaintext
+                />
+              </Col>
+            </Form.Group>
+          )}
+          {reference.updatedAt && (
+            <Form.Group as={Form.Row} controlId="updatedAt" className="mb-2">
+              <Form.Label column sm={2} className="text-md-right text-sm-left">
+                Updated:
+              </Form.Label>
+              <Col sm={10}>
+                <Field
+                  as={Form.Control}
+                  type="text"
+                  name="updatedAt"
+                  tabIndex={-1}
+                  readOnly
+                  plaintext
+                />
+              </Col>
+            </Form.Group>
+          )}
+          <Form.Group as={Form.Row} className="mt-3">
+            <Col sm={{ span: 10, offset: 2 }}>
+              <Button
+                type="submit"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+              >
+                Submit
+              </Button>{" "}
+              <Button type="reset" onClick={handleReset}>
+                Reset
+              </Button>
+            </Col>
+          </Form.Group>
+        </Form>
       )}
-      {reference.updatedAt && (
-        <Form.Group as={Form.Row} controlId="updatedAt" className="mb-2">
-          <Form.Label column sm={2} className="text-md-right text-sm-left">
-            Updated:
-          </Form.Label>
-          <Col sm={10}>
-            <Form.Control
-              type="text"
-              tabIndex={-1}
-              readOnly
-              plaintext
-              defaultValue={updated}
-            />
-          </Col>
-        </Form.Group>
-      )}
-      <Form.Group as={Form.Row} className="mt-3">
-        <Col sm={{ span: 10, offset: 2 }}>
-          <Button type="submit">Submit</Button>{" "}
-          <Button type="reset">Reset</Button>
-        </Col>
-      </Form.Group>
-    </Form>
+    </Formik>
   )
 }
 
