@@ -64,10 +64,10 @@ const AuthorForm = ({ author }) => {
       }) => (
         <Form className="mt-3">
           <Form.Group as={Form.Row} controlId="name">
-            <Col sm={2} className="text-md-right text-sm-left">
-              <Form.Label>Name:</Form.Label>
+            <Form.Label column sm={2} className="text-md-right text-sm-left">
+              Name:
               <ErrorMessage name="name" component="p" />
-            </Col>
+            </Form.Label>
             <Col sm={10}>
               <Field
                 as={Form.Control}
@@ -81,9 +81,9 @@ const AuthorForm = ({ author }) => {
             </Col>
           </Form.Group>
           <Form.Group as={Form.Row} controlId="aliases" className="mb-2">
-            <Col sm={2} className="text-md-right text-sm-left">
-              <Form.Label>Aliases:</Form.Label>
-            </Col>
+            <Form.Label column sm={2} className="text-md-right text-sm-left">
+              Aliases:
+            </Form.Label>
             <Col sm={10}>
               <Container
                 fluid
