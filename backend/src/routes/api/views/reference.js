@@ -62,10 +62,11 @@ router.get("/:id", (req, res) => {
 
       reference.Authors = reference.Authors.sort(
         (a, b) => a.AuthorsReferences.order - b.AuthorsReferences.order
-      ).map(attr => {
-        attr = attr.get()
-        delete attr.AuthorsReferences
-        return attr
+      ).map(author => {
+        author = author.get()
+        author.order = author.AuthorsReferences.order
+        delete author.AuthorsReferences
+        return author
       })
 
       if (reference.MagazineIssue) {
