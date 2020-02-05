@@ -15,13 +15,23 @@ const { compareVersion } = require("../../../lib/utils")
 
 let router = express.Router()
 
+router.get("/names", (req, res) => {
+  Magazine.findAll({ attributes: ["id", "name"], order: ["name"] })
+    .then(magazines => {
+      res.send({ status: "success", magazines })
+    })
+    .catch(error => {
+      res.send({ status: "error", error })
+    })
+})
+
 router.get("/all", (req, res) => {
-  let query = `
+  const query = `
     SELECT m.*, COUNT(mi.id) AS issues
     FROM Magazines m LEFT JOIN MagazineIssues mi ON m.id = mi.magazineId
     GROUP BY m.id
   `
-  let options = {
+  const options = {
     type: sequelize.QueryTypes.SELECT,
   }
 
@@ -36,14 +46,13 @@ router.get("/all", (req, res) => {
 })
 
 router.get("/:id(\\d+)", (req, res) => {
-  let id = req.params.id
-  let magazine
+  const id = req.params.id
 
   Magazine.findByPk(id, {
     include: [{ model: MagazineIssue, include: [Reference] }],
   })
-    .then(result => {
-      magazine = result.get()
+    .then(magazine => {
+      magazine = magazine.get()
 
       magazine.MagazineIssues = magazine.MagazineIssues.map(item => {
         item = item.get()
