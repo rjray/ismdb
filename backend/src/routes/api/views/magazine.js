@@ -15,8 +15,12 @@ const { compareVersion } = require("../../../lib/utils")
 
 let router = express.Router()
 
-router.get("/names", (req, res) => {
-  Magazine.findAll({ attributes: ["id", "name"], order: ["name"] })
+router.get("/namesandissues", (req, res) => {
+  Magazine.findAll({
+    attributes: ["id", "name"],
+    order: ["name"],
+    include: [{ model: MagazineIssue, attributes: ["number"] }],
+  })
     .then(magazines => {
       res.send({ status: "success", magazines })
     })
