@@ -14,9 +14,12 @@ import ReferenceForm from "../forms/ReferenceForm"
 const ReferenceUpdate = props => {
   let id = props.match.params.id
 
-  const [{ data, loading, error }] = useDataApi(`/api/views/reference/${id}`, {
-    data: {},
-  })
+  const [{ data, loading, error }] = useDataApi(
+    `/api/views/combo/editreference/${id}`,
+    {
+      data: {},
+    }
+  )
   let content
 
   if (error) {
@@ -34,7 +37,7 @@ const ReferenceUpdate = props => {
       </div>
     )
   } else {
-    const reference = data.reference
+    const { reference } = data
 
     content = (
       <>
@@ -48,7 +51,7 @@ const ReferenceUpdate = props => {
             </LinkContainer>
           </Col>
         </Row>
-        <ReferenceForm reference={reference} />
+        <ReferenceForm {...data} />
       </>
     )
   }

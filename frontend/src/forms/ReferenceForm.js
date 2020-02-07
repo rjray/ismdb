@@ -6,12 +6,9 @@ import Button from "react-bootstrap/Button"
 import Container from "react-bootstrap/Container"
 import { Formik, Field, FieldArray, ErrorMessage } from "formik"
 import { MdLink, MdDelete, MdSettingsBackupRestore } from "react-icons/md"
-import _ from "lodash"
 import * as Yup from "yup"
-import ScaleLoader from "react-spinners/ScaleLoader"
 
 import compareVersion from "../utils/compare-version"
-import useDataApi from "../utils/data-api"
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -72,188 +69,11 @@ const validationSchema = Yup.object().shape({
     ),
 })
 
-const ReferenceRecordType = () => {
-  const [{ data, loading, error }] = useDataApi("/api/misc/recordtypes", {
-    data: {},
-  })
-  let content
-
-  if (error) {
-    content = (
-      <>
-        <h3>An Error Occurred</h3>
-        <p>An error occurred trying to load the record types:</p>
-        <p>{error.message}</p>
-      </>
-    )
-  } else if (loading) {
-    content = (
-      <div style={{ textAlign: "center" }}>
-        <ScaleLoader />
-      </div>
-    )
-  } else {
-    const recordtypes = data.recordtypes
-
-    content = (
-      <Form.Group as={Form.Row} controlId="recordType" className="mb-2">
-        <Form.Label column sm={2} className="text-md-right text-sm-left">
-          Record Type:
-        </Form.Label>
-        <Col sm={10}>
-          <Container fluid className="pl-0">
-            <Form.Group as={Form.Row} controlId="recordType" className="mb-2">
-              <Col sm={3}>
-                <Field
-                  as={Form.Control}
-                  type="select"
-                  component="select"
-                  name="RecordTypeId"
-                  style={{ width: "100%", marginTop: "0.35rem" }}
-                >
-                  <option value="">-- Choose --</option>
-                  {recordtypes.map((type, index) => (
-                    <option key={index} value={type.id}>
-                      {type.notes}
-                    </option>
-                  ))}
-                </Field>
-              </Col>
-            </Form.Group>
-          </Container>
-        </Col>
-      </Form.Group>
-    )
-  }
-
-  return content
-}
-
-const ReferenceRecordTypeDetail = ({ recordType, magazine }) => {
-  const isBook = recordType.description === "book"
-  const isArticle = recordType.description === "article"
-  const isPlaceholder = recordType.description === "placeholder"
-  const [{ data, loading, error }] = useDataApi(
-    "/api/views/magazine/namesandissues",
-    {
-      data: {},
-    }
-  )
-  let content
-
-  if (error) {
-    content = (
-      <>
-        <h3>An Error Occurred</h3>
-        <p>An error occurred trying to load the magazine names:</p>
-        <p>{error.message}</p>
-      </>
-    )
-  } else if (loading) {
-    content = (
-      <div style={{ textAlign: "center" }}>
-        <ScaleLoader />
-      </div>
-    )
-  } else {
-    let issues = {}
-    const magazines = data.magazines.map(magazine => {
-      issues[magazine.id] = magazine.MagazineIssues.map(i => i.number).sort(
-        compareVersion
-      )
-      return magazine
-    })
-
-    content = (
-      <>
-        <Form.Group
-          as={Form.Row}
-          controlId="isbn"
-          className="mb-2"
-          style={isBook ? {} : { display: "none" }}
-        >
-          <Form.Label column sm={2} className="text-md-right text-sm-left">
-            ISBN:
-          </Form.Label>
-          <Col sm={10}>
-            <Container fluid className="pl-0">
-              <Form.Group as={Form.Row} controlId="isbn" className="mb-2">
-                <Col sm={3}>
-                  <Field
-                    as={Form.Control}
-                    type="text"
-                    name="isbn"
-                    placeholder="ISBN"
-                    data-lpignore="true"
-                  />
-                </Col>
-              </Form.Group>
-            </Container>
-          </Col>
-        </Form.Group>
-        <Form.Group
-          as={Form.Row}
-          controlId="magazine"
-          className="mb-2"
-          style={isArticle || isPlaceholder ? {} : { display: "none" }}
-        >
-          <Form.Label column sm={2} className="text-md-right text-sm-left">
-            Magazine:
-          </Form.Label>
-          <Col sm={10}>
-            <Container fluid className="pl-0">
-              <Form.Group as={Form.Row} controlId="magazine" className="mb-2">
-                <Col sm={3}>
-                  <Field
-                    as={Form.Control}
-                    type="select"
-                    component="select"
-                    name="MagazineId"
-                    style={{ width: "100%", marginTop: "0.35rem" }}
-                  >
-                    <option value="">-- Choose --</option>
-                    {magazines.map((magazine, index) => (
-                      <option key={index} value={magazine.id}>
-                        {magazine.name}
-                      </option>
-                    ))}
-                  </Field>
-                </Col>
-                <Col sm={3}>
-                  <Field
-                    as={Form.Control}
-                    type="text"
-                    name="MagazineIssueNumber"
-                    placeholder="Issue Number"
-                    list="magazine-issues"
-                    data-lpignore="true"
-                  />
-                  <datalist id="magazine-issues">
-                    {magazine &&
-                      magazine.id &&
-                      issues[magazine.id].map((issue, index) => (
-                        <option key={index} value={issue}></option>
-                      ))}
-                  </datalist>
-                </Col>
-              </Form.Group>
-            </Container>
-          </Col>
-        </Form.Group>
-      </>
-    )
-  }
-
-  return content
-}
-
-const ReferenceForm = ({ reference }) => {
+const ReferenceForm = ({ recordtypes, magazines, reference }) => {
   let initialValues = { ...reference }
-  initialValues.authors = _.sortBy(initialValues.Authors, o => o.order).map(
-    item => {
-      return { ...item, delete: false }
-    }
-  )
+  initialValues.authors = initialValues.Authors.map(item => {
+    return { ...item, deleted: false }
+  })
   delete initialValues.Authors
   initialValues.createdAt = new Date(initialValues.createdAt)
   initialValues.updatedAt = new Date(initialValues.updatedAt)
@@ -268,6 +88,15 @@ const ReferenceForm = ({ reference }) => {
   delete initialValues.RecordType
   if (!initialValues.isbn) {
     initialValues.isbn = ""
+  }
+  // Force this to a string:
+  initialValues.RecordTypeId = `${initialValues.RecordTypeId}`
+
+  let issues = {}
+  for (let magazine of magazines) {
+    issues[magazine.id] = magazine.MagazineIssues.map(i => i.number).sort(
+      compareVersion
+    )
   }
 
   return (
@@ -305,11 +134,109 @@ const ReferenceForm = ({ reference }) => {
               />
             </Col>
           </Form.Group>
-          <ReferenceRecordType />
-          <ReferenceRecordTypeDetail
-            recordType={reference.RecordType}
-            magazine={reference.Magazine}
-          />
+          <Form.Group as={Form.Row} controlId="recordType" className="mb-2">
+            <Form.Label column sm={2} className="text-md-right text-sm-left">
+              Record Type:
+            </Form.Label>
+            <Col sm={10}>
+              <Container fluid className="pl-0">
+                <Form.Group
+                  as={Form.Row}
+                  controlId="recordType"
+                  className="mb-2"
+                >
+                  <Col sm={3}>
+                    <Field
+                      as={Form.Control}
+                      type="select"
+                      component="select"
+                      name="RecordTypeId"
+                      style={{ width: "100%", marginTop: "0.35rem" }}
+                    >
+                      <option value="">-- Choose --</option>
+                      {recordtypes.map((type, index) => (
+                        <option key={index} value={type.id}>
+                          {type.notes}
+                        </option>
+                      ))}
+                    </Field>
+                  </Col>
+                </Form.Group>
+              </Container>
+            </Col>
+          </Form.Group>
+          {values.RecordTypeId === "1" && (
+            <Form.Group as={Form.Row} controlId="isbn" className="mb-2">
+              <Form.Label column sm={2} className="text-md-right text-sm-left">
+                ISBN:
+              </Form.Label>
+              <Col sm={10}>
+                <Container fluid className="pl-0">
+                  <Form.Group as={Form.Row} controlId="isbn" className="mb-2">
+                    <Col sm={3}>
+                      <Field
+                        as={Form.Control}
+                        type="text"
+                        name="isbn"
+                        placeholder="ISBN"
+                        data-lpignore="true"
+                      />
+                    </Col>
+                  </Form.Group>
+                </Container>
+              </Col>
+            </Form.Group>
+          )}
+          {(values.RecordTypeId === "2" || values.RecordTypeId === "3") && (
+            <Form.Group as={Form.Row} controlId="magazine" className="mb-2">
+              <Form.Label column sm={2} className="text-md-right text-sm-left">
+                Magazine:
+              </Form.Label>
+              <Col sm={10}>
+                <Container fluid className="pl-0">
+                  <Form.Group
+                    as={Form.Row}
+                    controlId="magazine"
+                    className="mb-2"
+                  >
+                    <Col sm={3}>
+                      <Field
+                        as={Form.Control}
+                        type="select"
+                        component="select"
+                        name="MagazineId"
+                        style={{ width: "100%", marginTop: "0.35rem" }}
+                      >
+                        <option value="">-- Choose --</option>
+                        {magazines.map((magazine, index) => (
+                          <option key={index} value={magazine.id}>
+                            {magazine.name}
+                          </option>
+                        ))}
+                      </Field>
+                    </Col>
+                    <Col sm={3}>
+                      <Field
+                        as={Form.Control}
+                        type="text"
+                        name="MagazineIssueNumber"
+                        placeholder="Issue Number"
+                        list="magazine-issues"
+                        data-lpignore="true"
+                      />
+                      <datalist id="magazine-issues">
+                        {reference.Magazine &&
+                          reference.Magazine.id &&
+                          issues[reference.Magazine.id].map((issue, index) => (
+                            <option key={index} value={issue}></option>
+                          ))}
+                      </datalist>
+                    </Col>
+                  </Form.Group>
+                </Container>
+              </Col>
+            </Form.Group>
+          )}
           <Form.Group as={Form.Row} controlId="aliases" className="mb-2">
             <Form.Label column sm={2} className="text-md-right text-sm-left">
               Authors:
