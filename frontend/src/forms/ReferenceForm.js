@@ -21,6 +21,12 @@ const validationSchema = Yup.object().shape({
     .required(
       <em style={{ fontSize: "75%", color: "red" }}>Name cannot be empty</em>
     ),
+  isbn: Yup.string()
+    .max(25)
+    .nullable(),
+  MagazineIssueNumber: Yup.string()
+    .max(50)
+    .nullable(),
   authors: Yup.array().of(
     Yup.object().shape({
       name: Yup.string()
