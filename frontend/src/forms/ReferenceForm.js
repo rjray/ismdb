@@ -102,14 +102,14 @@ const ReferenceRecordType = () => {
         </Form.Label>
         <Col sm={10}>
           <Container fluid className="pl-0">
-            <Form.Group as={Form.Row} controlId="isbn" className="mb-2">
+            <Form.Group as={Form.Row} controlId="recordType" className="mb-2">
               <Col sm={3}>
                 <Field
                   as={Form.Control}
                   type="select"
                   component="select"
                   name="RecordTypeId"
-                  style={{ width: "100%" }}
+                  style={{ width: "100%", marginTop: "0.35rem" }}
                 >
                   <option value="">-- Choose --</option>
                   {recordtypes.map((type, index) => (
@@ -209,7 +209,7 @@ const ReferenceRecordTypeDetail = ({ recordType, magazine }) => {
                     type="select"
                     component="select"
                     name="MagazineId"
-                    style={{ width: "100%" }}
+                    style={{ width: "100%", marginTop: "0.35rem" }}
                   >
                     <option value="">-- Choose --</option>
                     {magazines.map((magazine, index) => (
