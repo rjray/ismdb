@@ -22,10 +22,20 @@ const validationSchema = Yup.object().shape({
       <em style={{ fontSize: "75%", color: "red" }}>Name cannot be empty</em>
     ),
   isbn: Yup.string()
-    .max(25)
+    .max(
+      15,
+      <em style={{ fontSize: "75%", color: "red" }}>
+        ISBN cannot exceed 15 characters (no hyphens)
+      </em>
+    )
     .nullable(),
   MagazineIssueNumber: Yup.string()
-    .max(50)
+    .max(
+      50,
+      <em style={{ fontSize: "75%", color: "red" }}>
+        Magazine issue label cannot exceed 50 characters
+      </em>
+    )
     .nullable(),
   authors: Yup.array().of(
     Yup.object().shape({
