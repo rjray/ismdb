@@ -17,7 +17,7 @@ module.exports = {
         type: Sequelize.STRING(75),
       },
       isbn: {
-        type: Sequelize.STRING(25),
+        type: Sequelize.STRING(15),
       },
       language: {
         type: Sequelize.STRING(50),
