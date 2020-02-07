@@ -241,9 +241,8 @@ const ReferenceForm = ({ recordtypes, magazines, reference }) => {
                         data-lpignore="true"
                       />
                       <datalist id="magazine-issues">
-                        {reference.Magazine &&
-                          reference.Magazine.id &&
-                          issues[reference.Magazine.id].map((issue, index) => (
+                        {values.MagazineId &&
+                          issues[+values.MagazineId].map((issue, index) => (
                             <option key={index} value={issue}></option>
                           ))}
                       </datalist>
@@ -253,7 +252,7 @@ const ReferenceForm = ({ recordtypes, magazines, reference }) => {
               </Col>
             </Form.Group>
           )}
-          <Form.Group as={Form.Row} controlId="aliases" className="mb-2">
+          <Form.Group as={Form.Row} controlId="authors" className="mb-2">
             <Form.Label column sm={2} className="text-md-right text-sm-left">
               Authors:
             </Form.Label>
