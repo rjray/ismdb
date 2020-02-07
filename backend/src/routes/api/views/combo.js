@@ -1,5 +1,5 @@
 /*
- * Functionality for /api/views/reference
+ * Functionality for /api/views/combo
  */
 
 const express = require("express")
