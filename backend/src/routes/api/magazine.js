@@ -16,7 +16,7 @@ router.get("/:id(\\d+)", (req, res) => {
     .then(magazine => {
       if (magazine) {
         magazine = magazine.get()
-        res.send({ magazine })
+        res.send({ status: "success", magazine })
       } else {
         let error = { message: `No magazine with id "${id}" found` }
         res.send({ status: "error", error })

@@ -21,7 +21,7 @@ router.get("/:id(\\d+)", (req, res) => {
           delete item.AuthorId
           return item
         })
-        res.send({ author })
+        res.send({ status: "success", author })
       } else {
         let error = { message: `No author with id "${id}" found` }
         res.send({ status: "error", error })
