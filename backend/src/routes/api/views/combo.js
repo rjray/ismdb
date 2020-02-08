@@ -11,12 +11,21 @@ const {
   MagazineIssue,
   Magazine,
   Author,
+  sequelize,
 } = require("../../../models")
 
 let router = express.Router()
 
 router.get("/editreference/:id(\\d+)?", (req, res) => {
   let id = req.params.id
+
+  const langQuery = `
+    SELECT DISTINCT(language) FROM \`References\` WHERE
+    language IS NOT NULL AND language != "" ORDER BY language
+  `
+  const queryOptions = {
+    type: sequelize.QueryTypes.SELECT,
+  }
 
   let promises = [
     RecordType.findAll({ order: ["id"] }),
@@ -25,6 +34,7 @@ router.get("/editreference/:id(\\d+)?", (req, res) => {
       order: ["name"],
       include: [{ model: MagazineIssue, attributes: ["number"] }],
     }),
+    sequelize.query(langQuery, queryOptions),
   ]
   if (id) {
     promises.push(
@@ -48,7 +58,10 @@ router.get("/editreference/:id(\\d+)?", (req, res) => {
     .then(values => {
       let recordtypes = values[0]
       let magazines = values[1]
-      let reference = id ? values[2] : {}
+      let languages = values[2]
+      let reference = id ? values[3] : {}
+
+      languages = languages.map(l => l.language)
 
       if (!_.isEmpty(reference)) {
         reference = reference.get()
@@ -69,7 +82,13 @@ router.get("/editreference/:id(\\d+)?", (req, res) => {
         }
       }
 
-      res.send({ status: "success", recordtypes, magazines, reference })
+      res.send({
+        status: "success",
+        recordtypes,
+        magazines,
+        languages,
+        reference,
+      })
     })
     .catch(error => {
       if (_.isEmpty(error)) {
