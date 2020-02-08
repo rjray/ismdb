@@ -85,7 +85,7 @@ const validationSchema = Yup.object().shape({
     ),
 })
 
-const ReferenceForm = ({ recordtypes, magazines, reference }) => {
+const ReferenceForm = ({ recordtypes, magazines, languages, reference }) => {
   let initialValues = { ...reference }
   initialValues.authors = initialValues.Authors.map(item => {
     return { ...item, deleted: false }
@@ -378,8 +378,14 @@ const ReferenceForm = ({ recordtypes, magazines, reference }) => {
                 onBlur={handleBlur}
                 onChange={handleChange}
                 placeholder="Language"
+                list="language-list"
                 data-lpignore="true"
               />
+              <datalist id="language-list">
+                {languages.map((language, index) => (
+                  <option key={index} value={language}></option>
+                ))}
+              </datalist>
             </Col>
           </Form.Group>
           <Form.Group as={Form.Row} controlId="keywords" className="mb-2">
