@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       keywords: {
-        type: DataTypes.STRING(1000),
+        type: DataTypes.STRING(2000),
         get: function() {
           let value = this.getDataValue("keywords")
           return value ? value : ""
