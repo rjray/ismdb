@@ -1,5 +1,7 @@
 "use strict"
 
+const { createStringGetter, createStringSetter } = require("../lib/utils")
+
 module.exports = (sequelize, DataTypes) => {
   const Reference = sequelize.define(
     "Reference",
@@ -10,31 +12,23 @@ module.exports = (sequelize, DataTypes) => {
       },
       type: {
         type: DataTypes.STRING(75),
-        get: function() {
-          let value = this.getDataValue("type")
-          return value ? value : ""
-        },
+        get: createStringGetter("type"),
+        set: createStringSetter("type"),
       },
       isbn: {
         type: DataTypes.STRING(15),
-        get: function() {
-          let value = this.getDataValue("language")
-          return value ? value : ""
-        },
+        get: createStringGetter("isbn"),
+        set: createStringSetter("isbn"),
       },
       language: {
         type: DataTypes.STRING(50),
-        get: function() {
-          let value = this.getDataValue("language")
-          return value ? value : ""
-        },
+        get: createStringGetter("language"),
+        set: createStringSetter("language"),
       },
       keywords: {
         type: DataTypes.STRING(2000),
-        get: function() {
-          let value = this.getDataValue("keywords")
-          return value ? value : ""
-        },
+        get: createStringGetter("keywords"),
+        set: createStringSetter("keywords"),
       },
     },
     {}

@@ -23,6 +23,21 @@ const compareVersion = (a, b) => {
   return a.length == b.length ? 0 : a.length < b.length ? -1 : 1
 }
 
+const createStringGetter = field => {
+  return function() {
+    let value = this.getDataValue(field)
+    return value || ""
+  }
+}
+
+const createStringSetter = field => {
+  return function(value) {
+    this.setDataValue(field, value || null)
+  }
+}
+
 module.exports = {
   compareVersion,
+  createStringGetter,
+  createStringSetter,
 }
