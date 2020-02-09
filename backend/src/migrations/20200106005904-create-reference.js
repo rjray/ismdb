@@ -23,7 +23,7 @@ module.exports = {
         type: Sequelize.STRING(50),
       },
       keywords: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING(1000),
       },
       createdAt: {
         allowNull: false,

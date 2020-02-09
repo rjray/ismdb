@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(75),
       isbn: DataTypes.STRING(15),
       language: DataTypes.STRING(50),
-      keywords: DataTypes.TEXT,
+      keywords: DataTypes.STRING(1000),
     },
     {}
   )
