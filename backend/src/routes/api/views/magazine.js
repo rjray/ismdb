@@ -11,7 +11,6 @@ const {
   Reference,
   sequelize,
 } = require("../../../models")
-const { compareVersion } = require("../../../lib/utils")
 
 let router = express.Router()
 
@@ -62,7 +61,7 @@ router.get("/:id(\\d+)", (req, res) => {
         item = item.get()
         delete item.MagazineId
         return item
-      }).sort((a, b) => compareVersion(a.number, b.number))
+      })
 
       res.send({ status: "success", magazine })
     })
