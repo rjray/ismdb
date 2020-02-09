@@ -42,7 +42,7 @@ const validationSchema = Yup.object().shape({
     .nullable(),
 })
 
-const MagazineForm = ({ magazine }) => {
+const MagazineForm = ({ languages, magazine }) => {
   let initialValues = { ...magazine }
   initialValues.createdAt = new Date(initialValues.createdAt)
   initialValues.updatedAt = new Date(initialValues.updatedAt)
@@ -90,12 +90,18 @@ const MagazineForm = ({ magazine }) => {
               <Field
                 as={Form.Control}
                 type="text"
+                name="language"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                name="language"
                 placeholder="Language"
+                list="language-list"
                 data-lpignore="true"
               />
+              <datalist id="language-list">
+                {languages.map((language, index) => (
+                  <option key={index} value={language}></option>
+                ))}
+              </datalist>
             </Col>
           </Form.Group>
           <Form.Group as={Form.Row} controlId="aliases">

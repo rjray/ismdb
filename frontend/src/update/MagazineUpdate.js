@@ -14,9 +14,12 @@ import MagazineForm from "../forms/MagazineForm"
 const MagazineUpdate = props => {
   let id = props.match.params.id
 
-  const [{ data, loading, error }] = useDataApi(`/api/magazine/${id}`, {
-    data: {},
-  })
+  const [{ data, loading, error }] = useDataApi(
+    `/api/views/combo/editmagazine/${id}`,
+    {
+      data: {},
+    }
+  )
   let content
 
   if (error) {
@@ -48,7 +51,7 @@ const MagazineUpdate = props => {
             </LinkContainer>
           </Col>
         </Row>
-        <MagazineForm magazine={magazine} />
+        <MagazineForm {...data} />
       </>
     )
   }
