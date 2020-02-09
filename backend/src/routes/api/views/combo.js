@@ -101,4 +101,48 @@ router.get("/editreference/:id(\\d+)?", (req, res) => {
     })
 })
 
+router.get("/editmagazine/:id(\\d+)?", (req, res) => {
+  let id = req.params.id
+
+  const langQuery = `
+    SELECT DISTINCT(language) FROM \`References\` WHERE
+    language IS NOT NULL AND language != "" ORDER BY language
+  `
+  const queryOptions = {
+    type: sequelize.QueryTypes.SELECT,
+  }
+
+  let promises = [sequelize.query(langQuery, queryOptions)]
+  if (id) {
+    promises.push(Magazine.findByPk(id))
+  }
+
+  Promise.all(promises)
+    .then(values => {
+      let languages = values[0]
+      let magazine = id ? values[1] : {}
+
+      languages = languages.map(l => l.language)
+
+      if (!_.isEmpty(magazine)) {
+        magazine = magazine.get()
+      }
+
+      res.send({
+        status: "success",
+        languages,
+        magazine,
+      })
+    })
+    .catch(error => {
+      if (_.isEmpty(error)) {
+        error = {
+          message: `No magazine found for id ${id}`,
+        }
+      }
+
+      res.send({ status: "error", error })
+    })
+})
+
 module.exports = router
