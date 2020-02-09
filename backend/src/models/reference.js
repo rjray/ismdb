@@ -8,10 +8,34 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(255),
         allowNull: false,
       },
-      type: DataTypes.STRING(75),
-      isbn: DataTypes.STRING(15),
-      language: DataTypes.STRING(50),
-      keywords: DataTypes.STRING(1000),
+      type: {
+        type: DataTypes.STRING(75),
+        get: function() {
+          let value = this.getDataValue("type")
+          return value ? value : ""
+        },
+      },
+      isbn: {
+        type: DataTypes.STRING(15),
+        get: function() {
+          let value = this.getDataValue("language")
+          return value ? value : ""
+        },
+      },
+      language: {
+        type: DataTypes.STRING(50),
+        get: function() {
+          let value = this.getDataValue("language")
+          return value ? value : ""
+        },
+      },
+      keywords: {
+        type: DataTypes.STRING(1000),
+        get: function() {
+          let value = this.getDataValue("keywords")
+          return value ? value : ""
+        },
+      },
     },
     {}
   )

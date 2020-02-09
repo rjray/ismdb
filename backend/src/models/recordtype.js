@@ -8,9 +8,15 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(50),
         allowNull: false,
       },
-      notes: DataTypes.STRING(255),
+      notes: {
+        type: DataTypes.STRING(255),
+        get: function() {
+          let value = this.getDataValue("notes")
+          return value ? value : ""
+        },
+      },
     },
-    { timestamps: false },
+    { timestamps: false }
   )
 
   return RecordType

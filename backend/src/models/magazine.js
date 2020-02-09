@@ -8,11 +8,29 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(50),
         allowNull: false,
       },
-      language: DataTypes.STRING(50),
-      aliases: DataTypes.STRING(100),
-      notes: DataTypes.STRING(1000),
+      language: {
+        type: DataTypes.STRING(50),
+        get: function() {
+          let value = this.getDataValue("language")
+          return value ? value : ""
+        },
+      },
+      aliases: {
+        type: DataTypes.STRING(100),
+        get: function() {
+          let value = this.getDataValue("aliases")
+          return value ? value : ""
+        },
+      },
+      notes: {
+        type: DataTypes.STRING(1000),
+        get: function() {
+          let value = this.getDataValue("notes")
+          return value ? value : ""
+        },
+      },
     },
-    {},
+    {}
   )
   Magazine.associate = function(models) {
     Magazine.hasMany(models.MagazineIssue)
