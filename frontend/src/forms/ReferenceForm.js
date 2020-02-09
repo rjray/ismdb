@@ -102,9 +102,6 @@ const ReferenceForm = ({ recordtypes, magazines, languages, reference }) => {
   delete initialValues.Magazine
   delete initialValues.MagazineIssue
   delete initialValues.RecordType
-  if (!initialValues.isbn) {
-    initialValues.isbn = ""
-  }
   // Force this to a string:
   initialValues.RecordTypeId = `${initialValues.RecordTypeId}`
 
