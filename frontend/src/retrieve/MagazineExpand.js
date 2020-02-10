@@ -9,6 +9,7 @@ import ScaleLoader from "react-spinners/ScaleLoader"
 import _ from "lodash"
 
 import useDataApi from "../utils/data-api"
+import compareVersion from "../utils/compare-version"
 
 const createIssueRow = (mId, elements) => {
   if (elements.length < 10) {
@@ -52,7 +53,10 @@ const MagazineExpand = props => {
     )
   } else {
     let magazine = data.magazine
-    let chunks = _.chunk(magazine.MagazineIssues, 10)
+    let issues = magazine.MagazineIssues.sort((a, b) =>
+      compareVersion(a.number, b.number)
+    )
+    let chunks = _.chunk(issues, 10)
     let rows = chunks.map((row, idx) => {
       let rowInner = createIssueRow(magazine.id, row)
       return <Row key={idx}>{rowInner}</Row>
