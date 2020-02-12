@@ -90,6 +90,7 @@ const AuthorAll = () => {
               paginationPerPage={25}
               expandableRows
               expandOnRowClicked
+              expandableRowsHideExpander
               expandableRowsComponent={<AuthorExpand />}
               defaultSortField="name"
               columns={columns}

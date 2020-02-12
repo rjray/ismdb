@@ -220,6 +220,7 @@ const MagazineDetail = ({ id }) => {
               sortFunction={sortRows}
               expandableRows
               expandOnRowClicked
+              expandableRowsHideExpander
               expandableRowsComponent={<MagazineDetailExpand />}
               columns={columns}
               data={magazine.MagazineIssues}

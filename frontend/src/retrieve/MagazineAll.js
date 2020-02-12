@@ -98,6 +98,7 @@ const MagazineAll = () => {
               paginationPerPage={25}
               expandableRows
               expandOnRowClicked
+              expandableRowsHideExpander
               expandableRowsComponent={<MagazineExpand />}
               defaultSortField="name"
               columns={columns}

@@ -73,6 +73,7 @@ const ReferenceTable = props => {
       paginationPerPage={25}
       expandableRows
       expandOnRowClicked
+      expandableRowsHideExpander
       expandableRowsComponent={<ReferenceExpand />}
       defaultSortField="name"
       columns={columns}
