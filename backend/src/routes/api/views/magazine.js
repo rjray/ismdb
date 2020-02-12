@@ -14,20 +14,6 @@ const {
 
 let router = express.Router()
 
-router.get("/namesandissues", (req, res) => {
-  Magazine.findAll({
-    attributes: ["id", "name"],
-    order: ["name"],
-    include: [{ model: MagazineIssue, attributes: ["number"] }],
-  })
-    .then(magazines => {
-      res.send({ status: "success", magazines })
-    })
-    .catch(error => {
-      res.send({ status: "error", error })
-    })
-})
-
 router.get("/all", (req, res) => {
   const query = `
     SELECT m.*, COUNT(mi.id) AS issues
