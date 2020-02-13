@@ -42,19 +42,17 @@ const validationSchema = Yup.object().shape({
     .nullable(),
 })
 
-const MagazineForm = ({ languages, magazine }) => {
+const MagazineForm = ({ magazine, languages, action, submitHandler }) => {
   let initialValues = { ...magazine }
   initialValues.createdAt = new Date(initialValues.createdAt)
   initialValues.updatedAt = new Date(initialValues.updatedAt)
+  initialValues.action = action
 
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={(values, actions) => {
-        alert(JSON.stringify(values, null, 2))
-        actions.setSubmitting(false)
-      }}
+      onSubmit={submitHandler}
     >
       {({
         handleChange,
@@ -77,6 +75,7 @@ const MagazineForm = ({ languages, magazine }) => {
                 onChange={handleChange}
                 name="name"
                 placeholder="Name"
+                autoFocus
                 data-lpignore="true"
               />
             </Col>

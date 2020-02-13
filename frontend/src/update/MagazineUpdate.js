@@ -11,6 +11,11 @@ import useDataApi from "../utils/data-api"
 import Header from "../styles/Header"
 import MagazineForm from "../forms/MagazineForm"
 
+const submitHandler = (values, actions) => {
+  alert(JSON.stringify(values, null, 2))
+  actions.setSubmitting(false)
+}
+
 const MagazineUpdate = props => {
   let id = props.match.params.id
 
@@ -51,7 +56,7 @@ const MagazineUpdate = props => {
             </LinkContainer>
           </Col>
         </Row>
-        <MagazineForm {...data} />
+        <MagazineForm submitHandler={submitHandler} action="update" {...data} />
       </>
     )
   }
