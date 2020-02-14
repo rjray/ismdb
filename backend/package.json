@@ -9,6 +9,7 @@
   "author": "Randy J. Ray <rjray@blackperl.com>",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "date-fns": "^2.8.1",
     "dotenv": "^8.2.0",
