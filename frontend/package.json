@@ -9,6 +9,7 @@
     "axios": "^0.19.2",
     "bootstrap": "^4.4.1",
     "date-fns": "^2.9.0",
+    "deep-equal": "^2.0.1",
     "formik": "^2.1.4",
     "lodash": "^4.17.15",
     "react": "^16.12.0",
