@@ -6,15 +6,14 @@ import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
+import deepEqual from "deep-equal"
 
 import useDataApi from "../utils/data-api"
+import { setupCRUDHandler } from "../utils/crud"
 import Header from "../styles/Header"
 import MagazineForm from "../forms/MagazineForm"
 
-const submitHandler = (values, actions) => {
-  alert(JSON.stringify(values, null, 2))
-  actions.setSubmitting(false)
-}
+const crudHandler = setupCRUDHandler({ type: "magazine" })
 
 const MagazineUpdate = props => {
   let id = props.match.params.id
@@ -43,6 +42,21 @@ const MagazineUpdate = props => {
     )
   } else {
     const magazine = data.magazine
+
+    const submitHandler = (values, formikBag) => {
+      let oldMagazine = { ...magazine }
+      let newMagazine = { ...values }
+      for (let key of ["action", "createdAt", "updatedAt"]) {
+        delete oldMagazine[key]
+        delete newMagazine[key]
+      }
+
+      if (!deepEqual(oldMagazine, newMagazine)) {
+        //alert(JSON.stringify(values, null, 2))
+        crudHandler(values, formikBag)
+      }
+      formikBag.setSubmitting(false)
+    }
 
     content = (
       <>

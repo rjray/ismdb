@@ -7,11 +7,11 @@ import axios from "axios"
 import apiEndpoint from "./api-endpoint"
 
 const setupCRUDHandler = params => {
-  return (values, actions) => submitCRUDForm(params, values, actions)
+  return (values, formikBag) => submitCRUDForm(params, values, formikBag)
 }
 
-const submitCRUDForm = (params, values, actions) => {
-  const { type } = params
+const submitCRUDForm = (params, values, formikBag) => {
+  const { type, onSuccess, onError } = params
   const { action } = values
 
   axios
@@ -19,15 +19,15 @@ const submitCRUDForm = (params, values, actions) => {
     .then(res => {
       let status = res.data.status
       if (status === "success") {
-        alert("Success")
+        onSuccess && onSuccess(res.data)
       } else if (status === "error") {
-        alert(`Error: ${res.data.error.message}`)
+        onError && onError(res.data.error)
       }
-      actions.setSubmitting(false)
+      formikBag.setSubmitting(false)
     })
     .catch(error => {
-      alert(`Error: ${error.message}`)
-      actions.setSubmitting(false)
+      onError && onError(error)
+      formikBag.setSubmitting(false)
     })
 }
 
