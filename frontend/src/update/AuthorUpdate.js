@@ -14,7 +14,7 @@ import AuthorForm from "../forms/AuthorForm"
 const AuthorUpdate = props => {
   let id = props.match.params.id
 
-  const [{ data, loading, error }] = useDataApi(`/api/author/${id}`, {
+  const [{ data, loading, error }] = useDataApi(`/api/retrieve/author/${id}`, {
     data: {},
   })
   let content

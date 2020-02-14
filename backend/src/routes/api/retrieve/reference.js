@@ -1,24 +1,24 @@
 /*
- * Functionality for /api/magazine
+ * Functionality for /api/reference
  */
 
 const express = require("express")
 const _ = require("lodash")
 
-const { Magazine } = require("../../models")
+const { Reference, RecordType, MagazineIssue } = require("../../../models")
 
 let router = express.Router()
 
 router.get("/:id(\\d+)", (req, res) => {
   let id = req.params.id
 
-  Magazine.findByPk(id)
-    .then(magazine => {
-      if (magazine) {
-        magazine = magazine.get()
-        res.send({ status: "success", magazine })
+  Reference.findByPk(id, { include: [RecordType, MagazineIssue] })
+    .then(reference => {
+      if (reference) {
+        reference = reference.get()
+        res.send({ status: "success", reference })
       } else {
-        let error = { message: `No magazine with id "${id}" found` }
+        let error = { message: `No reference with id "${id}" found` }
         res.send({ status: "error", error })
       }
     })

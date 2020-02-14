@@ -5,7 +5,7 @@
 const express = require("express")
 const _ = require("lodash")
 
-const { Author, AuthorAlias } = require("../../models")
+const { Author, AuthorAlias } = require("../../../models")
 
 let router = express.Router()
 
