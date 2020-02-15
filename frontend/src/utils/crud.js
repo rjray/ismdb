@@ -19,9 +19,9 @@ const submitCRUDForm = (params, values, formikBag) => {
     .then(res => {
       let status = res.data.status
       if (status === "success") {
-        onSuccess && onSuccess(res.data)
+        onSuccess && onSuccess(res.data, formikBag)
       } else if (status === "error") {
-        onError && onError(res.data.error)
+        onError && onError(res.data.error, formikBag)
       }
       formikBag.setSubmitting(false)
     })
@@ -31,4 +31,4 @@ const submitCRUDForm = (params, values, formikBag) => {
     })
 }
 
-export { setupCRUDHandler, submitCRUDForm }
+export default setupCRUDHandler
