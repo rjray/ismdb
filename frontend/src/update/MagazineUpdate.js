@@ -9,11 +9,25 @@ import ScaleLoader from "react-spinners/ScaleLoader"
 import deepEqual from "deep-equal"
 
 import useDataApi from "../utils/data-api"
-import { setupCRUDHandler } from "../utils/crud"
+import setupCRUDHandler from "../utils/crud"
 import Header from "../styles/Header"
 import MagazineForm from "../forms/MagazineForm"
 
-const crudHandler = setupCRUDHandler({ type: "magazine" })
+const crudHandler = setupCRUDHandler({
+  type: "magazine",
+  onSuccess: (data, formikBag) => {
+    let magazine = { ...data.magazine }
+    magazine.createdAt = new Date(magazine.createdAt)
+    magazine.updatedAt = new Date(magazine.updatedAt)
+    for (let field in magazine) {
+      formikBag.setFieldValue(field, magazine[field], false)
+    }
+  },
+  onError: (error, formikBag) => {
+    alert(`Error during update: ${error.message}`)
+    formikBag.resetForm()
+  },
+})
 
 const MagazineUpdate = props => {
   let id = props.match.params.id
