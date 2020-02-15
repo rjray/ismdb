@@ -24,7 +24,7 @@ const crudHandler = setupCRUDHandler({
     }
   },
   onError: (error, formikBag) => {
-    alert(`Error during update: ${error.message}`)
+    alert(`Error during magazine update: ${error.message}`)
     formikBag.resetForm()
   },
 })
