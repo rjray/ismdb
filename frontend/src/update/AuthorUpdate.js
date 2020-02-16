@@ -6,10 +6,30 @@ import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
+import deepEqual from "deep-equal"
+import _ from "lodash"
 
 import useDataApi from "../utils/data-api"
+import setupCRUDHandler from "../utils/crud"
 import Header from "../styles/Header"
 import AuthorForm from "../forms/AuthorForm"
+
+const crudHandler = setupCRUDHandler({
+  type: "author",
+  onSuccess: (data, formikBag) => {
+    let author = { ...data.author }
+    author.aliases = _.sortBy(author.aliases, o => o.name).map(item => {
+      return { name: item.name, id: item.id, deleted: false }
+    })
+    for (let field in author) {
+      formikBag.setFieldValue(field, author[field], false)
+    }
+  },
+  onError: (error, formikBag) => {
+    alert(`Error during update: ${error.message}`)
+    formikBag.resetForm()
+  },
+})
 
 const AuthorUpdate = props => {
   let id = props.match.params.id
@@ -35,6 +55,21 @@ const AuthorUpdate = props => {
     )
   } else {
     const author = data.author
+    author.aliases = _.sortBy(author.AuthorAliases, o => o.name).map(item => {
+      return { name: item.name, id: item.id, deleted: false }
+    })
+    delete author.AuthorAliases
+
+    const submitHandler = (values, formikBag) => {
+      let oldAuthor = { ...author }
+      let newAuthor = { ...values }
+      delete newAuthor.action
+
+      if (!deepEqual(oldAuthor, newAuthor)) {
+        crudHandler(values, formikBag)
+      }
+      formikBag.setSubmitting(false)
+    }
 
     content = (
       <>
@@ -48,7 +83,11 @@ const AuthorUpdate = props => {
             </LinkContainer>
           </Col>
         </Row>
-        <AuthorForm author={author} />
+        <AuthorForm
+          author={author}
+          action="update"
+          submitHandler={submitHandler}
+        />
       </>
     )
   }

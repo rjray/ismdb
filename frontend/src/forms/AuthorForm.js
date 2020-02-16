@@ -5,7 +5,6 @@ import Button from "react-bootstrap/Button"
 import Container from "react-bootstrap/Container"
 import { Formik, Field, FieldArray, ErrorMessage } from "formik"
 import { MdDelete, MdSettingsBackupRestore } from "react-icons/md"
-import _ from "lodash"
 import * as Yup from "yup"
 
 const validationSchema = Yup.object().shape({
@@ -37,22 +36,14 @@ const validationSchema = Yup.object().shape({
   ),
 })
 
-const AuthorForm = ({ author }) => {
-  let initialValues = {
-    name: author.name,
-    aliases: _.sortBy(author.AuthorAliases, o => o.name).map(item => {
-      return { name: item.name, id: item.id, deleted: false }
-    }),
-  }
+const AuthorForm = ({ author, action, submitHandler }) => {
+  let initialValues = { ...author, action: action }
 
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={(values, actions) => {
-        alert(JSON.stringify(values, null, 2))
-        actions.setSubmitting(false)
-      }}
+      onSubmit={submitHandler}
     >
       {({
         values,
