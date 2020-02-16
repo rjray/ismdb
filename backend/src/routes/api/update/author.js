@@ -8,17 +8,6 @@ const { Author, AuthorAlias, sequelize } = require("../../../models")
 
 const router = express.Router()
 
-const getMethods = obj => {
-  let properties = new Set()
-  let currentObj = obj
-  do {
-    Object.getOwnPropertyNames(currentObj).map(item => properties.add(item))
-  } while ((currentObj = Object.getPrototypeOf(currentObj)))
-  return [...properties.keys()]
-    .filter(item => typeof obj[item] === "function")
-    .sort()
-}
-
 router.post("/", (req, res) => {
   const { action, id, ...body } = req.body
 
@@ -33,7 +22,6 @@ router.post("/", (req, res) => {
     .then(author => {
       try {
         return sequelize.transaction(async t => {
-          //console.log(JSON.stringify(getMethods(author), null, 2))
           if (body.name !== author.name) {
             await author.update({ name: body.name })
           }
