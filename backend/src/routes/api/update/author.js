@@ -23,7 +23,7 @@ router.post("/", (req, res) => {
       try {
         return sequelize.transaction(async t => {
           if (body.name !== author.name) {
-            await author.update({ name: body.name })
+            await author.update({ name: body.name }, { transaction: t })
           }
 
           let aliases = {},
@@ -61,17 +61,17 @@ router.post("/", (req, res) => {
             })
 
           for (let alias of toDelete) {
-            await author.removeAuthorAlias(alias)
-            await alias.destroy()
+            await author.removeAuthorAlias(alias, { transaction: t })
+            await alias.destroy({ transaction: t })
           }
           for (let alias of toUpdate) {
-            await alias.save()
+            await alias.save({ transaction: t })
           }
           for (let name of toAdd) {
-            await author.createAuthorAlias({ name: name })
+            await author.createAuthorAlias({ name: name }, { transaction: t })
           }
 
-          let newAliases = await author.getAuthorAliases()
+          let newAliases = await author.getAuthorAliases({ transaction: t })
           author = author.get()
           delete author.AuthorAliases
           author.aliases = newAliases.map(alias => {
