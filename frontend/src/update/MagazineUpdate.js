@@ -66,7 +66,6 @@ const MagazineUpdate = props => {
       }
 
       if (!deepEqual(oldMagazine, newMagazine)) {
-        //alert(JSON.stringify(values, null, 2))
         crudHandler(values, formikBag)
       }
       formikBag.setSubmitting(false)
