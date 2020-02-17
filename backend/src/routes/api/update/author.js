@@ -21,9 +21,9 @@ router.post("/", (req, res) => {
   Author.findByPk(id, { include: [AuthorAlias] })
     .then(author => {
       try {
-        return sequelize.transaction(async t => {
+        return sequelize.transaction(async txn => {
           if (body.name !== author.name) {
-            await author.update({ name: body.name }, { transaction: t })
+            await author.update({ name: body.name }, { transaction: txn })
           }
 
           let aliases = {},
@@ -61,17 +61,17 @@ router.post("/", (req, res) => {
             })
 
           for (let alias of toDelete) {
-            await author.removeAuthorAlias(alias, { transaction: t })
-            await alias.destroy({ transaction: t })
+            await author.removeAuthorAlias(alias, { transaction: txn })
+            await alias.destroy({ transaction: txn })
           }
           for (let alias of toUpdate) {
-            await alias.save({ transaction: t })
+            await alias.save({ transaction: txn })
           }
           for (let name of toAdd) {
-            await author.createAuthorAlias({ name: name }, { transaction: t })
+            await author.createAuthorAlias({ name: name }, { transaction: txn })
           }
 
-          let newAliases = await author.getAuthorAliases({ transaction: t })
+          let newAliases = await author.getAuthorAliases({ transaction: txn })
           author = author.get()
           delete author.AuthorAliases
           author.aliases = newAliases.map(alias => {

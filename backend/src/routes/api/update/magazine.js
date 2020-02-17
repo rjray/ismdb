@@ -31,7 +31,6 @@ router.post("/", (req, res) => {
       res.send({ status: "success", magazine })
     })
     .catch(error => {
-      error = error.errors[0]
       res.send({ status: "error", error })
     })
 })
