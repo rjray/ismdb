@@ -6,10 +6,28 @@ import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
+import deepEqual from "deep-equal"
 
 import useDataApi from "../utils/data-api"
+import setupCRUDHandler from "../utils/crud"
 import Header from "../styles/Header"
 import ReferenceForm from "../forms/ReferenceForm"
+
+const crudHandler = setupCRUDHandler({
+  type: "reference",
+  onSuccess: (data, formikBag) => {
+    let reference = { ...data.reference }
+    reference.createdAt = new Date(reference.createdAt)
+    reference.updatedAt = new Date(reference.updatedAt)
+    for (let field in reference) {
+      formikBag.setFieldValue(field, reference[field], false)
+    }
+  },
+  onError: (error, formikBag) => {
+    alert(`Error during reference update: ${error.message}`)
+    formikBag.resetForm()
+  },
+})
 
 const ReferenceUpdate = props => {
   let id = props.match.params.id
@@ -39,6 +57,36 @@ const ReferenceUpdate = props => {
   } else {
     const { reference } = data
 
+    reference.authors = reference.Authors.map(item => {
+      return { ...item, deleted: false }
+    })
+    delete reference.Authors
+    reference.createdAt = new Date(reference.createdAt)
+    reference.updatedAt = new Date(reference.updatedAt)
+    reference.MagazineId = reference.Magazine ? reference.Magazine.id : ""
+    reference.MagazineIssueNumber = reference.MagazineIssue
+      ? reference.MagazineIssue.number
+      : ""
+    delete reference.Magazine
+    delete reference.MagazineIssue
+    delete reference.RecordType
+    // Force this to a string:
+    reference.RecordTypeId = `${reference.RecordTypeId}`
+
+    const submitHandler = (values, formikBag) => {
+      let oldReference = { ...reference }
+      let newReference = { ...values }
+      for (let key of ["action", "createdAt", "updatedAt"]) {
+        delete oldReference[key]
+        delete newReference[key]
+      }
+
+      if (!deepEqual(oldReference, newReference)) {
+        crudHandler(values, formikBag)
+      }
+      formikBag.setSubmitting(false)
+    }
+
     content = (
       <>
         <Row>
@@ -51,7 +99,11 @@ const ReferenceUpdate = props => {
             </LinkContainer>
           </Col>
         </Row>
-        <ReferenceForm {...data} />
+        <ReferenceForm
+          {...data}
+          action="update"
+          submitHandler={submitHandler}
+        />
       </>
     )
   }

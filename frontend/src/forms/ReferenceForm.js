@@ -85,25 +85,15 @@ const validationSchema = Yup.object().shape({
     ),
 })
 
-const ReferenceForm = ({ recordtypes, magazines, languages, reference }) => {
-  let initialValues = { ...reference }
-  initialValues.authors = initialValues.Authors.map(item => {
-    return { ...item, deleted: false }
-  })
-  delete initialValues.Authors
-  initialValues.createdAt = new Date(initialValues.createdAt)
-  initialValues.updatedAt = new Date(initialValues.updatedAt)
-  initialValues.MagazineId = initialValues.Magazine
-    ? initialValues.Magazine.id
-    : ""
-  initialValues.MagazineIssueNumber = initialValues.MagazineIssue
-    ? initialValues.MagazineIssue.number
-    : ""
-  delete initialValues.Magazine
-  delete initialValues.MagazineIssue
-  delete initialValues.RecordType
-  // Force this to a string:
-  initialValues.RecordTypeId = `${initialValues.RecordTypeId}`
+const ReferenceForm = ({
+  recordtypes,
+  magazines,
+  languages,
+  reference,
+  action,
+  submitHandler,
+}) => {
+  let initialValues = { ...reference, action: action }
 
   let issues = {}
   for (let magazine of magazines) {
