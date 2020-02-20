@@ -55,10 +55,6 @@ const AuthorUpdate = props => {
     )
   } else {
     const author = data.author
-    author.aliases = _.sortBy(author.AuthorAliases, o => o.name).map(item => {
-      return { name: item.name, id: item.id, deleted: false }
-    })
-    delete author.AuthorAliases
 
     const submitHandler = (values, formikBag) => {
       let oldAuthor = { ...author }

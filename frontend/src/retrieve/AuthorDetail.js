@@ -22,7 +22,7 @@ const AuthorDetail = ({ id }) => {
     content = (
       <>
         <h3>An Error Occurred</h3>
-        <p>An error occurred trying to load all the authors:</p>
+        <p>An error occurred trying to load author:</p>
         <p>{error.message}</p>
       </>
     )
@@ -34,7 +34,7 @@ const AuthorDetail = ({ id }) => {
     )
   } else {
     const author = data.author
-    const references = author.References
+    const references = author.references
     const pagination = references.length < 26 ? { pagination: false } : {}
 
     content = (
@@ -52,7 +52,9 @@ const AuthorDetail = ({ id }) => {
             </LinkContainer>
           </Col>
         </Row>
-        {author.AuthorAliases.length > 0 && <AuthorAliases author={author} />}
+        {author.aliases.length > 0 && (
+          <AuthorAliases aliases={author.aliases} />
+        )}
         <Row>
           <Col>
             <ReferenceTable data={references} {...pagination} />

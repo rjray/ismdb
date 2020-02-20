@@ -24,7 +24,7 @@ const AuthorExpand = props => {
           </LinkContainer>
         </Col>
       </Row>
-      {author.AuthorAliases.length > 0 && <AuthorAliases author={author} />}
+      {author.aliases.length > 0 && <AuthorAliases aliases={author.aliases} />}
     </Container>
   )
 }
