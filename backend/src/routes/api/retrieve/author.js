@@ -3,37 +3,23 @@
  */
 
 const express = require("express")
-const _ = require("lodash")
 
-const { Author, AuthorAlias } = require("../../../models")
+const { fetchSingleAuthorSimple } = require("../../../db/authors")
 
 let router = express.Router()
 
 router.get("/:id(\\d+)", (req, res) => {
   const id = req.params.id
 
-  Author.findByPk(id, { include: [AuthorAlias] })
+  fetchSingleAuthorSimple(id)
     .then(author => {
       if (author) {
-        author = author.get()
-        author.AuthorAliases = author.AuthorAliases.map(item => {
-          item = item.get()
-          delete item.AuthorId
-          return item
-        })
         res.send({ status: "success", author })
       } else {
-        let error = { message: `No author with id "${id}" found` }
-        res.send({ status: "error", error })
+        res.send({ status: "error", error: `No author with id "${id}" found` })
       }
     })
     .catch(error => {
-      if (_.isEmpty(error)) {
-        error = {
-          message: "Empty exception thrown!",
-        }
-      }
-
       res.send({ status: "error", error })
     })
 })
