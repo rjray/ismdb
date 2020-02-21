@@ -7,7 +7,6 @@ import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 import deepEqual from "deep-equal"
-import _ from "lodash"
 
 import useDataApi from "../utils/data-api"
 import setupCRUDHandler from "../utils/crud"
@@ -17,8 +16,9 @@ import AuthorForm from "../forms/AuthorForm"
 const crudHandler = setupCRUDHandler({
   type: "author",
   onSuccess: (data, formikBag) => {
+    console.log(JSON.stringify(data, null, 2))
     let author = { ...data.author }
-    author.aliases = _.sortBy(author.aliases, o => o.name).map(item => {
+    author.aliases = author.aliases.map(item => {
       return { name: item.name, id: item.id, deleted: false }
     })
     for (let field in author) {
