@@ -105,7 +105,7 @@ const fetchAllAuthorsWithRefcount = async () => {
 
 // Update a single author using the content in data.
 const updateAuthor = async (id, data) => {
-  Author.findByPk(id, { include: [AuthorAlias] })
+  return Author.findByPk(id, { include: [AuthorAlias] })
     .then(author => {
       return sequelize.transaction(async txn => {
         if (data.name !== author.name) {
