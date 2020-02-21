@@ -4,7 +4,7 @@
 
 const express = require("express")
 
-const { Author, AuthorAlias, sequelize } = require("../../../models")
+const { updateAuthor } = require("../../../db/authors")
 
 const router = express.Router()
 
@@ -14,75 +14,13 @@ router.post("/", (req, res) => {
   if (action !== "update") {
     res.send({
       status: "error",
-      error: { message: "Invalid data packet for update" },
+      error: new Error("Invalid data packet for update"),
     })
   }
 
-  Author.findByPk(id, { include: [AuthorAlias] })
+  updateAuthor(id, body)
     .then(author => {
-      try {
-        return sequelize.transaction(async txn => {
-          if (body.name !== author.name) {
-            await author.update({ name: body.name }, { transaction: txn })
-          }
-
-          let aliases = {},
-            toDelete = [],
-            toAdd = [],
-            toUpdate = []
-          author.AuthorAliases.forEach(alias => (aliases[alias.id] = alias))
-
-          // Gather those that should be deleted. This will create an array of
-          // object due to using the table derived from author.
-          body.aliases
-            .filter(alias => alias.id != 0 && alias.deleted)
-            .forEach(alias => {
-              if (aliases.hasOwnProperty(alias.id)) {
-                toDelete.push(aliases[alias.id])
-              }
-            })
-          // Gather those that should be added. For this, we only need the name
-          // field.
-          body.aliases
-            .filter(alias => alias.id == 0 && alias.name.length != 0)
-            .forEach(alias => toAdd.push(alias.name))
-          // Gather the ones that need to be updated. Here we use setName and
-          // store the object itself (as taken from the table).
-          body.aliases
-            .filter(alias => alias.id != 0 && !alias.deleted)
-            .forEach(alias => {
-              if (aliases.hasOwnProperty(alias.id)) {
-                if (aliases[alias.id].name != alias.name) {
-                  let aliasToUpdate = aliases[alias.id]
-                  aliasToUpdate.name = alias.name
-                  toUpdate.push(aliasToUpdate)
-                }
-              }
-            })
-
-          for (let alias of toDelete) {
-            await author.removeAuthorAlias(alias, { transaction: txn })
-            await alias.destroy({ transaction: txn })
-          }
-          for (let alias of toUpdate) {
-            await alias.save({ transaction: txn })
-          }
-          for (let name of toAdd) {
-            await author.createAuthorAlias({ name: name }, { transaction: txn })
-          }
-
-          let newAliases = await author.getAuthorAliases({ transaction: txn })
-          author = author.get()
-          delete author.AuthorAliases
-          author.aliases = newAliases.map(alias => {
-            return { name: alias.name, id: alias.id }
-          })
-
-          res.send({ status: "success", author })
-        })
-      } catch (error) {
-        res.send({ status: "error", error })
-      }
+      res.send({ status: "success", author })
     })
     .catch(error => {
       res.send({ status: "error", error })
