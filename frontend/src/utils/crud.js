@@ -23,11 +23,9 @@ const submitCRUDForm = (params, values, formikBag) => {
       } else if (status === "error") {
         onError && onError(res.data.error, formikBag)
       }
-      formikBag.setSubmitting(false)
     })
     .catch(error => {
       onError && onError(error, formikBag)
-      formikBag.setSubmitting(false)
     })
 }
 
