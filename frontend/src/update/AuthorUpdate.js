@@ -16,7 +16,6 @@ import AuthorForm from "../forms/AuthorForm"
 const crudHandler = setupCRUDHandler({
   type: "author",
   onSuccess: (data, formikBag) => {
-    console.log(JSON.stringify(data, null, 2))
     let author = { ...data.author }
     author.aliases = author.aliases.map(item => {
       return { name: item.name, id: item.id, deleted: false }
