@@ -1,10 +1,11 @@
-import React from "react"
+import React, { useState } from "react"
 import { LinkContainer } from "react-router-bootstrap"
 import { Helmet } from "react-helmet"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
+import Toast from "react-bootstrap/Toast"
 import ScaleLoader from "react-spinners/ScaleLoader"
 import deepEqual from "deep-equal"
 
@@ -13,25 +14,11 @@ import setupCRUDHandler from "../utils/crud"
 import Header from "../styles/Header"
 import AuthorForm from "../forms/AuthorForm"
 
-const crudHandler = setupCRUDHandler({
-  type: "author",
-  onSuccess: (data, formikBag) => {
-    let author = { ...data.author }
-    author.aliases = author.aliases.map(item => {
-      return { name: item.name, id: item.id, deleted: false }
-    })
-    for (let field in author) {
-      formikBag.setFieldValue(field, author[field], false)
-    }
-  },
-  onError: (error, formikBag) => {
-    alert(`Error during update: ${error.message}`)
-    formikBag.resetForm()
-  },
-})
-
 const AuthorUpdate = props => {
-  let id = props.match.params.id
+  const id = props.match.params.id
+  const [show, setShow] = useState(false)
+  const [showResult, setShowResult] = useState("")
+  const [showResultMessage, setShowResultMessage] = useState("")
 
   const [{ data, loading, error }] = useDataApi(`/api/retrieve/author/${id}`, {
     data: {},
@@ -54,6 +41,29 @@ const AuthorUpdate = props => {
     )
   } else {
     const author = data.author
+
+    const crudHandler = setupCRUDHandler({
+      type: "author",
+      onSuccess: (data, formikBag) => {
+        let author = { ...data.author }
+        author.aliases = author.aliases.map(item => {
+          return { name: item.name, id: item.id, deleted: false }
+        })
+        for (let field in author) {
+          formikBag.setFieldValue(field, author[field], false)
+        }
+        setShow(true)
+        setShowResult("Success")
+        setShowResultMessage("Author succesfully updated")
+      },
+      onError: (error, formikBag) => {
+        alert(`Error during update: ${error.message}`)
+        formikBag.resetForm()
+        setShow(true)
+        setShowResult("Error")
+        setShowResultMessage(`Update failed: ${data.error.message}`)
+      },
+    })
 
     const submitHandler = (values, formikBag) => {
       let oldAuthor = { ...author }
@@ -92,6 +102,24 @@ const AuthorUpdate = props => {
       <Helmet>
         <title>Author Update</title>
       </Helmet>
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        style={{ position: "relative" }}
+      >
+        <Toast
+          onClose={() => setShow(false)}
+          show={show}
+          delay={5000}
+          autohide
+          style={{ zIndex: 1000, position: "absolute", top: 0, right: 0 }}
+        >
+          <Toast.Header>
+            <strong className="mr-auto">{showResult}</strong>
+          </Toast.Header>
+          <Toast.Body>{showResultMessage}</Toast.Body>
+        </Toast>
+      </div>
       <Container className="mt-2">{content}</Container>
     </>
   )
