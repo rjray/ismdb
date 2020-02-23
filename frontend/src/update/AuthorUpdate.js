@@ -5,7 +5,6 @@ import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
-import Toast from "react-bootstrap/Toast"
 import ScaleLoader from "react-spinners/ScaleLoader"
 import deepEqual from "deep-equal"
 
@@ -13,13 +12,11 @@ import useDataApi from "../utils/data-api"
 import setupCRUDHandler from "../utils/crud"
 import Header from "../styles/Header"
 import AuthorForm from "../forms/AuthorForm"
+import Notifications from "../components/Notifications"
 
 const AuthorUpdate = props => {
   const id = props.match.params.id
-  const [show, setShow] = useState(false)
-  const [showResult, setShowResult] = useState("")
-  const [showResultMessage, setShowResultMessage] = useState("")
-
+  const [notifications, setNotifications] = useState([])
   const [{ data, loading, error }] = useDataApi(`/api/retrieve/author/${id}`, {
     data: {},
   })
@@ -46,22 +43,39 @@ const AuthorUpdate = props => {
       type: "author",
       onSuccess: (data, formikBag) => {
         let author = { ...data.author }
+        let notes
+
         author.aliases = author.aliases.map(item => {
           return { name: item.name, id: item.id, deleted: false }
         })
         for (let field in author) {
           formikBag.setFieldValue(field, author[field], false)
         }
-        setShow(true)
-        setShowResult("Success")
-        setShowResultMessage("Author succesfully updated")
+
+        if (data.notifications) {
+          notes = data.notifications
+        } else {
+          notes = []
+        }
+        notes.push({
+          status: "success",
+          result: "Update success",
+          resultMessage: `Author "${author.name}" successfully updated`,
+        })
+        setNotifications([])
+        setNotifications(notes)
       },
       onError: (error, formikBag) => {
-        alert(`Error during update: ${error.message}`)
         formikBag.resetForm()
-        setShow(true)
-        setShowResult("Error")
-        setShowResultMessage(`Update failed: ${data.error.message}`)
+        const notes = [
+          {
+            status: "error",
+            result: "Update error",
+            resultMessage: `Error during update: ${error.message}`,
+          },
+        ]
+        setNotifications([])
+        setNotifications(notes)
       },
     })
 
@@ -102,24 +116,7 @@ const AuthorUpdate = props => {
       <Helmet>
         <title>Author Update</title>
       </Helmet>
-      <div
-        aria-live="polite"
-        aria-atomic="true"
-        style={{ position: "relative" }}
-      >
-        <Toast
-          onClose={() => setShow(false)}
-          show={show}
-          delay={5000}
-          autohide
-          style={{ zIndex: 1000, position: "absolute", top: 0, right: 0 }}
-        >
-          <Toast.Header>
-            <strong className="mr-auto">{showResult}</strong>
-          </Toast.Header>
-          <Toast.Body>{showResultMessage}</Toast.Body>
-        </Toast>
-      </div>
+      <Notifications notifications={notifications} />
       <Container className="mt-2">{content}</Container>
     </>
   )
