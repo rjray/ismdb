@@ -7,6 +7,7 @@ import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 import deepEqual from "deep-equal"
+import _ from "lodash"
 
 import useDataApi from "../utils/data-api"
 import setupCRUDHandler from "../utils/crud"
@@ -17,6 +18,7 @@ import Notifications from "../components/Notifications"
 const AuthorUpdate = props => {
   const id = props.match.params.id
   const [notifications, setNotifications] = useState([])
+  const [masterAuthor, setMasterAuthor] = useState({})
   const [{ data, loading, error }] = useDataApi(`/api/retrieve/author/${id}`, {
     data: {},
   })
@@ -37,7 +39,7 @@ const AuthorUpdate = props => {
       </div>
     )
   } else {
-    const author = data.author
+    const author = _.isEmpty(masterAuthor) ? data.author : masterAuthor
 
     const crudHandler = setupCRUDHandler({
       type: "author",
@@ -64,6 +66,8 @@ const AuthorUpdate = props => {
         })
         setNotifications([])
         setNotifications(notes)
+
+        setMasterAuthor(author)
       },
       onError: (error, formikBag) => {
         formikBag.resetForm()
@@ -83,6 +87,7 @@ const AuthorUpdate = props => {
       let oldAuthor = { ...author }
       let newAuthor = { ...values }
       delete newAuthor.action
+      oldAuthor.aliases.forEach(item => (item.deleted = false))
 
       if (!deepEqual(oldAuthor, newAuthor)) {
         crudHandler(values, formikBag)

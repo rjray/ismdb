@@ -7,6 +7,7 @@ import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import ScaleLoader from "react-spinners/ScaleLoader"
 import deepEqual from "deep-equal"
+import _ from "lodash"
 
 import useDataApi from "../utils/data-api"
 import setupCRUDHandler from "../utils/crud"
@@ -17,6 +18,7 @@ import Notifications from "../components/Notifications"
 const MagazineUpdate = props => {
   const id = props.match.params.id
   const [notifications, setNotifications] = useState([])
+  const [masterMagazine, setMasterMagazine] = useState({})
   const [{ data, loading, error }] = useDataApi(
     `/api/views/combo/editmagazine/${id}`,
     {
@@ -40,9 +42,7 @@ const MagazineUpdate = props => {
       </div>
     )
   } else {
-    const magazine = data.magazine
-    console.log("Magazine record @ form-render:")
-    console.log(JSON.stringify(magazine, null, 2))
+    const magazine = _.isEmpty(masterMagazine) ? data.magazine : masterMagazine
 
     const crudHandler = setupCRUDHandler({
       type: "magazine",
@@ -68,6 +68,8 @@ const MagazineUpdate = props => {
         })
         setNotifications([])
         setNotifications(notes)
+
+        setMasterMagazine(magazine)
       },
       onError: (error, formikBag) => {
         formikBag.resetForm()
@@ -86,8 +88,6 @@ const MagazineUpdate = props => {
     const submitHandler = (values, formikBag) => {
       let oldMagazine = { ...magazine }
       let newMagazine = { ...values }
-      console.log(JSON.stringify(oldMagazine, null, 2))
-      console.log(JSON.stringify(newMagazine, null, 2))
       for (let key of ["action", "createdAt", "updatedAt"]) {
         delete oldMagazine[key]
         delete newMagazine[key]
@@ -95,8 +95,6 @@ const MagazineUpdate = props => {
 
       if (!deepEqual(oldMagazine, newMagazine)) {
         crudHandler(values, formikBag)
-      } else {
-        console.log("No change, no post.")
       }
       formikBag.setSubmitting(false)
     }
