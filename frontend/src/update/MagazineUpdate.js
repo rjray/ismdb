@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { LinkContainer } from "react-router-bootstrap"
 import { Helmet } from "react-helmet"
 import Container from "react-bootstrap/Container"
@@ -12,26 +12,11 @@ import useDataApi from "../utils/data-api"
 import setupCRUDHandler from "../utils/crud"
 import Header from "../styles/Header"
 import MagazineForm from "../forms/MagazineForm"
-
-const crudHandler = setupCRUDHandler({
-  type: "magazine",
-  onSuccess: (data, formikBag) => {
-    let magazine = { ...data.magazine }
-    magazine.createdAt = new Date(magazine.createdAt)
-    magazine.updatedAt = new Date(magazine.updatedAt)
-    for (let field in magazine) {
-      formikBag.setFieldValue(field, magazine[field], false)
-    }
-  },
-  onError: (error, formikBag) => {
-    alert(`Error during magazine update: ${error.message}`)
-    formikBag.resetForm()
-  },
-})
+import Notifications from "../components/Notifications"
 
 const MagazineUpdate = props => {
-  let id = props.match.params.id
-
+  const id = props.match.params.id
+  const [notifications, setNotifications] = useState([])
   const [{ data, loading, error }] = useDataApi(
     `/api/views/combo/editmagazine/${id}`,
     {
@@ -56,10 +41,53 @@ const MagazineUpdate = props => {
     )
   } else {
     const magazine = data.magazine
+    console.log("Magazine record @ form-render:")
+    console.log(JSON.stringify(magazine, null, 2))
+
+    const crudHandler = setupCRUDHandler({
+      type: "magazine",
+      onSuccess: (data, formikBag) => {
+        let magazine = { ...data.magazine }
+        let notes
+
+        magazine.createdAt = new Date(magazine.createdAt)
+        magazine.updatedAt = new Date(magazine.updatedAt)
+        for (let field in magazine) {
+          formikBag.setFieldValue(field, magazine[field], false)
+        }
+
+        if (data.notifications) {
+          notes = data.notifications
+        } else {
+          notes = []
+        }
+        notes.push({
+          status: "success",
+          result: "Update success",
+          resultMessage: `Magazine "${magazine.name}" successfully updated`,
+        })
+        setNotifications([])
+        setNotifications(notes)
+      },
+      onError: (error, formikBag) => {
+        formikBag.resetForm()
+        const notes = [
+          {
+            status: "error",
+            result: "Update error",
+            resultMessage: `Error during update: ${error.message}`,
+          },
+        ]
+        setNotifications([])
+        setNotifications(notes)
+      },
+    })
 
     const submitHandler = (values, formikBag) => {
       let oldMagazine = { ...magazine }
       let newMagazine = { ...values }
+      console.log(JSON.stringify(oldMagazine, null, 2))
+      console.log(JSON.stringify(newMagazine, null, 2))
       for (let key of ["action", "createdAt", "updatedAt"]) {
         delete oldMagazine[key]
         delete newMagazine[key]
@@ -67,6 +95,8 @@ const MagazineUpdate = props => {
 
       if (!deepEqual(oldMagazine, newMagazine)) {
         crudHandler(values, formikBag)
+      } else {
+        console.log("No change, no post.")
       }
       formikBag.setSubmitting(false)
     }
@@ -93,6 +123,7 @@ const MagazineUpdate = props => {
       <Helmet>
         <title>Magazine Update</title>
       </Helmet>
+      <Notifications notifications={notifications} />
       <Container className="mt-2">{content}</Container>
     </>
   )
