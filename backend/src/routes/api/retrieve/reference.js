@@ -4,17 +4,16 @@
 
 const express = require("express")
 
-const { Reference, RecordType, MagazineIssue } = require("../../../models")
+const { fetchSingleReferenceSimple } = require("../../../db/references")
 
 let router = express.Router()
 
 router.get("/:id(\\d+)", (req, res) => {
   const id = req.params.id
 
-  Reference.findByPk(id, { include: [RecordType, MagazineIssue] })
+  fetchSingleReferenceSimple(id)
     .then(reference => {
       if (reference) {
-        reference = reference.get()
         res.send({ status: "success", reference })
       } else {
         res.send({
