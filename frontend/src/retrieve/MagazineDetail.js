@@ -42,7 +42,7 @@ const sortRows = (rows, field, direction) => {
 }
 
 const MagazineDetailExpand = props => {
-  let references = props.data.References
+  let references = props.data.references
 
   let columns = [
     {
@@ -137,7 +137,7 @@ const MagazineDetail = ({ id }) => {
       {
         name: <b>References</b>,
         selector: "References",
-        format: row => row.References.length,
+        format: row => row.references.length,
       },
       {
         name: <b>Added</b>,
@@ -165,7 +165,7 @@ const MagazineDetail = ({ id }) => {
       },
     ]
     let pagination =
-      magazine.MagazineIssues.length < 26
+      magazine.issues.length < 26
         ? {}
         : { pagination: true, paginationPerPage: 25 }
 
@@ -223,7 +223,7 @@ const MagazineDetail = ({ id }) => {
               expandableRowsHideExpander
               expandableRowsComponent={<MagazineDetailExpand />}
               columns={columns}
-              data={magazine.MagazineIssues}
+              data={magazine.issues}
               {...pagination}
             />
           </Col>

@@ -53,7 +53,7 @@ const MagazineExpand = props => {
     )
   } else {
     let magazine = data.magazine
-    let issues = magazine.MagazineIssues.sort((a, b) =>
+    let issues = magazine.issues.sort((a, b) =>
       compareVersion(a.number, b.number)
     )
     let chunks = _.chunk(issues, 10)
