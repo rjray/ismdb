@@ -66,7 +66,7 @@ router.get("/editreference/:id(\\d+)?", (req, res) => {
       if (!_.isEmpty(reference)) {
         reference = reference.get()
 
-        reference.Authors = reference.Authors.sort(
+        reference.authors = reference.Authors.sort(
           (a, b) => a.AuthorsReferences.order - b.AuthorsReferences.order
         ).map(author => {
           author = author.get()
@@ -74,6 +74,7 @@ router.get("/editreference/:id(\\d+)?", (req, res) => {
           delete author.AuthorsReferences
           return author
         })
+        delete reference.Authors
 
         if (reference.MagazineIssue) {
           reference.Magazine = reference.MagazineIssue.Magazine.get()
