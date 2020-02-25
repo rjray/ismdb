@@ -3,14 +3,13 @@
  */
 
 const express = require("express")
-const _ = require("lodash")
 
 const { Reference, RecordType, MagazineIssue } = require("../../../models")
 
 let router = express.Router()
 
 router.get("/:id(\\d+)", (req, res) => {
-  let id = req.params.id
+  const id = req.params.id
 
   Reference.findByPk(id, { include: [RecordType, MagazineIssue] })
     .then(reference => {
@@ -18,17 +17,13 @@ router.get("/:id(\\d+)", (req, res) => {
         reference = reference.get()
         res.send({ status: "success", reference })
       } else {
-        let error = { message: `No reference with id "${id}" found` }
-        res.send({ status: "error", error })
+        res.send({
+          status: "error",
+          error: new Error(`No reference with id "${id}" found`),
+        })
       }
     })
     .catch(error => {
-      if (_.isEmpty(error)) {
-        error = {
-          message: "Empty exception thrown!",
-        }
-      }
-
       res.send({ status: "error", error })
     })
 })
