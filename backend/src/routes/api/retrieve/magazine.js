@@ -3,32 +3,26 @@
  */
 
 const express = require("express")
-const _ = require("lodash")
 
-const { Magazine } = require("../../../models")
+const { fetchSingleMagazineSimple } = require("../../../db/magazines")
 
 let router = express.Router()
 
 router.get("/:id(\\d+)", (req, res) => {
-  let id = req.params.id
+  const id = req.params.id
 
-  Magazine.findByPk(id)
+  fetchSingleMagazineSimple(id)
     .then(magazine => {
       if (magazine) {
-        magazine = magazine.get()
         res.send({ status: "success", magazine })
       } else {
-        let error = { message: `No magazine with id "${id}" found` }
-        res.send({ status: "error", error })
+        res.send({
+          status: "error",
+          error: `No magazine with id "${id}" found`,
+        })
       }
     })
     .catch(error => {
-      if (_.isEmpty(error)) {
-        error = {
-          message: "Empty exception thrown!",
-        }
-      }
-
       res.send({ status: "error", error })
     })
 })
