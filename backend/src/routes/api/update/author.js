@@ -9,14 +9,7 @@ const { updateAuthor } = require("../../../db/authors")
 const router = express.Router()
 
 router.post("/", (req, res) => {
-  const { action, id, ...body } = req.body
-
-  if (action !== "update") {
-    res.send({
-      status: "error",
-      error: new Error("Invalid data packet for update"),
-    })
-  }
+  const { id, ...body } = req.body
 
   updateAuthor(id, body)
     .then(author => {

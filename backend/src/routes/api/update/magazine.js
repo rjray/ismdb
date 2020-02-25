@@ -9,14 +9,7 @@ const { updateMagazine } = require("../../../db/magazines")
 const router = express.Router()
 
 router.post("/", (req, res) => {
-  const { action, id, ...body } = req.body
-
-  if (action !== "update") {
-    res.send({
-      status: "error",
-      error: { message: "Invalid data packet for update" },
-    })
-  }
+  const { id, ...body } = req.body
 
   updateMagazine(id, body)
     .then(magazine => {
