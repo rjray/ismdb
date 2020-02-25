@@ -26,7 +26,6 @@ router.get("/:id(\\d+)", (req, res) => {
 
   fetchSingleMagazineComplete(id)
     .then(magazine => {
-      console.log(JSON.stringify(magazine, null, 2))
       if (magazine) {
         res.send({ status: "success", magazine })
       } else {
