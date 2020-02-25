@@ -57,10 +57,9 @@ const ReferenceUpdate = props => {
   } else {
     const { reference } = data
 
-    reference.authors = reference.Authors.map(item => {
+    reference.authors = reference.authors.map(item => {
       return { ...item, deleted: false }
     })
-    delete reference.Authors
     reference.createdAt = new Date(reference.createdAt)
     reference.updatedAt = new Date(reference.updatedAt)
     reference.MagazineId = reference.Magazine ? reference.Magazine.id : ""

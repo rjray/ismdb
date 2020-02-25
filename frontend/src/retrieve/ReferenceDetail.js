@@ -12,12 +12,11 @@ import { formatDistanceToNow, format } from "date-fns"
 import useDataApi from "../utils/data-api"
 import Header from "../styles/Header"
 
-const FormatAuthors = props => {
-  let reference = props.reference
+const FormatAuthors = ({ reference }) => {
   let content = []
 
-  if (reference.Authors.length > 0) {
-    for (let author of reference.Authors) {
+  if (reference.authors.length > 0) {
+    for (let author of reference.authors) {
       content.push(
         <Link key={author.id} to={`/authors/${author.id}`}>
           {author.name}
@@ -119,7 +118,7 @@ const ReferenceDetail = ({ id }) => {
         </Row>
         <Row>
           <Col xs lg="2">
-            <b>{reference.Authors.length === 1 ? "Author: " : "Authors:"}</b>
+            <b>{reference.authors.length === 1 ? "Author: " : "Authors:"}</b>
           </Col>
           <Col lg="8">
             <FormatAuthors reference={reference} />

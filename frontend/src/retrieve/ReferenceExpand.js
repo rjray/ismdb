@@ -13,9 +13,9 @@ const FormatAuthors = props => {
   let reference = props.reference
   let content
 
-  if (reference.Authors.length > 0) {
-    content = [reference.Authors.length === 1 ? "Author: " : "Authors: "]
-    for (let author of reference.Authors) {
+  if (reference.authors.length > 0) {
+    content = [reference.authors.length === 1 ? "Author: " : "Authors: "]
+    for (let author of reference.authors) {
       content.push(
         <Link key={author.id} to={`/authors/${author.id}`}>
           {author.name}
