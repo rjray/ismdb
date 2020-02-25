@@ -3,29 +3,16 @@
  */
 
 const express = require("express")
-const _ = require("lodash")
 
 const {
-  MagazineIssue,
-  Magazine,
-  Reference,
-  sequelize,
-} = require("../../../models")
+  fetchAllMagazinesWithIssueCount,
+  fetchSingleMagazineComplete,
+} = require("../../../db/magazines")
 
 let router = express.Router()
 
 router.get("/all", (req, res) => {
-  const query = `
-    SELECT m.*, COUNT(mi.id) AS issues
-    FROM Magazines m LEFT JOIN MagazineIssues mi ON m.id = mi.magazineId
-    GROUP BY m.id
-  `
-  const options = {
-    type: sequelize.QueryTypes.SELECT,
-  }
-
-  sequelize
-    .query(query, options)
+  fetchAllMagazinesWithIssueCount()
     .then(magazines => {
       res.send({ status: "success", magazines })
     })
@@ -37,27 +24,19 @@ router.get("/all", (req, res) => {
 router.get("/:id(\\d+)", (req, res) => {
   const id = req.params.id
 
-  Magazine.findByPk(id, {
-    include: [{ model: MagazineIssue, include: [Reference] }],
-  })
+  fetchSingleMagazineComplete(id)
     .then(magazine => {
-      magazine = magazine.get()
-
-      magazine.MagazineIssues = magazine.MagazineIssues.map(item => {
-        item = item.get()
-        delete item.MagazineId
-        return item
-      })
-
-      res.send({ status: "success", magazine })
+      console.log(JSON.stringify(magazine, null, 2))
+      if (magazine) {
+        res.send({ status: "success", magazine })
+      } else {
+        res.send({
+          status: "error",
+          error: new Error(`No magazine with id "${id}" found`),
+        })
+      }
     })
     .catch(error => {
-      if (_.isEmpty(error)) {
-        error = {
-          message: `No magazine found for id ${id}`,
-        }
-      }
-
       res.send({ status: "error", error })
     })
 })

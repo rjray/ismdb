@@ -2,9 +2,7 @@
  * All database operations that focus on magazines.
  */
 
-const _ = require("lodash")
-
-const { Magazine, MagazineIssue, sequelize } = require("../models")
+const { Magazine, MagazineIssue, Reference } = require("../models")
 
 // Most-basic magazine request. Single magazine without issues or anything.
 const fetchSingleMagazineSimple = async id => {
@@ -21,4 +19,43 @@ const fetchSingleMagazineSimple = async id => {
   return magazine
 }
 
-module.exports = { fetchSingleMagazineSimple }
+// Get a single magazine with issues and references.
+const fetchSingleMagazineComplete = async id => {
+  let magazine = await Magazine.findByPk(id, {
+    include: [{ model: MagazineIssue, include: [Reference] }],
+  })
+
+  magazine = magazine.get()
+  magazine.issues = magazine.MagazineIssues.map(issue => {
+    issue = issue.get()
+    delete issue.MagazineId
+    issue.references = issue.References.map(reference => reference.get())
+    delete issue.References
+
+    return issue
+  })
+
+  return magazine
+}
+
+// Get all magazines, with a count of their issues.
+const fetchAllMagazinesWithIssueCount = async id => {
+  let magazines = await Magazine.findAll({
+    include: [{ model: MagazineIssue, attributes: ["id"] }],
+  })
+
+  magazines = magazines.map(magazine => {
+    magazine = magazine.get()
+    magazine.issues = magazine.MagazineIssues.length
+    delete magazine.MagazineIssues
+    return magazine
+  })
+
+  return magazines
+}
+
+module.exports = {
+  fetchSingleMagazineSimple,
+  fetchSingleMagazineComplete,
+  fetchAllMagazinesWithIssueCount,
+}
