@@ -1,8 +1,15 @@
 /*
- * All database operations that focus on magazines.
+ * All database operations that focus on magazines and issues.
  */
 
-const { Magazine, MagazineIssue, Reference, sequelize } = require("../models")
+const {
+  Magazine,
+  MagazineIssue,
+  Reference,
+  RecordType,
+  Author,
+  sequelize,
+} = require("../models")
 
 // Most-basic magazine request. Single magazine without issues or anything.
 const fetchSingleMagazineSimple = async id => {
@@ -54,6 +61,15 @@ const fetchAllMagazinesWithIssueCount = async id => {
   return magazines
 }
 
+// Get all the magazines, along with all their issue numbers.
+const fetchAllMagazinesWithIssueNumbers = async (opts = {}) => {
+  return Magazine.findAll({
+    order: ["name"],
+    include: [{ model: MagazineIssue, attributes: ["number"] }],
+    ...opts,
+  })
+}
+
 // Update a single magazine using the content in data.
 const updateMagazine = async (id, data) => {
   return Magazine.findByPk(id).then(magazine => {
@@ -68,9 +84,52 @@ const updateMagazine = async (id, data) => {
   })
 }
 
+// Fetch a single magazine issue with all the ancillary data.
+const fetchSingleMagazineIssueComplete = async id => {
+  let magazineissue = await MagazineIssue.findByPk(id, {
+    include: [
+      Magazine,
+      {
+        model: Reference,
+        include: [
+          RecordType,
+          {
+            model: MagazineIssue,
+            include: [Magazine],
+          },
+          {
+            model: Author,
+            as: "Authors",
+          },
+        ],
+      },
+    ],
+  })
+
+  magazineissue = magazineissue.get()
+
+  magazineissue.Magazine = magazineissue.Magazine.get()
+  magazineissue.References = magazineissue.References.map(reference => {
+    reference = reference.get()
+
+    if (reference.MagazineIssue) {
+      reference.Magazine = reference.MagazineIssue.Magazine.get()
+      reference.MagazineIssue = reference.MagazineIssue.get()
+      delete reference.MagazineIssue.Magazine
+    }
+    reference.RecordType = reference.RecordType.get()
+
+    return reference
+  })
+
+  return magazineissue
+}
+
 module.exports = {
   fetchSingleMagazineSimple,
   fetchSingleMagazineComplete,
   fetchAllMagazinesWithIssueCount,
+  fetchAllMagazinesWithIssueNumbers,
   updateMagazine,
+  fetchSingleMagazineIssueComplete,
 }

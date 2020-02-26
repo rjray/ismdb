@@ -3,14 +3,13 @@
  */
 
 const express = require("express")
-const _ = require("lodash")
 
-const { RecordType } = require("../../models")
+const { fetchAllRecordTypes } = require("../../db/misc")
 
 let router = express.Router()
 
 router.get("/recordtypes", (req, res) => {
-  RecordType.findAll({ order: ["id"] })
+  fetchAllRecordTypes({ order: ["id"] })
     .then(recordtypes => {
       res.send({ status: "success", recordtypes })
     })
