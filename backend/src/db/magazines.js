@@ -46,9 +46,10 @@ const fetchSingleMagazineComplete = async id => {
 }
 
 // Get all magazines, with a count of their issues.
-const fetchAllMagazinesWithIssueCount = async id => {
+const fetchAllMagazinesWithIssueCount = async (id, opts = {}) => {
   let magazines = await Magazine.findAll({
     include: [{ model: MagazineIssue, attributes: ["id"] }],
+    ...opts,
   })
 
   magazines = magazines.map(magazine => {

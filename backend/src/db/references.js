@@ -67,9 +67,10 @@ const fetchSingleReferenceComplete = async id => {
 
 // Get all references with RecordType and Magazine info. Like calling
 // fetchSingleReferenceSimple() for all refs.
-const fetchAllReferencesSimple = async () => {
+const fetchAllReferencesSimple = async (opts = {}) => {
   let references = await Reference.findAll({
     include: [RecordType, { model: MagazineIssue, include: [Magazine] }],
+    ...opts,
   })
 
   references = references.map(item => {

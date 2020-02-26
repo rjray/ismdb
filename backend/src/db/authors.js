@@ -82,12 +82,13 @@ const fetchSingleAuthorComplex = async id => {
 
 // Fetch all authors along with a count of how many references they're credited
 // on.
-const fetchAllAuthorsWithRefcount = async () => {
+const fetchAllAuthorsWithRefcount = async (opts = {}) => {
   let authors = await Author.findAll({
     include: [
       AuthorAlias,
       { model: Reference, as: "References", attributes: ["id"] },
     ],
+    ...opts,
   })
 
   authors = authors.map(author => {
