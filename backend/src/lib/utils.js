@@ -36,8 +36,16 @@ const createStringSetter = field => {
   }
 }
 
+const objectifyError = error => {
+  return {
+    name: error.name,
+    message: error.message,
+  }
+}
+
 module.exports = {
   compareVersion,
   createStringGetter,
   createStringSetter,
+  objectifyError,
 }

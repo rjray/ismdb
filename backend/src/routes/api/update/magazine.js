@@ -5,6 +5,7 @@
 const express = require("express")
 
 const { updateMagazine } = require("../../../db/magazines")
+const { objectifyError } = require("../../../lib/utils")
 
 const router = express.Router()
 
@@ -16,7 +17,7 @@ router.post("/", (req, res) => {
       res.send({ status: "success", magazine })
     })
     .catch(error => {
-      res.send({ status: "error", error })
+      res.send({ status: "error", error: objectifyError(error) })
     })
 })
 

@@ -8,6 +8,7 @@ const {
   fetchAllAuthorsWithRefcount,
   fetchSingleAuthorComplex,
 } = require("../../../db/authors")
+const { objectifyError } = require("../../../lib/utils")
 
 let router = express.Router()
 
@@ -17,7 +18,7 @@ router.get("/all", (req, res) => {
       res.send({ status: "success", authors })
     })
     .catch(error => {
-      res.send({ status: "error", error })
+      res.send({ status: "error", error: objectifyError(error) })
     })
 })
 
@@ -31,12 +32,12 @@ router.get("/:id", (req, res) => {
       } else {
         res.send({
           status: "error",
-          error: `No author with id "${id}" found`,
+          error: { message: `No author with id "${id}" found` },
         })
       }
     })
     .catch(error => {
-      res.send({ status: "error", error })
+      res.send({ status: "error", error: objectifyError(error) })
     })
 })
 

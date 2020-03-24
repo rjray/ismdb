@@ -11,6 +11,7 @@ const {
 } = require("../../../db/magazines")
 const { fetchSingleReferenceComplete } = require("../../../db/references")
 const { fetchAllRecordTypes } = require("../../../db/misc")
+const { objectifyError } = require("../../../lib/utils")
 
 let router = express.Router()
 
@@ -42,7 +43,7 @@ router.get("/editreference/:id(\\d+)?", (req, res) => {
       })
     })
     .catch(error => {
-      res.send({ status: "error", error })
+      res.send({ status: "error", error: objectifyError(error) })
     })
 })
 
@@ -66,7 +67,7 @@ router.get("/editmagazine/:id(\\d+)?", (req, res) => {
       })
     })
     .catch(error => {
-      res.send({ status: "error", error })
+      res.send({ status: "error", error: objectifyError(error) })
     })
 })
 

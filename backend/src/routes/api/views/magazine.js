@@ -8,6 +8,7 @@ const {
   fetchAllMagazinesWithIssueCount,
   fetchSingleMagazineComplete,
 } = require("../../../db/magazines")
+const { objectifyError } = require("../../../lib/utils")
 
 let router = express.Router()
 
@@ -17,7 +18,7 @@ router.get("/all", (req, res) => {
       res.send({ status: "success", magazines })
     })
     .catch(error => {
-      res.send({ status: "error", error })
+      res.send({ status: "error", error: objectifyError(error) })
     })
 })
 
@@ -36,7 +37,7 @@ router.get("/:id(\\d+)", (req, res) => {
       }
     })
     .catch(error => {
-      res.send({ status: "error", error })
+      res.send({ status: "error", error: objectifyError(error) })
     })
 })
 

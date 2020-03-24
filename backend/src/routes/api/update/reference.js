@@ -11,6 +11,7 @@ const {
   Author,
   sequelize,
 } = require("../../../models")
+const { objectifyError } = require("../../../lib/utils")
 
 const router = express.Router()
 
@@ -71,11 +72,11 @@ router.post("/", (req, res) => {
           res.send({ status: "success", reference })
         })
       } catch (error) {
-        res.send({ status: "error", error })
+        res.send({ status: "error", error: objectifyError(error) })
       }
     })
     .catch(error => {
-      res.send({ status: "error", error })
+      res.send({ status: "error", error: objectifyError(error) })
     })
 
   Author.findByPk(id, { include: [AuthorAlias] })
@@ -141,11 +142,11 @@ router.post("/", (req, res) => {
           res.send({ status: "success", author })
         })
       } catch (error) {
-        res.send({ status: "error", error })
+        res.send({ status: "error", error: objectifyError(error) })
       }
     })
     .catch(error => {
-      res.send({ status: "error", error })
+      res.send({ status: "error", error: objectifyError(error) })
     })
 })
 
