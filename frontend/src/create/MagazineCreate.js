@@ -66,6 +66,7 @@ const MagazineCreate = () => {
 
         formikBag.resetForm()
 
+        setState({ ...state, notifications: [] })
         setState({
           notifications: notes,
           createdMagazine: magazine,
@@ -80,6 +81,7 @@ const MagazineCreate = () => {
             resultMessage: `Error during creation: ${error.message}`,
           },
         ]
+        setState({ ...state, notifications: [] })
         setState({ ...state, notifications: notes })
       },
     })
