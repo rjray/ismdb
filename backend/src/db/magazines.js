@@ -78,7 +78,14 @@ const createMagazine = async data => {
   data.createdAt = new Date()
   data.updatedAt = new Date()
 
-  const magazine = await Magazine.create(data)
+  const magazine = await Magazine.create(data).catch(error => {
+    if (error.hasOwnProperty("errors")) {
+      const specific = error.errors[0]
+      throw new Error(specific.message)
+    } else {
+      throw new Error(error.message)
+    }
+  })
 
   return magazine.get()
 }
