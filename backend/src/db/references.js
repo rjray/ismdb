@@ -89,8 +89,65 @@ const fetchAllReferencesSimple = async (opts = {}) => {
   return references
 }
 
+// Update a single reference using the content in data. This has to include
+// author data, author linkage, and possible magazine issue linkage.
+const updateReference = async (id, data) => {
+  return Reference.findByPk(id, {
+    include: [
+      RecordType,
+      {
+        model: MagazineIssue,
+        include: [Magazine],
+      },
+      {
+        model: Author,
+        as: "Authors",
+      },
+    ],
+  }).then(reference => {
+    return sequelize.transaction(async txn => {
+      let updates = {},
+        authToDelete = [],
+        authToAdd = []
+
+      // Build up the initial fields to update.
+      for (let key of ["type", "language", "keywords", "name"]) {
+        if (data[key] !== reference[key]) {
+          updates[key] = data[key]
+        }
+      }
+      // This always updates.
+      updates.updatedAt = new Date()
+
+      // Check for the type of record to have changed.
+      const newRecordTypeId = Number(data.RecordTypeId)
+      if (newRecordTypeId !== reference.RecordTypeId) {
+        updates.RecordTypeId = newRecordTypeId
+
+        if (newRecordTypeId === 1) {
+          // This is now a book. This is easy, just null out the issue ID and
+          // add the ISBN.
+          updates.MagazineIssueId = null
+          updates.isbn = data.isbn
+        } else if (newRecordTypeId === 2 || newRecordTypeId === 3) {
+          // This is now a magazine feature or placeholder. But it isn't enough
+          // to just null out the ISBN-- also have to locate the issue ID of
+          // the specified magazine/issue #, possibly creating a new issue
+          // record.
+          updates.isbn = null
+        } else {
+          // This is something else entirely
+          updates.MagazineIssueId = null
+          updates.isbn = null
+        }
+      }
+    })
+  })
+}
+
 module.exports = {
   fetchSingleReferenceSimple,
   fetchSingleReferenceComplete,
   fetchAllReferencesSimple,
+  updateReference,
 }
