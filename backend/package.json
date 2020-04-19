@@ -1,13 +1,15 @@
 {
   "name": "mymodb-backend",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Backend for MyMoDB",
   "main": "server.js",
   "scripts": {
+    "start": "cd src && nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Randy J. Ray <rjray@blackperl.com>",
   "license": "MIT",
+  "repository": "https://github.com/rjray/mymodb",
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
@@ -22,6 +24,15 @@
     "sqlite3": "^4.1.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.3"
+    "@babel/core": "^7.9.0",
+    "babel-preset-airbnb": "^5.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^3.0.0",
+    "nodemon": "^2.0.3",
+    "prettier": "^2.0.4"
   }
 }
