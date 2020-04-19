@@ -2,6 +2,7 @@
   "name": "mymodb-backend",
   "version": "0.1.0",
   "description": "Backend for MyMoDB",
+  "private": true,
   "main": "server.js",
   "scripts": {
     "start": "cd src && nodemon server.js",
