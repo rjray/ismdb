@@ -104,6 +104,16 @@ const updateMagazine = async (id, data) => {
   });
 };
 
+// Delete a single Magazine record.
+const deleteMagazine = async (id) => {
+  return Magazine.destroy({ where: { id } });
+};
+
+// Delete a single MagazineIssue record.
+const deleteMagazineIssue = async (id) => {
+  return MagazineIssue.destroy({ where: { id } });
+};
+
 // Fetch a single magazine issue with all the ancillary data.
 const fetchSingleMagazineIssueComplete = async (id) => {
   let magazineissue = await MagazineIssue.findByPk(id, {
@@ -152,5 +162,7 @@ module.exports = {
   fetchAllMagazinesWithIssueNumbers,
   createMagazine,
   updateMagazine,
+  deleteMagazine,
+  deleteMagazineIssue,
   fetchSingleMagazineIssueComplete,
 };

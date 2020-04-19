@@ -145,9 +145,15 @@ const updateReference = async (id, data) => {
   });
 };
 
+// Delete a single Reference from the database.
+const deleteReference = async (id) => {
+  return Reference.destroy({ where: { id } });
+};
+
 module.exports = {
   fetchSingleReferenceSimple,
   fetchSingleReferenceComplete,
   fetchAllReferencesSimple,
   updateReference,
+  deleteReference,
 };

@@ -164,9 +164,15 @@ const updateAuthor = async (id, data) => {
     });
 };
 
+// Delete a single Author from the database.
+const deleteAuthor = async (id) => {
+  return Author.destroy({ where: { id } });
+};
+
 module.exports = {
   fetchSingleAuthorSimple,
   fetchSingleAuthorComplex,
   fetchAllAuthorsWithRefcount,
   updateAuthor,
+  deleteAuthor,
 };
