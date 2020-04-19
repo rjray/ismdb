@@ -1,17 +1,17 @@
-import React from "react"
-import AuthorDetail from "./AuthorDetail"
-import AuthorAll from "./AuthorAll"
+import React from "react";
+import AuthorDetail from "./AuthorDetail";
+import AuthorAll from "./AuthorAll";
 
-const AuthorRetrieve = props => {
-  let content
+const AuthorRetrieve = (props) => {
+  let content;
 
   if (props.match.params.id) {
-    content = <AuthorDetail id={props.match.params.id} />
+    content = <AuthorDetail id={props.match.params.id} />;
   } else {
-    content = <AuthorAll />
+    content = <AuthorAll />;
   }
 
-  return content
-}
+  return content;
+};
 
-export default AuthorRetrieve
+export default AuthorRetrieve;

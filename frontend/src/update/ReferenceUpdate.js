@@ -1,44 +1,44 @@
-import React from "react"
-import { LinkContainer } from "react-router-bootstrap"
-import { Helmet } from "react-helmet"
-import Container from "react-bootstrap/Container"
-import Row from "react-bootstrap/Row"
-import Col from "react-bootstrap/Col"
-import Button from "react-bootstrap/Button"
-import ScaleLoader from "react-spinners/ScaleLoader"
-import deepEqual from "deep-equal"
+import React from "react";
+import { LinkContainer } from "react-router-bootstrap";
+import { Helmet } from "react-helmet";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import ScaleLoader from "react-spinners/ScaleLoader";
+import deepEqual from "deep-equal";
 
-import useDataApi from "../utils/data-api"
-import setupCRUDHandler from "../utils/crud"
-import Header from "../styles/Header"
-import ReferenceForm from "../forms/ReferenceForm"
+import useDataApi from "../utils/data-api";
+import setupCRUDHandler from "../utils/crud";
+import Header from "../styles/Header";
+import ReferenceForm from "../forms/ReferenceForm";
 
 const crudHandler = setupCRUDHandler({
   type: "reference",
   onSuccess: (data, formikBag) => {
-    let reference = { ...data.reference }
-    reference.createdAt = new Date(reference.createdAt)
-    reference.updatedAt = new Date(reference.updatedAt)
+    let reference = { ...data.reference };
+    reference.createdAt = new Date(reference.createdAt);
+    reference.updatedAt = new Date(reference.updatedAt);
     for (let field in reference) {
-      formikBag.setFieldValue(field, reference[field], false)
+      formikBag.setFieldValue(field, reference[field], false);
     }
   },
   onError: (error, formikBag) => {
-    alert(`Error during reference update: ${error.message}`)
-    formikBag.resetForm()
+    alert(`Error during reference update: ${error.message}`);
+    formikBag.resetForm();
   },
-})
+});
 
-const ReferenceUpdate = props => {
-  let id = props.match.params.id
+const ReferenceUpdate = (props) => {
+  let id = props.match.params.id;
 
   const [{ data, loading, error }] = useDataApi(
     `/api/views/combo/editreference/${id}`,
     {
       data: {},
     }
-  )
-  let content
+  );
+  let content;
 
   if (error) {
     content = (
@@ -47,44 +47,44 @@ const ReferenceUpdate = props => {
         <p>An error occurred trying to load the reference:</p>
         <p>{error.message}</p>
       </>
-    )
+    );
   } else if (loading) {
     content = (
       <div style={{ textAlign: "center" }}>
         <ScaleLoader />
       </div>
-    )
+    );
   } else {
-    const { reference } = data
+    const { reference } = data;
 
-    reference.authors = reference.authors.map(item => {
-      return { ...item, deleted: false }
-    })
-    reference.createdAt = new Date(reference.createdAt)
-    reference.updatedAt = new Date(reference.updatedAt)
-    reference.MagazineId = reference.Magazine ? reference.Magazine.id : ""
+    reference.authors = reference.authors.map((item) => {
+      return { ...item, deleted: false };
+    });
+    reference.createdAt = new Date(reference.createdAt);
+    reference.updatedAt = new Date(reference.updatedAt);
+    reference.MagazineId = reference.Magazine ? reference.Magazine.id : "";
     reference.MagazineIssueNumber = reference.MagazineIssue
       ? reference.MagazineIssue.number
-      : ""
-    delete reference.Magazine
-    delete reference.MagazineIssue
-    delete reference.RecordType
+      : "";
+    delete reference.Magazine;
+    delete reference.MagazineIssue;
+    delete reference.RecordType;
     // Force this to a string:
-    reference.RecordTypeId = `${reference.RecordTypeId}`
+    reference.RecordTypeId = `${reference.RecordTypeId}`;
 
     const submitHandler = (values, formikBag) => {
-      let oldReference = { ...reference }
-      let newReference = { ...values }
+      let oldReference = { ...reference };
+      let newReference = { ...values };
       for (let key of ["action", "createdAt", "updatedAt"]) {
-        delete oldReference[key]
-        delete newReference[key]
+        delete oldReference[key];
+        delete newReference[key];
       }
 
       if (!deepEqual(oldReference, newReference)) {
-        crudHandler(values, formikBag)
+        crudHandler(values, formikBag);
       }
-      formikBag.setSubmitting(false)
-    }
+      formikBag.setSubmitting(false);
+    };
 
     content = (
       <>
@@ -104,7 +104,7 @@ const ReferenceUpdate = props => {
           submitHandler={submitHandler}
         />
       </>
-    )
+    );
   }
 
   return (
@@ -114,7 +114,7 @@ const ReferenceUpdate = props => {
       </Helmet>
       <Container className="mt-2">{content}</Container>
     </>
-  )
-}
+  );
+};
 
-export default ReferenceUpdate
+export default ReferenceUpdate;

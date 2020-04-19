@@ -1,18 +1,18 @@
-import React from "react"
-import { Link } from "react-router-dom"
-import { LinkContainer } from "react-router-bootstrap"
-import { Helmet } from "react-helmet"
-import Container from "react-bootstrap/Container"
-import Row from "react-bootstrap/Row"
-import Col from "react-bootstrap/Col"
-import Button from "react-bootstrap/Button"
-import ScaleLoader from "react-spinners/ScaleLoader"
-import { formatDistanceToNow, compareAsc, compareDesc, format } from "date-fns"
-import DataTable from "react-data-table-component"
+import React from "react";
+import { Link } from "react-router-dom";
+import { LinkContainer } from "react-router-bootstrap";
+import { Helmet } from "react-helmet";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import ScaleLoader from "react-spinners/ScaleLoader";
+import { formatDistanceToNow, compareAsc, compareDesc, format } from "date-fns";
+import DataTable from "react-data-table-component";
 
-import useDataApi from "../utils/data-api"
-import compareVersion from "../utils/compare-version"
-import Header from "../styles/Header"
+import useDataApi from "../utils/data-api";
+import compareVersion from "../utils/compare-version";
+import Header from "../styles/Header";
 
 const sortRows = (rows, field, direction) => {
   switch (field) {
@@ -20,36 +20,36 @@ const sortRows = (rows, field, direction) => {
       rows =
         direction === "desc"
           ? rows.sort((a, b) => compareVersion(b.number, a.number))
-          : rows.sort((a, b) => compareVersion(a.number, b.number))
-      break
+          : rows.sort((a, b) => compareVersion(a.number, b.number));
+      break;
     case "createdAt":
       rows =
         direction === "desc"
           ? rows.sort((a, b) => compareDesc(a.createdAt, b.createdAt))
-          : rows.sort((a, b) => compareAsc(a.createdAt, b.createdAt))
-      break
+          : rows.sort((a, b) => compareAsc(a.createdAt, b.createdAt));
+      break;
     case "updatedAt":
       rows =
         direction === "desc"
           ? rows.sort((a, b) => compareDesc(a.updatedAt, b.updatedAt))
-          : rows.sort((a, b) => compareAsc(a.updatedAt, b.updatedAt))
-      break
+          : rows.sort((a, b) => compareAsc(a.updatedAt, b.updatedAt));
+      break;
     default:
-      break
+      break;
   }
 
-  return rows
-}
+  return rows;
+};
 
-const MagazineDetailExpand = props => {
-  let references = props.data.references
+const MagazineDetailExpand = (props) => {
+  let references = props.data.references;
 
   let columns = [
     {
       name: <b>Name</b>,
       selector: "name",
       wrap: true,
-      format: row => <Link to={`/references/${row.id}`}>{row.name}</Link>,
+      format: (row) => <Link to={`/references/${row.id}`}>{row.name}</Link>,
     },
     {
       name: <b>Type</b>,
@@ -65,25 +65,25 @@ const MagazineDetailExpand = props => {
       name: <b>Added</b>,
       selector: "createdAt",
       hide: "sm",
-      format: row => {
-        const now = new Date(row.createdAt)
-        const show = format(now, "PPpp")
-        const title = formatDistanceToNow(now)
-        return <span title={`${title} ago`}>{show}</span>
+      format: (row) => {
+        const now = new Date(row.createdAt);
+        const show = format(now, "PPpp");
+        const title = formatDistanceToNow(now);
+        return <span title={`${title} ago`}>{show}</span>;
       },
     },
     {
       name: <b>Updated</b>,
       selector: "updatedAt",
       hide: "md",
-      format: row => {
-        const now = new Date(row.updatedAt)
-        const show = format(now, "PPpp")
-        const title = formatDistanceToNow(now)
-        return <span title={`${title} ago`}>{show}</span>
+      format: (row) => {
+        const now = new Date(row.updatedAt);
+        const show = format(now, "PPpp");
+        const title = formatDistanceToNow(now);
+        return <span title={`${title} ago`}>{show}</span>;
       },
     },
-  ]
+  ];
 
   let content = (
     <DataTable
@@ -95,20 +95,20 @@ const MagazineDetailExpand = props => {
       columns={columns}
       data={references}
     />
-  )
+  );
 
   return (
     <Container fluid className="mt-2 mb-3">
       {content}
     </Container>
-  )
-}
+  );
+};
 
 const MagazineDetail = ({ id }) => {
   const [{ data, loading, error }] = useDataApi(`/api/views/magazine/${id}`, {
     data: {},
-  })
-  let content
+  });
+  let content;
 
   if (error) {
     content = (
@@ -117,17 +117,17 @@ const MagazineDetail = ({ id }) => {
         <p>An error occurred trying to load all the magazines:</p>
         <p>{error.message}</p>
       </>
-    )
+    );
   } else if (loading) {
     content = (
       <div style={{ textAlign: "center" }}>
         <ScaleLoader />
       </div>
-    )
+    );
   } else {
-    let magazine = data.magazine
-    let created = new Date(magazine.createdAt)
-    let updated = new Date(magazine.updatedAt)
+    let magazine = data.magazine;
+    let created = new Date(magazine.createdAt);
+    let updated = new Date(magazine.updatedAt);
     let columns = [
       {
         name: <b>Number</b>,
@@ -137,18 +137,18 @@ const MagazineDetail = ({ id }) => {
       {
         name: <b>References</b>,
         selector: "References",
-        format: row => row.references.length,
+        format: (row) => row.references.length,
       },
       {
         name: <b>Added</b>,
         selector: "createdAt",
         sortable: true,
         hide: "sm",
-        format: row => {
-          const now = new Date(row.createdAt)
-          const show = format(now, "PPpp")
-          const title = formatDistanceToNow(now)
-          return <span title={`${title} ago`}>{show}</span>
+        format: (row) => {
+          const now = new Date(row.createdAt);
+          const show = format(now, "PPpp");
+          const title = formatDistanceToNow(now);
+          return <span title={`${title} ago`}>{show}</span>;
         },
       },
       {
@@ -156,18 +156,18 @@ const MagazineDetail = ({ id }) => {
         selector: "updatedAt",
         sortable: true,
         hide: "md",
-        format: row => {
-          const now = new Date(row.updatedAt)
-          const show = format(now, "PPpp")
-          const title = formatDistanceToNow(now)
-          return <span title={`${title} ago`}>{show}</span>
+        format: (row) => {
+          const now = new Date(row.updatedAt);
+          const show = format(now, "PPpp");
+          const title = formatDistanceToNow(now);
+          return <span title={`${title} ago`}>{show}</span>;
         },
       },
-    ]
+    ];
     let pagination =
       magazine.issues.length < 26
         ? {}
-        : { pagination: true, paginationPerPage: 25 }
+        : { pagination: true, paginationPerPage: 25 };
 
     content = (
       <>
@@ -229,7 +229,7 @@ const MagazineDetail = ({ id }) => {
           </Col>
         </Row>
       </>
-    )
+    );
   }
 
   return (
@@ -239,7 +239,7 @@ const MagazineDetail = ({ id }) => {
       </Helmet>
       <Container className="mt-2">{content}</Container>
     </>
-  )
-}
+  );
+};
 
-export default MagazineDetail
+export default MagazineDetail;

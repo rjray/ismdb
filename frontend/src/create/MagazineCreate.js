@@ -1,33 +1,33 @@
-import React, { useState } from "react"
-import { Redirect } from "react-router-dom"
-import { Helmet } from "react-helmet"
-import Form from "react-bootstrap/Form"
-import Container from "react-bootstrap/Container"
-import Row from "react-bootstrap/Row"
-import Col from "react-bootstrap/Col"
-import ScaleLoader from "react-spinners/ScaleLoader"
+import React, { useState } from "react";
+import { Redirect } from "react-router-dom";
+import { Helmet } from "react-helmet";
+import Form from "react-bootstrap/Form";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
-import useDataApi from "../utils/data-api"
-import setupCRUDHandler from "../utils/crud"
-import Header from "../styles/Header"
-import MagazineForm from "../forms/MagazineForm"
-import Notifications from "../components/Notifications"
+import useDataApi from "../utils/data-api";
+import setupCRUDHandler from "../utils/crud";
+import Header from "../styles/Header";
+import MagazineForm from "../forms/MagazineForm";
+import Notifications from "../components/Notifications";
 
 const MagazineCreate = () => {
   const [state, setState] = useState({
     notifications: [],
     createdMagazine: null,
     stayOnPage: true,
-  })
+  });
   const [{ data, loading, error }] = useDataApi(
     "/api/views/combo/editmagazine",
     {
       data: {},
     }
-  )
+  );
 
-  const { notifications, createdMagazine, stayOnPage } = state
-  let content
+  const { notifications, createdMagazine, stayOnPage } = state;
+  let content;
 
   if (error) {
     content = (
@@ -36,60 +36,60 @@ const MagazineCreate = () => {
         <p>An error occurred trying to load the languages:</p>
         <p>{error.message}</p>
       </>
-    )
+    );
   } else if (loading) {
     content = (
       <div style={{ textAlign: "center" }}>
         <ScaleLoader />
       </div>
-    )
+    );
   } else {
     const crudHandler = setupCRUDHandler({
       type: "magazine",
       onSuccess: (data, formikBag) => {
-        let magazine = { ...data.magazine }
-        let notes
+        let magazine = { ...data.magazine };
+        let notes;
 
-        magazine.createdAt = new Date(magazine.createdAt)
-        magazine.updatedAt = new Date(magazine.updatedAt)
+        magazine.createdAt = new Date(magazine.createdAt);
+        magazine.updatedAt = new Date(magazine.updatedAt);
 
         if (data.notifications) {
-          notes = data.notifications
+          notes = data.notifications;
         } else {
-          notes = []
+          notes = [];
         }
         notes.push({
           status: "success",
           result: "Creation success",
           resultMessage: `Magazine "${magazine.name}" successfully created`,
-        })
+        });
 
-        formikBag.resetForm()
+        formikBag.resetForm();
 
-        setState({ ...state, notifications: [] })
+        setState({ ...state, notifications: [] });
         setState({
           notifications: notes,
           createdMagazine: magazine,
           stayOnPage,
-        })
+        });
       },
-      onError: error => {
+      onError: (error) => {
         const notes = [
           {
             status: "error",
             result: "Create error",
             resultMessage: `Error during creation: ${error.message}`,
           },
-        ]
-        setState({ ...state, notifications: [] })
-        setState({ ...state, notifications: notes })
+        ];
+        setState({ ...state, notifications: [] });
+        setState({ ...state, notifications: notes });
       },
-    })
+    });
 
     const submitHandler = (values, formikBag) => {
-      crudHandler(values, formikBag)
-      formikBag.setSubmitting(false)
-    }
+      crudHandler(values, formikBag);
+      formikBag.setSubmitting(false);
+    };
 
     if (createdMagazine && !stayOnPage) {
       return (
@@ -99,10 +99,10 @@ const MagazineCreate = () => {
           magazine={createdMagazine}
           notifications={notifications}
         />
-      )
+      );
     }
 
-    const emptyMagazine = { name: "", language: "", aliases: "", notes: "" }
+    const emptyMagazine = { name: "", language: "", aliases: "", notes: "" };
 
     content = (
       <>
@@ -122,7 +122,7 @@ const MagazineCreate = () => {
                 label=""
                 checked={stayOnPage}
                 onChange={() => {
-                  setState({ ...state, stayOnPage: !stayOnPage })
+                  setState({ ...state, stayOnPage: !stayOnPage });
                 }}
               />
             </div>
@@ -135,7 +135,7 @@ const MagazineCreate = () => {
           magazine={emptyMagazine}
         />
       </>
-    )
+    );
   }
 
   return (
@@ -146,7 +146,7 @@ const MagazineCreate = () => {
       <Notifications notifications={notifications} />
       <Container className="mt-2">{content}</Container>
     </>
-  )
-}
+  );
+};
 
-export default MagazineCreate
+export default MagazineCreate;

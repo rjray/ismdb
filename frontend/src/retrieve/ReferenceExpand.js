@@ -1,39 +1,39 @@
-import React from "react"
-import { Link } from "react-router-dom"
-import { LinkContainer } from "react-router-bootstrap"
-import Container from "react-bootstrap/Container"
-import Row from "react-bootstrap/Row"
-import Col from "react-bootstrap/Col"
-import Button from "react-bootstrap/Button"
-import ScaleLoader from "react-spinners/ScaleLoader"
+import React from "react";
+import { Link } from "react-router-dom";
+import { LinkContainer } from "react-router-bootstrap";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
-import useDataApi from "../utils/data-api"
+import useDataApi from "../utils/data-api";
 
-const FormatAuthors = props => {
-  let reference = props.reference
-  let content
+const FormatAuthors = (props) => {
+  let reference = props.reference;
+  let content;
 
   if (reference.authors.length > 0) {
-    content = [reference.authors.length === 1 ? "Author: " : "Authors: "]
+    content = [reference.authors.length === 1 ? "Author: " : "Authors: "];
     for (let author of reference.authors) {
       content.push(
         <Link key={author.id} to={`/authors/${author.id}`}>
           {author.name}
         </Link>
-      )
-      content.push(", ")
+      );
+      content.push(", ");
     }
-    content.pop()
+    content.pop();
   }
 
-  return <div>{content}</div>
-}
+  return <div>{content}</div>;
+};
 
-const ReferenceExpand = props => {
+const ReferenceExpand = (props) => {
   const [
     { data, loading, error },
-  ] = useDataApi(`/api/views/reference/${props.data.id}`, { data: {} })
-  let content
+  ] = useDataApi(`/api/views/reference/${props.data.id}`, { data: {} });
+  let content;
 
   if (error) {
     content = (
@@ -42,15 +42,15 @@ const ReferenceExpand = props => {
         <p>An error occurred trying to load data for reference:</p>
         <p>{error.message}</p>
       </>
-    )
+    );
   } else if (loading) {
     content = (
       <div style={{ textAlign: "center" }}>
         <ScaleLoader />
       </div>
-    )
+    );
   } else {
-    let reference = data.reference
+    let reference = data.reference;
 
     content = (
       <>
@@ -81,14 +81,14 @@ const ReferenceExpand = props => {
           <Col>Keywords: {reference.keywords}</Col>
         </Row>
       </>
-    )
+    );
   }
 
   return (
     <Container fluid className="mt-2 mb-3">
       {content}
     </Container>
-  )
-}
+  );
+};
 
-export default ReferenceExpand
+export default ReferenceExpand;

@@ -1,21 +1,21 @@
-import React, { useState } from "react"
-import Toast from "react-bootstrap/Toast"
-import { GoCheck, GoX } from "react-icons/go"
+import React, { useState } from "react";
+import Toast from "react-bootstrap/Toast";
+import { GoCheck, GoX } from "react-icons/go";
 
 const Notification = ({ data }) => {
-  const [show, setShow] = useState(true)
-  const { status, result, resultMessage } = data
-  let textClass, textIcon
+  const [show, setShow] = useState(true);
+  const { status, result, resultMessage } = data;
+  let textClass, textIcon;
 
   switch (status) {
     case "success":
-      textClass = "text-success"
-      textIcon = <GoCheck />
-      break
+      textClass = "text-success";
+      textIcon = <GoCheck />;
+      break;
     default:
-      textClass = "text-danger"
-      textIcon = <GoX />
-      break
+      textClass = "text-danger";
+      textIcon = <GoX />;
+      break;
   }
 
   return (
@@ -32,8 +32,8 @@ const Notification = ({ data }) => {
       </Toast.Header>
       <Toast.Body>{resultMessage}</Toast.Body>
     </Toast>
-  )
-}
+  );
+};
 
 const Notifications = ({ notifications }) => (
   <div
@@ -47,6 +47,6 @@ const Notifications = ({ notifications }) => (
       ))}
     </div>
   </div>
-)
+);
 
-export default Notifications
+export default Notifications;

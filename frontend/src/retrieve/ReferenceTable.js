@@ -1,10 +1,10 @@
-import React from "react"
-import { format, formatDistanceToNow } from "date-fns"
-import DataTable from "react-data-table-component"
+import React from "react";
+import { format, formatDistanceToNow } from "date-fns";
+import DataTable from "react-data-table-component";
 
-import ReferenceExpand from "./ReferenceExpand"
+import ReferenceExpand from "./ReferenceExpand";
 
-const ReferenceTable = props => {
+const ReferenceTable = (props) => {
   let columns = [
     {
       name: <b>Name</b>,
@@ -15,20 +15,20 @@ const ReferenceTable = props => {
     },
     {
       name: <b>Source</b>,
-      selector: row => {
-        let str
+      selector: (row) => {
+        let str;
 
         if (row.RecordType.description === "book") {
-          str = row.isbn ? `ISBN ${row.isbn}` : "Book"
+          str = row.isbn ? `ISBN ${row.isbn}` : "Book";
         } else if (row.RecordType.description === "article") {
-          str = `${row.Magazine.name} ${row.MagazineIssue.number}`
+          str = `${row.Magazine.name} ${row.MagazineIssue.number}`;
         } else if (row.RecordType.description === "placeholder") {
-          str = `${row.Magazine.name} ${row.MagazineIssue.number} (placeholder)`
+          str = `${row.Magazine.name} ${row.MagazineIssue.number} (placeholder)`;
         } else {
-          str = row.RecordType.notes
+          str = row.RecordType.notes;
         }
 
-        return str
+        return str;
       },
       sortable: true,
       wrap: true,
@@ -40,11 +40,11 @@ const ReferenceTable = props => {
       sortable: true,
       minWidth: "20%",
       hide: "sm",
-      format: row => {
-        const now = new Date(row.createdAt)
-        const show = format(now, "PPpp")
-        const title = formatDistanceToNow(now)
-        return <span title={`${title} ago`}>{show}</span>
+      format: (row) => {
+        const now = new Date(row.createdAt);
+        const show = format(now, "PPpp");
+        const title = formatDistanceToNow(now);
+        return <span title={`${title} ago`}>{show}</span>;
       },
     },
     {
@@ -53,14 +53,14 @@ const ReferenceTable = props => {
       sortable: true,
       minWidth: "20%",
       hide: "md",
-      format: row => {
-        const now = new Date(row.updatedAt)
-        const show = format(now, "PPpp")
-        const title = formatDistanceToNow(now)
-        return <span title={`${title} ago`}>{show}</span>
+      format: (row) => {
+        const now = new Date(row.updatedAt);
+        const show = format(now, "PPpp");
+        const title = formatDistanceToNow(now);
+        return <span title={`${title} ago`}>{show}</span>;
       },
     },
-  ]
+  ];
 
   return (
     <DataTable
@@ -79,7 +79,7 @@ const ReferenceTable = props => {
       columns={columns}
       {...props}
     />
-  )
-}
+  );
+};
 
-export default ReferenceTable
+export default ReferenceTable;

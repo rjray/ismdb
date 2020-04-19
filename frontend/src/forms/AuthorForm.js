@@ -1,11 +1,11 @@
-import React from "react"
-import Form from "react-bootstrap/Form"
-import Col from "react-bootstrap/Col"
-import Button from "react-bootstrap/Button"
-import Container from "react-bootstrap/Container"
-import { Formik, Field, FieldArray, ErrorMessage } from "formik"
-import { MdDelete, MdSettingsBackupRestore } from "react-icons/md"
-import * as Yup from "yup"
+import React from "react";
+import Form from "react-bootstrap/Form";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
+import { Formik, Field, FieldArray, ErrorMessage } from "formik";
+import { MdDelete, MdSettingsBackupRestore } from "react-icons/md";
+import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -34,10 +34,10 @@ const validationSchema = Yup.object().shape({
         ),
     })
   ),
-})
+});
 
 const AuthorForm = ({ author, action, submitHandler }) => {
-  let initialValues = { ...author, action: action }
+  let initialValues = { ...author, action: action };
 
   return (
     <Formik
@@ -81,7 +81,7 @@ const AuthorForm = ({ author, action, submitHandler }) => {
                 className="mb-2 pb-0 px-0 d-flex flex-column justify-content-start"
               >
                 <FieldArray name="aliases">
-                  {helpers => (
+                  {(helpers) => (
                     <>
                       {values.aliases.map((alias, index) => (
                         <Form.Group
@@ -113,13 +113,13 @@ const AuthorForm = ({ author, action, submitHandler }) => {
                                 tabIndex={-1}
                                 onClick={() => {
                                   if (alias.id === 0 && alias.name === "") {
-                                    helpers.remove(index)
+                                    helpers.remove(index);
                                   } else {
                                     helpers.replace(index, {
                                       name: alias.name,
                                       id: alias.id,
                                       deleted: !alias.deleted,
-                                    })
+                                    });
                                   }
                                 }}
                               >
@@ -167,7 +167,7 @@ const AuthorForm = ({ author, action, submitHandler }) => {
         </Form>
       )}
     </Formik>
-  )
-}
+  );
+};
 
-export default AuthorForm
+export default AuthorForm;

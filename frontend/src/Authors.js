@@ -1,25 +1,25 @@
-import React from "react"
+import React from "react";
 
-import AuthorRetrieve from "./retrieve/AuthorRetrieve"
-import AuthorUpdate from "./update/AuthorUpdate"
+import AuthorRetrieve from "./retrieve/AuthorRetrieve";
+import AuthorUpdate from "./update/AuthorUpdate";
 
-const Authors = props => {
-  let content
+const Authors = (props) => {
+  let content;
 
   switch (props.match.params.view) {
     case "create":
-      break
+      break;
     case "update":
-      content = <AuthorUpdate {...props} />
-      break
+      content = <AuthorUpdate {...props} />;
+      break;
     case "delete":
-      break
+      break;
     default:
       // "retrieve" or null
-      content = <AuthorRetrieve {...props} />
+      content = <AuthorRetrieve {...props} />;
   }
 
-  return content
-}
+  return content;
+};
 
-export default Authors
+export default Authors;

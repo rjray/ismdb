@@ -1,12 +1,12 @@
-import React from "react"
-import { Helmet } from "react-helmet"
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom"
-import Container from "react-bootstrap/Container"
+import React from "react";
+import { Helmet } from "react-helmet";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Container from "react-bootstrap/Container";
 
-import NavHeader from "./NavHeader"
-import Authors from "./Authors"
-import Magazines from "./Magazines"
-import References from "./References"
+import NavHeader from "./NavHeader";
+import Authors from "./Authors";
+import Magazines from "./Magazines";
+import References from "./References";
 
 const App = () => (
   <Router>
@@ -38,6 +38,6 @@ const App = () => (
       </Switch>
     </Container>
   </Router>
-)
+);
 
-export default App
+export default App;

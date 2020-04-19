@@ -1,21 +1,21 @@
-import React from "react"
-import { LinkContainer } from "react-router-bootstrap"
-import { Helmet } from "react-helmet"
-import Container from "react-bootstrap/Container"
-import Row from "react-bootstrap/Row"
-import Col from "react-bootstrap/Col"
-import Button from "react-bootstrap/Button"
-import ScaleLoader from "react-spinners/ScaleLoader"
+import React from "react";
+import { LinkContainer } from "react-router-bootstrap";
+import { Helmet } from "react-helmet";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
-import useDataApi from "../utils/data-api"
-import Header from "../styles/Header"
-import ReferenceTable from "./ReferenceTable"
+import useDataApi from "../utils/data-api";
+import Header from "../styles/Header";
+import ReferenceTable from "./ReferenceTable";
 
 const ReferenceAll = () => {
   const [{ data, loading, error }] = useDataApi("/api/views/reference/all", {
     data: {},
-  })
-  let content
+  });
+  let content;
 
   if (error) {
     content = (
@@ -24,13 +24,13 @@ const ReferenceAll = () => {
         <p>An error occurred trying to load all the references:</p>
         <p>{error.message}</p>
       </>
-    )
+    );
   } else if (loading) {
     content = (
       <div style={{ textAlign: "center" }}>
         <ScaleLoader />
       </div>
-    )
+    );
   } else {
     content = (
       <>
@@ -50,7 +50,7 @@ const ReferenceAll = () => {
           </Col>
         </Row>
       </>
-    )
+    );
   }
 
   return (
@@ -60,7 +60,7 @@ const ReferenceAll = () => {
       </Helmet>
       <Container className="mt-2">{content}</Container>
     </>
-  )
-}
+  );
+};
 
-export default ReferenceAll
+export default ReferenceAll;

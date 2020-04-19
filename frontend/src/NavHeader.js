@@ -1,10 +1,10 @@
-import React from "react"
-import Container from "react-bootstrap/Container"
-import Button from "react-bootstrap/Button"
-import Navbar from "react-bootstrap/Navbar"
-import Nav from "react-bootstrap/Nav"
-import NavDropdown from "react-bootstrap/NavDropdown"
-import { LinkContainer } from "react-router-bootstrap"
+import React from "react";
+import Container from "react-bootstrap/Container";
+import Button from "react-bootstrap/Button";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+import NavDropdown from "react-bootstrap/NavDropdown";
+import { LinkContainer } from "react-router-bootstrap";
 
 const NavHeader = () => (
   <Container fluid>
@@ -35,6 +35,6 @@ const NavHeader = () => (
       </Nav>
     </Navbar>
   </Container>
-)
+);
 
-export default NavHeader
+export default NavHeader;

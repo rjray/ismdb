@@ -1,22 +1,22 @@
-import React from "react"
-import { LinkContainer } from "react-router-bootstrap"
-import { Helmet } from "react-helmet"
-import Container from "react-bootstrap/Container"
-import Row from "react-bootstrap/Row"
-import Col from "react-bootstrap/Col"
-import Button from "react-bootstrap/Button"
-import ScaleLoader from "react-spinners/ScaleLoader"
+import React from "react";
+import { LinkContainer } from "react-router-bootstrap";
+import { Helmet } from "react-helmet";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
-import useDataApi from "../utils/data-api"
-import Header from "../styles/Header"
-import AuthorAliases from "./AuthorAliases"
-import ReferenceTable from "./ReferenceTable"
+import useDataApi from "../utils/data-api";
+import Header from "../styles/Header";
+import AuthorAliases from "./AuthorAliases";
+import ReferenceTable from "./ReferenceTable";
 
 const AuthorDetail = ({ id }) => {
   const [{ data, loading, error }] = useDataApi(`/api/views/author/${id}`, {
     data: {},
-  })
-  let content
+  });
+  let content;
 
   if (error) {
     content = (
@@ -25,17 +25,17 @@ const AuthorDetail = ({ id }) => {
         <p>An error occurred trying to load author:</p>
         <p>{error.message}</p>
       </>
-    )
+    );
   } else if (loading) {
     content = (
       <div style={{ textAlign: "center" }}>
         <ScaleLoader />
       </div>
-    )
+    );
   } else {
-    const author = data.author
-    const references = author.references
-    const pagination = references.length < 26 ? { pagination: false } : {}
+    const author = data.author;
+    const references = author.references;
+    const pagination = references.length < 26 ? { pagination: false } : {};
 
     content = (
       <>
@@ -61,7 +61,7 @@ const AuthorDetail = ({ id }) => {
           </Col>
         </Row>
       </>
-    )
+    );
   }
 
   return (
@@ -71,7 +71,7 @@ const AuthorDetail = ({ id }) => {
       </Helmet>
       <Container className="mt-2">{content}</Container>
     </>
-  )
-}
+  );
+};
 
-export default AuthorDetail
+export default AuthorDetail;

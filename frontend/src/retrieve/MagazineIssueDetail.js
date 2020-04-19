@@ -1,15 +1,15 @@
-import React from "react"
-import { LinkContainer } from "react-router-bootstrap"
-import { Helmet } from "react-helmet"
-import Container from "react-bootstrap/Container"
-import Row from "react-bootstrap/Row"
-import Col from "react-bootstrap/Col"
-import Button from "react-bootstrap/Button"
-import ScaleLoader from "react-spinners/ScaleLoader"
+import React from "react";
+import { LinkContainer } from "react-router-bootstrap";
+import { Helmet } from "react-helmet";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
-import useDataApi from "../utils/data-api"
-import Header from "../styles/Header"
-import ReferenceTable from "./ReferenceTable"
+import useDataApi from "../utils/data-api";
+import Header from "../styles/Header";
+import ReferenceTable from "./ReferenceTable";
 
 const MagazineDetail = ({ id }) => {
   const [{ data, loading, error }] = useDataApi(
@@ -17,8 +17,8 @@ const MagazineDetail = ({ id }) => {
     {
       data: {},
     }
-  )
-  let content
+  );
+  let content;
 
   if (error) {
     content = (
@@ -27,15 +27,15 @@ const MagazineDetail = ({ id }) => {
         <p>An error occurred trying to load the magazine issue:</p>
         <p>{error.message}</p>
       </>
-    )
+    );
   } else if (loading) {
     content = (
       <div style={{ textAlign: "center" }}>
         <ScaleLoader />
       </div>
-    )
+    );
   } else {
-    let mi = data.magazineissue
+    let mi = data.magazineissue;
 
     content = (
       <>
@@ -67,7 +67,7 @@ const MagazineDetail = ({ id }) => {
           </Col>
         </Row>
       </>
-    )
+    );
   }
 
   return (
@@ -77,7 +77,7 @@ const MagazineDetail = ({ id }) => {
       </Helmet>
       <Container className="mt-2">{content}</Container>
     </>
-  )
-}
+  );
+};
 
-export default MagazineDetail
+export default MagazineDetail;

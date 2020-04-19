@@ -1,9 +1,9 @@
-import React from "react"
-import Form from "react-bootstrap/Form"
-import Col from "react-bootstrap/Col"
-import Button from "react-bootstrap/Button"
-import { Formik, Field, ErrorMessage } from "formik"
-import * as Yup from "yup"
+import React from "react";
+import Form from "react-bootstrap/Form";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import { Formik, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -40,13 +40,13 @@ const validationSchema = Yup.object().shape({
       </em>
     )
     .nullable(),
-})
+});
 
 const MagazineForm = ({ magazine, languages, action, submitHandler }) => {
-  let initialValues = { ...magazine }
-  initialValues.createdAt = new Date(initialValues.createdAt)
-  initialValues.updatedAt = new Date(initialValues.updatedAt)
-  initialValues.action = action
+  let initialValues = { ...magazine };
+  initialValues.createdAt = new Date(initialValues.createdAt);
+  initialValues.updatedAt = new Date(initialValues.updatedAt);
+  initialValues.action = action;
 
   return (
     <Formik
@@ -189,7 +189,7 @@ const MagazineForm = ({ magazine, languages, action, submitHandler }) => {
         </Form>
       )}
     </Formik>
-  )
-}
+  );
+};
 
-export default MagazineForm
+export default MagazineForm;

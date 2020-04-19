@@ -1,25 +1,25 @@
-import React from "react"
+import React from "react";
 
-import ReferenceRetrieve from "./retrieve/ReferenceRetrieve"
-import ReferenceUpdate from "./update/ReferenceUpdate"
+import ReferenceRetrieve from "./retrieve/ReferenceRetrieve";
+import ReferenceUpdate from "./update/ReferenceUpdate";
 
-const References = props => {
-  let content
+const References = (props) => {
+  let content;
 
   switch (props.match.params.view) {
     case "create":
-      break
+      break;
     case "update":
-      content = <ReferenceUpdate {...props} />
-      break
+      content = <ReferenceUpdate {...props} />;
+      break;
     case "delete":
-      break
+      break;
     default:
       // "retrieve" or null
-      content = <ReferenceRetrieve {...props} />
+      content = <ReferenceRetrieve {...props} />;
   }
 
-  return content
-}
+  return content;
+};
 
-export default References
+export default References;

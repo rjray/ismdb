@@ -1,14 +1,14 @@
-import React from "react"
-import { LinkContainer } from "react-router-bootstrap"
-import Form from "react-bootstrap/Form"
-import Col from "react-bootstrap/Col"
-import Button from "react-bootstrap/Button"
-import Container from "react-bootstrap/Container"
-import { Formik, Field, FieldArray, ErrorMessage } from "formik"
-import { MdLink, MdDelete, MdSettingsBackupRestore } from "react-icons/md"
-import * as Yup from "yup"
+import React from "react";
+import { LinkContainer } from "react-router-bootstrap";
+import Form from "react-bootstrap/Form";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
+import { Formik, Field, FieldArray, ErrorMessage } from "formik";
+import { MdLink, MdDelete, MdSettingsBackupRestore } from "react-icons/md";
+import * as Yup from "yup";
 
-import compareVersion from "../utils/compare-version"
+import compareVersion from "../utils/compare-version";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -83,7 +83,7 @@ const validationSchema = Yup.object().shape({
         Keywords cannot be empty
       </em>
     ),
-})
+});
 
 const ReferenceForm = ({
   recordtypes,
@@ -93,13 +93,13 @@ const ReferenceForm = ({
   action,
   submitHandler,
 }) => {
-  let initialValues = { ...reference, action: action }
+  let initialValues = { ...reference, action: action };
 
-  let issues = {}
+  let issues = {};
   for (let magazine of magazines) {
-    issues[magazine.id] = magazine.MagazineIssues.map(i => i.number).sort(
+    issues[magazine.id] = magazine.MagazineIssues.map((i) => i.number).sort(
       compareVersion
-    )
+    );
   }
 
   return (
@@ -107,8 +107,8 @@ const ReferenceForm = ({
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={(values, actions) => {
-        alert(JSON.stringify(values, null, 2))
-        actions.setSubmitting(false)
+        alert(JSON.stringify(values, null, 2));
+        actions.setSubmitting(false);
       }}
     >
       {({
@@ -249,7 +249,7 @@ const ReferenceForm = ({
                 className="mb-2 pb-0 px-0 d-flex flex-column justify-content-start"
               >
                 <FieldArray name="authors">
-                  {helpers => (
+                  {(helpers) => (
                     <>
                       {values.authors.map((author, index) => (
                         <Form.Group
@@ -281,12 +281,12 @@ const ReferenceForm = ({
                                 tabIndex={-1}
                                 onClick={() => {
                                   if (author.id === 0 && author.name === "") {
-                                    helpers.remove(index)
+                                    helpers.remove(index);
                                   } else {
                                     helpers.replace(index, {
                                       ...author,
                                       deleted: !author.deleted,
-                                    })
+                                    });
                                   }
                                 }}
                               >
@@ -444,7 +444,7 @@ const ReferenceForm = ({
         </Form>
       )}
     </Formik>
-  )
-}
+  );
+};
 
-export default ReferenceForm
+export default ReferenceForm;

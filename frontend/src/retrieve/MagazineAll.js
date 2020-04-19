@@ -1,23 +1,23 @@
-import React from "react"
-import { LinkContainer } from "react-router-bootstrap"
-import { Helmet } from "react-helmet"
-import Container from "react-bootstrap/Container"
-import Row from "react-bootstrap/Row"
-import Col from "react-bootstrap/Col"
-import Button from "react-bootstrap/Button"
-import ScaleLoader from "react-spinners/ScaleLoader"
-import { formatDistanceToNow, format } from "date-fns"
-import DataTable from "react-data-table-component"
+import React from "react";
+import { LinkContainer } from "react-router-bootstrap";
+import { Helmet } from "react-helmet";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import ScaleLoader from "react-spinners/ScaleLoader";
+import { formatDistanceToNow, format } from "date-fns";
+import DataTable from "react-data-table-component";
 
-import useDataApi from "../utils/data-api"
-import Header from "../styles/Header"
-import MagazineExpand from "./MagazineExpand"
+import useDataApi from "../utils/data-api";
+import Header from "../styles/Header";
+import MagazineExpand from "./MagazineExpand";
 
 const MagazineAll = () => {
   const [{ data, loading, error }] = useDataApi("/api/views/magazine/all", {
     data: {},
-  })
-  let content
+  });
+  let content;
 
   if (error) {
     content = (
@@ -26,15 +26,15 @@ const MagazineAll = () => {
         <p>An error occurred trying to load all the magazines:</p>
         <p>{error.message}</p>
       </>
-    )
+    );
   } else if (loading) {
     content = (
       <div style={{ textAlign: "center" }}>
         <ScaleLoader />
       </div>
-    )
+    );
   } else {
-    let magazines = data.magazines
+    let magazines = data.magazines;
     let columns = [
       {
         name: <b>Name</b>,
@@ -52,11 +52,11 @@ const MagazineAll = () => {
         sortable: true,
         maxWidth: "20%",
         hide: "sm",
-        format: row => {
-          const now = new Date(row.createdAt)
-          const show = format(now, "PPpp")
-          const title = formatDistanceToNow(now)
-          return <span title={`${title} ago`}>{show}</span>
+        format: (row) => {
+          const now = new Date(row.createdAt);
+          const show = format(now, "PPpp");
+          const title = formatDistanceToNow(now);
+          return <span title={`${title} ago`}>{show}</span>;
         },
       },
       {
@@ -65,14 +65,14 @@ const MagazineAll = () => {
         sortable: true,
         maxWidth: "20%",
         hide: "md",
-        format: row => {
-          const now = new Date(row.updatedAt)
-          const show = format(now, "PPpp")
-          const title = formatDistanceToNow(now)
-          return <span title={`${title} ago`}>{show}</span>
+        format: (row) => {
+          const now = new Date(row.updatedAt);
+          const show = format(now, "PPpp");
+          const title = formatDistanceToNow(now);
+          return <span title={`${title} ago`}>{show}</span>;
         },
       },
-    ]
+    ];
 
     content = (
       <>
@@ -107,7 +107,7 @@ const MagazineAll = () => {
           </Col>
         </Row>
       </>
-    )
+    );
   }
 
   return (
@@ -117,7 +117,7 @@ const MagazineAll = () => {
       </Helmet>
       <Container className="mt-2">{content}</Container>
     </>
-  )
-}
+  );
+};
 
-export default MagazineAll
+export default MagazineAll;

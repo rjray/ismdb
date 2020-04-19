@@ -1,19 +1,19 @@
-import React from "react"
-import { Link } from "react-router-dom"
-import { LinkContainer } from "react-router-bootstrap"
-import { Helmet } from "react-helmet"
-import Container from "react-bootstrap/Container"
-import Row from "react-bootstrap/Row"
-import Col from "react-bootstrap/Col"
-import Button from "react-bootstrap/Button"
-import ScaleLoader from "react-spinners/ScaleLoader"
-import { formatDistanceToNow, format } from "date-fns"
+import React from "react";
+import { Link } from "react-router-dom";
+import { LinkContainer } from "react-router-bootstrap";
+import { Helmet } from "react-helmet";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import ScaleLoader from "react-spinners/ScaleLoader";
+import { formatDistanceToNow, format } from "date-fns";
 
-import useDataApi from "../utils/data-api"
-import Header from "../styles/Header"
+import useDataApi from "../utils/data-api";
+import Header from "../styles/Header";
 
 const FormatAuthors = ({ reference }) => {
-  let content = []
+  let content = [];
 
   if (reference.authors.length > 0) {
     for (let author of reference.authors) {
@@ -21,20 +21,20 @@ const FormatAuthors = ({ reference }) => {
         <Link key={author.id} to={`/authors/${author.id}`}>
           {author.name}
         </Link>
-      )
-      content.push(", ")
+      );
+      content.push(", ");
     }
-    content.pop()
+    content.pop();
   }
 
-  return <span>{content}</span>
-}
+  return <span>{content}</span>;
+};
 
 const ReferenceDetail = ({ id }) => {
   const [{ data, loading, error }] = useDataApi(`/api/views/reference/${id}`, {
     data: {},
-  })
-  let content
+  });
+  let content;
 
   if (error) {
     content = (
@@ -43,21 +43,21 @@ const ReferenceDetail = ({ id }) => {
         <p>An error occurred trying to load data for reference:</p>
         <p>{error.message}</p>
       </>
-    )
+    );
   } else if (loading) {
     content = (
       <div style={{ textAlign: "center" }}>
         <ScaleLoader />
       </div>
-    )
+    );
   } else {
-    let reference = data.reference
-    let created = new Date(reference.createdAt)
-    let updated = new Date(reference.updatedAt)
-    let recType
+    let reference = data.reference;
+    let created = new Date(reference.createdAt);
+    let updated = new Date(reference.updatedAt);
+    let recType;
 
     if (reference.RecordType.description === "book") {
-      recType = reference.isbn ? `ISBN ${reference.isbn}` : "Book"
+      recType = reference.isbn ? `ISBN ${reference.isbn}` : "Book";
     } else if (reference.RecordType.description === "article") {
       recType = (
         <Link
@@ -65,7 +65,7 @@ const ReferenceDetail = ({ id }) => {
         >
           {`${reference.Magazine.name} ${reference.MagazineIssue.number}`}
         </Link>
-      )
+      );
     } else if (reference.RecordType.description === "placeholder") {
       recType = (
         <Link
@@ -73,9 +73,9 @@ const ReferenceDetail = ({ id }) => {
         >
           {`${reference.Magazine.name} ${reference.MagazineIssue.number} (placeholder)`}
         </Link>
-      )
+      );
     } else {
-      recType = reference.RecordType.notes
+      recType = reference.RecordType.notes;
     }
 
     content = (
@@ -151,7 +151,7 @@ const ReferenceDetail = ({ id }) => {
           </Col>
         </Row>
       </>
-    )
+    );
   }
 
   return (
@@ -161,7 +161,7 @@ const ReferenceDetail = ({ id }) => {
       </Helmet>
       <Container className="mt-2">{content}</Container>
     </>
-  )
-}
+  );
+};
 
-export default ReferenceDetail
+export default ReferenceDetail;
