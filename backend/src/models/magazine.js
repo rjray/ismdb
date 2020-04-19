@@ -1,6 +1,6 @@
-"use strict"
+"use strict";
 
-const { createStringGetter, createStringSetter } = require("../lib/utils")
+const { createStringGetter, createStringSetter } = require("../lib/utils");
 
 module.exports = (sequelize, DataTypes) => {
   const Magazine = sequelize.define(
@@ -27,10 +27,10 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {}
-  )
-  Magazine.associate = function(models) {
-    Magazine.hasMany(models.MagazineIssue)
-  }
+  );
+  Magazine.associate = function (models) {
+    Magazine.hasMany(models.MagazineIssue);
+  };
 
-  return Magazine
-}
+  return Magazine;
+};

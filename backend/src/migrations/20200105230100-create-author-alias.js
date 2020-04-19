@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -13,9 +13,9 @@ module.exports = {
         type: Sequelize.STRING(60),
         allowNull: false,
       },
-    })
+    });
   },
-  down: queryInterface => {
-    return queryInterface.dropTable("AuthorAliases")
+  down: (queryInterface) => {
+    return queryInterface.dropTable("AuthorAliases");
   },
-}
+};

@@ -1,6 +1,6 @@
-"use strict"
+"use strict";
 
-const { createStringGetter, createStringSetter } = require("../lib/utils")
+const { createStringGetter, createStringSetter } = require("../lib/utils");
 
 module.exports = (sequelize, DataTypes) => {
   const Reference = sequelize.define(
@@ -32,16 +32,16 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {}
-  )
-  Reference.associate = function(models) {
-    Reference.belongsTo(models.RecordType)
-    Reference.belongsTo(models.MagazineIssue, { onDelete: "CASCADE" })
+  );
+  Reference.associate = function (models) {
+    Reference.belongsTo(models.RecordType);
+    Reference.belongsTo(models.MagazineIssue, { onDelete: "CASCADE" });
     Reference.belongsToMany(models.Author, {
       as: "Authors",
       through: { model: models.AuthorsReferences },
       foreignKey: "referenceId",
-    })
-  }
+    });
+  };
 
-  return Reference
-}
+  return Reference;
+};

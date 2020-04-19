@@ -1,7 +1,7 @@
-"use strict"
+"use strict";
 
 module.exports = {
-  up: queryInterface => {
+  up: (queryInterface) => {
     return queryInterface
       .addIndex("AuthorsReferences", {
         fields: ["authorId"],
@@ -11,18 +11,18 @@ module.exports = {
         return queryInterface.addIndex("AuthorsReferences", {
           fields: ["referenceId"],
           name: "authors_references_reference",
-        })
-      })
+        });
+      });
   },
 
-  down: queryInterface => {
+  down: (queryInterface) => {
     return queryInterface
       .removeIndex("AuthorsReferences", "authors_references_author")
       .then(() => {
         return queryInterface.removeIndex(
           "AuthorsReferences",
-          "authors_references_reference",
-        )
-      })
+          "authors_references_reference"
+        );
+      });
   },
-}
+};

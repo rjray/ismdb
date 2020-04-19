@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 module.exports = (sequelize, DataTypes) => {
   const AuthorAlias = sequelize.define(
@@ -10,9 +10,9 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     { timestamps: false }
-  )
-  AuthorAlias.associate = function(models) {
-    AuthorAlias.belongsTo(models.Author, { onDelete: "CASCADE" })
-  }
-  return AuthorAlias
-}
+  );
+  AuthorAlias.associate = function (models) {
+    AuthorAlias.belongsTo(models.Author, { onDelete: "CASCADE" });
+  };
+  return AuthorAlias;
+};

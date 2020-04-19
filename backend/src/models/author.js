@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 module.exports = (sequelize, DataTypes) => {
   const Author = sequelize.define(
@@ -10,15 +10,15 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     { timestamps: false }
-  )
-  Author.associate = function(models) {
-    Author.hasMany(models.AuthorAlias)
+  );
+  Author.associate = function (models) {
+    Author.hasMany(models.AuthorAlias);
     Author.belongsToMany(models.Reference, {
       as: "References",
       through: { model: models.AuthorsReferences },
       foreignKey: "authorId",
-    })
-  }
+    });
+  };
 
-  return Author
-}
+  return Author;
+};

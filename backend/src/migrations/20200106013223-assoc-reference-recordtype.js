@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -8,12 +8,12 @@ module.exports = {
         model: "RecordTypes",
         key: "id",
       },
-    })
+    });
   },
 
-  down: queryInterface => {
+  down: (queryInterface) => {
     if (queryInterface.sequelize.getDialect() !== "sqlite") {
-      return queryInterface.removeColumn("References", "recordTypeId")
+      return queryInterface.removeColumn("References", "recordTypeId");
     }
   },
-}
+};

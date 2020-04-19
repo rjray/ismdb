@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 module.exports = (sequelize, DataTypes) => {
   const MagazineIssue = sequelize.define(
@@ -10,11 +10,11 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {}
-  )
-  MagazineIssue.associate = function(models) {
-    MagazineIssue.belongsTo(models.Magazine, { onDelete: "CASCADE" })
-    MagazineIssue.hasMany(models.Reference)
-  }
+  );
+  MagazineIssue.associate = function (models) {
+    MagazineIssue.belongsTo(models.Magazine, { onDelete: "CASCADE" });
+    MagazineIssue.hasMany(models.Reference);
+  };
 
-  return MagazineIssue
-}
+  return MagazineIssue;
+};

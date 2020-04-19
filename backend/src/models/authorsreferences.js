@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 module.exports = (sequelize, DataTypes) => {
   const AuthorsReferences = sequelize.define(
@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-    { timestamps: false },
-  )
+    { timestamps: false }
+  );
 
-  return AuthorsReferences
-}
+  return AuthorsReferences;
+};

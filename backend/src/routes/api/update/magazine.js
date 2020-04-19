@@ -2,23 +2,23 @@
  * /api/update/magazine
  */
 
-const express = require("express")
+const express = require("express");
 
-const { updateMagazine } = require("../../../db/magazines")
-const { objectifyError } = require("../../../lib/utils")
+const { updateMagazine } = require("../../../db/magazines");
+const { objectifyError } = require("../../../lib/utils");
 
-const router = express.Router()
+const router = express.Router();
 
 router.post("/", (req, res) => {
-  const { id, ...body } = req.body
+  const { id, ...body } = req.body;
 
   updateMagazine(id, body)
-    .then(magazine => {
-      res.send({ status: "success", magazine })
+    .then((magazine) => {
+      res.send({ status: "success", magazine });
     })
-    .catch(error => {
-      res.send({ status: "error", error: objectifyError(error) })
-    })
-})
+    .catch((error) => {
+      res.send({ status: "error", error: objectifyError(error) });
+    });
+});
 
-module.exports = router
+module.exports = router;

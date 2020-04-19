@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -16,9 +16,9 @@ module.exports = {
       notes: {
         type: Sequelize.STRING(255),
       },
-    })
+    });
   },
-  down: queryInterface => {
-    return queryInterface.dropTable("RecordTypes")
+  down: (queryInterface) => {
+    return queryInterface.dropTable("RecordTypes");
   },
-}
+};
