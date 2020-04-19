@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     {}
   )
   MagazineIssue.associate = function(models) {
-    MagazineIssue.belongsTo(models.Magazine)
+    MagazineIssue.belongsTo(models.Magazine, { onDelete: "CASCADE" })
     MagazineIssue.hasMany(models.Reference)
   }
 

@@ -8,6 +8,7 @@ module.exports = {
         model: "Authors",
         key: "id",
       },
+      onDelete: "CASCADE",
     })
   },
 

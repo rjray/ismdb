@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
   )
   Reference.associate = function(models) {
     Reference.belongsTo(models.RecordType)
-    Reference.belongsTo(models.MagazineIssue)
+    Reference.belongsTo(models.MagazineIssue, { onDelete: "CASCADE" })
     Reference.belongsToMany(models.Author, {
       as: "Authors",
       through: { model: models.AuthorsReferences },

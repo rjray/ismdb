@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     { timestamps: false }
   )
   AuthorAlias.associate = function(models) {
-    AuthorAlias.belongsTo(models.Author)
+    AuthorAlias.belongsTo(models.Author, { onDelete: "CASCADE" })
   }
   return AuthorAlias
 }
