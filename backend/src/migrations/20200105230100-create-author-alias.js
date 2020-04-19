@@ -12,7 +12,6 @@ module.exports = {
       name: {
         type: Sequelize.STRING(60),
         allowNull: false,
-        unique: true,
       },
     })
   },
