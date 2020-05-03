@@ -6,7 +6,6 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
-import deepEqual from "deep-equal";
 
 import useDataApi from "../utils/data-api";
 import setupCRUDHandler from "../utils/crud";
@@ -80,9 +79,7 @@ const ReferenceUpdate = (props) => {
         delete newReference[key];
       }
 
-      if (!deepEqual(oldReference, newReference)) {
-        crudHandler(values, formikBag);
-      }
+      crudHandler(values, formikBag);
       formikBag.setSubmitting(false);
     };
 

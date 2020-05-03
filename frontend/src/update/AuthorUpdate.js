@@ -6,7 +6,6 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
-import deepEqual from "deep-equal";
 import _ from "lodash";
 
 import useDataApi from "../utils/data-api";
@@ -89,9 +88,7 @@ const AuthorUpdate = (props) => {
       delete newAuthor.action;
       oldAuthor.aliases.forEach((item) => (item.deleted = false));
 
-      if (!deepEqual(oldAuthor, newAuthor)) {
-        crudHandler(values, formikBag);
-      }
+      crudHandler(values, formikBag);
       formikBag.setSubmitting(false);
     };
 

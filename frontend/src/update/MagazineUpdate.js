@@ -6,7 +6,6 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
-import deepEqual from "deep-equal";
 import _ from "lodash";
 
 import useDataApi from "../utils/data-api";
@@ -93,9 +92,7 @@ const MagazineUpdate = (props) => {
         delete newMagazine[key];
       }
 
-      if (!deepEqual(oldMagazine, newMagazine)) {
-        crudHandler(values, formikBag);
-      }
+      crudHandler(values, formikBag);
       formikBag.setSubmitting(false);
     };
 
