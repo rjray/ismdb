@@ -6,10 +6,10 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
-import _ from "lodash";
 
 import useDataApi from "../utils/data-api";
 import setupCRUDHandler from "../utils/crud";
+import { isEmpty } from "../utils/no-lodash";
 import Header from "../styles/Header";
 import MagazineForm from "../forms/MagazineForm";
 import Notifications from "../components/Notifications";
@@ -41,7 +41,7 @@ const MagazineUpdate = (props) => {
       </div>
     );
   } else {
-    const magazine = _.isEmpty(masterMagazine) ? data.magazine : masterMagazine;
+    const magazine = isEmpty(masterMagazine) ? data.magazine : masterMagazine;
 
     const crudHandler = setupCRUDHandler({
       type: "magazine",

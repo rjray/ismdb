@@ -6,10 +6,10 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
-import _ from "lodash";
 
 import useDataApi from "../utils/data-api";
 import compareVersion from "../utils/compare-version";
+import { chunk } from "../utils/no-lodash";
 
 const createIssueRow = (mId, elements) => {
   if (elements.length < 10) {
@@ -56,7 +56,7 @@ const MagazineExpand = (props) => {
     let issues = magazine.issues.sort((a, b) =>
       compareVersion(a.number, b.number)
     );
-    let chunks = _.chunk(issues, 10);
+    let chunks = chunk(issues, 10);
     let rows = chunks.map((row, idx) => {
       let rowInner = createIssueRow(magazine.id, row);
       return <Row key={idx}>{rowInner}</Row>;

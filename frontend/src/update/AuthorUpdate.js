@@ -6,10 +6,10 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
-import _ from "lodash";
 
 import useDataApi from "../utils/data-api";
 import setupCRUDHandler from "../utils/crud";
+import { isEmpty } from "../utils/no-lodash";
 import Header from "../styles/Header";
 import AuthorForm from "../forms/AuthorForm";
 import Notifications from "../components/Notifications";
@@ -38,7 +38,7 @@ const AuthorUpdate = (props) => {
       </div>
     );
   } else {
-    const author = _.isEmpty(masterAuthor) ? data.author : masterAuthor;
+    const author = isEmpty(masterAuthor) ? data.author : masterAuthor;
 
     const crudHandler = setupCRUDHandler({
       type: "author",
