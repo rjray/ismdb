@@ -20,12 +20,12 @@
     "helmet": "^3.22.0",
     "lodash": "^4.17.15",
     "mysql2": "^2.1.0",
-    "sequelize": "^5.21.6",
+    "sequelize": "^5.21.7",
     "sequelize-cli": "^5.5.1",
-    "sqlite3": "^4.1.1"
+    "sqlite3": "^4.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0",
+    "@babel/core": "^7.9.6",
     "babel-preset-airbnb": "^5.0.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.1.0",
