@@ -43,9 +43,16 @@ const objectifyError = (error) => {
   };
 };
 
+// Taken from https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore
+// to replace usage of lodash.
+const sortBy = (key) => {
+  return (a, b) => (a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0);
+};
+
 module.exports = {
   compareVersion,
   createStringGetter,
   createStringSetter,
   objectifyError,
+  sortBy,
 };

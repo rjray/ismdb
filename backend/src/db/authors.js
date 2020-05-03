@@ -2,8 +2,6 @@
  * All database operations that focus on authors.
  */
 
-const _ = require("lodash");
-
 const {
   Author,
   AuthorAlias,
@@ -13,6 +11,7 @@ const {
   MagazineIssue,
   sequelize,
 } = require("../models");
+const { sortBy } = require("../lib/utils");
 
 function convertAliases(aliasList) {
   let aliases = aliasList.map((item) => {
@@ -20,7 +19,7 @@ function convertAliases(aliasList) {
     delete item.AuthorId;
     return item;
   });
-  aliases = _.sortBy(aliases, (o) => o.name);
+  aliases = sortBy(aliases, "name");
 
   return aliases;
 }
