@@ -8,7 +8,7 @@ import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
 import useDataApi from "../utils/data-api";
-import Header from "../styles/Header";
+import Header from "../components/Header";
 import ReferenceTable from "./ReferenceTable";
 
 const ReferenceAll = () => {

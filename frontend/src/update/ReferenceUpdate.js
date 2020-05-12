@@ -9,7 +9,7 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 
 import useDataApi from "../utils/data-api";
 import setupCRUDHandler from "../utils/crud";
-import Header from "../styles/Header";
+import Header from "../components/Header";
 import ReferenceForm from "../forms/ReferenceForm";
 
 const crudHandler = setupCRUDHandler({

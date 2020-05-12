@@ -10,7 +10,7 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 import { formatDistanceToNow, format } from "date-fns";
 
 import useDataApi from "../utils/data-api";
-import Header from "../styles/Header";
+import Header from "../components/Header";
 
 const FormatAuthors = ({ reference }) => {
   let content = [];

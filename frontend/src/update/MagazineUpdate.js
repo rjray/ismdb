@@ -10,7 +10,7 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 import useDataApi from "../utils/data-api";
 import setupCRUDHandler from "../utils/crud";
 import { isEmpty } from "../utils/no-lodash";
-import Header from "../styles/Header";
+import Header from "../components/Header";
 import MagazineForm from "../forms/MagazineForm";
 import Notifications from "../components/Notifications";
 

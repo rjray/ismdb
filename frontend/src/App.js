@@ -7,6 +7,7 @@ import NavHeader from "./NavHeader";
 import Authors from "./Authors";
 import Magazines from "./Magazines";
 import References from "./References";
+import Header from "./components/Header";
 
 const App = () => (
   <Router>
@@ -20,7 +21,7 @@ const App = () => (
       <Switch>
         <Route exact path="/">
           <Container>
-            <h1>Home</h1>
+            <Header>Home</Header>
           </Container>
         </Route>
         <Route

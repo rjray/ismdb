@@ -12,7 +12,7 @@ import DataTable from "react-data-table-component";
 
 import useDataApi from "../utils/data-api";
 import compareVersion from "../utils/compare-version";
-import Header from "../styles/Header";
+import Header from "../components/Header";
 
 const sortRows = (rows, field, direction) => {
   switch (field) {

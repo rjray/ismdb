@@ -9,7 +9,7 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 import DataTable from "react-data-table-component";
 
 import useDataApi from "../utils/data-api";
-import Header from "../styles/Header";
+import Header from "../components/Header";
 import AuthorExpand from "./AuthorExpand";
 
 const lastNameFirst = (name) => {

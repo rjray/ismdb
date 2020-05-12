@@ -10,7 +10,7 @@ import { formatDistanceToNow, format } from "date-fns";
 import DataTable from "react-data-table-component";
 
 import useDataApi from "../utils/data-api";
-import Header from "../styles/Header";
+import Header from "../components/Header";
 import MagazineExpand from "./MagazineExpand";
 
 const MagazineAll = () => {
