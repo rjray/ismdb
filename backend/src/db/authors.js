@@ -19,7 +19,7 @@ function convertAliases(aliasList) {
     delete item.AuthorId;
     return item;
   });
-  aliases = sortBy(aliases, "name");
+  aliases.sort(sortBy("name"));
 
   return aliases;
 }
@@ -103,6 +103,41 @@ const fetchAllAuthorsWithRefcount = async (opts = {}) => {
   return authors;
 };
 
+// Create a new author using the content in data.
+const createAuthor = async (data) => {
+  // Because I reuse the same form, there are null values in for createdAt
+  // and updatedAt.
+  delete data.createdAt;
+  delete data.updatedAt;
+
+  const newId = await sequelize.transaction(async (txn) => {
+    const author = await Author.create(
+      { name: data.name },
+      { transaction: txn }
+    ).catch((error) => {
+      if (error.hasOwnProperty("errors")) {
+        const specific = error.errors[0];
+        throw new Error(specific.message);
+      } else {
+        throw new Error(error.message);
+      }
+    });
+
+    if (data.aliases.length) {
+      let aliases = data.aliases.filter((item) => !item.deleted)
+        .map((alias) => alias.name);
+
+      for (let name of aliases) {
+        await author.createAuthorAlias({ name: name }, { transaction: txn });
+      }
+    }
+
+    return author.id;
+  });
+
+  return fetchSingleAuthorSimple(newId);
+};
+
 // Update a single author using the content in data.
 const updateAuthor = async (id, data) => {
   return Author.findByPk(id, { include: [AuthorAlias] })
@@ -172,6 +207,7 @@ module.exports = {
   fetchSingleAuthorSimple,
   fetchSingleAuthorComplex,
   fetchAllAuthorsWithRefcount,
+  createAuthor,
   updateAuthor,
   deleteAuthor,
 };

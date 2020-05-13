@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 const create = require("./create");
 const retrieve = require("./retrieve");
 const update = require("./update");
+const del = require("./delete");
 const misc = require("./misc");
 const views = require("./views");
 
@@ -19,6 +20,7 @@ router.use(bodyParser.json());
 router.use("/create", create);
 router.use("/retrieve", retrieve);
 router.use("/update", update);
+router.use("/delete", del);
 router.use("/misc", misc);
 router.use("/views", views);
 
