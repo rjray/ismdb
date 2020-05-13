@@ -90,7 +90,10 @@ const ReferenceUpdate = (props) => {
             <Header>Reference Update</Header>
           </Col>
           <Col className="text-right">
-            <LinkContainer to={`/references/delete/${reference.id}`}>
+            <LinkContainer to={{
+              pathname: `/references/delete/${reference.id}`,
+              state: { reference },
+            }}>
               <Button>Delete</Button>
             </LinkContainer>
           </Col>

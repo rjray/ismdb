@@ -2,6 +2,7 @@ import React from "react";
 
 import ReferenceRetrieve from "./retrieve/ReferenceRetrieve";
 import ReferenceUpdate from "./update/ReferenceUpdate";
+import ReferenceDelete from "./delete/ReferenceDelete";
 
 const References = (props) => {
   let content;
@@ -13,6 +14,7 @@ const References = (props) => {
       content = <ReferenceUpdate {...props} />;
       break;
     case "delete":
+      content = <ReferenceDelete {...props} />;
       break;
     default:
       // "retrieve" or null

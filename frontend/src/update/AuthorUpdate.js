@@ -18,7 +18,7 @@ const AuthorUpdate = (props) => {
   const id = props.match.params.id;
   const [notifications, setNotifications] = useState([]);
   const [masterAuthor, setMasterAuthor] = useState({});
-  const [{ data, loading, error }] = useDataApi(`/api/retrieve/author/${id}`, {
+  const [{ data, loading, error }] = useDataApi(`/api/views/author/${id}`, {
     data: {},
   });
   let content;
@@ -99,7 +99,12 @@ const AuthorUpdate = (props) => {
             <Header>Author Update</Header>
           </Col>
           <Col className="text-right">
-            <LinkContainer to={`/authors/delete/${author.id}`}>
+            <LinkContainer
+              to={{
+                pathname: `/authors/delete/${author.id}`,
+                state: { author },
+              }}
+            >
               <Button>Delete</Button>
             </LinkContainer>
           </Col>
