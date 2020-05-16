@@ -72,13 +72,6 @@ const ReferenceUpdate = (props) => {
     reference.RecordTypeId = `${reference.RecordTypeId}`;
 
     const submitHandler = (values, formikBag) => {
-      let oldReference = { ...reference };
-      let newReference = { ...values };
-      for (let key of ["action", "createdAt", "updatedAt"]) {
-        delete oldReference[key];
-        delete newReference[key];
-      }
-
       crudHandler(values, formikBag);
       formikBag.setSubmitting(false);
     };
