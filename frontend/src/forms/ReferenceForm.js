@@ -275,8 +275,8 @@ const ReferenceForm = ({
                               selectHintOnEnter
                               disabled={author.deleted}
                               options={authorlist}
-                              data-lpignore={true}
                               placeholder="Author name"
+                              defaultInputValue={author.name}
                               inputProps={{
                                 ["data-lpignore"]: "true",
                                 className: author.deleted
