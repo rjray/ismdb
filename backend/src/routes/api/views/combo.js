@@ -5,23 +5,25 @@
 const express = require("express");
 
 const { fetchLanguages } = require("../../../db/raw-sql");
+const { fetchAllAuthorsWithAliases } = require("../../../db/authors");
 const {
   fetchSingleMagazineSimple,
   fetchAllMagazinesWithIssueNumbers,
 } = require("../../../db/magazines");
 const { fetchSingleReferenceComplete } = require("../../../db/references");
 const { fetchAllRecordTypes } = require("../../../db/misc");
-const { objectifyError } = require("../../../lib/utils");
+const { sortBy, objectifyError } = require("../../../lib/utils");
 
-let router = express.Router();
+const router = express.Router();
 
 router.get("/editreference/:id(\\d+)?", (req, res) => {
-  let id = req.params.id;
+  const id = req.params.id;
 
-  let promises = [
+  const promises = [
     fetchAllRecordTypes({ order: ["id"] }),
     fetchAllMagazinesWithIssueNumbers({ attributes: ["id", "name"] }),
     fetchLanguages(),
+    fetchAllAuthorsWithAliases(),
   ];
   if (id) {
     promises.push(fetchSingleReferenceComplete(id));
@@ -29,16 +31,31 @@ router.get("/editreference/:id(\\d+)?", (req, res) => {
 
   Promise.all(promises)
     .then((values) => {
-      let recordtypes = values[0];
-      let magazines = values[1];
-      let languages = values[2];
-      let reference = id ? values[3] : {};
+      const recordtypes = values[0];
+      const magazines = values[1];
+      const languages = values[2];
+      const allAuthors = values[3];
+      const reference = id ? values[4] : {};
+
+      const authorlist = [];
+      for (const author of allAuthors) {
+        const { id, name, aliases } = author;
+
+        // Start with the author themselves:
+        authorlist.push({ id, name });
+        // Add any aliases for this author:
+        for (const alias of aliases) {
+          authorlist.push({ id, name: alias.name, aliasOf: name });
+        }
+      }
+      authorlist.sort(sortBy("name"));
 
       res.send({
         status: "success",
         recordtypes,
         magazines,
         languages,
+        authorlist,
         reference,
       });
     })
@@ -48,17 +65,17 @@ router.get("/editreference/:id(\\d+)?", (req, res) => {
 });
 
 router.get("/editmagazine/:id(\\d+)?", (req, res) => {
-  let id = req.params.id;
+  const id = req.params.id;
 
-  let promises = [fetchLanguages()];
+  const promises = [fetchLanguages()];
   if (id) {
     promises.push(fetchSingleMagazineSimple(id));
   }
 
   Promise.all(promises)
     .then((values) => {
-      let languages = values[0];
-      let magazine = id ? values[1] : {};
+      const languages = values[0];
+      const magazine = id ? values[1] : {};
 
       res.send({
         status: "success",
