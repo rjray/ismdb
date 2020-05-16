@@ -1,5 +1,6 @@
 import React from "react";
 
+import ReferenceCreate from "./create/ReferenceCreate";
 import ReferenceRetrieve from "./retrieve/ReferenceRetrieve";
 import ReferenceUpdate from "./update/ReferenceUpdate";
 import ReferenceDelete from "./delete/ReferenceDelete";
@@ -9,6 +10,7 @@ const References = (props) => {
 
   switch (props.match.params.view) {
     case "create":
+      content = <ReferenceCreate {...props} />;
       break;
     case "update":
       content = <ReferenceUpdate {...props} />;
