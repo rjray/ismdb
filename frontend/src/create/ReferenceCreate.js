@@ -87,7 +87,6 @@ const ReferenceCreate = () => {
     });
 
     const submitHandler = (values, formikBag) => {
-      //alert(JSON.stringify(values, null, 2));
       crudHandler(values, formikBag);
       formikBag.setSubmitting(false);
     };

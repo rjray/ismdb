@@ -4,9 +4,12 @@ import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
+import { Typeahead } from "react-bootstrap-typeahead";
 import { Formik, Field, FieldArray, ErrorMessage } from "formik";
 import { MdLink, MdDelete, MdSettingsBackupRestore } from "react-icons/md";
 import * as Yup from "yup";
+
+import "react-bootstrap-typeahead/css/Typeahead.css";
 
 import compareVersion from "../utils/compare-version";
 
@@ -21,6 +24,9 @@ const validationSchema = Yup.object().shape({
     .required(
       <em style={{ fontSize: "75%", color: "red" }}>Name cannot be empty</em>
     ),
+  RecordTypeId: Yup.string().required(
+    <em style={{ fontSize: "75%", color: "red" }}>Must choose a record type</em>
+  ),
   isbn: Yup.string()
     .max(
       15,
@@ -89,6 +95,7 @@ const ReferenceForm = ({
   recordtypes,
   magazines,
   languages,
+  authorlist,
   reference,
   action,
   submitHandler,
@@ -106,10 +113,7 @@ const ReferenceForm = ({
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={(values, actions) => {
-        alert(JSON.stringify(values, null, 2));
-        actions.setSubmitting(false);
-      }}
+      onSubmit={submitHandler}
     >
       {({
         values,
@@ -137,7 +141,7 @@ const ReferenceForm = ({
               />
             </Col>
           </Form.Group>
-          <Form.Group as={Form.Row} controlId="recordType" className="mb-2">
+          <Form.Group as={Form.Row} controlId="RecordTypeId" className="mb-2">
             <Form.Label column sm={2} className="text-md-right text-sm-left">
               Record Type:
             </Form.Label>
@@ -154,6 +158,8 @@ const ReferenceForm = ({
                       type="select"
                       component="select"
                       name="RecordTypeId"
+                      onBlur={handleBlur}
+                      onChange={handleChange}
                       style={{ width: "100%", marginTop: "0.35rem" }}
                     >
                       <option value="">-- Choose --</option>
@@ -259,14 +265,40 @@ const ReferenceForm = ({
                           className="mb-2"
                         >
                           <Col sm={3}>
-                            <Field
-                              as={Form.Control}
-                              type="text"
+                            <Typeahead
+                              id={`authors.${index}.name`}
                               name={`authors.${index}.name`}
-                              placeholder="Name"
+                              labelKey="name"
+                              minLength={2}
+                              allowNew
+                              newSelectionPrefix="New author: "
+                              selectHintOnEnter
                               disabled={author.deleted}
-                              className={author.deleted && "strikethrough"}
-                              data-lpignore="true"
+                              options={authorlist}
+                              data-lpignore={true}
+                              placeholder="Author name"
+                              inputProps={{
+                                ["data-lpignore"]: "true",
+                                className: author.deleted
+                                  ? "strikethrough"
+                                  : "",
+                              }}
+                              onChange={(selected) => {
+                                const newItem = {};
+                                if (selected && selected[0]) {
+                                  newItem.deleted = false;
+                                  if (selected[0].customOption) {
+                                    newItem.name = selected[0].name;
+                                    newItem.id = 0;
+                                  } else {
+                                    newItem.name =
+                                      selected[0].aliasOf || selected[0].name;
+                                    newItem.id = selected[0].id;
+                                  }
+                                }
+
+                                helpers.replace(index, newItem);
+                              }}
                             />
                             <ErrorMessage
                               name={`author.${index}.name`}
