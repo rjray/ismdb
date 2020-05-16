@@ -8,6 +8,7 @@ const {
   MagazineIssue,
   Magazine,
   Author,
+  AuthorsReferences,
   sequelize,
 } = require("../models");
 
@@ -74,7 +75,7 @@ const fetchAllReferencesSimple = async (opts = {}) => {
   });
 
   references = references.map((item) => {
-    let reference = item.get();
+    const reference = item.get();
 
     if (reference.MagazineIssue) {
       reference.Magazine = reference.MagazineIssue.Magazine.get();
@@ -88,6 +89,105 @@ const fetchAllReferencesSimple = async (opts = {}) => {
 
   return references;
 };
+
+// Create a new reference using the content in data.
+const createReference = async (data) => {
+  // Explicitly set these.
+  data.createdAt = new Date();
+  data.updatedAt = new Date();
+
+  // Remove the authors, that will be processed separately.
+  const authors = data.authors.filter((author) => !author.deleted);
+  delete data.authors;
+  delete data.action;
+
+  // Convert this one.
+  data.RecordTypeId = parseInt(data.RecordTypeId, 10);
+
+  // These are not used directly in the creation of a Reference instance, but
+  // will be needed if the record type is a magazine.
+  const magazineIssueNumber = data.MagazineIssueNumber;
+  delete data.MagazineIssueNumber;
+  const magazineId = data.MagazineId;
+  delete data.MagazineId;
+
+  const newId = await sequelize.transaction(async (txn) => {
+    // Start by leveling things out a bit based on the record type.
+    if (data.RecordTypeId === 1) {
+      // A book. Clear magazine-related values.
+      data.MagazineIssueId = null;
+    } else if (data.RecordTypeId === 2 || data.RecordTypeId === 3) {
+      // A magazine entry. Make sure ISBN is cleared, and convert the magazine
+      // ID and issue number to the ID of a MagazineIssue instance.
+      data.isbn = null;
+
+      const magazineIssue = await MagazineIssue.findOne(
+        { where: { magazineId, number: magazineIssueNumber } },
+        { transaction: txn }
+      );
+      if (magazineIssue) {
+        // It already exists
+        data.MagazineIssueId = magazineIssue.id;
+      } else {
+        // Not found, so create it
+        const newMagazineIssue = await MagazineIssue.create(
+          { MagazineId: magazineId, number: magazineIssueNumber },
+          { transaction: txn }
+        ).catch((error) => {
+          if (error.hasOwnProperty("errors")) {
+            const specific = error.errors[0];
+            throw new Error(specific.message);
+          } else {
+            throw new Error(error.message);
+          }
+        });
+        data.MagazineIssueId = newMagazineIssue.id;
+      }
+    } else {
+      // Something other than a book or magazine entry. Clear out those fields.
+      data.isbn = null;
+      data.MagazineIssueId = null;
+    }
+
+    // Should be able to create the Reference instance, now.
+    const newReference = await Reference.create(data, { transaction: txn })
+      .catch((error) => {
+        if (error.hasOwnProperty("errors")) {
+          const specific = error.errors[0];
+          throw new Error(specific.message);
+        } else {
+          throw new Error(error.message);
+        }
+      });
+
+    // Connect the authors to the new reference
+    const newAuthors = [];
+    let authorIndex = 0;
+    for (const author of authors) {
+      if (author.id) {
+        newAuthors.push({
+          authorId: author.id,
+          referenceId: newReference.id,
+          order: authorIndex,
+        });
+      } else {
+        const newAuthor = await Author.create({ name: author.name });
+        newAuthors.push({
+          authorId: newAuthor.id,
+          referenceId: newReference.id,
+          order: authorIndex,
+        });
+      }
+      authorIndex++;
+    }
+
+    await AuthorsReferences.bulkCreate(newAuthors, { transaction: txn });
+
+    return newReference.id;
+  });
+
+  return fetchSingleReferenceComplete(newId);
+}
 
 // Update a single reference using the content in data. This has to include
 // author data, author linkage, and possible magazine issue linkage.
@@ -154,6 +254,7 @@ module.exports = {
   fetchSingleReferenceSimple,
   fetchSingleReferenceComplete,
   fetchAllReferencesSimple,
+  createReference,
   updateReference,
   deleteReference,
 };
