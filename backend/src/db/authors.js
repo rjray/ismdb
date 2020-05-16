@@ -103,13 +103,26 @@ const fetchAllAuthorsWithRefcount = async (opts = {}) => {
   return authors;
 };
 
+// Fetch all authors along with aliases.
+const fetchAllAuthorsWithAliases = async (opts = {}) => {
+  let authors = await Author.findAll({
+    include: [AuthorAlias],
+    ...opts,
+  });
+
+  authors = authors.map((author) => {
+    author = author.get();
+    author.aliases = convertAliases(author.AuthorAliases);
+    delete author.AuthorAliases;
+
+    return author;
+  });
+
+  return authors;
+};
+
 // Create a new author using the content in data.
 const createAuthor = async (data) => {
-  // Because I reuse the same form, there are null values in for createdAt
-  // and updatedAt.
-  delete data.createdAt;
-  delete data.updatedAt;
-
   const newId = await sequelize.transaction(async (txn) => {
     const author = await Author.create(
       { name: data.name },
@@ -207,6 +220,7 @@ module.exports = {
   fetchSingleAuthorSimple,
   fetchSingleAuthorComplex,
   fetchAllAuthorsWithRefcount,
+  fetchAllAuthorsWithAliases,
   createAuthor,
   updateAuthor,
   deleteAuthor,
