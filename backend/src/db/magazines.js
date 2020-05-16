@@ -73,8 +73,7 @@ const fetchAllMagazinesWithIssueNumbers = async (opts = {}) => {
 
 // Create a new magazine using the content in data.
 const createMagazine = async (data) => {
-  // Because I reuse the same form, there are null values in for createdAt
-  // and updatedAt. Plus, I need them explicitly set anyway.
+  // Explicitly set these.
   data.createdAt = new Date();
   data.updatedAt = new Date();
 
