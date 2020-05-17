@@ -47,28 +47,16 @@ const ReferenceCreate = () => {
     const crudHandler = setupCRUDHandler({
       type: "reference",
       onSuccess: (data, formikBag) => {
-        const reference = { ...data.reference };
-        let notes;
+        const { reference, notifications } = data;
 
         reference.createdAt = new Date(reference.createdAt);
         reference.updatedAt = new Date(reference.updatedAt);
-
-        if (data.notifications) {
-          notes = data.notifications;
-        } else {
-          notes = [];
-        }
-        notes.push({
-          status: "success",
-          result: "Creation success",
-          resultMessage: `Reference "${reference.name}" successfully created`,
-        });
 
         formikBag.resetForm();
 
         setState({ ...state, notifications: [] });
         setState({
-          notifications: notes,
+          notifications,
           createdReference: reference,
           stayOnPage,
         });
@@ -116,7 +104,7 @@ const ReferenceCreate = () => {
       RecordTypeId: "",
       MagazineId: "",
       MagazineIssueNumber: "",
-    }
+    };
 
     content = (
       <>
