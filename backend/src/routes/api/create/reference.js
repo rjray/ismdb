@@ -13,8 +13,8 @@ router.post("/", (req, res) => {
   const body = req.body;
 
   createReference(body)
-    .then((reference) => {
-      res.send({ status: "success", reference });
+    .then((data) => {
+      res.send({ status: "success", ...data });
     })
     .catch((error) => {
       res.send({ status: "error", error: objectifyError(error) });

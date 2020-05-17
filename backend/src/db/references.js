@@ -92,6 +92,8 @@ const fetchAllReferencesSimple = async (opts = {}) => {
 
 // Create a new reference using the content in data.
 const createReference = async (data) => {
+  const notifications = [];
+
   // Explicitly set these.
   data.createdAt = new Date();
   data.updatedAt = new Date();
@@ -150,15 +152,16 @@ const createReference = async (data) => {
     }
 
     // Should be able to create the Reference instance, now.
-    const newReference = await Reference.create(data, { transaction: txn })
-      .catch((error) => {
-        if (error.hasOwnProperty("errors")) {
-          const specific = error.errors[0];
-          throw new Error(specific.message);
-        } else {
-          throw new Error(error.message);
-        }
-      });
+    const newReference = await Reference.create(data, {
+      transaction: txn,
+    }).catch((error) => {
+      if (error.hasOwnProperty("errors")) {
+        const specific = error.errors[0];
+        throw new Error(specific.message);
+      } else {
+        throw new Error(error.message);
+      }
+    });
 
     // Connect the authors to the new reference
     const newAuthors = [];
@@ -172,6 +175,11 @@ const createReference = async (data) => {
         });
       } else {
         const newAuthor = await Author.create({ name: author.name });
+        notifications.push({
+          status: "success",
+          result: "Creation success",
+          resultMessage: `Author "${author.name}" successfully created`,
+        });
         newAuthors.push({
           authorId: newAuthor.id,
           referenceId: newReference.id,
@@ -186,8 +194,14 @@ const createReference = async (data) => {
     return newReference.id;
   });
 
-  return fetchSingleReferenceComplete(newId);
-}
+  const reference = await fetchSingleReferenceComplete(newId);
+  notifications.push({
+    status: "Success",
+    result: "Creation success",
+    resultMessage: `Reference "${reference.name}" successfully created`,
+  });
+  return { reference, notifications };
+};
 
 // Update a single reference using the content in data. This has to include
 // author data, author linkage, and possible magazine issue linkage.
