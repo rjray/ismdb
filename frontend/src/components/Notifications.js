@@ -19,13 +19,7 @@ const Notification = ({ data }) => {
   }
 
   return (
-    <Toast
-      onClose={() => setShow(false)}
-      show={show}
-      delay={4000}
-      autohide
-      style={{ position: "absolute", top: 0, right: 0 }}
-    >
+    <Toast onClose={() => setShow(false)} show={show} delay={4000} autohide>
       <Toast.Header>
         <span className={`${textClass} mr-2`}>{textIcon}</span>
         <strong className="mr-auto">{result}</strong>
