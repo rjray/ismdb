@@ -93,6 +93,7 @@ const fetchAllReferencesSimple = async (opts = {}) => {
 // Create a new reference using the content in data.
 const createReference = async (data) => {
   const notifications = [];
+  const authorsAdded = [];
 
   // Explicitly set these.
   data.createdAt = new Date();
@@ -168,18 +169,24 @@ const createReference = async (data) => {
     let authorIndex = 0;
     for (const author of authors) {
       if (author.id) {
+        // This is an existing author, so just create the new AuthorsReferences
+        // struct directly from the data.
         newAuthors.push({
           authorId: author.id,
           referenceId: newReference.id,
           order: authorIndex,
         });
       } else {
+        // This author has no ID. Since the Typeahead widget handles the
+        // onChange/onBlur for a name that is typed in without explicitly
+        // selecting it, this can only mean a brand-new author.
         const newAuthor = await Author.create({ name: author.name });
         notifications.push({
           status: "success",
           result: "Creation success",
           resultMessage: `Author "${author.name}" successfully created`,
         });
+        authorsAdded.push({ name: newAuthor.name, id: newAuthor.id });
         newAuthors.push({
           authorId: newAuthor.id,
           referenceId: newReference.id,
@@ -200,7 +207,7 @@ const createReference = async (data) => {
     result: "Creation success",
     resultMessage: `Reference "${reference.name}" successfully created`,
   });
-  return { reference, notifications };
+  return { reference, authorsAdded, notifications };
 };
 
 // Update a single reference using the content in data. This has to include
