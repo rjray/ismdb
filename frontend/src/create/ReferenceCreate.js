@@ -44,13 +44,19 @@ const ReferenceCreate = () => {
       </div>
     );
   } else {
+    const { recordtypes, magazines, languages, authorlist } = data;
+
     const crudHandler = setupCRUDHandler({
       type: "reference",
       onSuccess: (data, formikBag) => {
-        const { reference, notifications } = data;
+        const { reference, authorsAdded, notifications } = data;
 
-        reference.createdAt = new Date(reference.createdAt);
-        reference.updatedAt = new Date(reference.updatedAt);
+        reference.createdAt = new Date();
+        reference.updatedAt = new Date();
+
+        // If any new authors were added, put them in the master-list that is
+        // used by the Typeahead component.
+        authorsAdded.forEach((author) => authorlist.push(author));
 
         formikBag.resetForm();
 
@@ -132,6 +138,10 @@ const ReferenceCreate = () => {
         </Row>
         <ReferenceForm
           {...data}
+          recordtypes={recordtypes}
+          magazines={magazines}
+          languages={languages}
+          authorlist={authorlist}
           submitHandler={submitHandler}
           action="create"
           reference={emptyReference}
