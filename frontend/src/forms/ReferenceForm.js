@@ -4,7 +4,7 @@ import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
-import { Typeahead } from "react-bootstrap-typeahead";
+import { Typeahead, Highlighter } from "react-bootstrap-typeahead";
 import { Formik, Field, FieldArray, ErrorMessage } from "formik";
 import { MdLink, MdDelete, MdSettingsBackupRestore } from "react-icons/md";
 import * as Yup from "yup";
@@ -90,6 +90,19 @@ const validationSchema = Yup.object().shape({
       </em>
     ),
 });
+
+const formatAuthor = (option, props) => {
+  const author = [
+    <Highlighter key="name" search={props.text}>
+      {option.name}
+    </Highlighter>,
+  ];
+  if (option.aliasOf) {
+    author.push(<em>→ {option.aliasOf}</em>);
+  }
+
+  return author;
+};
 
 const ReferenceForm = ({
   recordtypes,
@@ -269,6 +282,10 @@ const ReferenceForm = ({
                               id={`authors.${index}.name`}
                               name={`authors.${index}.name`}
                               labelKey="name"
+                              clearButton
+                              align="left"
+                              maxResults={10}
+                              paginate
                               minLength={2}
                               allowNew
                               newSelectionPrefix="New author: "
@@ -277,6 +294,7 @@ const ReferenceForm = ({
                               options={authorlist}
                               placeholder="Author name"
                               defaultInputValue={author.name}
+                              renderMenuItemChildren={formatAuthor}
                               inputProps={{
                                 ["data-lpignore"]: "true",
                                 className: author.deleted
