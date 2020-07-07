@@ -59,15 +59,12 @@ const ReferenceExpand = (props) => {
             <LinkContainer to={`/references/${reference.id}`}>
               <Button>View</Button>
             </LinkContainer>
-          </Col>
-          <Col className="text-center">
-            {reference.language && `Language: ${reference.language}`}
-          </Col>
-          <Col className="text-right">
+            &nbsp;
             <LinkContainer to={`/references/update/${reference.id}`}>
-              <Button>edit</Button>
+              <Button>Edit</Button>
             </LinkContainer>
           </Col>
+          <Col>{reference.language && `Language: ${reference.language}`}</Col>
         </Row>
         <Row>
           <Col>Type: {reference.type}</Col>

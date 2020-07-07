@@ -75,13 +75,12 @@ const MagazineExpand = (props) => {
           <LinkContainer to={`/magazines/${magazine.id}`}>
             <Button>View</Button>
           </LinkContainer>
-        </Col>
-        <Col>{magazine.language && `Language: ${magazine.language}`}</Col>
-        <Col className="text-right">
+          &nbsp;
           <LinkContainer to={`/magazines/update/${magazine.id}`}>
             <Button>Edit</Button>
           </LinkContainer>
         </Col>
+        <Col>{magazine.language && `Language: ${magazine.language}`}</Col>
       </Row>
     );
 
