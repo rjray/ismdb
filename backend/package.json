@@ -19,7 +19,7 @@
     "express": "^4.17.1",
     "helmet": "^3.23.3",
     "mysql2": "^2.1.0",
-    "sequelize": "^5.22.3",
+    "sequelize": "^6.0.0",
     "sequelize-cli": "^6.2.0",
     "sqlite3": "^5.0.0"
   },
