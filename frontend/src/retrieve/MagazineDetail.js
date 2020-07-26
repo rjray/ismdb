@@ -7,39 +7,12 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
-import { formatDistanceToNow, compareAsc, compareDesc, format } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 import DataTable from "react-data-table-component";
 
 import useDataApi from "../utils/data-api";
 import compareVersion from "../utils/compare-version";
 import Header from "../components/Header";
-
-const sortRows = (rows, field, direction) => {
-  switch (field) {
-    case "number":
-      rows =
-        direction === "desc"
-          ? rows.sort((a, b) => compareVersion(b.number, a.number))
-          : rows.sort((a, b) => compareVersion(a.number, b.number));
-      break;
-    case "createdAt":
-      rows =
-        direction === "desc"
-          ? rows.sort((a, b) => compareDesc(a.createdAt, b.createdAt))
-          : rows.sort((a, b) => compareAsc(a.createdAt, b.createdAt));
-      break;
-    case "updatedAt":
-      rows =
-        direction === "desc"
-          ? rows.sort((a, b) => compareDesc(a.updatedAt, b.updatedAt))
-          : rows.sort((a, b) => compareAsc(a.updatedAt, b.updatedAt));
-      break;
-    default:
-      break;
-  }
-
-  return rows;
-};
 
 const MagazineDetailExpand = (props) => {
   let references = props.data.references;
@@ -133,6 +106,7 @@ const MagazineDetail = ({ id }) => {
         name: <b>Number</b>,
         selector: "number",
         sortable: true,
+        sortFunction: (a, b) => compareVersion(a.number, b.number),
       },
       {
         name: <b>References</b>,
@@ -217,7 +191,6 @@ const MagazineDetail = ({ id }) => {
               highlightOnHover
               pointerOnHover
               defaultSortField="number"
-              sortFunction={sortRows}
               expandableRows
               expandOnRowClicked
               expandableRowsHideExpander
