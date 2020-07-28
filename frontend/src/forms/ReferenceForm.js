@@ -150,6 +150,7 @@ const ReferenceForm = ({
                 onBlur={handleBlur}
                 onChange={handleChange}
                 placeholder="Name"
+                autoFocus
                 data-lpignore="true"
               />
             </Col>
