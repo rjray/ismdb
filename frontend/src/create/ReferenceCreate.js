@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Redirect } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Form from "react-bootstrap/Form";
@@ -7,6 +7,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
+import AppContext from "../AppContext";
 import useDataApi from "../utils/data-api";
 import setupCRUDHandler from "../utils/crud";
 import Header from "../components/Header";
@@ -14,10 +15,10 @@ import ReferenceForm from "../forms/ReferenceForm";
 import Notifications from "../components/Notifications";
 
 const ReferenceCreate = () => {
+  const { multientry, toggleMultientry } = useContext(AppContext);
   const [state, setState] = useState({
     notifications: [],
     createdReference: null,
-    stayOnPage: true,
   });
   const [{ data, loading, error }] = useDataApi(
     "/api/views/combo/editreference",
@@ -26,7 +27,7 @@ const ReferenceCreate = () => {
     }
   );
 
-  const { notifications, createdReference, stayOnPage } = state;
+  const { notifications, createdReference } = state;
   let content;
 
   if (error) {
@@ -64,7 +65,6 @@ const ReferenceCreate = () => {
         setState({
           notifications,
           createdReference: reference,
-          stayOnPage,
         });
       },
       onError: (error) => {
@@ -85,7 +85,7 @@ const ReferenceCreate = () => {
       formikBag.setSubmitting(false);
     };
 
-    if (createdReference && !stayOnPage) {
+    if (createdReference && !multientry) {
       return (
         <Redirect
           push
@@ -128,10 +128,8 @@ const ReferenceCreate = () => {
                 type="switch"
                 className="mr-0 pr-0 align-middle"
                 label=""
-                checked={stayOnPage}
-                onChange={() => {
-                  setState({ ...state, stayOnPage: !stayOnPage });
-                }}
+                checked={multientry}
+                onChange={toggleMultientry}
               />
             </div>
           </Col>
