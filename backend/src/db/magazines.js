@@ -97,7 +97,7 @@ const updateMagazine = async (id, data) => {
       // Since we're updating...
       data.updatedAt = new Date();
 
-      magazine = await magazine.update(data);
+      magazine = await magazine.update(data, { transaction: txn });
       return magazine.get();
     });
   });
