@@ -12,15 +12,25 @@ import Header from "./components/Header";
 
 const App = () => {
   const [multientry, setMultientry] = useState(false);
-
   const toggleMultientry = () => setMultientry((multientry) => !multientry);
+
+  const [notifications, setNotifications] = useState([]);
+  const clearNotifications = () => setNotifications([]);
+  const addNotifications = (newEntries) => {
+    setNotifications((notifications) => setNotifications(
+      notifications.concat(newEntries)
+    ));
+  };
 
   const contextData = useMemo(
     () => ({
       multientry,
       toggleMultientry,
+      notifications,
+      clearNotifications,
+      addNotifications,
     }),
-    [multientry]
+    [multientry, notifications]
   );
 
   return (
