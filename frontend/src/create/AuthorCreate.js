@@ -1,49 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Redirect } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
+import AppContext from "../AppContext";
 import setupCRUDHandler from "../utils/crud";
 import Header from "../components/Header";
 import AuthorForm from "../forms/AuthorForm";
 import Notifications from "../components/Notifications";
 
 const AuthorCreate = () => {
-  const [{ notifications, authorCreated }, setState] = useState({
-    notifications: [],
-    authorCreated: false,
-  });
+  const { setNotifications } = useContext(AppContext);
+  const [authorCreated, setAuthorCreated] = useState(false);
 
   const crudHandler = setupCRUDHandler({
     type: "author",
     onSuccess: (data) => {
       let author = { ...data.author };
-      let notes;
+      let notifications = data.notifications || [];
 
-      if (data.notifications) {
-        notes = data.notifications;
-      } else {
-        notes = [];
-      }
-      notes.push({
+      notifications.push({
         status: "success",
         result: "Creation success",
         resultMessage: `Author "${author.name}" successfully created`,
       });
 
-      setState({ notifications: notes, authorCreated: true });
+      setNotifications(notifications);
+      setAuthorCreated(true);
     },
     onError: (error) => {
-      const notes = [
+      const notifications = [
         {
           status: "error",
           result: "Create error",
           resultMessage: `Error during creation: ${error.message}`,
         },
       ];
-      setState({ authorCreated: false, notifications: notes });
+
+      setNotifications(notifications);
+      setAuthorCreated(false);
     },
   });
 
@@ -53,19 +50,14 @@ const AuthorCreate = () => {
   };
 
   if (authorCreated) {
-    return (
-      <Redirect
-        push
-        to={{ pathname: "/authors", notifications: notifications }}
-      />
-    );
+    return <Redirect push to={{ pathname: "/authors" }} />;
   } else {
     return (
       <>
         <Helmet>
           <title>Add an Author</title>
         </Helmet>
-        <Notifications notifications={notifications} />
+        <Notifications />
         <Container className="mt-2">
           <Row>
             <Col>

@@ -15,11 +15,10 @@ import MagazineForm from "../forms/MagazineForm";
 import Notifications from "../components/Notifications";
 
 const MagazineCreate = () => {
-  const { multientry, toggleMultientry } = useContext(AppContext);
-  const [state, setState] = useState({
-    notifications: [],
-    createdMagazine: null,
-  });
+  const { multientry, toggleMultientry, setNotifications } = useContext(
+    AppContext
+  );
+  const [createdMagazine, setCreatedMagazine] = useState(null);
   const [{ data, loading, error }] = useDataApi(
     "/api/views/combo/editmagazine",
     {
@@ -27,7 +26,6 @@ const MagazineCreate = () => {
     }
   );
 
-  const { notifications, createdMagazine } = state;
   let content;
 
   if (error) {
@@ -49,17 +47,12 @@ const MagazineCreate = () => {
       type: "magazine",
       onSuccess: (data, formikBag) => {
         let magazine = { ...data.magazine };
-        let notes;
+        let notifications = data.notifications || [];
 
         magazine.createdAt = new Date(magazine.createdAt);
         magazine.updatedAt = new Date(magazine.updatedAt);
 
-        if (data.notifications) {
-          notes = data.notifications;
-        } else {
-          notes = [];
-        }
-        notes.push({
+        notifications.push({
           status: "success",
           result: "Creation success",
           resultMessage: `Magazine "${magazine.name}" successfully created`,
@@ -67,22 +60,19 @@ const MagazineCreate = () => {
 
         formikBag.resetForm();
 
-        setState({ ...state, notifications: [] });
-        setState({
-          notifications: notes,
-          createdMagazine: magazine,
-        });
+        setNotifications(notifications);
+        setCreatedMagazine(magazine);
       },
       onError: (error) => {
-        const notes = [
+        const notifications = [
           {
             status: "error",
             result: "Create error",
             resultMessage: `Error during creation: ${error.message}`,
           },
         ];
-        setState({ ...state, notifications: [] });
-        setState({ ...state, notifications: notes });
+
+        setNotifications(notifications);
       },
     });
 
@@ -95,9 +85,10 @@ const MagazineCreate = () => {
       return (
         <Redirect
           push
-          to={`/magazines/update/${createdMagazine.id}`}
-          magazine={createdMagazine}
-          notifications={notifications}
+          to={{
+            pathname: `/magazines/update/${createdMagazine.id}`,
+            state: { magazine: createdMagazine },
+          }}
         />
       );
     }
@@ -141,7 +132,7 @@ const MagazineCreate = () => {
       <Helmet>
         <title>Magazine Creation</title>
       </Helmet>
-      <Notifications notifications={notifications} />
+      <Notifications />
       <Container className="mt-2">{content}</Container>
     </>
   );

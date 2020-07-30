@@ -14,12 +14,11 @@ const App = () => {
   const [multientry, setMultientry] = useState(false);
   const toggleMultientry = () => setMultientry((multientry) => !multientry);
 
-  const [notifications, setNotifications] = useState([]);
-  const clearNotifications = () => setNotifications([]);
+  const [notifications, setNotificationList] = useState([]);
+  const clearNotifications = () => setNotificationList([]);
+  const setNotifications = (newEntries) => setNotificationList(newEntries);
   const addNotifications = (newEntries) => {
-    setNotifications((notifications) => setNotifications(
-      notifications.concat(newEntries)
-    ));
+    setNotificationList((notifications) => notifications.concat(newEntries));
   };
 
   const contextData = useMemo(
@@ -28,6 +27,7 @@ const App = () => {
       toggleMultientry,
       notifications,
       clearNotifications,
+      setNotifications,
       addNotifications,
     }),
     [multientry, notifications]

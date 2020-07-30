@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { LinkContainer } from "react-router-bootstrap";
 import { Helmet } from "react-helmet";
 import Container from "react-bootstrap/Container";
@@ -7,6 +7,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
+import AppContext from "../AppContext";
 import useDataApi from "../utils/data-api";
 import setupCRUDHandler from "../utils/crud";
 import { isEmpty } from "../utils/no-lodash";
@@ -16,11 +17,13 @@ import Notifications from "../components/Notifications";
 
 const AuthorUpdate = (props) => {
   const id = props.match.params.id;
-  const [notifications, setNotifications] = useState([]);
+
+  const { setNotifications } = useContext(AppContext);
   const [masterAuthor, setMasterAuthor] = useState({});
   const [{ data, loading, error }] = useDataApi(`/api/views/author/${id}`, {
     data: {},
   });
+
   let content;
 
   if (error) {
@@ -44,7 +47,7 @@ const AuthorUpdate = (props) => {
       type: "author",
       onSuccess: (data, formikBag) => {
         let author = { ...data.author };
-        let notes;
+        let notifications = data.notifications || [];
 
         author.aliases = author.aliases.map((item) => {
           return { name: item.name, id: item.id, deleted: false };
@@ -53,32 +56,25 @@ const AuthorUpdate = (props) => {
           formikBag.setFieldValue(field, author[field], false);
         }
 
-        if (data.notifications) {
-          notes = data.notifications;
-        } else {
-          notes = [];
-        }
-        notes.push({
+        notifications.push({
           status: "success",
           result: "Update success",
           resultMessage: `Author "${author.name}" successfully updated`,
         });
-        setNotifications([]);
-        setNotifications(notes);
 
+        setNotifications(notifications);
         setMasterAuthor(author);
       },
       onError: (error, formikBag) => {
         formikBag.resetForm();
-        const notes = [
+        const notifications = [
           {
             status: "error",
             result: "Update error",
             resultMessage: `Error during update: ${error.message}`,
           },
         ];
-        setNotifications([]);
-        setNotifications(notes);
+        setNotifications(notifications);
       },
     });
 
@@ -123,7 +119,7 @@ const AuthorUpdate = (props) => {
       <Helmet>
         <title>Author Update</title>
       </Helmet>
-      <Notifications notifications={notifications} />
+      <Notifications />
       <Container className="mt-2">{content}</Container>
     </>
   );

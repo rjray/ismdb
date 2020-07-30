@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { LinkContainer } from "react-router-bootstrap";
 import { Helmet } from "react-helmet";
 import Container from "react-bootstrap/Container";
@@ -7,6 +7,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
+import AppContext from "../AppContext";
 import useDataApi from "../utils/data-api";
 import setupCRUDHandler from "../utils/crud";
 import { isEmpty } from "../utils/no-lodash";
@@ -16,7 +17,8 @@ import Notifications from "../components/Notifications";
 
 const MagazineUpdate = (props) => {
   const id = props.match.params.id;
-  const [notifications, setNotifications] = useState([]);
+
+  const { setNotifications } = useContext(AppContext);
   const [masterMagazine, setMasterMagazine] = useState({});
   const [{ data, loading, error }] = useDataApi(
     `/api/views/combo/editmagazine/${id}`,
@@ -47,7 +49,7 @@ const MagazineUpdate = (props) => {
       type: "magazine",
       onSuccess: (data, formikBag) => {
         let magazine = { ...data.magazine };
-        let notes;
+        let notifications = data.notifications || [];
 
         magazine.createdAt = new Date(magazine.createdAt);
         magazine.updatedAt = new Date(magazine.updatedAt);
@@ -55,19 +57,13 @@ const MagazineUpdate = (props) => {
           formikBag.setFieldValue(field, magazine[field], false);
         }
 
-        if (data.notifications) {
-          notes = data.notifications;
-        } else {
-          notes = [];
-        }
-        notes.push({
+        notifications.push({
           status: "success",
           result: "Update success",
           resultMessage: `Magazine "${magazine.name}" successfully updated`,
         });
-        setNotifications([]);
-        setNotifications(notes);
 
+        setNotifications(notifications);
         setMasterMagazine(magazine);
       },
       onError: (error, formikBag) => {
@@ -118,7 +114,7 @@ const MagazineUpdate = (props) => {
       <Helmet>
         <title>Magazine Update</title>
       </Helmet>
-      <Notifications notifications={notifications} />
+      <Notifications />
       <Container className="mt-2">{content}</Container>
     </>
   );

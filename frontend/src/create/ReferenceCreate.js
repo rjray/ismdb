@@ -15,11 +15,10 @@ import ReferenceForm from "../forms/ReferenceForm";
 import Notifications from "../components/Notifications";
 
 const ReferenceCreate = () => {
-  const { multientry, toggleMultientry } = useContext(AppContext);
-  const [state, setState] = useState({
-    notifications: [],
-    createdReference: null,
-  });
+  const { multientry, toggleMultientry, setNotifications } = useContext(
+    AppContext
+  );
+  const [createdReference, setCreatedReference] = useState(null);
   const [{ data, loading, error }] = useDataApi(
     "/api/views/combo/editreference",
     {
@@ -27,7 +26,6 @@ const ReferenceCreate = () => {
     }
   );
 
-  const { notifications, createdReference } = state;
   let content;
 
   if (error) {
@@ -50,7 +48,7 @@ const ReferenceCreate = () => {
     const crudHandler = setupCRUDHandler({
       type: "reference",
       onSuccess: (data, formikBag) => {
-        const { reference, authorsAdded, notifications } = data;
+        const { reference, authorsAdded, notifications = [] } = data;
 
         reference.createdAt = new Date();
         reference.updatedAt = new Date();
@@ -59,24 +57,27 @@ const ReferenceCreate = () => {
         // used by the Typeahead component.
         authorsAdded.forEach((author) => authorlist.push(author));
 
+        notifications.push({
+          status: "success",
+          result: "Creation success",
+          resultMessage: `Reference "${reference.name}" successfully created`,
+        });
+
         formikBag.resetForm();
 
-        setState({ ...state, notifications: [] });
-        setState({
-          notifications,
-          createdReference: reference,
-        });
+        setNotifications(notifications);
+        setCreatedReference(reference);
       },
       onError: (error) => {
-        const notes = [
+        const notifications = [
           {
             status: "error",
             result: "Create error",
             resultMessage: `Error during creation: ${error.message}`,
           },
         ];
-        setState({ ...state, notifications: [] });
-        setState({ ...state, notifications: notes });
+
+        setNotifications(notifications);
       },
     });
 
@@ -91,10 +92,7 @@ const ReferenceCreate = () => {
           push
           to={{
             pathname: `/references/update/${createdReference.id}`,
-            state: {
-              reference: createdReference,
-              notifications,
-            },
+            state: { reference: createdReference },
           }}
         />
       );
@@ -153,7 +151,7 @@ const ReferenceCreate = () => {
       <Helmet>
         <title>Reference Create</title>
       </Helmet>
-      <Notifications notifications={notifications} />
+      <Notifications />
       <Container className="mt-2">{content}</Container>
     </>
   );
