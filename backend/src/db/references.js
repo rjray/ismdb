@@ -203,7 +203,7 @@ const createReference = async (data) => {
 
   const reference = await fetchSingleReferenceComplete(newId);
   notifications.push({
-    status: "Success",
+    status: "success",
     result: "Creation success",
     resultMessage: `Reference "${reference.name}" successfully created`,
   });
