@@ -35,7 +35,7 @@ const AuthorCreate = () => {
         {
           status: "error",
           result: "Create error",
-          resultMessage: `Error during creation: ${error.message}`,
+          resultMessage: `Error during author creation: ${error.message}`,
         },
       ];
 

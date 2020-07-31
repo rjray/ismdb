@@ -68,7 +68,7 @@ const MagazineCreate = () => {
           {
             status: "error",
             result: "Create error",
-            resultMessage: `Error during creation: ${error.message}`,
+            resultMessage: `Error during magazine creation: ${error.message}`,
           },
         ];
 

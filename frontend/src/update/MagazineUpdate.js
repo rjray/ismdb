@@ -72,7 +72,7 @@ const MagazineUpdate = (props) => {
           {
             status: "error",
             result: "Update error",
-            resultMessage: `Error during update: ${error.message}`,
+            resultMessage: `Error during magazine update: ${error.message}`,
           },
         ];
         setNotifications([]);
@@ -81,13 +81,6 @@ const MagazineUpdate = (props) => {
     });
 
     const submitHandler = (values, formikBag) => {
-      let oldMagazine = { ...magazine };
-      let newMagazine = { ...values };
-      for (let key of ["action", "createdAt", "updatedAt"]) {
-        delete oldMagazine[key];
-        delete newMagazine[key];
-      }
-
       crudHandler(values, formikBag);
       formikBag.setSubmitting(false);
     };

@@ -48,7 +48,7 @@ const ReferenceCreate = () => {
     const crudHandler = setupCRUDHandler({
       type: "reference",
       onSuccess: (data, formikBag) => {
-        const { reference, authorsAdded, notifications = [] } = data;
+        const { reference, authorsAdded, notifications } = data;
 
         reference.createdAt = new Date();
         reference.updatedAt = new Date();
@@ -56,12 +56,6 @@ const ReferenceCreate = () => {
         // If any new authors were added, put them in the master-list that is
         // used by the Typeahead component.
         authorsAdded.forEach((author) => authorlist.push(author));
-
-        notifications.push({
-          status: "success",
-          result: "Creation success",
-          resultMessage: `Reference "${reference.name}" successfully created`,
-        });
 
         formikBag.resetForm();
 
@@ -73,7 +67,7 @@ const ReferenceCreate = () => {
           {
             status: "error",
             result: "Create error",
-            resultMessage: `Error during creation: ${error.message}`,
+            resultMessage: `Error during reference creation: ${error.message}`,
           },
         ];
 

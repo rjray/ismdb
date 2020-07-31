@@ -71,7 +71,7 @@ const AuthorUpdate = (props) => {
           {
             status: "error",
             result: "Update error",
-            resultMessage: `Error during update: ${error.message}`,
+            resultMessage: `Error during author update: ${error.message}`,
           },
         ];
         setNotifications(notifications);
@@ -79,11 +79,6 @@ const AuthorUpdate = (props) => {
     });
 
     const submitHandler = (values, formikBag) => {
-      let oldAuthor = { ...author };
-      let newAuthor = { ...values };
-      delete newAuthor.action;
-      oldAuthor.aliases.forEach((item) => (item.deleted = false));
-
       crudHandler(values, formikBag);
       formikBag.setSubmitting(false);
     };
