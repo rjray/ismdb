@@ -8,38 +8,32 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { Formik } from "formik";
+import { useToasts } from "react-toast-notifications";
 
 import setupCRUDHandler from "../utils/crud";
 import Header from "../components/Header";
 
 const ReferenceDelete = (props) => {
   const reference = props.location.state.reference;
-  const [{ notifications, referenceDeleted }, setState] = useState({
-    notifications: [],
-    referenceDeleted: false,
-  });
+
+  const { addToast } = useToasts();
+  const [referenceDeleted, setReferenceDeleted] = useState(false);
 
   const crudHandler = setupCRUDHandler({
     type: "reference",
-    onSuccess: (data) => {
-      const notes = data.notifications || notifications || [];
-
-      notes.push({
-        status: "success",
-        result: "Deletion success",
-        resultMessage: `Reference "${reference.name}" successfully deleted`,
-      });
-      setState({ referenceDeleted: true, notifications: notes });
+    onSuccess: ({ notifications }) => {
+      notifications.forEach((n) =>
+        addToast(n.message, { appearance: n.status })
+      );
+      setReferenceDeleted(true);
     },
-    onError: (error) => {
-      const notes = [
-        {
-          status: "error",
-          result: "Update error",
-          resultMessage: `Error during deletion: ${error.message}`,
-        },
-      ];
-      setState({ referenceDeleted: false, notifications: notes });
+    onError: ({ error }) => {
+      if (Array.isArray(error)) {
+        error.forEach((e) => addToast(e.message, { appearance: "error" }));
+      } else {
+        addToast(error.message, { appearance: "error" });
+      }
+      setReferenceDeleted(false);
     },
   });
 
@@ -49,12 +43,7 @@ const ReferenceDelete = (props) => {
   };
 
   if (referenceDeleted) {
-    return (
-      <Redirect to={{
-        pathname: "/references",
-        state: { notifications }
-      }} />
-    );
+    return <Redirect to={{ pathname: "/references" }} />;
   } else {
     const num = reference.authors.length;
     const word1 = num === 1 ? "author's" : "authors'";

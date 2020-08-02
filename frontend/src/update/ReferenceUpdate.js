@@ -6,6 +6,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import { useToasts } from "react-toast-notifications";
 
 import useDataApi from "../utils/data-api";
 import setupCRUDHandler from "../utils/crud";
@@ -31,6 +32,7 @@ const crudHandler = setupCRUDHandler({
 const ReferenceUpdate = (props) => {
   let id = props.match.params.id;
 
+  const { addToast } = useToasts();
   const [{ data, loading, error }] = useDataApi(
     `/api/views/combo/editreference/${id}`,
     {
@@ -83,10 +85,12 @@ const ReferenceUpdate = (props) => {
             <Header>Reference Update</Header>
           </Col>
           <Col className="text-right">
-            <LinkContainer to={{
-              pathname: `/references/delete/${reference.id}`,
-              state: { reference },
-            }}>
+            <LinkContainer
+              to={{
+                pathname: `/references/delete/${reference.id}`,
+                state: { reference },
+              }}
+            >
               <Button>Delete</Button>
             </LinkContainer>
           </Col>

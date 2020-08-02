@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Form from "react-bootstrap/Form";
@@ -6,18 +6,17 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import { useToasts } from "react-toast-notifications";
 
 import AppContext from "../AppContext";
 import useDataApi from "../utils/data-api";
 import setupCRUDHandler from "../utils/crud";
 import Header from "../components/Header";
 import MagazineForm from "../forms/MagazineForm";
-import Notifications from "../components/Notifications";
 
 const MagazineCreate = () => {
-  const { multientry, toggleMultientry, setNotifications } = useContext(
-    AppContext
-  );
+  const { addToast } = useToasts();
+  const { multientry, toggleMultientry } = useContext(AppContext);
   const [createdMagazine, setCreatedMagazine] = useState(null);
   const [{ data, loading, error }] = useDataApi(
     "/api/views/combo/editmagazine",
@@ -46,33 +45,23 @@ const MagazineCreate = () => {
     const crudHandler = setupCRUDHandler({
       type: "magazine",
       onSuccess: (data, formikBag) => {
-        let magazine = { ...data.magazine };
-        let notifications = data.notifications || [];
+        const { magazine, notifications } = data;
 
         magazine.createdAt = new Date(magazine.createdAt);
         magazine.updatedAt = new Date(magazine.updatedAt);
 
-        notifications.push({
-          status: "success",
-          result: "Creation success",
-          resultMessage: `Magazine "${magazine.name}" successfully created`,
-        });
-
-        formikBag.resetForm();
-
-        setNotifications(notifications);
+        notifications.forEach((n) =>
+          addToast(n.message, { appearance: n.status })
+        );
         setCreatedMagazine(magazine);
+        formikBag.resetForm();
       },
-      onError: (error) => {
-        const notifications = [
-          {
-            status: "error",
-            result: "Create error",
-            resultMessage: `Error during magazine creation: ${error.message}`,
-          },
-        ];
-
-        setNotifications(notifications);
+      onError: ({ error }) => {
+        if (Array.isArray(error)) {
+          error.forEach((e) => addToast(e.message, { appearance: "error" }));
+        } else {
+          addToast(error.message, { appearance: "error" });
+        }
       },
     });
 
@@ -132,7 +121,6 @@ const MagazineCreate = () => {
       <Helmet>
         <title>Magazine Creation</title>
       </Helmet>
-      <Notifications />
       <Container className="mt-2">{content}</Container>
     </>
   );

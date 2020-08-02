@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Form from "react-bootstrap/Form";
@@ -6,18 +6,17 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import { useToasts } from "react-toast-notifications";
 
 import AppContext from "../AppContext";
 import useDataApi from "../utils/data-api";
 import setupCRUDHandler from "../utils/crud";
 import Header from "../components/Header";
 import ReferenceForm from "../forms/ReferenceForm";
-import Notifications from "../components/Notifications";
 
 const ReferenceCreate = () => {
-  const { multientry, toggleMultientry, setNotifications } = useContext(
-    AppContext
-  );
+  const { addToast } = useToasts();
+  const { multientry, toggleMultientry } = useContext(AppContext);
   const [createdReference, setCreatedReference] = useState(null);
   const [{ data, loading, error }] = useDataApi(
     "/api/views/combo/editreference",
@@ -57,21 +56,18 @@ const ReferenceCreate = () => {
         // used by the Typeahead component.
         authorsAdded.forEach((author) => authorlist.push(author));
 
-        formikBag.resetForm();
-
-        setNotifications(notifications);
+        notifications.forEach((n) =>
+          addToast(n.message, { appearance: n.status })
+        );
         setCreatedReference(reference);
+        formikBag.resetForm();
       },
-      onError: (error) => {
-        const notifications = [
-          {
-            status: "error",
-            result: "Create error",
-            resultMessage: `Error during reference creation: ${error.message}`,
-          },
-        ];
-
-        setNotifications(notifications);
+      onError: ({ error }) => {
+        if (Array.isArray(error)) {
+          error.forEach((e) => addToast(e.message, { appearance: "error" }));
+        } else {
+          addToast(error.message, { appearance: "error" });
+        }
       },
     });
 
@@ -145,7 +141,6 @@ const ReferenceCreate = () => {
       <Helmet>
         <title>Reference Create</title>
       </Helmet>
-      <Notifications />
       <Container className="mt-2">{content}</Container>
     </>
   );

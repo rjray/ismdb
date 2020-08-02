@@ -8,38 +8,32 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { Formik } from "formik";
+import { useToasts } from "react-toast-notifications";
 
 import setupCRUDHandler from "../utils/crud";
 import Header from "../components/Header";
 
 const MagazineDelete = (props) => {
   const magazine = props.location.state.magazine;
-  const [{ notifications, magazineDeleted }, setState] = useState({
-    notifications: [],
-    magazineDeleted: false,
-  });
+
+  const { addToast } = useToasts();
+  const [magazineDeleted, setMagazineDelete] = useState(false);
 
   const crudHandler = setupCRUDHandler({
     type: "magazine",
-    onSuccess: (data) => {
-      const notes = data.notifications || notifications || [];
-
-      notes.push({
-        status: "success",
-        result: "Deletion success",
-        resultMessage: `Magazine "${magazine.name}" successfully deleted`,
-      });
-      setState({ magazineDeleted: true, notifications: notes });
+    onSuccess: ({ notifications }) => {
+      notifications.forEach((n) =>
+        addToast(n.message, { appearance: n.status })
+      );
+      setMagazineDeleted(true);
     },
-    onError: (error) => {
-      const notes = [
-        {
-          status: "error",
-          result: "Update error",
-          resultMessage: `Error during deletion: ${error.message}`,
-        },
-      ];
-      setState({ magazineDeleted: false, notifications: notes });
+    onError: ({ error }) => {
+      if (Array.isArray(error)) {
+        error.forEach((e) => addToast(e.message, { appearance: "error" }));
+      } else {
+        addToast(error.message, { appearance: "error" });
+      }
+      setMagazineDeleted(false);
     },
   });
 
@@ -49,9 +43,7 @@ const MagazineDelete = (props) => {
   };
 
   if (magazineDeleted) {
-    return (
-      <Redirect to={{ pathname: "/magazines", notifications: notifications }} />
-    );
+    return <Redirect to={{ pathname: "/magazines" }} />;
   } else {
     const num = magazine.readings.length;
     const wordform = num === 1 ? "reading" : "readings";

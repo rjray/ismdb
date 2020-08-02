@@ -8,38 +8,32 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { Formik } from "formik";
+import { useToasts } from "react-toast-notifications";
 
 import setupCRUDHandler from "../utils/crud";
 import Header from "../components/Header";
 
 const AuthorDelete = (props) => {
   const author = props.location.state.author;
-  const [{ notifications, authorDeleted }, setState] = useState({
-    notifications: [],
-    authorDeleted: false,
-  });
+
+  const { addToast } = useToasts();
+  const [authorDeleted, setAuthorDeleted] = useState(false);
 
   const crudHandler = setupCRUDHandler({
     type: "author",
-    onSuccess: (data) => {
-      const notes = data.notifications || notifications || [];
-
-      notes.push({
-        status: "success",
-        result: "Deletion success",
-        resultMessage: `Author "${author.name}" successfully deleted`,
-      });
-      setState({ authorDeleted: true, notifications: notes });
+    onSuccess: ({ notifications }) => {
+      notifications.forEach((n) =>
+        addToast(n.message, { appearance: n.status })
+      );
+      setAuthorDeleted(true);
     },
-    onError: (error) => {
-      const notes = [
-        {
-          status: "error",
-          result: "Update error",
-          resultMessage: `Error during deletion: ${error.message}`,
-        },
-      ];
-      setState({ authorDeleted: false, notifications: notes });
+    onError: ({ error }) => {
+      if (Array.isArray(error)) {
+        error.forEach((e) => addToast(e.message, { appearance: "error" }));
+      } else {
+        addToast(error.message, { appearance: "error" });
+      }
+      setAuthorDeleted(false);
     },
   });
 
@@ -49,9 +43,7 @@ const AuthorDelete = (props) => {
   };
 
   if (authorDeleted) {
-    return (
-      <Redirect to={{ pathname: "/authors", notifications: notifications }} />
-    );
+    return <Redirect to={{ pathname: "/authors" }} />;
   } else {
     const num = author.references.length;
     const wordform = num === 1 ? "reference" : "references";

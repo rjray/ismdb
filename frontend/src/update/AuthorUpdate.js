@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { LinkContainer } from "react-router-bootstrap";
 import { Helmet } from "react-helmet";
 import Container from "react-bootstrap/Container";
@@ -6,19 +6,18 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import { useToasts } from "react-toast-notifications";
 
-import AppContext from "../AppContext";
 import useDataApi from "../utils/data-api";
 import setupCRUDHandler from "../utils/crud";
 import { isEmpty } from "../utils/no-lodash";
 import Header from "../components/Header";
 import AuthorForm from "../forms/AuthorForm";
-import Notifications from "../components/Notifications";
 
 const AuthorUpdate = (props) => {
   const id = props.match.params.id;
 
-  const { setNotifications } = useContext(AppContext);
+  const { addToast } = useToasts();
   const [masterAuthor, setMasterAuthor] = useState({});
   const [{ data, loading, error }] = useDataApi(`/api/views/author/${id}`, {
     data: {},
@@ -46,8 +45,7 @@ const AuthorUpdate = (props) => {
     const crudHandler = setupCRUDHandler({
       type: "author",
       onSuccess: (data, formikBag) => {
-        let author = { ...data.author };
-        let notifications = data.notifications || [];
+        const { author, notifications } = data;
 
         author.aliases = author.aliases.map((item) => {
           return { name: item.name, id: item.id, deleted: false };
@@ -56,25 +54,19 @@ const AuthorUpdate = (props) => {
           formikBag.setFieldValue(field, author[field], false);
         }
 
-        notifications.push({
-          status: "success",
-          result: "Update success",
-          resultMessage: `Author "${author.name}" successfully updated`,
-        });
-
-        setNotifications(notifications);
+        notifications.forEach((n) =>
+          addToast(n.message, { appearance: n.status })
+        );
         setMasterAuthor(author);
       },
-      onError: (error, formikBag) => {
+      onError: ({ error }, formikBag) => {
         formikBag.resetForm();
-        const notifications = [
-          {
-            status: "error",
-            result: "Update error",
-            resultMessage: `Error during author update: ${error.message}`,
-          },
-        ];
-        setNotifications(notifications);
+
+        if (Array.isArray(error)) {
+          error.forEach((e) => addToast(e.message, { appearance: "error" }));
+        } else {
+          addToast(error.message, { appearance: "error" });
+        }
       },
     });
 
@@ -114,7 +106,6 @@ const AuthorUpdate = (props) => {
       <Helmet>
         <title>Author Update</title>
       </Helmet>
-      <Notifications />
       <Container className="mt-2">{content}</Container>
     </>
   );
