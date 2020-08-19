@@ -190,6 +190,15 @@ components:
           $ref: "#/components/schemas/idType"
         number:
           $ref: "#/components/schemas/magazineIssueNumberType"
+    updateMagazineIssueType:
+      allOf:
+        - $ref: "#/components/schemas/abbreviatedMagazineIssueType"
+        - type: object
+          required:
+            - MagazineId
+          properties:
+            MagazineId:
+              $ref: "#/components/schemas/idType"
     magazineIssueType:
       allOf:
         - $ref: "#/components/schemas/abbreviatedMagazineIssueType"
@@ -229,6 +238,7 @@ components:
       required:
         - name
         - RecordTypeId
+        - keywords
       properties:
         name:
           $ref: "#/components/schemas/referenceNameType"
@@ -244,10 +254,23 @@ components:
           $ref: "#/components/schemas/idType"
         MagazineIssueId:
           $ref: "#/components/schemas/idType"
+        MagazineIssueNumber:
+          $ref: "#/components/schemas/magazineIssueNumberType"
+        MagazineId:
+          $ref: "#/components/schemas/idType"
         authors:
           type: array
           items:
             $ref: "#/components/schemas/selectedAuthorType"
+    updateReferenceType:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              $ref: "#/components/schemas/idType"
+        - $ref: "#/components/schemas/newReferenceType"
     referenceType:
       type: object
       required:
@@ -283,7 +306,66 @@ components:
           $ref: "#/components/schemas/dateTimeType"
         updatedAt:
           $ref: "#/components/schemas/dateTimeType"
-  responses: {}
+    errorObjectType:
+      type: object
+      required:
+        - summary
+        - description
+      properties:
+        code:
+          $ref: "#/components/schemas/idType"
+        summary:
+          type: string
+          maxLength: 75
+        description:
+          type: string
+        reference:
+          type: string
+    notificationType:
+      type: object
+      required:
+        - type
+        - summary
+        - message
+      properties:
+        type:
+          type: string
+        summary:
+          type: string
+          maxLength: 75
+        message:
+          type: string
+    notificationsType:
+      type: array
+      items:
+        $ref: "#/components/schemas/notificationType"
+  responses:
+    generalErrorResponse:
+      description: An error has occurred
+      content:
+        "application/json":
+          schema:
+            type: object
+            required:
+              - error
+            properties:
+              error:
+                $ref: "#/components/schemas/errorObjectType"
+              notifications:
+                $ref: "#/components/schemas/notificationsType"
+    generalError404Response:
+      description: Not found
+      content:
+        "application/json":
+          schema:
+            type: object
+            required:
+              - error
+            properties:
+              error:
+                $ref: "#/components/schemas/errorObjectType"
+              notifications:
+                $ref: "#/components/schemas/notificationsType"
 paths:
   "/author":
     post:
@@ -303,7 +385,16 @@ paths:
           content:
             "application/json":
               schema:
-                $ref: "#/components/schemas/authorType"
+                type: object
+                required:
+                  - author
+                properties:
+                  author:
+                    $ref: "#/components/schemas/authorType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
     get:
@@ -316,9 +407,18 @@ paths:
           content:
             "application/json":
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/authorType"
+                type: object
+                required:
+                  - authors
+                properties:
+                  authors:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/authorType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
   "/author/withRefCount":
@@ -332,9 +432,18 @@ paths:
           content:
             "application/json":
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/authorWithRefcountType"
+                type: object
+                required:
+                  - authors
+                properties:
+                  authors:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/authorWithRefcountType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
   "/author/{id}":
@@ -355,7 +464,18 @@ paths:
           content:
             "application/json":
               schema:
-                $ref: "#/components/schemas/authorType"
+                type: object
+                required:
+                  - author
+                properties:
+                  author:
+                    $ref: "#/components/schemas/authorType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
     put:
@@ -375,16 +495,38 @@ paths:
           content:
             "application/json":
               schema:
-                $ref: "#/components/schemas/authorType"
+                type: object
+                required:
+                  - author
+                properties:
+                  author:
+                    $ref: "#/components/schemas/authorType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
     delete:
       summary: Delete an author by ID
-      description: Delete the specified author. Does not delete any associated references.
+      description: Delete the specified author. Removes the author from associated reference records. Does not delete any reference records.
       operationId: deleteAuthorById
       responses:
+        "200":
+          description: Author deleted
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
         default:
-          description: Default error sample response
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
   "/author/{id}/withRefCount":
@@ -405,7 +547,18 @@ paths:
           content:
             "application/json":
               schema:
-                $ref: "#/components/schemas/authorWithRefcountType"
+                type: object
+                required:
+                  - author
+                properties:
+                  author:
+                    $ref: "#/components/schemas/authorWithRefcountType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
   "/author/{id}/withReferences":
@@ -426,7 +579,18 @@ paths:
           content:
             "application/json":
               schema:
-                $ref: "#/components/schemas/authorWithReferencesType"
+                type: object
+                required:
+                  - author
+                properties:
+                  author:
+                    $ref: "#/components/schemas/authorWithReferencesType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
   "/magazine":
@@ -443,6 +607,19 @@ paths:
       responses:
         "201":
           description: New magazine created
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - magazine
+                properties:
+                  magazine:
+                    $ref: "#/components/schemas/newMagazineType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Magazines
     get:
@@ -455,9 +632,18 @@ paths:
           content:
             "application/json":
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/magazineType"
+                type: object
+                required:
+                  - magazines
+                properties:
+                  magazines:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/magazineType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Magazines
   "/magazine/withIssues":
@@ -471,9 +657,18 @@ paths:
           content:
             "application/json":
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/magazineWithIssuesType"
+                type: object
+                required:
+                  - magazines
+                properties:
+                  magazines:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/magazineType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Magazines
   "/magazine/{id}":
@@ -494,7 +689,18 @@ paths:
           content:
             "application/json":
               schema:
-                $ref: "#/components/schemas/magazineType"
+                type: object
+                required:
+                  - magazine
+                properties:
+                  magazine:
+                    $ref: "#/components/schemas/magazineType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Magazines
     put:
@@ -513,7 +719,18 @@ paths:
           content:
             "application/json":
               schema:
-                $ref: "#/components/schemas/magazineType"
+                type: object
+                required:
+                  - magazine
+                properties:
+                  magazine:
+                    $ref: "#/components/schemas/magazineType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Magazines
     delete:
@@ -523,6 +740,17 @@ paths:
       responses:
         "200":
           description: Magazine deleted
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Magazines
   "/magazine/{id}/withIssues":
@@ -543,9 +771,127 @@ paths:
           content:
             "application/json":
               schema:
-                $ref: "#/components/schemas/magazineWithIssuesType"
+                type: object
+                required:
+                  - magazine
+                properties:
+                  magazine:
+                    $ref: "#/components/schemas/magazineWithIssuesType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Magazines
+  "/issue":
+    post:
+      summary: Create a new magazine issue
+      description: Create a new issue for the specified magazine.
+      operationId: createIssue
+      requestBody:
+        description: New issue
+        content:
+          "application/json":
+            schema:
+              type: object
+              required:
+                - issue
+              properties:
+                issue:
+                  $ref: "#/components/schemas/newMagazineIssueType"
+                notifications:
+                  $ref: "#/components/schemas/notificationsType"
+      responses:
+        "201":
+          description: New issue created
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Issues
+  "/issue/{id}":
+    parameters:
+      - name: id
+        in: path
+        description: ID of magazine issue to operate on
+        required: true
+        schema:
+          $ref: "#/components/schemas/idType"
+    get:
+      summary: Get a full magazine issue
+      description: Get a full magazine issue with magazine and reference information.
+      operationId: getIssueById
+      responses:
+        "200":
+          description: Issue data
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - issue
+                properties:
+                  issue:
+                    $ref: "#/components/schemas/magazineIssueWithReferencesType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Issues
+    put:
+      summary: Update a magazine issue
+      description: Update a magazine issue. Does not affect any associated references.
+      operationId: updateIssueById
+      requestBody:
+        description: Magazine issue to update
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/updateMagazineIssueType"
+      responses:
+        "200":
+          description: Updated magazine issue
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - issue
+                properties:
+                  issue:
+                    $ref: "#/components/schemas/magazineIssueType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Issues
+    delete:
+      summary: Delete a magazine issue
+      description: Delete a magazine issues. Deletes all references associated with it.
+      operationId: deleteIssueById
+      responses:
+        "200":
+          description: Magazine issue deleted
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Issues
   "/reference":
     post:
       summary: Create a new reference
@@ -560,6 +906,19 @@ paths:
       responses:
         "201":
           description: New reference created
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - reference
+                properties:
+                  reference:
+                    $ref: "#/components/schemas/referenceType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - References
     get:
@@ -572,9 +931,18 @@ paths:
           content:
             "application/json":
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/referenceType"
+                type: object
+                required:
+                  - references
+                properties:
+                  references:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/referenceType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - References
   "/reference/{id}":
@@ -595,9 +963,116 @@ paths:
           content:
             "application/json":
               schema:
-                $ref: "#/components/schemas/referenceType"
+                type: object
+                required:
+                  - reference
+                properties:
+                  reference:
+                    $ref: "#/components/schemas/referenceType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
       tags:
         - References
+    put:
+      summary: Update a reference
+      description: Update a reference. May result in the creation of new authors and/or a new magazine issue record.
+      operationId: updateReferenceById
+      requestBody:
+        description: Reference to update
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/updateReferenceType"
+      responses:
+        "200":
+          description: Updated reference
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - reference
+                properties:
+                  reference:
+                    $ref: "#/components/schemas/referenceType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - References
+    delete:
+      summary: Delete a single reference by ID
+      description: Delete a single reference by the ID. Does not affect any related records.
+      operationId: deleteReferenceById
+      responses:
+        "200":
+          description: Reference deleted
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - References
+  "/misc/recordtypes":
+    get:
+      summary: Fetch all record types as a list
+      description: Retrieve all record types as a list of objects.
+      operationId: getAllRecordTypes
+      responses:
+        "200":
+          description: All reference types
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - recordTypes
+                properties:
+                  recordTypes:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/recordTypeType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Miscellaneous
+  "/misc/languages":
+    get:
+      summary: Fetch all language strings
+      description: Fetch all language strings currently in use from the database.
+      operationId: getAllLanguages
+      responses:
+        "200":
+          description: All languages
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - languages
+                properties:
+                  languages:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/languageType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Miscellaneous
 tags:
   - name: Authors
     description: Operations that are primarily centered around authors
