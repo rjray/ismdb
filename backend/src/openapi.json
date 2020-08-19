@@ -1,97 +1,104 @@
 {
-  "openapi": "3.0.2",
-  "info": {
-    "title": "MyMoDB API",
-    "version": "0.1"
-  },
-  "servers": [
-    {
-      "url": "/api"
-    }
-  ],
   "components": {
     "parameters": {
-      "skipParam": {
-        "name": "skip",
+      "limitParam": {
+        "description": "Maximum query records to return",
         "in": "query",
-        "description": "Number of query items to skip",
+        "name": "limit",
         "required": false,
         "schema": {
-          "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "type": "integer"
         }
       },
-      "limitParam": {
-        "name": "limit",
+      "skipParam": {
+        "description": "Number of query items to skip",
         "in": "query",
-        "description": "Maximum query records to return",
+        "name": "skip",
         "required": false,
         "schema": {
-          "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "sortByParam": {
+        "description": "Field to sort on",
+        "in": "query",
+        "name": "sortBy",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "sortDirParam": {
+        "description": "Direction to sort in",
+        "in": "query",
+        "name": "sortDir",
+        "required": false,
+        "schema": {
+          "type": "string"
         }
       }
     },
-    "schemas": {
-      "idType": {
-        "type": "integer",
-        "format": "int64",
-        "minimum": 0
-      },
-      "dateTimeType": {
-        "type": "string",
-        "format": "date-time"
-      },
-      "languageType": {
-        "type": "string",
-        "maxLength": 50
-      },
-      "authorNameOrAliasType": {
-        "type": "string",
-        "maxLength": 60
-      },
-      "magazineNameType": {
-        "type": "string",
-        "maxLength": 50
-      },
-      "magazineAliasesType": {
-        "type": "string",
-        "maxLength": 100
-      },
-      "magazineNotesType": {
-        "type": "string",
-        "maxLength": 1000
-      },
-      "magazineIssueNumberType": {
-        "type": "string",
-        "maxLength": 50
-      },
-      "referenceNameType": {
-        "type": "string",
-        "maxLength": 255
-      },
-      "referenceTypeType": {
-        "type": "string",
-        "maxLength": 75
-      },
-      "referenceIsbnType": {
-        "type": "string",
-        "maxLength": 15
-      },
-      "referenceKeywordsType": {
-        "type": "string",
-        "maxLength": 2000
-      },
-      "newAuthorAliasType": {
-        "type": "object",
-        "required": [
-          "name"
-        ],
-        "properties": {
-          "name": {
-            "$ref": "#/components/schemas/authorNameOrAliasType"
+    "responses": {
+      "generalError404Response": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "error": {
+                  "$ref": "#/components/schemas/errorObjectType"
+                },
+                "notifications": {
+                  "$ref": "#/components/schemas/notificationsType"
+                }
+              },
+              "required": [
+                "error"
+              ],
+              "type": "object"
+            }
           }
-        }
+        },
+        "description": "Not found"
+      },
+      "generalErrorResponse": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "error": {
+                  "$ref": "#/components/schemas/errorObjectType"
+                },
+                "notifications": {
+                  "$ref": "#/components/schemas/notificationsType"
+                }
+              },
+              "required": [
+                "error"
+              ],
+              "type": "object"
+            }
+          }
+        },
+        "description": "An error has occurred"
+      }
+    },
+    "schemas": {
+      "abbreviatedMagazineIssueType": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/idType"
+          },
+          "number": {
+            "$ref": "#/components/schemas/magazineIssueNumberType"
+          }
+        },
+        "required": [
+          "id",
+          "number"
+        ],
+        "type": "object"
       },
       "authorAliasType": {
         "allOf": [
@@ -99,81 +106,54 @@
             "$ref": "#/components/schemas/newAuthorAliasType"
           },
           {
-            "type": "object",
+            "properties": {
+              "authorId": {
+                "$ref": "#/components/schemas/idType"
+              },
+              "id": {
+                "$ref": "#/components/schemas/idType"
+              }
+            },
             "required": [
               "id",
               "authorId"
             ],
-            "properties": {
-              "id": {
-                "$ref": "#/components/schemas/idType"
-              },
-              "authorId": {
-                "$ref": "#/components/schemas/idType"
-              }
-            }
+            "type": "object"
           }
         ]
       },
-      "newAuthorType": {
-        "type": "object",
-        "required": [
-          "name"
-        ],
-        "properties": {
-          "name": {
-            "$ref": "#/components/schemas/authorNameOrAliasType"
-          },
-          "aliases": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/newAuthorAliasType"
-            }
-          }
-        }
+      "authorNameOrAliasType": {
+        "maxLength": 60,
+        "type": "string"
       },
-      "selectedAuthorType": {
-        "type": "object",
-        "required": [
-          "name"
-        ],
+      "authorType": {
         "properties": {
+          "aliases": {
+            "items": {
+              "$ref": "#/components/schemas/authorAliasType"
+            },
+            "type": "array"
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/dateTimeType"
+          },
           "id": {
             "$ref": "#/components/schemas/idType"
           },
           "name": {
             "$ref": "#/components/schemas/authorNameOrAliasType"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/dateTimeType"
           }
-        }
-      },
-      "authorType": {
-        "type": "object",
+        },
         "required": [
           "id",
           "name",
           "createdAt",
           "updatedAt"
         ],
-        "properties": {
-          "id": {
-            "$ref": "#/components/schemas/idType"
-          },
-          "name": {
-            "$ref": "#/components/schemas/authorNameOrAliasType"
-          },
-          "createdAt": {
-            "$ref": "#/components/schemas/dateTimeType"
-          },
-          "updatedAt": {
-            "$ref": "#/components/schemas/dateTimeType"
-          },
-          "aliases": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/authorAliasType"
-            }
-          }
-        }
+        "type": "object"
       },
       "authorWithRefcountType": {
         "allOf": [
@@ -181,15 +161,15 @@
             "$ref": "#/components/schemas/authorType"
           },
           {
-            "type": "object",
-            "required": [
-              "refcount"
-            ],
             "properties": {
               "refcount": {
                 "type": "integer"
               }
-            }
+            },
+            "required": [
+              "refcount"
+            ],
+            "type": "object"
           }
         ]
       },
@@ -199,53 +179,123 @@
             "$ref": "#/components/schemas/authorWithRefcountType"
           },
           {
-            "type": "object",
+            "properties": {
+              "references": {
+                "items": {
+                  "$ref": "#/components/schemas/referenceType"
+                },
+                "type": "array"
+              }
+            },
             "required": [
               "references"
             ],
-            "properties": {
-              "references": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/referenceType"
-                }
-              }
-            }
+            "type": "object"
           }
         ]
       },
-      "newMagazineType": {
-        "type": "object",
-        "required": [
-          "name"
-        ],
+      "dateTimeType": {
+        "format": "date-time",
+        "type": "string"
+      },
+      "errorObjectType": {
         "properties": {
-          "name": {
-            "$ref": "#/components/schemas/magazineNameType"
+          "code": {
+            "$ref": "#/components/schemas/idType"
           },
-          "language": {
-            "$ref": "#/components/schemas/languageType"
+          "description": {
+            "type": "string"
           },
-          "aliases": {
-            "$ref": "#/components/schemas/magazineAliasesType"
+          "reference": {
+            "type": "string"
           },
-          "notes": {
-            "$ref": "#/components/schemas/magazineNotesType"
+          "summary": {
+            "maxLength": 75,
+            "type": "string"
           }
-        }
+        },
+        "required": [
+          "summary",
+          "description"
+        ],
+        "type": "object"
+      },
+      "idType": {
+        "format": "int64",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "languageType": {
+        "maxLength": 50,
+        "type": "string"
+      },
+      "magazineAliasesType": {
+        "maxLength": 100,
+        "type": "string"
+      },
+      "magazineIssueNumberType": {
+        "maxLength": 50,
+        "type": "string"
+      },
+      "magazineIssueType": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/abbreviatedMagazineIssueType"
+          },
+          {
+            "properties": {
+              "Magazine": {
+                "$ref": "#/components/schemas/magazineType"
+              }
+            },
+            "required": [
+              "Magazine"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "magazineIssueWithReferencesType": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/magazineIssueType"
+          },
+          {
+            "properties": {
+              "references": {
+                "items": {
+                  "$ref": "#/components/schemas/referenceType"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "references"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "magazineNameType": {
+        "maxLength": 50,
+        "type": "string"
+      },
+      "magazineNotesType": {
+        "maxLength": 1000,
+        "type": "string"
       },
       "magazineType": {
         "allOf": [
           {
-            "type": "object",
-            "required": [
-              "id"
-            ],
             "properties": {
               "id": {
                 "$ref": "#/components/schemas/idType"
               }
-            }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
           },
           {
             "$ref": "#/components/schemas/newMagazineType"
@@ -258,149 +308,84 @@
             "$ref": "#/components/schemas/magazineType"
           },
           {
-            "type": "object",
             "properties": {
               "issues": {
-                "type": "array",
                 "items": {
                   "$ref": "#/components/schemas/abbreviatedMagazineIssueType"
-                }
+                },
+                "type": "array"
               }
-            }
+            },
+            "type": "object"
           }
         ]
       },
+      "newAuthorAliasType": {
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/authorNameOrAliasType"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "newAuthorType": {
+        "properties": {
+          "aliases": {
+            "items": {
+              "$ref": "#/components/schemas/newAuthorAliasType"
+            },
+            "type": "array"
+          },
+          "name": {
+            "$ref": "#/components/schemas/authorNameOrAliasType"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
       "newMagazineIssueType": {
-        "type": "object",
+        "properties": {
+          "magazineId": {
+            "$ref": "#/components/schemas/idType"
+          },
+          "number": {
+            "$ref": "#/components/schemas/magazineIssueNumberType"
+          }
+        },
         "required": [
           "number",
           "magazineId"
         ],
+        "type": "object"
+      },
+      "newMagazineType": {
         "properties": {
-          "number": {
-            "$ref": "#/components/schemas/magazineIssueNumberType"
-          },
-          "magazineId": {
-            "$ref": "#/components/schemas/idType"
-          }
-        }
-      },
-      "abbreviatedMagazineIssueType": {
-        "type": "object",
-        "required": [
-          "id",
-          "number"
-        ],
-        "properties": {
-          "id": {
-            "$ref": "#/components/schemas/idType"
-          },
-          "number": {
-            "$ref": "#/components/schemas/magazineIssueNumberType"
-          }
-        }
-      },
-      "updateMagazineIssueType": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/abbreviatedMagazineIssueType"
-          },
-          {
-            "type": "object",
-            "required": [
-              "MagazineId"
-            ],
-            "properties": {
-              "MagazineId": {
-                "$ref": "#/components/schemas/idType"
-              }
-            }
-          }
-        ]
-      },
-      "magazineIssueType": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/abbreviatedMagazineIssueType"
-          },
-          {
-            "type": "object",
-            "required": [
-              "Magazine"
-            ],
-            "properties": {
-              "Magazine": {
-                "$ref": "#/components/schemas/magazineType"
-              }
-            }
-          }
-        ]
-      },
-      "magazineIssueWithReferencesType": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/magazineIssueType"
-          },
-          {
-            "type": "object",
-            "required": [
-              "references"
-            ],
-            "properties": {
-              "references": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/referenceType"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "recordTypeType": {
-        "type": "object",
-        "required": [
-          "id",
-          "description"
-        ],
-        "properties": {
-          "id": {
-            "$ref": "#/components/schemas/idType"
-          },
-          "description": {
-            "type": "string",
-            "maxLength": 50
-          },
-          "notes": {
-            "type": "string",
-            "maxLength": 255
-          }
-        }
-      },
-      "newReferenceType": {
-        "type": "object",
-        "required": [
-          "name",
-          "RecordTypeId",
-          "keywords"
-        ],
-        "properties": {
-          "name": {
-            "$ref": "#/components/schemas/referenceNameType"
-          },
-          "type": {
-            "$ref": "#/components/schemas/referenceTypeType"
-          },
-          "isbn": {
-            "$ref": "#/components/schemas/referenceIsbnType"
+          "aliases": {
+            "$ref": "#/components/schemas/magazineAliasesType"
           },
           "language": {
             "$ref": "#/components/schemas/languageType"
           },
-          "keywords": {
-            "$ref": "#/components/schemas/referenceKeywordsType"
+          "name": {
+            "$ref": "#/components/schemas/magazineNameType"
           },
-          "RecordTypeId": {
+          "notes": {
+            "$ref": "#/components/schemas/magazineNotesType"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "newReferenceType": {
+        "properties": {
+          "MagazineId": {
             "$ref": "#/components/schemas/idType"
           },
           "MagazineIssueId": {
@@ -409,47 +394,127 @@
           "MagazineIssueNumber": {
             "$ref": "#/components/schemas/magazineIssueNumberType"
           },
-          "MagazineId": {
+          "RecordTypeId": {
             "$ref": "#/components/schemas/idType"
           },
           "authors": {
-            "type": "array",
             "items": {
               "$ref": "#/components/schemas/selectedAuthorType"
-            }
-          }
-        }
-      },
-      "updateReferenceType": {
-        "allOf": [
-          {
-            "type": "object",
-            "required": [
-              "id"
-            ],
-            "properties": {
-              "id": {
-                "$ref": "#/components/schemas/idType"
-              }
-            }
+            },
+            "type": "array"
           },
-          {
-            "$ref": "#/components/schemas/newReferenceType"
+          "isbn": {
+            "$ref": "#/components/schemas/referenceIsbnType"
+          },
+          "keywords": {
+            "$ref": "#/components/schemas/referenceKeywordsType"
+          },
+          "language": {
+            "$ref": "#/components/schemas/languageType"
+          },
+          "name": {
+            "$ref": "#/components/schemas/referenceNameType"
+          },
+          "type": {
+            "$ref": "#/components/schemas/referenceTypeType"
           }
-        ]
-      },
-      "referenceType": {
-        "type": "object",
+        },
         "required": [
-          "id",
           "name",
-          "RecordType",
-          "createdAt",
-          "updatedAt"
+          "RecordTypeId",
+          "keywords"
         ],
+        "type": "object"
+      },
+      "notificationType": {
         "properties": {
+          "message": {
+            "type": "string"
+          },
+          "summary": {
+            "maxLength": 75,
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "summary",
+          "message"
+        ],
+        "type": "object"
+      },
+      "notificationsType": {
+        "items": {
+          "$ref": "#/components/schemas/notificationType"
+        },
+        "type": "array"
+      },
+      "recordTypeType": {
+        "properties": {
+          "description": {
+            "maxLength": 50,
+            "type": "string"
+          },
           "id": {
             "$ref": "#/components/schemas/idType"
+          },
+          "notes": {
+            "maxLength": 255,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "description"
+        ],
+        "type": "object"
+      },
+      "referenceIsbnType": {
+        "maxLength": 15,
+        "type": "string"
+      },
+      "referenceKeywordsType": {
+        "maxLength": 2000,
+        "type": "string"
+      },
+      "referenceNameType": {
+        "maxLength": 255,
+        "type": "string"
+      },
+      "referenceType": {
+        "properties": {
+          "Magazine": {
+            "$ref": "#/components/schemas/magazineType"
+          },
+          "MagazineIssue": {
+            "$ref": "#/components/schemas/magazineIssueType"
+          },
+          "RecordType": {
+            "$ref": "#/components/schemas/recordTypeType"
+          },
+          "authors": {
+            "items": {
+              "$ref": "#/components/schemas/authorType"
+            },
+            "type": "array"
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/dateTimeType"
+          },
+          "id": {
+            "$ref": "#/components/schemas/idType"
+          },
+          "isbn": {
+            "$ref": "#/components/schemas/referenceIsbnType"
+          },
+          "keywords": {
+            "$ref": "#/components/schemas/referenceKeywordsType"
+          },
+          "language": {
+            "$ref": "#/components/schemas/languageType"
           },
           "name": {
             "$ref": "#/components/schemas/referenceNameType"
@@ -457,140 +522,123 @@
           "type": {
             "$ref": "#/components/schemas/referenceTypeType"
           },
-          "isbn": {
-            "$ref": "#/components/schemas/referenceIsbnType"
-          },
-          "language": {
-            "$ref": "#/components/schemas/languageType"
-          },
-          "keywords": {
-            "$ref": "#/components/schemas/referenceKeywordsType"
-          },
-          "RecordType": {
-            "$ref": "#/components/schemas/recordTypeType"
-          },
-          "MagazineIssue": {
-            "$ref": "#/components/schemas/magazineIssueType"
-          },
-          "Magazine": {
-            "$ref": "#/components/schemas/magazineType"
-          },
-          "authors": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/authorType"
-            }
-          },
-          "createdAt": {
-            "$ref": "#/components/schemas/dateTimeType"
-          },
           "updatedAt": {
             "$ref": "#/components/schemas/dateTimeType"
           }
-        }
-      },
-      "errorObjectType": {
-        "type": "object",
+        },
         "required": [
-          "summary",
-          "description"
+          "id",
+          "name",
+          "RecordType",
+          "createdAt",
+          "updatedAt"
         ],
+        "type": "object"
+      },
+      "referenceTypeType": {
+        "maxLength": 75,
+        "type": "string"
+      },
+      "selectedAuthorType": {
         "properties": {
-          "code": {
+          "id": {
             "$ref": "#/components/schemas/idType"
           },
-          "summary": {
-            "type": "string",
-            "maxLength": 75
-          },
-          "description": {
-            "type": "string"
-          },
-          "reference": {
-            "type": "string"
+          "name": {
+            "$ref": "#/components/schemas/authorNameOrAliasType"
           }
-        }
-      },
-      "notificationType": {
-        "type": "object",
+        },
         "required": [
-          "type",
-          "summary",
-          "message"
+          "name"
         ],
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "summary": {
-            "type": "string",
-            "maxLength": 75
-          },
-          "message": {
-            "type": "string"
-          }
-        }
+        "type": "object"
       },
-      "notificationsType": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/notificationType"
-        }
-      }
-    },
-    "responses": {
-      "generalErrorResponse": {
-        "description": "An error has occurred",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": [
-                "error"
-              ],
-              "properties": {
-                "error": {
-                  "$ref": "#/components/schemas/errorObjectType"
-                },
-                "notifications": {
-                  "$ref": "#/components/schemas/notificationsType"
-                }
+      "updateMagazineIssueType": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/abbreviatedMagazineIssueType"
+          },
+          {
+            "properties": {
+              "MagazineId": {
+                "$ref": "#/components/schemas/idType"
               }
-            }
+            },
+            "required": [
+              "MagazineId"
+            ],
+            "type": "object"
           }
-        }
+        ]
       },
-      "generalError404Response": {
-        "description": "Not found",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": [
-                "error"
-              ],
-              "properties": {
-                "error": {
-                  "$ref": "#/components/schemas/errorObjectType"
-                },
-                "notifications": {
-                  "$ref": "#/components/schemas/notificationsType"
-                }
+      "updateReferenceType": {
+        "allOf": [
+          {
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/idType"
               }
-            }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          {
+            "$ref": "#/components/schemas/newReferenceType"
           }
-        }
+        ]
       }
     }
   },
+  "info": {
+    "title": "MyMoDB API",
+    "version": "0.1"
+  },
+  "openapi": "3.0.3",
   "paths": {
     "/author": {
+      "get": {
+        "description": "Fetch all authors as an array",
+        "operationId": "getAllAuthors",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "authors": {
+                      "items": {
+                        "$ref": "#/components/schemas/authorType"
+                      },
+                      "type": "array"
+                    },
+                    "notifications": {
+                      "$ref": "#/components/schemas/notificationsType"
+                    }
+                  },
+                  "required": [
+                    "authors"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "All authors"
+          },
+          "default": {
+            "$ref": "#/components/responses/generalErrorResponse"
+          }
+        },
+        "summary": "Fetch all authors",
+        "tags": [
+          "Authors"
+        ]
+      },
       "post": {
-        "summary": "Create a new author",
         "description": "Create a new author using the data in the request body.",
         "operationId": "createAuthor",
         "requestBody": {
-          "description": "Author to add",
           "content": {
             "application/json": {
               "schema": {
@@ -598,18 +646,14 @@
               }
             }
           },
+          "description": "Author to add",
           "required": true
         },
         "responses": {
           "201": {
-            "description": "New author created",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "author"
-                  ],
                   "properties": {
                     "author": {
                       "$ref": "#/components/schemas/authorType"
@@ -617,52 +661,21 @@
                     "notifications": {
                       "$ref": "#/components/schemas/notificationsType"
                     }
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "$ref": "#/components/responses/generalErrorResponse"
-          }
-        },
-        "tags": [
-          "Authors"
-        ]
-      },
-      "get": {
-        "summary": "Fetch all authors",
-        "description": "Fetch all authors as an array",
-        "operationId": "getAllAuthors",
-        "responses": {
-          "200": {
-            "description": "All authors",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
+                  },
                   "required": [
-                    "authors"
+                    "author"
                   ],
-                  "properties": {
-                    "authors": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/authorType"
-                      }
-                    },
-                    "notifications": {
-                      "$ref": "#/components/schemas/notificationsType"
-                    }
-                  }
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "New author created"
           },
           "default": {
             "$ref": "#/components/responses/generalErrorResponse"
           }
         },
+        "summary": "Create a new author",
         "tags": [
           "Authors"
         ]
@@ -670,80 +683,62 @@
     },
     "/author/withRefCount": {
       "get": {
-        "summary": "Fetch all authors with reference counts",
         "description": "Fetch all authors as an array, with each author record including the reference count",
         "operationId": "getAllAuthorsWithRefCount",
         "responses": {
           "200": {
-            "description": "All authors with reference counts",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "authors"
-                  ],
                   "properties": {
                     "authors": {
-                      "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/authorWithRefcountType"
-                      }
+                      },
+                      "type": "array"
                     },
                     "notifications": {
                       "$ref": "#/components/schemas/notificationsType"
                     }
-                  }
+                  },
+                  "required": [
+                    "authors"
+                  ],
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "All authors with reference counts"
           },
           "default": {
             "$ref": "#/components/responses/generalErrorResponse"
           }
         },
+        "summary": "Fetch all authors with reference counts",
         "tags": [
           "Authors"
         ]
       }
     },
     "/author/{id}": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "ID of author to operate on",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/idType"
-          }
-        }
-      ],
-      "get": {
-        "summary": "Fetch a single author by ID",
-        "description": "Retrieve a single author by ID. Returns author and alias information.",
-        "operationId": "getAuthorById",
+      "delete": {
+        "description": "Delete the specified author. Removes the author from associated reference records. Does not delete any reference records.",
+        "operationId": "deleteAuthorById",
         "responses": {
           "200": {
-            "description": "Author data",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "author"
-                  ],
                   "properties": {
-                    "author": {
-                      "$ref": "#/components/schemas/authorType"
-                    },
                     "notifications": {
                       "$ref": "#/components/schemas/notificationsType"
                     }
-                  }
+                  },
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "Author deleted"
           },
           "404": {
             "$ref": "#/components/responses/generalError404Response"
@@ -752,16 +747,63 @@
             "$ref": "#/components/responses/generalErrorResponse"
           }
         },
+        "summary": "Delete an author by ID",
         "tags": [
           "Authors"
         ]
       },
+      "get": {
+        "description": "Retrieve a single author by ID. Returns author and alias information.",
+        "operationId": "getAuthorById",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "author": {
+                      "$ref": "#/components/schemas/authorType"
+                    },
+                    "notifications": {
+                      "$ref": "#/components/schemas/notificationsType"
+                    }
+                  },
+                  "required": [
+                    "author"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Author data"
+          },
+          "404": {
+            "$ref": "#/components/responses/generalError404Response"
+          },
+          "default": {
+            "$ref": "#/components/responses/generalErrorResponse"
+          }
+        },
+        "summary": "Fetch a single author by ID",
+        "tags": [
+          "Authors"
+        ]
+      },
+      "parameters": [
+        {
+          "description": "ID of author to operate on",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/idType"
+          }
+        }
+      ],
       "put": {
-        "summary": "Update an author",
         "description": "Update the author record specified by the given ID",
         "operationId": "updateAuthorById",
         "requestBody": {
-          "description": "Author to update",
           "content": {
             "application/json": {
               "schema": {
@@ -769,18 +811,14 @@
               }
             }
           },
+          "description": "Author to update",
           "required": true
         },
         "responses": {
           "200": {
-            "description": "Updated author data",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "author"
-                  ],
                   "properties": {
                     "author": {
                       "$ref": "#/components/schemas/authorType"
@@ -788,10 +826,15 @@
                     "notifications": {
                       "$ref": "#/components/schemas/notificationsType"
                     }
-                  }
+                  },
+                  "required": [
+                    "author"
+                  ],
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "Updated author data"
           },
           "404": {
             "$ref": "#/components/responses/generalError404Response"
@@ -800,68 +843,21 @@
             "$ref": "#/components/responses/generalErrorResponse"
           }
         },
-        "tags": [
-          "Authors"
-        ]
-      },
-      "delete": {
-        "summary": "Delete an author by ID",
-        "description": "Delete the specified author. Removes the author from associated reference records. Does not delete any reference records.",
-        "operationId": "deleteAuthorById",
-        "responses": {
-          "200": {
-            "description": "Author deleted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "notifications": {
-                      "$ref": "#/components/schemas/notificationsType"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/generalError404Response"
-          },
-          "default": {
-            "$ref": "#/components/responses/generalErrorResponse"
-          }
-        },
+        "summary": "Update an author",
         "tags": [
           "Authors"
         ]
       }
     },
     "/author/{id}/withRefCount": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "ID of author to operate on",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/idType"
-          }
-        }
-      ],
       "get": {
-        "summary": "Fetch a single author with reference count by ID",
         "description": "Retrieve a single author by ID, including the reference count. Returns author and alias information.",
         "operationId": "getAuthorByIdWithRefCount",
         "responses": {
           "200": {
-            "description": "Author data with reference count",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "author"
-                  ],
                   "properties": {
                     "author": {
                       "$ref": "#/components/schemas/authorWithRefcountType"
@@ -869,10 +865,15 @@
                     "notifications": {
                       "$ref": "#/components/schemas/notificationsType"
                     }
-                  }
+                  },
+                  "required": [
+                    "author"
+                  ],
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "Author data with reference count"
           },
           "404": {
             "$ref": "#/components/responses/generalError404Response"
@@ -881,37 +882,32 @@
             "$ref": "#/components/responses/generalErrorResponse"
           }
         },
+        "summary": "Fetch a single author with reference count by ID",
         "tags": [
           "Authors"
         ]
-      }
-    },
-    "/author/{id}/withReferences": {
+      },
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
           "description": "ID of author to operate on",
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "$ref": "#/components/schemas/idType"
           }
         }
-      ],
+      ]
+    },
+    "/author/{id}/withReferences": {
       "get": {
-        "summary": "Fetch a single author with all references by ID",
         "description": "Retrieve a single author by ID, including all the reference structures.",
         "operationId": "getAuthorByIdWithReferences",
         "responses": {
           "200": {
-            "description": "Author data with references",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "author"
-                  ],
                   "properties": {
                     "author": {
                       "$ref": "#/components/schemas/authorWithReferencesType"
@@ -919,10 +915,15 @@
                     "notifications": {
                       "$ref": "#/components/schemas/notificationsType"
                     }
-                  }
+                  },
+                  "required": [
+                    "author"
+                  ],
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "Author data with references"
           },
           "404": {
             "$ref": "#/components/responses/generalError404Response"
@@ -931,325 +932,31 @@
             "$ref": "#/components/responses/generalErrorResponse"
           }
         },
+        "summary": "Fetch a single author with all references by ID",
         "tags": [
           "Authors"
         ]
-      }
-    },
-    "/magazine": {
-      "post": {
-        "summary": "Create a new magazine",
-        "description": "Create a new magazine using the data in the request body.",
-        "operationId": "createMagazine",
-        "requestBody": {
-          "description": "New magazine",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/newMagazineType"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "New magazine created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "magazine"
-                  ],
-                  "properties": {
-                    "magazine": {
-                      "$ref": "#/components/schemas/newMagazineType"
-                    },
-                    "notifications": {
-                      "$ref": "#/components/schemas/notificationsType"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "$ref": "#/components/responses/generalErrorResponse"
-          }
-        },
-        "tags": [
-          "Magazines"
-        ]
       },
-      "get": {
-        "summary": "Fetch all magazines",
-        "description": "Fetch all magazines as an array. Does not include issue information.",
-        "operationId": "getAllMagazines",
-        "responses": {
-          "200": {
-            "description": "All magazines",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "magazines"
-                  ],
-                  "properties": {
-                    "magazines": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/magazineType"
-                      }
-                    },
-                    "notifications": {
-                      "$ref": "#/components/schemas/notificationsType"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "$ref": "#/components/responses/generalErrorResponse"
-          }
-        },
-        "tags": [
-          "Magazines"
-        ]
-      }
-    },
-    "/magazine/withIssues": {
-      "get": {
-        "summary": "Fetch all magazines with issues",
-        "description": "Fetch all magazines as an array. Includes issues information as nested arrays.",
-        "operationId": "getAllMagazinesWithIssues",
-        "responses": {
-          "200": {
-            "description": "All magazines with issues",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "magazines"
-                  ],
-                  "properties": {
-                    "magazines": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/magazineType"
-                      }
-                    },
-                    "notifications": {
-                      "$ref": "#/components/schemas/notificationsType"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "$ref": "#/components/responses/generalErrorResponse"
-          }
-        },
-        "tags": [
-          "Magazines"
-        ]
-      }
-    },
-    "/magazine/{id}": {
       "parameters": [
         {
-          "name": "id",
+          "description": "ID of author to operate on",
           "in": "path",
-          "description": "ID of magazine to operate on",
+          "name": "id",
           "required": true,
           "schema": {
             "$ref": "#/components/schemas/idType"
           }
         }
-      ],
-      "get": {
-        "summary": "Fetch a single magazine by ID",
-        "description": "Retrieve a single magazine by the ID. Does not include issue information.",
-        "operationId": "getMagazineById",
-        "responses": {
-          "200": {
-            "description": "Magazine data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "magazine"
-                  ],
-                  "properties": {
-                    "magazine": {
-                      "$ref": "#/components/schemas/magazineType"
-                    },
-                    "notifications": {
-                      "$ref": "#/components/schemas/notificationsType"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/generalError404Response"
-          },
-          "default": {
-            "$ref": "#/components/responses/generalErrorResponse"
-          }
-        },
-        "tags": [
-          "Magazines"
-        ]
-      },
-      "put": {
-        "summary": "Update a magazine by ID",
-        "description": "Update a specific magazine by ID.",
-        "operationId": "updateMagazineById",
-        "requestBody": {
-          "description": "Magazine to update",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/magazineType"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Updated magazine",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "magazine"
-                  ],
-                  "properties": {
-                    "magazine": {
-                      "$ref": "#/components/schemas/magazineType"
-                    },
-                    "notifications": {
-                      "$ref": "#/components/schemas/notificationsType"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/generalError404Response"
-          },
-          "default": {
-            "$ref": "#/components/responses/generalErrorResponse"
-          }
-        },
-        "tags": [
-          "Magazines"
-        ]
-      },
-      "delete": {
-        "summary": "Delete a magazine by ID",
-        "description": "Delete a specific magazine by ID. Deletes all issues of the magazine and their references.",
-        "operationId": "deleteMagazineById",
-        "responses": {
-          "200": {
-            "description": "Magazine deleted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "notifications": {
-                      "$ref": "#/components/schemas/notificationsType"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/generalError404Response"
-          },
-          "default": {
-            "$ref": "#/components/responses/generalErrorResponse"
-          }
-        },
-        "tags": [
-          "Magazines"
-        ]
-      }
-    },
-    "/magazine/{id}/withIssues": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "ID of magazine to operate on",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/idType"
-          }
-        }
-      ],
-      "get": {
-        "summary": "Fetch a single magazine by ID with issue information",
-        "description": "Retrieve a single magazine by the ID. Includes issue information as a nested array.",
-        "operationId": "getMagazineByIdWithIssues",
-        "responses": {
-          "200": {
-            "description": "Magazine data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "magazine"
-                  ],
-                  "properties": {
-                    "magazine": {
-                      "$ref": "#/components/schemas/magazineWithIssuesType"
-                    },
-                    "notifications": {
-                      "$ref": "#/components/schemas/notificationsType"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/generalError404Response"
-          },
-          "default": {
-            "$ref": "#/components/responses/generalErrorResponse"
-          }
-        },
-        "tags": [
-          "Magazines"
-        ]
-      }
+      ]
     },
     "/issue": {
       "post": {
-        "summary": "Create a new magazine issue",
         "description": "Create a new issue for the specified magazine.",
         "operationId": "createIssue",
         "requestBody": {
-          "description": "New issue",
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "issue"
-                ],
                 "properties": {
                   "issue": {
                     "$ref": "#/components/schemas/newMagazineIssueType"
@@ -1257,10 +964,15 @@
                   "notifications": {
                     "$ref": "#/components/schemas/notificationsType"
                   }
-                }
+                },
+                "required": [
+                  "issue"
+                ],
+                "type": "object"
               }
             }
-          }
+          },
+          "description": "New issue"
         },
         "responses": {
           "201": {
@@ -1270,37 +982,52 @@
             "$ref": "#/components/responses/generalErrorResponse"
           }
         },
+        "summary": "Create a new magazine issue",
         "tags": [
           "Issues"
         ]
       }
     },
     "/issue/{id}": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "ID of magazine issue to operate on",
-          "required": true,
-          "schema": {
-            "$ref": "#/components/schemas/idType"
+      "delete": {
+        "description": "Delete a magazine issues. Deletes all references associated with it.",
+        "operationId": "deleteIssueById",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "notifications": {
+                      "$ref": "#/components/schemas/notificationsType"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Magazine issue deleted"
+          },
+          "404": {
+            "$ref": "#/components/responses/generalError404Response"
+          },
+          "default": {
+            "$ref": "#/components/responses/generalErrorResponse"
           }
-        }
-      ],
+        },
+        "summary": "Delete a magazine issue",
+        "tags": [
+          "Issues"
+        ]
+      },
       "get": {
-        "summary": "Get a full magazine issue",
         "description": "Get a full magazine issue with magazine and reference information.",
         "operationId": "getIssueById",
         "responses": {
           "200": {
-            "description": "Issue data",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "issue"
-                  ],
                   "properties": {
                     "issue": {
                       "$ref": "#/components/schemas/magazineIssueWithReferencesType"
@@ -1308,10 +1035,15 @@
                     "notifications": {
                       "$ref": "#/components/schemas/notificationsType"
                     }
-                  }
+                  },
+                  "required": [
+                    "issue"
+                  ],
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "Issue data"
           },
           "404": {
             "$ref": "#/components/responses/generalError404Response"
@@ -1320,34 +1052,40 @@
             "$ref": "#/components/responses/generalErrorResponse"
           }
         },
+        "summary": "Get a full magazine issue",
         "tags": [
           "Issues"
         ]
       },
+      "parameters": [
+        {
+          "description": "ID of magazine issue to operate on",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/idType"
+          }
+        }
+      ],
       "put": {
-        "summary": "Update a magazine issue",
         "description": "Update a magazine issue. Does not affect any associated references.",
         "operationId": "updateIssueById",
         "requestBody": {
-          "description": "Magazine issue to update",
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/updateMagazineIssueType"
               }
             }
-          }
+          },
+          "description": "Magazine issue to update"
         },
         "responses": {
           "200": {
-            "description": "Updated magazine issue",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "issue"
-                  ],
                   "properties": {
                     "issue": {
                       "$ref": "#/components/schemas/magazineIssueType"
@@ -1355,10 +1093,15 @@
                     "notifications": {
                       "$ref": "#/components/schemas/notificationsType"
                     }
-                  }
+                  },
+                  "required": [
+                    "issue"
+                  ],
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "Updated magazine issue"
           },
           "404": {
             "$ref": "#/components/responses/generalError404Response"
@@ -1367,162 +1110,248 @@
             "$ref": "#/components/responses/generalErrorResponse"
           }
         },
-        "tags": [
-          "Issues"
-        ]
-      },
-      "delete": {
-        "summary": "Delete a magazine issue",
-        "description": "Delete a magazine issues. Deletes all references associated with it.",
-        "operationId": "deleteIssueById",
-        "responses": {
-          "200": {
-            "description": "Magazine issue deleted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "notifications": {
-                      "$ref": "#/components/schemas/notificationsType"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/generalError404Response"
-          },
-          "default": {
-            "$ref": "#/components/responses/generalErrorResponse"
-          }
-        },
+        "summary": "Update a magazine issue",
         "tags": [
           "Issues"
         ]
       }
     },
-    "/reference": {
+    "/magazine": {
+      "get": {
+        "description": "Fetch all magazines as an array. Does not include issue information.",
+        "operationId": "getAllMagazines",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "magazines": {
+                      "items": {
+                        "$ref": "#/components/schemas/magazineType"
+                      },
+                      "type": "array"
+                    },
+                    "notifications": {
+                      "$ref": "#/components/schemas/notificationsType"
+                    }
+                  },
+                  "required": [
+                    "magazines"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "All magazines"
+          },
+          "default": {
+            "$ref": "#/components/responses/generalErrorResponse"
+          }
+        },
+        "summary": "Fetch all magazines",
+        "tags": [
+          "Magazines"
+        ]
+      },
       "post": {
-        "summary": "Create a new reference",
-        "description": "Create a new reference using the data in the request body.",
-        "operationId": "createReference",
+        "description": "Create a new magazine using the data in the request body.",
+        "operationId": "createMagazine",
         "requestBody": {
-          "description": "New reference",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/newReferenceType"
+                "$ref": "#/components/schemas/newMagazineType"
               }
             }
-          }
+          },
+          "description": "New magazine"
         },
         "responses": {
           "201": {
-            "description": "New reference created",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "reference"
-                  ],
                   "properties": {
-                    "reference": {
-                      "$ref": "#/components/schemas/referenceType"
+                    "magazine": {
+                      "$ref": "#/components/schemas/newMagazineType"
                     },
                     "notifications": {
                       "$ref": "#/components/schemas/notificationsType"
                     }
-                  }
+                  },
+                  "required": [
+                    "magazine"
+                  ],
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "New magazine created"
           },
           "default": {
             "$ref": "#/components/responses/generalErrorResponse"
           }
         },
+        "summary": "Create a new magazine",
         "tags": [
-          "References"
-        ]
-      },
-      "get": {
-        "summary": "Fetch all references",
-        "description": "Fetch all references as an array. Includes author, record type and magazine information.",
-        "operationId": "getAllReferences",
-        "responses": {
-          "200": {
-            "description": "All references",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "references"
-                  ],
-                  "properties": {
-                    "references": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/referenceType"
-                      }
-                    },
-                    "notifications": {
-                      "$ref": "#/components/schemas/notificationsType"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "$ref": "#/components/responses/generalErrorResponse"
-          }
-        },
-        "tags": [
-          "References"
+          "Magazines"
         ]
       }
     },
-    "/reference/{id}": {
+    "/magazine/withIssues": {
+      "get": {
+        "description": "Fetch all magazines as an array. Includes issues information as nested arrays.",
+        "operationId": "getAllMagazinesWithIssues",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "magazines": {
+                      "items": {
+                        "$ref": "#/components/schemas/magazineType"
+                      },
+                      "type": "array"
+                    },
+                    "notifications": {
+                      "$ref": "#/components/schemas/notificationsType"
+                    }
+                  },
+                  "required": [
+                    "magazines"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "All magazines with issues"
+          },
+          "default": {
+            "$ref": "#/components/responses/generalErrorResponse"
+          }
+        },
+        "summary": "Fetch all magazines with issues",
+        "tags": [
+          "Magazines"
+        ]
+      }
+    },
+    "/magazine/{id}": {
+      "delete": {
+        "description": "Delete a specific magazine by ID. Deletes all issues of the magazine and their references.",
+        "operationId": "deleteMagazineById",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "notifications": {
+                      "$ref": "#/components/schemas/notificationsType"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Magazine deleted"
+          },
+          "404": {
+            "$ref": "#/components/responses/generalError404Response"
+          },
+          "default": {
+            "$ref": "#/components/responses/generalErrorResponse"
+          }
+        },
+        "summary": "Delete a magazine by ID",
+        "tags": [
+          "Magazines"
+        ]
+      },
+      "get": {
+        "description": "Retrieve a single magazine by the ID. Does not include issue information.",
+        "operationId": "getMagazineById",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "magazine": {
+                      "$ref": "#/components/schemas/magazineType"
+                    },
+                    "notifications": {
+                      "$ref": "#/components/schemas/notificationsType"
+                    }
+                  },
+                  "required": [
+                    "magazine"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Magazine data"
+          },
+          "404": {
+            "$ref": "#/components/responses/generalError404Response"
+          },
+          "default": {
+            "$ref": "#/components/responses/generalErrorResponse"
+          }
+        },
+        "summary": "Fetch a single magazine by ID",
+        "tags": [
+          "Magazines"
+        ]
+      },
       "parameters": [
         {
-          "name": "id",
+          "description": "ID of magazine to operate on",
           "in": "path",
-          "description": "ID of reference to operate on",
+          "name": "id",
           "required": true,
           "schema": {
             "$ref": "#/components/schemas/idType"
           }
         }
       ],
-      "get": {
-        "summary": "Fetch a single reference by ID",
-        "description": "Retrieve a single reference by the ID. Includes author, record type and magazine information.",
-        "operationId": "getReferenceById",
+      "put": {
+        "description": "Update a specific magazine by ID.",
+        "operationId": "updateMagazineById",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/magazineType"
+              }
+            }
+          },
+          "description": "Magazine to update"
+        },
         "responses": {
           "200": {
-            "description": "Reference data",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": [
-                    "reference"
-                  ],
                   "properties": {
-                    "reference": {
-                      "$ref": "#/components/schemas/referenceType"
+                    "magazine": {
+                      "$ref": "#/components/schemas/magazineType"
                     },
                     "notifications": {
                       "$ref": "#/components/schemas/notificationsType"
                     }
-                  }
+                  },
+                  "required": [
+                    "magazine"
+                  ],
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "Updated magazine"
           },
           "404": {
             "$ref": "#/components/responses/generalError404Response"
@@ -1531,45 +1360,331 @@
             "$ref": "#/components/responses/generalErrorResponse"
           }
         },
+        "summary": "Update a magazine by ID",
+        "tags": [
+          "Magazines"
+        ]
+      }
+    },
+    "/magazine/{id}/withIssues": {
+      "get": {
+        "description": "Retrieve a single magazine by the ID. Includes issue information as a nested array.",
+        "operationId": "getMagazineByIdWithIssues",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "magazine": {
+                      "$ref": "#/components/schemas/magazineWithIssuesType"
+                    },
+                    "notifications": {
+                      "$ref": "#/components/schemas/notificationsType"
+                    }
+                  },
+                  "required": [
+                    "magazine"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Magazine data"
+          },
+          "404": {
+            "$ref": "#/components/responses/generalError404Response"
+          },
+          "default": {
+            "$ref": "#/components/responses/generalErrorResponse"
+          }
+        },
+        "summary": "Fetch a single magazine by ID with issue information",
+        "tags": [
+          "Magazines"
+        ]
+      },
+      "parameters": [
+        {
+          "description": "ID of magazine to operate on",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/idType"
+          }
+        }
+      ]
+    },
+    "/misc/languages": {
+      "get": {
+        "description": "Fetch all language strings currently in use from the database.",
+        "operationId": "getAllLanguages",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "languages": {
+                      "items": {
+                        "$ref": "#/components/schemas/languageType"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "languages"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "All languages"
+          },
+          "default": {
+            "$ref": "#/components/responses/generalErrorResponse"
+          }
+        },
+        "summary": "Fetch all language strings",
+        "tags": [
+          "Miscellaneous"
+        ]
+      }
+    },
+    "/misc/recordtypes": {
+      "get": {
+        "description": "Retrieve all record types as a list of objects.",
+        "operationId": "getAllRecordTypes",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "recordTypes": {
+                      "items": {
+                        "$ref": "#/components/schemas/recordTypeType"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "recordTypes"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "All reference types"
+          },
+          "default": {
+            "$ref": "#/components/responses/generalErrorResponse"
+          }
+        },
+        "summary": "Fetch all record types as a list",
+        "tags": [
+          "Miscellaneous"
+        ]
+      }
+    },
+    "/reference": {
+      "get": {
+        "description": "Fetch all references as an array. Includes author, record type and magazine information.",
+        "operationId": "getAllReferences",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "notifications": {
+                      "$ref": "#/components/schemas/notificationsType"
+                    },
+                    "references": {
+                      "items": {
+                        "$ref": "#/components/schemas/referenceType"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "references"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "All references"
+          },
+          "default": {
+            "$ref": "#/components/responses/generalErrorResponse"
+          }
+        },
+        "summary": "Fetch all references",
         "tags": [
           "References"
         ]
       },
+      "post": {
+        "description": "Create a new reference using the data in the request body.",
+        "operationId": "createReference",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/newReferenceType"
+              }
+            }
+          },
+          "description": "New reference"
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "notifications": {
+                      "$ref": "#/components/schemas/notificationsType"
+                    },
+                    "reference": {
+                      "$ref": "#/components/schemas/referenceType"
+                    }
+                  },
+                  "required": [
+                    "reference"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "New reference created"
+          },
+          "default": {
+            "$ref": "#/components/responses/generalErrorResponse"
+          }
+        },
+        "summary": "Create a new reference",
+        "tags": [
+          "References"
+        ]
+      }
+    },
+    "/reference/{id}": {
+      "delete": {
+        "description": "Delete a single reference by the ID. Does not affect any related records.",
+        "operationId": "deleteReferenceById",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "notifications": {
+                      "$ref": "#/components/schemas/notificationsType"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Reference deleted"
+          },
+          "404": {
+            "$ref": "#/components/responses/generalError404Response"
+          },
+          "default": {
+            "$ref": "#/components/responses/generalErrorResponse"
+          }
+        },
+        "summary": "Delete a single reference by ID",
+        "tags": [
+          "References"
+        ]
+      },
+      "get": {
+        "description": "Retrieve a single reference by the ID. Includes author, record type and magazine information.",
+        "operationId": "getReferenceById",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "notifications": {
+                      "$ref": "#/components/schemas/notificationsType"
+                    },
+                    "reference": {
+                      "$ref": "#/components/schemas/referenceType"
+                    }
+                  },
+                  "required": [
+                    "reference"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Reference data"
+          },
+          "404": {
+            "$ref": "#/components/responses/generalError404Response"
+          },
+          "default": {
+            "$ref": "#/components/responses/generalErrorResponse"
+          }
+        },
+        "summary": "Fetch a single reference by ID",
+        "tags": [
+          "References"
+        ]
+      },
+      "parameters": [
+        {
+          "description": "ID of reference to operate on",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/idType"
+          }
+        }
+      ],
       "put": {
-        "summary": "Update a reference",
         "description": "Update a reference. May result in the creation of new authors and/or a new magazine issue record.",
         "operationId": "updateReferenceById",
         "requestBody": {
-          "description": "Reference to update",
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/updateReferenceType"
               }
             }
-          }
+          },
+          "description": "Reference to update"
         },
         "responses": {
           "200": {
-            "description": "Updated reference",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
+                  "properties": {
+                    "notifications": {
+                      "$ref": "#/components/schemas/notificationsType"
+                    },
+                    "reference": {
+                      "$ref": "#/components/schemas/referenceType"
+                    }
+                  },
                   "required": [
                     "reference"
                   ],
-                  "properties": {
-                    "reference": {
-                      "$ref": "#/components/schemas/referenceType"
-                    },
-                    "notifications": {
-                      "$ref": "#/components/schemas/notificationsType"
-                    }
-                  }
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "Updated reference"
           },
           "404": {
             "$ref": "#/components/responses/generalError404Response"
@@ -1578,135 +1693,38 @@
             "$ref": "#/components/responses/generalErrorResponse"
           }
         },
+        "summary": "Update a reference",
         "tags": [
           "References"
-        ]
-      },
-      "delete": {
-        "summary": "Delete a single reference by ID",
-        "description": "Delete a single reference by the ID. Does not affect any related records.",
-        "operationId": "deleteReferenceById",
-        "responses": {
-          "200": {
-            "description": "Reference deleted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "notifications": {
-                      "$ref": "#/components/schemas/notificationsType"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/generalError404Response"
-          },
-          "default": {
-            "$ref": "#/components/responses/generalErrorResponse"
-          }
-        },
-        "tags": [
-          "References"
-        ]
-      }
-    },
-    "/misc/recordtypes": {
-      "get": {
-        "summary": "Fetch all record types as a list",
-        "description": "Retrieve all record types as a list of objects.",
-        "operationId": "getAllRecordTypes",
-        "responses": {
-          "200": {
-            "description": "All reference types",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "recordTypes"
-                  ],
-                  "properties": {
-                    "recordTypes": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/recordTypeType"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "$ref": "#/components/responses/generalErrorResponse"
-          }
-        },
-        "tags": [
-          "Miscellaneous"
-        ]
-      }
-    },
-    "/misc/languages": {
-      "get": {
-        "summary": "Fetch all language strings",
-        "description": "Fetch all language strings currently in use from the database.",
-        "operationId": "getAllLanguages",
-        "responses": {
-          "200": {
-            "description": "All languages",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "languages"
-                  ],
-                  "properties": {
-                    "languages": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/languageType"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "$ref": "#/components/responses/generalErrorResponse"
-          }
-        },
-        "tags": [
-          "Miscellaneous"
         ]
       }
     }
   },
+  "servers": [
+    {
+      "url": "/api"
+    }
+  ],
   "tags": [
     {
-      "name": "Authors",
-      "description": "Operations that are primarily centered around authors"
+      "description": "Operations that are primarily centered around authors",
+      "name": "Authors"
     },
     {
-      "name": "Magazines",
-      "description": "Operations that are primarily centered around magazines"
+      "description": "Operations that are primarily centered around magazines",
+      "name": "Magazines"
     },
     {
-      "name": "Issues",
-      "description": "Operations that are primarily centered around magazine issues"
+      "description": "Operations that are primarily centered around magazine issues",
+      "name": "Issues"
     },
     {
-      "name": "References",
-      "description": "Operations that are primarily centered around references"
+      "description": "Operations that are primarily centered around references",
+      "name": "References"
     },
     {
-      "name": "Miscellaneous",
-      "description": "Operations that are not associated with any previous group"
+      "description": "Operations that are not associated with any previous group",
+      "name": "Miscellaneous"
     }
   ]
 }
