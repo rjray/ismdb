@@ -453,7 +453,8 @@ paths:
   "/author/withRefCount":
     get:
       summary: Fetch all authors with reference counts
-      description: Fetch all authors as an array, with each author record including the reference count.
+      description: Fetch all authors as an array, with each author record
+        including the reference count.
       operationId: getAllAuthorsWithRefCount
       parameters:
         - $ref: "#/components/parameters/offsetParam"
@@ -487,7 +488,8 @@ paths:
   "/author/namesAndAliases":
     get:
       summary: Fetch a list of author names, including aliases
-      description: Fetch all author names as an array, including aliases with a pointer to the master name.
+      description: Fetch all author names as an array, including aliases with a
+        pointer to the master name.
       operationId: getAuthorNamesAndAliases
       parameters:
         - $ref: "#/components/parameters/offsetParam"
@@ -521,7 +523,8 @@ paths:
       - $ref: "#/components/parameters/idParam"
     get:
       summary: Fetch a single author by ID
-      description: Retrieve a single author by ID. Returns author and alias information.
+      description: Retrieve a single author by ID. Returns author and alias
+        information.
       operationId: getAuthorById
       responses:
         "200":
@@ -576,7 +579,8 @@ paths:
         - Authors
     delete:
       summary: Delete an author by ID
-      description: Delete the specified author. Removes the author from associated reference records. Does not delete any reference records.
+      description: Delete the specified author. Removes the author from
+        associated reference records. Does not delete any reference records.
       operationId: deleteAuthorById
       responses:
         "200":
@@ -599,7 +603,8 @@ paths:
       - $ref: "#/components/parameters/idParam"
     get:
       summary: Fetch a single author with reference count by ID
-      description: Retrieve a single author by ID, including the reference count. Returns author and alias information.
+      description: Retrieve a single author by ID, including the reference
+        count. Returns author and alias information.
       operationId: getAuthorByIdWithRefCount
       responses:
         "200":
@@ -626,7 +631,8 @@ paths:
       - $ref: "#/components/parameters/idParam"
     get:
       summary: Fetch a single author with all references by ID
-      description: Retrieve a single author by ID, including all the reference structures.
+      description: Retrieve a single author by ID, including all the reference
+        structures.
       operationId: getAuthorByIdWithReferences
       responses:
         "200":
@@ -679,7 +685,8 @@ paths:
         - Magazines
     get:
       summary: Fetch all magazines
-      description: Fetch all magazines as an array. Does not include issue information.
+      description: Fetch all magazines as an array. Does not include issue
+        information.
       operationId: getAllMagazines
       parameters:
         - $ref: "#/components/parameters/offsetParam"
@@ -713,7 +720,8 @@ paths:
   "/magazine/withIssues":
     get:
       summary: Fetch all magazines with issues
-      description: Fetch all magazines as an array. Includes issues information as nested arrays.
+      description: Fetch all magazines as an array. Includes issues information
+        as nested arrays.
       operationId: getAllMagazinesWithIssues
       parameters:
         - $ref: "#/components/parameters/offsetParam"
@@ -749,7 +757,8 @@ paths:
       - $ref: "#/components/parameters/idParam"
     get:
       summary: Fetch a single magazine by ID
-      description: Retrieve a single magazine by the ID. Does not include issue information.
+      description: Retrieve a single magazine by the ID. Does not include issue
+        information.
       operationId: getMagazineById
       responses:
         "200":
@@ -803,7 +812,8 @@ paths:
         - Magazines
     delete:
       summary: Delete a magazine by ID
-      description: Delete a specific magazine by ID. Deletes all issues of the magazine and their references.
+      description: Delete a specific magazine by ID. Deletes all issues of the
+        magazine and their references.
       operationId: deleteMagazineById
       responses:
         "200":
@@ -826,7 +836,8 @@ paths:
       - $ref: "#/components/parameters/idParam"
     get:
       summary: Fetch a single magazine by ID with issue information
-      description: Retrieve a single magazine by the ID. Includes issue information as a nested array.
+      description: Retrieve a single magazine by the ID. Includes issue
+        information as a nested array.
       operationId: getMagazineByIdWithIssues
       responses:
         "200":
@@ -878,7 +889,8 @@ paths:
       - $ref: "#/components/parameters/idParam"
     get:
       summary: Get a full magazine issue
-      description: Get a full magazine issue with magazine and reference information.
+      description: Get a full magazine issue with magazine and reference
+        information.
       operationId: getIssueById
       responses:
         "200":
@@ -902,7 +914,8 @@ paths:
         - Issues
     put:
       summary: Update a magazine issue
-      description: Update a magazine issue. Does not affect any associated references.
+      description: Update a magazine issue. Does not affect any associated
+        references.
       operationId: updateIssueById
       requestBody:
         description: Magazine issue to update
@@ -932,7 +945,8 @@ paths:
         - Issues
     delete:
       summary: Delete a magazine issue
-      description: Delete a magazine issues. Deletes all references associated with it.
+      description: Delete a magazine issues. Deletes all references associated
+        with it.
       operationId: deleteIssueById
       responses:
         "200":
@@ -981,7 +995,8 @@ paths:
         - References
     get:
       summary: Fetch all references
-      description: Fetch all references as an array. Includes author, record type and magazine information.
+      description: Fetch all references as an array. Includes author, record
+        type and magazine information.
       operationId: getAllReferences
       parameters:
         - $ref: "#/components/parameters/offsetParam"
@@ -1017,7 +1032,8 @@ paths:
       - $ref: "#/components/parameters/idParam"
     get:
       summary: Fetch a single reference by ID
-      description: Retrieve a single reference by the ID. Includes author, record type and magazine information.
+      description: Retrieve a single reference by the ID. Includes author,
+        record type and magazine information.
       operationId: getReferenceById
       responses:
         "200":
@@ -1041,7 +1057,8 @@ paths:
         - References
     put:
       summary: Update a reference
-      description: Update a reference. May result in the creation of new authors and/or a new magazine issue record.
+      description: Update a reference. May result in the creation of new
+        authors and/or a new magazine issue record.
       operationId: updateReferenceById
       requestBody:
         description: Reference to update
@@ -1071,7 +1088,8 @@ paths:
         - References
     delete:
       summary: Delete a single reference by ID
-      description: Delete a single reference by the ID. Does not affect any related records.
+      description: Delete a single reference by the ID. Removes any author
+        associations, but does not affect any other related records.
       operationId: deleteReferenceById
       responses:
         "200":
@@ -1091,8 +1109,8 @@ paths:
         - References
   "/misc/recordtypes":
     get:
-      summary: Fetch all record types as a list
-      description: Retrieve all record types as a list of objects.
+      summary: Fetch all record types as an array
+      description: Retrieve all record types as an array of objects.
       operationId: getAllRecordTypes
       responses:
         "200":
@@ -1114,9 +1132,18 @@ paths:
         - Miscellaneous
   "/misc/languages":
     get:
-      summary: Fetch all language strings
-      description: Fetch all language strings currently in use from the database.
+      summary: Fetch all language strings as an array
+      description: Fetch all language strings currently in use from the
+        database as an array of strings.
       operationId: getAllLanguages
+      parameters:
+        - name: preferred
+          in: query
+          description: Preferred language, will be moved to the head of the
+            returned list.
+          required: false
+          schema:
+            type: string
       responses:
         "200":
           description: All languages
