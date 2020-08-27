@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
     },
-    { timestamps: false }
+    {}
   );
   Author.associate = function (models) {
     Author.hasMany(models.AuthorAlias);

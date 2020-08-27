@@ -37,6 +37,7 @@ migrate_authors($dbhi, $dbho);
 migrate_periodicals($dbhi, $dbho);
 migrate_reference_table($dbhi, $dbho);
 fix_placeholders($dbho);
+fix_author_dates($dbho);
 fix_magazine_issue_dates($dbho);
 
 $dbhi->disconnect;
@@ -82,6 +83,7 @@ sub migrate_record_types {
 sub migrate_authors {
     my ($dbhin, $dbhout) = @_;
     my ($authors_count, $aliases_count) = (0, 0);
+    my $now = time2str(time);
 
     my $sth = $dbhin->prepare('SELECT id, name, aliases FROM authors');
     $sth->execute;
@@ -89,7 +91,8 @@ sub migrate_authors {
     $sth->finish;
 
     $sth = $dbhout->prepare(
-        'INSERT INTO `Authors` (`id`, `name`) VALUES (?, ?)'
+        'INSERT INTO `Authors` (`id`, `name`, `createdAt`, `updatedAt`) ' .
+        'VALUES (?, ?, ?, ?)'
     );
     my $stha = $dbhout->prepare(
         'INSERT INTO `AuthorAliases` (`authorId`, `name`) VALUES (?, ?)'
@@ -97,7 +100,7 @@ sub migrate_authors {
     my $result = eval {
         for my $row (@{$data}) {
             my ($id, $name, $aliases) = @{$row};
-            $sth->execute($id, $name);
+            $sth->execute($id, $name, $now, $now);
             $authors_count++;
 
             if ($aliases) {
@@ -238,9 +241,49 @@ sub fix_placeholders {
     return;
 }
 
+sub fix_author_dates {
+    my $dbh = shift;
+    my ($fixed, $skipped) = (0, 0);
+
+    my $authors = $dbh->selectall_arrayref(
+        'SELECT * FROM `Authors`', { Slice => {} }
+    );
+    my $sth = $dbh->prepare(
+        'UPDATE `Authors` SET `createdAt` = ?, `updatedAt` = ? ' .
+        'WHERE `id` = ?'
+    );
+
+    for my $author (@{$authors}) {
+        my $refs = $dbh->selectall_arrayref(
+            'SELECT r.`createdAt`, r.`updatedAt` FROM `References` r ' .
+            'LEFT JOIN `AuthorsReferences` ar ON r.`id` = ar.`referenceId` ' .
+            "WHERE ar.`authorId` = $author->{id}",
+            { Slice => {} }
+        );
+
+        if (0 == @{$refs}) {
+            print "  Author '$author->{name}' has no references\n";
+            $skipped++;
+            next;
+        }
+
+        my $created =
+            (sort { $a->{createdAt} cmp $b->{createdAt} } @{$refs})[0];
+        $sth->execute(
+            $created->{createdAt}, $created->{createdAt}, $author->{id}
+        );
+        $fixed++;
+    }
+
+    $dbh->commit;
+    print "$fixed author records dates corrected, $skipped skipped.\n";
+
+    return;
+}
+
 sub fix_magazine_issue_dates {
     my $dbh = shift;
-    my ($fixed, $skipped);
+    my ($fixed, $skipped) = (0, 0);
 
     my $refs = $dbh->selectall_arrayref(
         'SELECT * FROM `References` WHERE `magazineIssueId` IS NOT NULL',
