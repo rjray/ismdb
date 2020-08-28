@@ -148,7 +148,7 @@ components:
           properties:
             refcount:
               type: integer
-    authorWithReferencesType:
+    authorWithRefsAndAliasesType:
       allOf:
         - $ref: "#/components/schemas/authorWithRefcountType"
         - type: object
@@ -159,6 +159,10 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/referenceType"
+            aliases:
+              type: array
+              items:
+                $ref: "#/components/schemas/authorAliasType"
     newMagazineType:
       type: object
       required:
@@ -626,17 +630,17 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
-  "/author/{id}/withReferences":
+  "/author/{id}/withRefsAndAliases":
     parameters:
       - $ref: "#/components/parameters/idParam"
     get:
-      summary: Fetch a single author with all references by ID
+      summary: Fetch a single author by ID with all references and aliases
       description: Retrieve a single author by ID, including all the reference
-        structures.
+        structures and any author aliases.
       operationId: getAuthorByIdWithReferences
       responses:
         "200":
-          description: Author data with references
+          description: Author data with references and aliases
           content:
             "application/json":
               schema:
@@ -645,7 +649,7 @@ paths:
                   - author
                 properties:
                   author:
-                    $ref: "#/components/schemas/authorWithReferencesType"
+                    $ref: "#/components/schemas/authorWithRefsAndAliasesType"
                   notifications:
                     $ref: "#/components/schemas/notificationsType"
         "404":
