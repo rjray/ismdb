@@ -14,7 +14,7 @@ const {
 const { sortBy } = require("../lib/utils");
 
 function convertAliases(aliasList) {
-  let aliases = aliasList.map((item) => {
+  const aliases = aliasList.map((item) => {
     item = item.get();
     delete item.AuthorId;
     return item;
@@ -37,7 +37,29 @@ const fetchSingleAuthorSimple = async (id) => {
     author.aliases = convertAliases(author.AuthorAliases);
     delete author.AuthorAliases;
   } else {
-    throw new Error(`No author with id "${id}" found`);
+    author = null;
+  }
+
+  return author;
+};
+
+// Single author with any aliases and a count of their references.
+const fetchSingleAuthorWithRefCount = async (id) => {
+  let author = await Author.findByPk(id, {
+    include: [
+      AuthorAlias,
+      { model: Reference, as: "References", attributes: ["id"] },
+    ]
+  }).catch((error) => { throw new Error(error); });
+
+  if (author) {
+    author = author.get();
+    author.aliases = convertAliases(author.AuthorAliases);
+    delete author.AuthorAliases;
+    author.refcount = author.References.length;
+    delete author.References;
+  } else {
+    author = null;
   }
 
   return author;
@@ -73,12 +95,58 @@ const fetchSingleAuthorComplex = async (id) => {
     });
     delete author.References;
   } else {
-    throw new Error(`No author with id "${id}" found`);
+    author = null;
   }
 
   return author;
 };
 
+// Fetch all authors along with aliases. Returns an object with the count in a
+// property called "count" and all the authors in a property called "authors".
+const fetchAllAuthorsWithAliasesAndCount = async (opts = {}) => {
+  const count = await Author.count();
+  const results = await Author.findAll({
+    include: [AuthorAlias],
+    ...opts,
+  });
+
+  const authors = results.map((author) => {
+    author = author.get();
+    author.aliases = convertAliases(author.AuthorAliases);
+    delete author.AuthorAliases;
+
+    return author;
+  });
+
+  return { count, authors };
+};
+
+// Fetch all authors along with a count of how many references they're credited
+// on. Returns the same shape of object as above.
+const fetchAllAuthorsWithRefcountAndCount = async (opts = {}) => {
+  const count = await Author.count();
+  const results = await Author.findAll({
+    include: [
+      AuthorAlias,
+      { model: Reference, as: "References", attributes: ["id"] },
+    ],
+    ...opts,
+  });
+
+  const authors = results.map((author) => {
+    author = author.get();
+    author.aliases = convertAliases(author.AuthorAliases);
+    delete author.AuthorAliases;
+    author.refcount = author.References.length;
+    delete author.References;
+
+    return author;
+  });
+
+  return { count, authors };
+};
+
+// LEGACY
 // Fetch all authors along with a count of how many references they're credited
 // on.
 const fetchAllAuthorsWithRefcount = async (opts = {}) => {
@@ -105,12 +173,12 @@ const fetchAllAuthorsWithRefcount = async (opts = {}) => {
 
 // Fetch all authors along with aliases.
 const fetchAllAuthorsWithAliases = async (opts = {}) => {
-  let authors = await Author.findAll({
+  const allAuthors = await Author.findAll({
     include: [AuthorAlias],
     ...opts,
   });
 
-  authors = authors.map((author) => {
+  const authors = allAuthors.map((author) => {
     author = author.get();
     author.aliases = convertAliases(author.AuthorAliases);
     delete author.AuthorAliases;
@@ -218,9 +286,12 @@ const deleteAuthor = async (id) => {
 
 module.exports = {
   fetchSingleAuthorSimple,
+  fetchSingleAuthorWithRefCount,
   fetchSingleAuthorComplex,
   fetchAllAuthorsWithRefcount,
   fetchAllAuthorsWithAliases,
+  fetchAllAuthorsWithAliasesAndCount,
+  fetchAllAuthorsWithRefcountAndCount,
   createAuthor,
   updateAuthor,
   deleteAuthor,
