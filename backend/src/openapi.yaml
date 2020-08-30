@@ -392,6 +392,7 @@ components:
                 $ref: "#/components/schemas/notificationsType"
 paths:
   "/author":
+    x-exegesis-controller: authorsController
     post:
       summary: Create a new author
       description: Create a new author using the data in the request body.
@@ -423,7 +424,7 @@ paths:
         - Authors
     get:
       summary: Fetch all authors
-      description: Fetch authors as an array. Returns a count of all authors.
+      description: Fetch authors as an array. Includes a count of all authors.
       operationId: getAllAuthors
       parameters:
         - $ref: "#/components/parameters/offsetParam"
@@ -438,13 +439,13 @@ paths:
                 type: object
                 required:
                   - count
-                  - rows
+                  - authors
                 properties:
                   count:
                     type: integer
                     format: int64
                     minimum: 0
-                  rows:
+                  authors:
                     type: array
                     items:
                       $ref: "#/components/schemas/authorType"
@@ -455,6 +456,7 @@ paths:
       tags:
         - Authors
   "/author/withRefCount":
+    x-exegesis-controller: authorsController
     get:
       summary: Fetch all authors with reference counts
       description: Fetch all authors as an array, with each author record
@@ -473,13 +475,13 @@ paths:
                 type: object
                 required:
                   - count
-                  - rows
+                  - authors
                 properties:
                   count:
                     type: integer
                     format: int64
                     minimum: 0
-                  rows:
+                  authors:
                     type: array
                     items:
                       $ref: "#/components/schemas/authorWithRefcountType"
@@ -490,6 +492,7 @@ paths:
       tags:
         - Authors
   "/author/namesAndAliases":
+    x-exegesis-controller: authorsController
     get:
       summary: Fetch a list of author names, including aliases
       description: Fetch all author names as an array, including aliases with a
@@ -505,24 +508,30 @@ paths:
           content:
             "application/json":
               schema:
-                type: array
-                items:
-                  type: object
-                  required:
-                    - id
-                    - name
-                  properties:
-                    id:
-                      $ref: "#/components/schemas/idType"
-                    name:
-                      $ref: "#/components/schemas/authorNameOrAliasType"
-                    aliasOf:
-                      $ref: "#/components/schemas/idType"
+                type: object
+                required:
+                  - authors
+                properties:
+                  authors:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - id
+                        - name
+                      properties:
+                        id:
+                          $ref: "#/components/schemas/idType"
+                        name:
+                          $ref: "#/components/schemas/authorNameOrAliasType"
+                        aliasOf:
+                          $ref: "#/components/schemas/authorNameOrAliasType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
   "/author/{id}":
+    x-exegesis-controller: authorsController
     parameters:
       - $ref: "#/components/parameters/idParam"
     get:
@@ -603,6 +612,7 @@ paths:
       tags:
         - Authors
   "/author/{id}/withRefCount":
+    x-exegesis-controller: authorsController
     parameters:
       - $ref: "#/components/parameters/idParam"
     get:
@@ -631,6 +641,7 @@ paths:
       tags:
         - Authors
   "/author/{id}/withRefsAndAliases":
+    x-exegesis-controller: authorsController
     parameters:
       - $ref: "#/components/parameters/idParam"
     get:
@@ -705,13 +716,13 @@ paths:
                 type: object
                 required:
                   - count
-                  - rows
+                  - magazines
                 properties:
                   count:
                     type: integer
                     format: int64
                     minimum: 0
-                  rows:
+                  magazines:
                     type: array
                     items:
                       $ref: "#/components/schemas/magazineType"
@@ -740,16 +751,16 @@ paths:
                 type: object
                 required:
                   - count
-                  - rows
+                  - magazines
                 properties:
                   count:
                     type: integer
                     format: int64
                     minimum: 0
-                  rows:
+                  magazines:
                     type: array
                     items:
-                      $ref: "#/components/schemas/magazineType"
+                      $ref: "#/components/schemas/magazineWithIssuesType"
                   notifications:
                     $ref: "#/components/schemas/notificationsType"
         default:
@@ -1015,13 +1026,13 @@ paths:
                 type: object
                 required:
                   - count
-                  - rows
+                  - references
                 properties:
                   count:
                     type: integer
                     format: int64
                     minimum: 0
-                  rows:
+                  references:
                     type: array
                     items:
                       $ref: "#/components/schemas/referenceType"
