@@ -59,7 +59,7 @@ sub migrate_record_types {
     );
 
     my $sth = $dbhout->prepare(
-        'INSERT INTO `RecordTypes` (`id`, `description`, `notes`) VALUES ' .
+        'INSERT INTO `RecordTypes` (`id`, `name`, `description`) VALUES ' .
         '(?, ?, ?)'
     );
     my $result = eval {

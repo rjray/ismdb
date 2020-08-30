@@ -6,6 +6,10 @@ module.exports = (sequelize, DataTypes) => {
   const RecordType = sequelize.define(
     "RecordType",
     {
+      name: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+      },
       description: {
         type: DataTypes.STRING(50),
         allowNull: false,
