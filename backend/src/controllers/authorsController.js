@@ -19,7 +19,8 @@ const { sortBy } = require("../lib/utils");
 function createAuthor(context) {
   const { res, requestBody } = context;
 
-  return authors.createAuthor(requestBody)
+  return authors
+    .createAuthor(requestBody)
     .then((author) => {
       res.status(200).pureJson({ author });
     })
@@ -28,7 +29,7 @@ function createAuthor(context) {
         error: {
           summary: error.name,
           description: error.message,
-        }
+        },
       });
     });
 }
@@ -45,7 +46,8 @@ function getAllAuthors(context) {
   const query = context.params.query;
   const res = context.res;
 
-  return authors.fetchAllAuthorsWithAliasesAndCount()
+  return authors
+    .fetchAllAuthorsWithAliasesAndCount()
     .then((results) => {
       res.status(200).pureJson(results);
     })
@@ -54,7 +56,7 @@ function getAllAuthors(context) {
         error: {
           summary: error.name,
           description: error.message,
-        }
+        },
       });
     });
 }
@@ -71,7 +73,8 @@ function getAllAuthorsWithRefCount(context) {
   const query = context.params.query;
   const res = context.res;
 
-  return authors.fetchAllAuthorsWithRefcountAndCount()
+  return authors
+    .fetchAllAuthorsWithRefcountAndCount()
     .then((results) => {
       res.status(200).pureJson(results);
     })
@@ -80,12 +83,14 @@ function getAllAuthorsWithRefCount(context) {
         error: {
           summary: error.name,
           description: error.message,
-        }
+        },
       });
     });
 }
 
 /*
+  GET /author/namesAndAliases
+
   Return a list of just author names and their IDs, with aliases also in the
   list (pointing to the name they alias). May be limited by the parameters
   passed in, as well. The returned object has a single key, "authors", that is
@@ -97,7 +102,8 @@ function getAuthorNamesAndAliases(context) {
   const query = context.params.query;
   const res = context.res;
 
-  return authors.fetchAllAuthorsWithAliases()
+  return authors
+    .fetchAllAuthorsWithAliases()
     .then((authorlist) => {
       const authors = [];
       for (const author of authorlist) {
@@ -119,7 +125,7 @@ function getAuthorNamesAndAliases(context) {
         error: {
           summary: error.name,
           description: error.message,
-        }
+        },
       });
     });
 }
@@ -134,18 +140,18 @@ function getAuthorById(context) {
   const id = context.params.path.id;
   const res = context.res;
 
-  return authors.fetchSingleAuthorSimple(id)
+  return authors
+    .fetchSingleAuthorSimple(id)
     .then((author) => {
       if (author) {
         res.status(200).pureJson({ author });
       } else {
-        res.status(404)
-          .pureJson({
-            error: {
-              summary: "Not found",
-              description: `No author with this ID (${id}) found`,
-            }
-          });
+        res.status(404).pureJson({
+          error: {
+            summary: "Not found",
+            description: `No author with this ID (${id}) found`,
+          },
+        });
       }
     })
     .catch((error) => {
@@ -153,7 +159,7 @@ function getAuthorById(context) {
         error: {
           summary: error.name,
           description: error.message,
-        }
+        },
       });
     });
 }
@@ -170,18 +176,18 @@ function updateAuthorById(context) {
   const id = context.params.path.id;
   const { res, requestBody } = context;
 
-  return authors.updateAuthor(id, requestBody)
+  return authors
+    .updateAuthor(id, requestBody)
     .then((author) => {
       if (author) {
         res.status(200).pureJson({ author });
       } else {
-        res.status(404)
-          .pureJson({
-            error: {
-              summary: "Not found",
-              description: `No author with this ID (${id}) found`,
-            }
-          });
+        res.status(404).pureJson({
+          error: {
+            summary: "Not found",
+            description: `No author with this ID (${id}) found`,
+          },
+        });
       }
     })
     .catch((error) => {
@@ -189,7 +195,7 @@ function updateAuthorById(context) {
         error: {
           summary: error.name,
           description: error.message,
-        }
+        },
       });
     });
 }
@@ -205,18 +211,18 @@ function deleteAuthorById(context) {
   const id = context.params.path.id;
   const res = context.res;
 
-  return authors.deleteAuthor(id)
+  return authors
+    .deleteAuthor(id)
     .then((number) => {
       if (number) {
         res.status(200).pureJson({});
       } else {
-        res.status(404)
-          .pureJson({
-            error: {
-              summary: "Not found",
-              description: `No author with this ID (${id}) found`,
-            }
-          });
+        res.status(404).pureJson({
+          error: {
+            summary: "Not found",
+            description: `No author with this ID (${id}) found`,
+          },
+        });
       }
     })
     .catch((error) => {
@@ -224,7 +230,7 @@ function deleteAuthorById(context) {
         error: {
           summary: error.name,
           description: error.message,
-        }
+        },
       });
     });
 }
@@ -241,18 +247,18 @@ function getAuthorByIdWithRefCount(context) {
   const id = context.params.path.id;
   const res = context.res;
 
-  return authors.fetchSingleAuthorWithRefCount(id)
+  return authors
+    .fetchSingleAuthorWithRefCount(id)
     .then((author) => {
       if (author) {
         res.status(200).pureJson({ author });
       } else {
-        res.status(404)
-          .pureJson({
-            error: {
-              summary: "Not found",
-              description: `No author with this ID (${id}) found`,
-            }
-          });
+        res.status(404).pureJson({
+          error: {
+            summary: "Not found",
+            description: `No author with this ID (${id}) found`,
+          },
+        });
       }
     })
     .catch((error) => {
@@ -260,7 +266,7 @@ function getAuthorByIdWithRefCount(context) {
         error: {
           summary: error.name,
           description: error.message,
-        }
+        },
       });
     });
 }
@@ -277,18 +283,18 @@ function getAuthorByIdWithReferences(context) {
   const id = context.params.path.id;
   const res = context.res;
 
-  return authors.fetchSingleAuthorComplex(id)
+  return authors
+    .fetchSingleAuthorComplex(id)
     .then((author) => {
       if (author) {
         res.status(200).pureJson({ author });
       } else {
-        res.status(404)
-          .pureJson({
-            error: {
-              summary: "Not found",
-              description: `No author with this ID (${id}) found`,
-            }
-          });
+        res.status(404).pureJson({
+          error: {
+            summary: "Not found",
+            description: `No author with this ID (${id}) found`,
+          },
+        });
       }
     })
     .catch((error) => {
@@ -296,7 +302,7 @@ function getAuthorByIdWithReferences(context) {
         error: {
           summary: error.name,
           description: error.message,
-        }
+        },
       });
     });
 }
