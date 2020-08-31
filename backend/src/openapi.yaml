@@ -1123,6 +1123,7 @@ paths:
       tags:
         - References
   "/misc/recordtypes":
+    x-exegesis-controller: miscController
     get:
       summary: Fetch all record types as an array
       description: Retrieve all record types as an array of objects.
@@ -1146,6 +1147,7 @@ paths:
       tags:
         - Miscellaneous
   "/misc/languages":
+    x-exegesis-controller: miscController
     get:
       summary: Fetch all language strings as an array
       description: Fetch all language strings currently in use from the
