@@ -49,8 +49,10 @@ const fetchSingleAuthorWithRefCount = async (id) => {
     include: [
       AuthorAlias,
       { model: Reference, as: "References", attributes: ["id"] },
-    ]
-  }).catch((error) => { throw new Error(error); });
+    ],
+  }).catch((error) => {
+    throw new Error(error);
+  });
 
   if (author) {
     author = author.get();
@@ -104,7 +106,7 @@ const fetchSingleAuthorComplex = async (id) => {
 // Fetch all authors along with aliases. Returns an object with the count in a
 // property called "count" and all the authors in a property called "authors".
 const fetchAllAuthorsWithAliasesAndCount = async (opts = {}) => {
-  const count = await Author.count();
+  const count = await Author.count(opts);
   const results = await Author.findAll({
     include: [AuthorAlias],
     ...opts,
@@ -124,7 +126,7 @@ const fetchAllAuthorsWithAliasesAndCount = async (opts = {}) => {
 // Fetch all authors along with a count of how many references they're credited
 // on. Returns the same shape of object as above.
 const fetchAllAuthorsWithRefcountAndCount = async (opts = {}) => {
-  const count = await Author.count();
+  const count = await Author.count(opts);
   const results = await Author.findAll({
     include: [
       AuthorAlias,
@@ -205,7 +207,8 @@ const createAuthor = async (data) => {
     });
 
     if (data.aliases.length) {
-      let aliases = data.aliases.filter((item) => !item.deleted)
+      let aliases = data.aliases
+        .filter((item) => !item.deleted)
         .map((alias) => alias.name);
 
       for (let name of aliases) {
