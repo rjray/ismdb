@@ -194,16 +194,6 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/abbreviatedMagazineIssueType"
-    newMagazineIssueType:
-      type: object
-      required:
-        - number
-        - magazineId
-      properties:
-        number:
-          $ref: "#/components/schemas/magazineIssueNumberType"
-        magazineId:
-          $ref: "#/components/schemas/idType"
     abbreviatedMagazineIssueType:
       type: object
       required:
@@ -214,24 +204,48 @@ components:
           $ref: "#/components/schemas/idType"
         number:
           $ref: "#/components/schemas/magazineIssueNumberType"
+    newMagazineIssueType:
+      type: object
+      required:
+        - number
+        - magazineId
+      properties:
+        number:
+          $ref: "#/components/schemas/magazineIssueNumberType"
+        magazineId:
+          $ref: "#/components/schemas/idType"
     updateMagazineIssueType:
-      allOf:
-        - $ref: "#/components/schemas/abbreviatedMagazineIssueType"
-        - type: object
-          required:
-            - MagazineId
-          properties:
-            MagazineId:
-              $ref: "#/components/schemas/idType"
+      type: object
+      required:
+        - id
+        - number
+        - MagazineId
+      properties:
+        id:
+          $ref: "#/components/schemas/idType"
+        number:
+          $ref: "#/components/schemas/magazineIssueNumberType"
+        MagazineId:
+          $ref: "#/components/schemas/idType"
     magazineIssueType:
-      allOf:
-        - $ref: "#/components/schemas/abbreviatedMagazineIssueType"
-        - type: object
-          required:
-            - Magazine
-          properties:
-            Magazine:
-              $ref: "#/components/schemas/magazineType"
+      type: object
+      required:
+        - id
+        - number
+        - Magazine
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          $ref: "#/components/schemas/idType"
+        number:
+          $ref: "#/components/schemas/magazineIssueNumberType"
+        Magazine:
+          $ref: "#/components/schemas/magazineType"
+        createdAt:
+          $ref: "#/components/schemas/dateTimeType"
+        updatedAt:
+          $ref: "#/components/schemas/dateTimeType"
     magazineIssueWithReferencesType:
       allOf:
         - $ref: "#/components/schemas/magazineIssueType"
@@ -875,38 +889,44 @@ paths:
       tags:
         - Magazines
   "/issue":
+    x-exegesis-controller: issuesController
     post:
       summary: Create a new magazine issue
       description: Create a new issue for the specified magazine.
-      operationId: createIssue
+      operationId: createMagazineIssue
       requestBody:
         description: New issue
         content:
           "application/json":
             schema:
-              type: object
-              required:
-                - issue
-              properties:
-                issue:
-                  $ref: "#/components/schemas/newMagazineIssueType"
-                notifications:
-                  $ref: "#/components/schemas/notificationsType"
+              $ref: "#/components/schemas/newMagazineIssueType"
       responses:
         "201":
           description: New issue created
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - magazineissue
+                properties:
+                  magazineissue:
+                    $ref: "#/components/schemas/magazineIssueType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Issues
   "/issue/{id}":
+    x-exegesis-controller: issuesController
     parameters:
       - $ref: "#/components/parameters/idParam"
     get:
       summary: Get a full magazine issue
       description: Get a full magazine issue with magazine and reference
         information.
-      operationId: getIssueById
+      operationId: getMagazineIssueById
       responses:
         "200":
           description: Issue data
@@ -931,7 +951,7 @@ paths:
       summary: Update a magazine issue
       description: Update a magazine issue. Does not affect any associated
         references.
-      operationId: updateIssueById
+      operationId: updateMagazineIssueById
       requestBody:
         description: Magazine issue to update
         content:
@@ -962,7 +982,7 @@ paths:
       summary: Delete a magazine issue
       description: Delete a magazine issues. Deletes all references associated
         with it.
-      operationId: deleteIssueById
+      operationId: deleteMagazineIssueById
       responses:
         "200":
           description: Magazine issue deleted

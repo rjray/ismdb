@@ -11,6 +11,7 @@ const {
   sequelize,
 } = require("../models");
 
+// LEGACY
 // Most-basic magazine request. Single magazine without issues or anything.
 const fetchSingleMagazineSimple = async (id) => {
   let magazine = await Magazine.findByPk(id).catch((error) => {
@@ -26,6 +27,7 @@ const fetchSingleMagazineSimple = async (id) => {
   return magazine;
 };
 
+// LEGACY
 // Get a single magazine with issues and references.
 const fetchSingleMagazineComplete = async (id) => {
   let magazine = await Magazine.findByPk(id, {
@@ -45,6 +47,7 @@ const fetchSingleMagazineComplete = async (id) => {
   return magazine;
 };
 
+// LEGACY
 // Get all magazines, with a count of their issues.
 const fetchAllMagazinesWithIssueCount = async (id, opts = {}) => {
   let magazines = await Magazine.findAll({
@@ -62,6 +65,7 @@ const fetchAllMagazinesWithIssueCount = async (id, opts = {}) => {
   return magazines;
 };
 
+// LEGACY
 // Get all the magazines, along with all their issue numbers.
 const fetchAllMagazinesWithIssueNumbers = async (opts = {}) => {
   return Magazine.findAll({
@@ -71,6 +75,7 @@ const fetchAllMagazinesWithIssueNumbers = async (opts = {}) => {
   });
 };
 
+// LEGACY
 // Create a new magazine using the content in data.
 const createMagazine = async (data) => {
   // Explicitly set these.
@@ -89,6 +94,7 @@ const createMagazine = async (data) => {
   return magazine.get();
 };
 
+// LEGACY
 // Update a single magazine using the content in data.
 const updateMagazine = async (id, data) => {
   return Magazine.findByPk(id).then((magazine) => {
@@ -103,16 +109,51 @@ const updateMagazine = async (id, data) => {
   });
 };
 
+// LEGACY
 // Delete a single Magazine record.
 const deleteMagazine = async (id) => {
   return Magazine.destroy({ where: { id } });
 };
 
+// Create a MagazineIssue record.
+const createMagazineIssue = async (data) => {
+  // Explicitly set these:
+  data.createdAt = new Date();
+  data.updatedAt = new Date();
+
+  const magazineissue = await MagazineIssue.create(data).catch((error) => {
+    if (error.hasOwnProperty("errors")) {
+      const specific = error.errors[0];
+      throw new Error(specific.message);
+    } else {
+      throw new Error(error.message);
+    }
+  });
+
+  return magazineissue.get();
+};
+
+// Update a MagazineIssue record.
+const updateMagazineIssue = async (id, data) => {
+  return MagazineIssue.findByPk(id).then((magazineissue) => {
+    return sequelize.transaction(async (txn) => {
+      data.createdAt = new Date(data.createdAt);
+      // Since we're updating...
+      data.updatedAt = new Date();
+
+      magazineissue = await magazineissue.update(data, { transaction: txn });
+      return magazineissue.get();
+    });
+  });
+};
+
+// LEGACY
 // Delete a single MagazineIssue record.
 const deleteMagazineIssue = async (id) => {
   return MagazineIssue.destroy({ where: { id } });
 };
 
+// LEGACY
 // Fetch a single magazine issue with all the ancillary data.
 const fetchSingleMagazineIssueComplete = async (id) => {
   let magazineissue = await MagazineIssue.findByPk(id, {
@@ -162,6 +203,8 @@ module.exports = {
   createMagazine,
   updateMagazine,
   deleteMagazine,
+  createMagazineIssue,
+  updateMagazineIssue,
   deleteMagazineIssue,
   fetchSingleMagazineIssueComplete,
 };
