@@ -12,6 +12,7 @@ const {
   sequelize,
 } = require("../models");
 
+// LEGACY
 // Most-basic reference request. Single reference, with only the RecordType and
 // (if relevant) MagazineIssue+Magazine joins.
 const fetchSingleReferenceSimple = async (id) => {
@@ -66,6 +67,51 @@ const fetchSingleReferenceComplete = async (id) => {
   return reference;
 };
 
+// Get all the references (based on opts), with RecordType, Magazine and
+// Author information. Returns the count, as well.
+const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
+  const count = await Reference.count(opts);
+  const results = await Reference.findAll({
+    include: [
+      RecordType,
+      {
+        model: MagazineIssue,
+        include: [Magazine],
+      },
+      {
+        model: Author,
+        as: "Authors",
+      },
+    ],
+    ...opts,
+  });
+
+  const references = results.map((reference) => {
+    reference = reference.get();
+
+    reference.authors = reference.Authors.sort(
+      (a, b) => a.AuthorsReferences.order - b.AuthorsReferences.order
+    ).map((author) => {
+      author = author.get();
+      author.order = author.AuthorsReferences.order;
+      delete author.AuthorsReferences;
+      return author;
+    });
+    delete reference.Authors;
+
+    if (reference.MagazineIssue) {
+      reference.Magazine = reference.MagazineIssue.Magazine.get();
+      reference.MagazineIssue = reference.MagazineIssue.get();
+      delete reference.MagazineIssue.Magazine;
+    }
+
+    return reference;
+  });
+
+  return { count, references };
+};
+
+// LEGACY
 // Get all references with RecordType and Magazine info. Like calling
 // fetchSingleReferenceSimple() for all refs.
 const fetchAllReferencesSimple = async (opts = {}) => {
@@ -274,6 +320,7 @@ const deleteReference = async (id) => {
 module.exports = {
   fetchSingleReferenceSimple,
   fetchSingleReferenceComplete,
+  fetchAllReferencesCompleteWithCount,
   fetchAllReferencesSimple,
   createReference,
   updateReference,
