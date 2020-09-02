@@ -22,7 +22,7 @@ function createAuthor(context) {
   return authors
     .createAuthor(requestBody)
     .then((author) => {
-      res.status(200).pureJson({ author });
+      res.status(201).pureJson({ author });
     })
     .catch((error) => {
       res.status(500).pureJson({
