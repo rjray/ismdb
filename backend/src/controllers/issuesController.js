@@ -1,8 +1,8 @@
 "use strict";
 
 /*
-  This is the exegesis controller module for all author operations (all API
-  paths at/below "/author").
+  This is the exegesis controller module for all magazine issue operations (all
+  API paths at/below "/issue").
  */
 
 const magazines = require("../db/magazines");
