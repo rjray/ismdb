@@ -11,7 +11,6 @@ const {
   sequelize,
 } = require("../models");
 
-// LEGACY
 // Most-basic magazine request. Single magazine without issues or anything.
 const fetchSingleMagazineSimple = async (id) => {
   let magazine = await Magazine.findByPk(id).catch((error) => {
@@ -20,14 +19,11 @@ const fetchSingleMagazineSimple = async (id) => {
 
   if (magazine) {
     magazine = magazine.get();
-  } else {
-    throw new Error(`No magazine with id "${id}" found`);
   }
 
   return magazine;
 };
 
-// LEGACY
 // Get a single magazine with issues and references.
 const fetchSingleMagazineComplete = async (id) => {
   let magazine = await Magazine.findByPk(id, {
@@ -43,13 +39,33 @@ const fetchSingleMagazineComplete = async (id) => {
 
     return issue;
   });
+  delete magazine.MagazineIssues;
 
   return magazine;
 };
 
+// Get all magazines, with a count of their issues and a count of the total
+// matching magazine records.
+const fetchAllMagazinesWithIssueCountAndCount = async (opts = {}) => {
+  const count = await Magazine.count(opts);
+  const results = await Magazine.findAll({
+    include: [{ model: MagazineIssue, attributes: ["id"] }],
+    ...opts,
+  });
+
+  const magazines = results.map((magazine) => {
+    magazine = magazine.get();
+    magazine.issues = magazine.MagazineIssues.length;
+    delete magazine.MagazineIssues;
+    return magazine;
+  });
+
+  return { count, magazines };
+};
+
 // LEGACY
 // Get all magazines, with a count of their issues.
-const fetchAllMagazinesWithIssueCount = async (id, opts = {}) => {
+const fetchAllMagazinesWithIssueCount = async (opts = {}) => {
   let magazines = await Magazine.findAll({
     include: [{ model: MagazineIssue, attributes: ["id"] }],
     ...opts,
@@ -65,6 +81,18 @@ const fetchAllMagazinesWithIssueCount = async (id, opts = {}) => {
   return magazines;
 };
 
+// Get all the magazines, along with all their issue numbers and a count of all
+// (matching) magazines.
+const fetchAllMagazinesWithIssueNumbersAndCount = async (opts = {}) => {
+  const count = await Magazine.count(opts);
+  const magazines = await Magazine.findAll({
+    include: [{ model: MagazineIssue, attributes: ["number"] }],
+    ...opts,
+  });
+
+  return { count, magazines };
+};
+
 // LEGACY
 // Get all the magazines, along with all their issue numbers.
 const fetchAllMagazinesWithIssueNumbers = async (opts = {}) => {
@@ -75,7 +103,6 @@ const fetchAllMagazinesWithIssueNumbers = async (opts = {}) => {
   });
 };
 
-// LEGACY
 // Create a new magazine using the content in data.
 const createMagazine = async (data) => {
   // Explicitly set these.
@@ -94,7 +121,6 @@ const createMagazine = async (data) => {
   return magazine.get();
 };
 
-// LEGACY
 // Update a single magazine using the content in data.
 const updateMagazine = async (id, data) => {
   return Magazine.findByPk(id).then((magazine) => {
@@ -109,7 +135,6 @@ const updateMagazine = async (id, data) => {
   });
 };
 
-// LEGACY
 // Delete a single Magazine record.
 const deleteMagazine = async (id) => {
   return Magazine.destroy({ where: { id } });
@@ -147,13 +172,11 @@ const updateMagazineIssue = async (id, data) => {
   });
 };
 
-// LEGACY
 // Delete a single MagazineIssue record.
 const deleteMagazineIssue = async (id) => {
   return MagazineIssue.destroy({ where: { id } });
 };
 
-// LEGACY
 // Fetch a single magazine issue with all the ancillary data.
 const fetchSingleMagazineIssueComplete = async (id) => {
   let magazineissue = await MagazineIssue.findByPk(id, {
@@ -198,7 +221,9 @@ const fetchSingleMagazineIssueComplete = async (id) => {
 module.exports = {
   fetchSingleMagazineSimple,
   fetchSingleMagazineComplete,
+  fetchAllMagazinesWithIssueCountAndCount,
   fetchAllMagazinesWithIssueCount,
+  fetchAllMagazinesWithIssueNumbersAndCount,
   fetchAllMagazinesWithIssueNumbers,
   createMagazine,
   updateMagazine,

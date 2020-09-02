@@ -194,6 +194,15 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/abbreviatedMagazineIssueType"
+    magazineWithIssuesAndReferencesType:
+      allOf:
+        - $ref: "#/components/schemas/magazineType"
+        - type: object
+          properties:
+            issues:
+              type: array
+              items:
+                $ref: "#/components/schemas/magazineIssueWithReferencesType"
     abbreviatedMagazineIssueType:
       type: object
       required:
@@ -684,6 +693,7 @@ paths:
       tags:
         - Authors
   "/magazine":
+    x-exegesis-controller: magazinesController
     post:
       summary: Create a new magazine
       description: Create a new magazine using the data in the request body.
@@ -747,6 +757,7 @@ paths:
       tags:
         - Magazines
   "/magazine/withIssues":
+    x-exegesis-controller: magazinesController
     get:
       summary: Fetch all magazines with issues
       description: Fetch all magazines as an array. Includes issues information
@@ -782,6 +793,7 @@ paths:
       tags:
         - Magazines
   "/magazine/{id}":
+    x-exegesis-controller: magazinesController
     parameters:
       - $ref: "#/components/parameters/idParam"
     get:
@@ -861,12 +873,14 @@ paths:
       tags:
         - Magazines
   "/magazine/{id}/withIssues":
+    x-exegesis-controller: magazinesController
     parameters:
       - $ref: "#/components/parameters/idParam"
     get:
       summary: Fetch a single magazine by ID with issue information
       description: Retrieve a single magazine by the ID. Includes issue
-        information as a nested array.
+        information as a nested array. Issues include all reference information
+        as well.
       operationId: getMagazineByIdWithIssues
       responses:
         "200":
@@ -879,7 +893,7 @@ paths:
                   - magazine
                 properties:
                   magazine:
-                    $ref: "#/components/schemas/magazineWithIssuesType"
+                    $ref: "#/components/schemas/magazineWithIssuesAndReferencesType"
                   notifications:
                     $ref: "#/components/schemas/notificationsType"
         "404":
