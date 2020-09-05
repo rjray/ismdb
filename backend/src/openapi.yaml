@@ -42,6 +42,14 @@ components:
       required: true
       schema:
         $ref: "#/components/schemas/idType"
+    preferredParam:
+      name: preferred
+      in: query
+      description: Preferred language, will be moved to the head of the
+        returned list of languages.
+      required: false
+      schema:
+        type: string
   schemas:
     idType:
       type: integer
@@ -1158,6 +1166,192 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - References
+  "/combo/referenceeditdata":
+    x-exegesis-controller: comboController
+    get:
+      summary: Retrieve all data needed for the reference creation form
+      description: Retrieve all the data needed for the form used for creating
+        new references. Data includes all languages, all record types, author
+        names and aliases, and magazine names with their respective issue
+        numbers.
+      operationId: fetchCreateReferenceData
+      parameters:
+        - $ref: "#/components/parameters/preferredParam"
+      responses:
+        "200":
+          description: Reference-creation data bundle
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - languages
+                  - recordTypes
+                  - authors
+                  - magazines
+                properties:
+                  languages:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/languageType"
+                  recordTypes:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/recordTypeType"
+                  authors:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - id
+                        - name
+                      properties:
+                        id:
+                          $ref: "#/components/schemas/idType"
+                        name:
+                          $ref: "#/components/schemas/authorNameOrAliasType"
+                        aliasOf:
+                          $ref: "#/components/schemas/authorNameOrAliasType"
+                  magazines:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/magazineWithIssuesType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Combination
+  "/combo/referenceeditdata/{id}":
+    x-exegesis-controller: comboController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Retrieve all data needed for the reference editing form
+      description: Retrieve all the data needed for the form used for editing
+        existing references. Data includes all languages, all record types,
+        author names and aliases, magazine names with their respective issue
+        numbers, and the existing reference record itself.
+      operationId: fetchEditReferenceData
+      parameters:
+        - $ref: "#/components/parameters/preferredParam"
+      responses:
+        "200":
+          description: Reference-editing data bundle
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - languages
+                  - recordTypes
+                  - authors
+                  - magazines
+                  - reference
+                properties:
+                  languages:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/languageType"
+                  recordTypes:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/recordTypeType"
+                  authors:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - id
+                        - name
+                      properties:
+                        id:
+                          $ref: "#/components/schemas/idType"
+                        name:
+                          $ref: "#/components/schemas/authorNameOrAliasType"
+                        aliasOf:
+                          $ref: "#/components/schemas/authorNameOrAliasType"
+                  magazines:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/magazineWithIssuesType"
+                  reference:
+                    $ref: "#/components/schemas/referenceType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Combination
+  "/combo/magazineeditdata":
+    x-exegesis-controller: comboController
+    get:
+      summary: Retrieve all data needed for the magazine creation form
+      description: Retrieve all the data needed for the form used for creating
+        magazines. Data includes (for now) just languages.
+      operationId: fetchCreateMagazineData
+      parameters:
+        - $ref: "#/components/parameters/preferredParam"
+      responses:
+        "200":
+          description: Reference-editing data bundle
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - languages
+                  - magazine
+                properties:
+                  languages:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/languageType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Combination
+  "/combo/magazineeditdata/{id}":
+    x-exegesis-controller: comboController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Retrieve all data needed for the magazine editing form
+      description: Retrieve all the data needed for the form used for editing
+        existing magazines. Data includes all languages, and the existing
+        magazine record itself.
+      operationId: fetchEditMagazineData
+      parameters:
+        - $ref: "#/components/parameters/preferredParam"
+      responses:
+        "200":
+          description: Reference-editing data bundle
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - languages
+                  - magazine
+                properties:
+                  languages:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/languageType"
+                  magazine:
+                    $ref: "#/components/schemas/magazineType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Combination
   "/misc/recordtypes":
     x-exegesis-controller: miscController
     get:
@@ -1190,13 +1384,7 @@ paths:
         database as an array of strings.
       operationId: getAllLanguages
       parameters:
-        - name: preferred
-          in: query
-          description: Preferred language, will be moved to the head of the
-            returned list.
-          required: false
-          schema:
-            type: string
+        - $ref: "#/components/parameters/preferredParam"
       responses:
         "200":
           description: All languages
@@ -1224,5 +1412,7 @@ tags:
     description: Operations that are primarily centered around magazine issues
   - name: References
     description: Operations that are primarily centered around references
+  - name: Combination
+    description: Operations that return more than one type of data
   - name: Miscellaneous
     description: Operations that are not associated with any previous group
