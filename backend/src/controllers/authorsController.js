@@ -103,21 +103,8 @@ function getAuthorNamesAndAliases(context) {
   const res = context.res;
 
   return authors
-    .fetchAllAuthorsWithAliases()
-    .then((authorlist) => {
-      const authors = [];
-      for (const author of authorlist) {
-        const { id, name, aliases } = author;
-
-        // Start with the author themselves:
-        authors.push({ id, name });
-        // Add any aliases for this author:
-        for (const alias of aliases) {
-          authors.push({ id, name: alias.name, aliasOf: name });
-        }
-      }
-      authors.sort(sortBy("name"));
-
+    .fetchAuthorsNamesAliasesList(query)
+    .then((authors) => {
       res.status(200).pureJson({ authors });
     })
     .catch((error) => {

@@ -173,6 +173,7 @@ const fetchAllAuthorsWithRefcount = async (opts = {}) => {
   return authors;
 };
 
+// LEGACY
 // Fetch all authors along with aliases.
 const fetchAllAuthorsWithAliases = async (opts = {}) => {
   const allAuthors = await Author.findAll({
@@ -187,6 +188,27 @@ const fetchAllAuthorsWithAliases = async (opts = {}) => {
 
     return author;
   });
+
+  return authors;
+};
+
+// Fetch the author names and aliases, and create an alphabetized merged list
+// that points any alias records to the actual name.
+const fetchAuthorsNamesAliasesList = async (opts = {}) => {
+  const results = await fetchAllAuthorsWithAliasesAndCount(opts);
+  const authors = [];
+
+  for (const author of results.authors) {
+    const { id, name, aliases } = author;
+
+    // Start with the author themselves:
+    authors.push({ id, name });
+    // Add any aliases for this author:
+    for (const alias of aliases) {
+      authors.push({ id, name: alias.name, aliasOf: name });
+    }
+  }
+  authors.sort(sortBy("name"));
 
   return authors;
 };
@@ -295,6 +317,7 @@ module.exports = {
   fetchAllAuthorsWithAliases,
   fetchAllAuthorsWithAliasesAndCount,
   fetchAllAuthorsWithRefcountAndCount,
+  fetchAuthorsNamesAliasesList,
   createAuthor,
   updateAuthor,
   deleteAuthor,

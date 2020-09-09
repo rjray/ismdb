@@ -5,7 +5,7 @@
   paths at/below "/combo").
  */
 
-const { fetchAllAuthorsWithAliases } = require("../db/authors");
+const { fetchAuthorsNamesAliasesList } = require("../db/authors");
 const { fetchSingleReferenceComplete } = require("../db/references");
 const {
   fetchSingleMagazineSimple,
@@ -83,8 +83,8 @@ function fetchCreateReferenceData(context, id) {
   const promises = [
     fetchAllRecordTypes({ order: ["id"] }),
     fetchAllMagazinesWithIssueNumbersAndCount({ attributes: ["id", "name"] }),
-    fetchAllLanguages(),
-    fetchAllAuthorsWithAliases(),
+    fetchAllLanguages(query),
+    fetchAuthorsNamesAliasesList(),
   ];
   if (id) {
     promises.push(fetchSingleReferenceComplete(id));
@@ -93,7 +93,7 @@ function fetchCreateReferenceData(context, id) {
   Promise.all(promises)
     .then((values) => {
       const recordTypes = values[0];
-      const magazines = values[1];
+      const magazines = values[1].magazines;
       const languages = values[2];
       const authors = values[3];
       const reference = id ? values[4] : null;
