@@ -3,6 +3,7 @@
 const port = process.env.PORT || 3000;
 const express = require("express");
 const helmet = require("helmet");
+const cors = require("cors");
 const exegesisExpress = require("exegesis-express");
 const http = require("http");
 const path = require("path");
@@ -22,6 +23,7 @@ async function createServer() {
   const app = express();
   app.use(exegesis);
   app.use(helmet());
+  app.use(cors());
   app.use((_, res) => {
     res.status(404).json({ message: "Not found" });
   });
