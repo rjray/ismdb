@@ -15,25 +15,25 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
-    "date-fns": "^2.15.0",
+    "date-fns": "^2.16.1",
     "dotenv": "^8.2.0",
     "exegesis-express": "^2.0.0",
     "express": "^4.17.1",
     "helmet": "^3.23.3",
     "mysql2": "^2.1.0",
-    "sequelize": "^6.3.4",
+    "sequelize": "^6.3.5",
     "sequelize-cli": "^6.2.0",
     "sqlite3": "^5.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.4",
+    "@babel/core": "^7.11.6",
     "babel-preset-airbnb": "^5.0.0",
-    "eslint": "^7.7.0",
+    "eslint": "^7.9.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-react": "^7.20.6",
-    "eslint-plugin-react-hooks": "^4.1.0",
+    "eslint-plugin-react-hooks": "^4.1.2",
     "nodemon": "^2.0.4",
     "prettier": "2.0.5"
   }
