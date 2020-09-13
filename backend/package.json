@@ -5,7 +5,7 @@
   "private": true,
   "main": "server.js",
   "scripts": {
-    "start": "cd src && nodemon server.js",
+    "start": "cd src && nodemon -w openapi.yaml -w . server.js",
     "db-reset": "(cd src; sequelize db:drop; sequelize db:create && sequelize db:migrate)",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
