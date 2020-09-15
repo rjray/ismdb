@@ -6,10 +6,10 @@ import { ToastProvider } from "react-toast-notifications";
 
 import AppContext from "./AppContext";
 import NavHeader from "./NavHeader";
+import Home from "./Home";
 import Authors from "./Authors";
 import Magazines from "./Magazines";
 import References from "./References";
-import Header from "./components/Header";
 
 const App = () => {
   const [multientry, setMultientry] = useState(false);
@@ -36,9 +36,7 @@ const App = () => {
           <Container fluid>
             <Switch>
               <Route exact path="/">
-                <Container>
-                  <Header>Home</Header>
-                </Container>
+                <Home />
               </Route>
               <Route
                 path="/references/:view(create|retrieve|update|delete)?/:id(\d+)?"
