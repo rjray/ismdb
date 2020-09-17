@@ -41,6 +41,11 @@ module.exports = (sequelize, DataTypes) => {
       through: { model: models.AuthorsReferences },
       foreignKey: "referenceId",
     });
+    Reference.belongsToMany(models.Tag, {
+      as: "Tags",
+      through: { model: models.TagsReferences },
+      foreignKey: "referenceId",
+    });
   };
 
   return Reference;
