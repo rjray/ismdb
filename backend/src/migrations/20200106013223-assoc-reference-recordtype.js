@@ -12,8 +12,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    if (queryInterface.sequelize.getDialect() !== "sqlite") {
-      return queryInterface.removeColumn("References", "recordTypeId");
-    }
+    return queryInterface.removeColumn("References", "recordTypeId");
   },
 };

@@ -13,8 +13,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    if (queryInterface.sequelize.getDialect() !== "sqlite") {
-      return queryInterface.removeColumn("AuthorAliases", "authorId");
-    }
+    return queryInterface.removeColumn("AuthorAliases", "authorId");
   },
 };
