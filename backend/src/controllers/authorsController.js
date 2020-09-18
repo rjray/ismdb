@@ -6,7 +6,6 @@
  */
 
 const authors = require("../db/authors");
-const { sortBy } = require("../lib/utils");
 
 /*
   POST /author
