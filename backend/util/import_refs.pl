@@ -5,14 +5,47 @@ use strict;
 use warnings;
 use utf8;
 
+use Carp qw(croak);
 use Getopt::Long 'GetOptions';
 
 use DBI;
 
 my %opts;
-GetOptions(\%opts, qw(host=s port=i user=s password=s)) or
+GetOptions(\%opts, qw(host=s port=i username=s password=s env:s)) or
     die "Error in command line\n";
 my ($dbin, $dbout) = @ARGV;
+
+if (defined $opts{env}) {
+    my $envfile = $opts{env} || $ENV{NODE_ENV} ? ".env.$ENV{NODE_ENV}" : '.env';
+
+    if (open my $fh, '<', $envfile) {
+        my @lines = <$fh>;
+        close $fh or croak "Error closing $envfile: $!";
+        chomp @lines;
+        for my $line (@lines) {
+            next if (! $line);
+            next if ($line =~ /^#/);
+
+            if ($line =~ /^(\w+)=(.*)$/) {
+                my $val = $2 || q{};
+                (my $key = lc $1) =~ s/^db_//;
+                if ($key eq 'database') {
+                    $dbout ||= $val;
+                } else {
+                    $opts{$key} ||= $val;
+                }
+            } else {
+                warn "Bad line ($line) in $envfile. Skipping\n";
+            }
+        }
+    } else {
+        croak "Error opening $envfile for reading: $!";
+    }
+}
+# port defaults to 3306:
+$opts{port} ||= 3306;
+# host defaults to localhost:
+$opts{host} ||= 'localhost';
 
 my $attrs = {
     AutoCommit => 0,
@@ -20,17 +53,14 @@ my $attrs = {
 };
 
 my $dbhi = DBI->connect("dbi:SQLite:$dbin", q{}, q{}, { sqlite_unicode => 1 });
-my $outdsn = $dbout =~ /[.]db$/ ?
-    "dbi:SQLite:$dbout" :
-    "dbi:mysql:database=$dbout;host=$opts{host};port=$opts{port}";
-my $dbho = DBI->connect($outdsn, $opts{user}, $opts{password}, $attrs);
-if ($outdsn =~ /SQLite/) {
-    $dbho->{sqlite_unicode} = 1;
-    $dbho->do('PRAGMA foreign_keys = ON');
-} else {
-    $dbho->{mysql_enable_utf8} = 1;
-    $dbho->do('set names "UTF8"');
-}
+my $dbho = DBI->connect(
+    "dbi:mysql:database=$dbout;host=$opts{host};port=$opts{port}",
+    $opts{username},
+    $opts{password},
+    $attrs
+);
+$dbho->{mysql_enable_utf8} = 1;
+$dbho->do('set names "UTF8"');
 
 migrate_record_types($dbhi, $dbho);
 migrate_authors($dbhi, $dbho);
