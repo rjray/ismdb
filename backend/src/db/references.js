@@ -5,6 +5,7 @@
 const {
   Reference,
   RecordType,
+  Tag,
   MagazineIssue,
   Magazine,
   Author,
@@ -12,83 +13,23 @@ const {
   sequelize,
 } = require("../models");
 
-// LEGACY
-// Most-basic reference request. Single reference, with only the RecordType and
-// (if relevant) MagazineIssue+Magazine joins.
-const fetchSingleReferenceSimple = async (id) => {
-  let reference = await Reference.findByPk(id, {
-    include: [RecordType, { model: MagazineIssue, include: [Magazine] }],
-  });
-  reference = reference.get();
-
-  if (reference.MagazineIssue) {
-    reference.Magazine = reference.MagazineIssue.Magazine.get();
-    reference.MagazineIssue = reference.MagazineIssue.get();
-    delete reference.MagazineIssue.Magazine;
-  }
-  reference.RecordType = reference.RecordType.get();
-
-  return reference;
+const includesForReference = [
+  RecordType,
+  { model: MagazineIssue, include: [Magazine] },
+  { model: Author, as: "Authors" },
+  { model: Tag, as: "Tags" },
+];
+const INCLUDE_REFERENCES = {
+  model: Reference,
+  as: "References",
+  include: includesForReference,
 };
 
-// Get a single reference with all ancillary data (type, magazine, authors).
-const fetchSingleReferenceComplete = async (id) => {
-  let reference = await Reference.findByPk(id, {
-    include: [
-      RecordType,
-      {
-        model: MagazineIssue,
-        include: [Magazine],
-      },
-      {
-        model: Author,
-        as: "Authors",
-      },
-    ],
-  });
+// "Clean" a reference record by stripping it down to a plain JS object.
+function cleanReference(reference) {
   reference = reference.get();
 
-  reference.authors = reference.Authors.sort(
-    (a, b) => a.AuthorsReferences.order - b.AuthorsReferences.order
-  ).map((author) => {
-    author = author.get();
-    author.order = author.AuthorsReferences.order;
-    delete author.AuthorsReferences;
-    return author;
-  });
-  delete reference.Authors;
-
-  if (reference.MagazineIssue) {
-    reference.Magazine = reference.MagazineIssue.Magazine.get();
-    reference.MagazineIssue = reference.MagazineIssue.get();
-    delete reference.MagazineIssue.Magazine;
-  }
-
-  return reference;
-};
-
-// Get all the references (based on opts), with RecordType, Magazine and
-// Author information. Returns the count, as well.
-const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
-  const count = await Reference.count(opts);
-  const results = await Reference.findAll({
-    include: [
-      RecordType,
-      {
-        model: MagazineIssue,
-        include: [Magazine],
-      },
-      {
-        model: Author,
-        as: "Authors",
-      },
-    ],
-    ...opts,
-  });
-
-  const references = results.map((reference) => {
-    reference = reference.get();
-
+  if (reference.Authors) {
     reference.authors = reference.Authors.sort(
       (a, b) => a.AuthorsReferences.order - b.AuthorsReferences.order
     ).map((author) => {
@@ -98,6 +39,39 @@ const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
       return author;
     });
     delete reference.Authors;
+  }
+
+  if (reference.Tags) {
+    reference.tags = reference.Tags.map((tag) => {
+      tag = tag.get();
+      delete tag.TagsReferences;
+      return tag;
+    });
+    delete reference.Tags;
+    delete reference.TagsReferences;
+  }
+
+  if (reference.MagazineIssue) {
+    reference.Magazine = reference.MagazineIssue.Magazine.get();
+    reference.MagazineIssue = reference.MagazineIssue.get();
+    delete reference.MagazineIssue.Magazine;
+  }
+
+  reference.RecordType = reference.RecordType.get();
+
+  return reference;
+}
+
+// LEGACY
+// Most-basic reference request. Single reference, with only the RecordType and
+// (if relevant) MagazineIssue+Magazine joins.
+const fetchSingleReferenceSimple = async (id) => {
+  let reference = await Reference.findByPk(id, {
+    include: [RecordType, { model: MagazineIssue, include: [Magazine] }],
+  });
+
+  if (reference) {
+    reference = reference.get();
 
     if (reference.MagazineIssue) {
       reference.Magazine = reference.MagazineIssue.Magazine.get();
@@ -105,8 +79,31 @@ const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
       delete reference.MagazineIssue.Magazine;
     }
 
-    return reference;
+    reference.RecordType = reference.RecordType.get();
+  }
+
+  return reference;
+};
+
+// Get a single reference with all ancillary data (type, magazine, authors).
+const fetchSingleReferenceComplete = async (id) => {
+  let reference = await Reference.findByPk(id, {
+    include: includesForReference,
   });
+
+  return reference ? cleanReference(reference) : reference;
+};
+
+// Get all the references (based on opts), with RecordType, Magazine and
+// Author information. Returns the count, as well.
+const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
+  const count = await Reference.count(opts);
+  const results = await Reference.findAll({
+    include: includesForReference,
+    ...opts,
+  });
+
+  const references = results.map((reference) => cleanReference(reference));
 
   return { count, references };
 };
@@ -260,17 +257,7 @@ const createReference = async (data) => {
 // author data, author linkage, and possible magazine issue linkage.
 const updateReference = async (id, data) => {
   return Reference.findByPk(id, {
-    include: [
-      RecordType,
-      {
-        model: MagazineIssue,
-        include: [Magazine],
-      },
-      {
-        model: Author,
-        as: "Authors",
-      },
-    ],
+    include: includesForReference,
   }).then((reference) => {
     return sequelize.transaction(async (txn) => {
       let updates = {},
@@ -318,6 +305,8 @@ const deleteReference = async (id) => {
 };
 
 module.exports = {
+  INCLUDE_REFERENCES,
+  cleanReference,
   fetchSingleReferenceSimple,
   fetchSingleReferenceComplete,
   fetchAllReferencesCompleteWithCount,

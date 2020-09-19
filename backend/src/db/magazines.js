@@ -2,14 +2,9 @@
  * All database operations that focus on magazines and issues.
  */
 
-const {
-  Magazine,
-  MagazineIssue,
-  Reference,
-  RecordType,
-  Author,
-  sequelize,
-} = require("../models");
+const { Magazine, MagazineIssue, sequelize } = require("../models");
+
+const { INCLUDE_REFERENCES, cleanReference } = require("./references");
 
 // Most-basic magazine request. Single magazine without issues or anything.
 const fetchSingleMagazineSimple = async (id) => {
@@ -27,19 +22,23 @@ const fetchSingleMagazineSimple = async (id) => {
 // Get a single magazine with issues and references.
 const fetchSingleMagazineComplete = async (id) => {
   let magazine = await Magazine.findByPk(id, {
-    include: [{ model: MagazineIssue, include: [Reference] }],
+    include: [{ model: MagazineIssue, include: [INCLUDE_REFERENCES] }],
   });
 
-  magazine = magazine.get();
-  magazine.issues = magazine.MagazineIssues.map((issue) => {
-    issue = issue.get();
-    delete issue.MagazineId;
-    issue.references = issue.References.map((reference) => reference.get());
-    delete issue.References;
+  if (magazine) {
+    magazine = magazine.get();
+    magazine.issues = magazine.MagazineIssues.map((issue) => {
+      issue = issue.get();
+      delete issue.MagazineId;
+      issue.references = issue.References.map((reference) =>
+        cleanReference(reference)
+      );
+      delete issue.References;
 
-    return issue;
-  });
-  delete magazine.MagazineIssues;
+      return issue;
+    });
+    delete magazine.MagazineIssues;
+  }
 
   return magazine;
 };
@@ -180,40 +179,16 @@ const deleteMagazineIssue = async (id) => {
 // Fetch a single magazine issue with all the ancillary data.
 const fetchSingleMagazineIssueComplete = async (id) => {
   let magazineissue = await MagazineIssue.findByPk(id, {
-    include: [
-      Magazine,
-      {
-        model: Reference,
-        include: [
-          RecordType,
-          {
-            model: MagazineIssue,
-            include: [Magazine],
-          },
-          {
-            model: Author,
-            as: "Authors",
-          },
-        ],
-      },
-    ],
+    include: [Magazine, INCLUDE_REFERENCES],
   });
 
   magazineissue = magazineissue.get();
 
   magazineissue.Magazine = magazineissue.Magazine.get();
-  magazineissue.References = magazineissue.References.map((reference) => {
-    reference = reference.get();
-
-    if (reference.MagazineIssue) {
-      reference.Magazine = reference.MagazineIssue.Magazine.get();
-      reference.MagazineIssue = reference.MagazineIssue.get();
-      delete reference.MagazineIssue.Magazine;
-    }
-    reference.RecordType = reference.RecordType.get();
-
-    return reference;
-  });
+  magazineissue.references = magazineissue.References.map((reference) =>
+    cleanReference(reference)
+  );
+  delete magazineissue.References;
 
   return magazineissue;
 };

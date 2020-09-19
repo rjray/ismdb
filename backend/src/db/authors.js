@@ -2,16 +2,10 @@
  * All database operations that focus on authors.
  */
 
-const {
-  Author,
-  AuthorAlias,
-  Reference,
-  RecordType,
-  Magazine,
-  MagazineIssue,
-  sequelize,
-} = require("../models");
+const { Author, AuthorAlias, Reference, sequelize } = require("../models");
 const { sortBy } = require("../lib/utils");
+
+const { INCLUDE_REFERENCES, cleanReference } = require("./references");
 
 function convertAliases(aliasList) {
   const aliases = aliasList.map((item) => {
@@ -70,14 +64,7 @@ const fetchSingleAuthorWithRefCount = async (id) => {
 // Fetch a single author with aliases and all references they're listed on.
 const fetchSingleAuthorComplex = async (id) => {
   let author = await Author.findByPk(id, {
-    include: [
-      AuthorAlias,
-      {
-        model: Reference,
-        as: "References",
-        include: [RecordType, { model: MagazineIssue, include: [Magazine] }],
-      },
-    ],
+    include: [AuthorAlias, INCLUDE_REFERENCES],
   });
 
   if (author) {
@@ -85,19 +72,10 @@ const fetchSingleAuthorComplex = async (id) => {
     author.aliases = convertAliases(author.AuthorAliases);
     delete author.AuthorAliases;
 
-    author.references = author.References.map((item) => {
-      item = item.get();
-      delete item.AuthorsReferences;
-      if (item.MagazineIssue) {
-        item.Magazine = item.MagazineIssue.Magazine.get();
-        item.MagazineIssue = item.MagazineIssue.get();
-        delete item.MagazineIssue.Magazine;
-      }
-      return item;
-    });
+    author.references = author.References.map((reference) =>
+      cleanReference(reference)
+    );
     delete author.References;
-  } else {
-    author = null;
   }
 
   return author;
