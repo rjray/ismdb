@@ -8,7 +8,7 @@
 const magazines = require("../db/magazines");
 
 /*
-  POST /issue
+  POST /issues
 
   Create a new magazine issue record from the content in the request body. The
   return value is an object with the keys "magazineissue" (new magazine issue)
@@ -34,7 +34,7 @@ function createMagazineIssue(context) {
 }
 
 /*
-  GET /issue/{id}
+  GET /issues/{id}
 
   Retrieve a single magazine issue record by ID from the database, with all the
   associated references. Returns an object with a single key, "magazineissue",
@@ -70,7 +70,7 @@ function getMagazineIssueById(context) {
 }
 
 /*
-  PUT /issue/{id}
+  PUT /issues/{id}
 
   Update the magazine issue record indicated by the ID parameter, using the
   content of the request body. Return value is an object with the keys
@@ -105,7 +105,7 @@ function updateMagazineIssueById(context) {
 }
 
 /*
-  DELETE /issue/{id}
+  DELETE /issues/{id}
 
   Delete the magazine issue record indicated by the ID parameter. Returns an
   object with one key, "notifications".

@@ -8,7 +8,7 @@
 const magazines = require("../db/magazines");
 
 /*
-  POST /magazine
+  POST /magazines
 
   Create a new magazine record from the content in the request body. The
   return value is an object with the keys "magazine" (new magazine) and
@@ -33,7 +33,7 @@ function createMagazine(context) {
 }
 
 /*
-  GET /magazine
+  GET /magazines
 
   Returns all magazine titles, with count of total issues per magazine. Return
   value is an object with keys "count" (the count of all magazine titles) and
@@ -61,7 +61,7 @@ function getAllMagazines(context) {
 }
 
 /*
-  GET /magazine/withIssues
+  GET /magazines/withIssues
 
   Returns all magazine titles with nested issue information. Return value is an
   object with keys "count" (the count of all magazine titles) and "magazines",
@@ -89,7 +89,7 @@ function getAllMagazinesWithIssues(context) {
 }
 
 /*
-  GET /magazine/{id}
+  GET /magazines/{id}
 
   Fetch a single magazine title by ID. Return value is an object with the keys
   "magazine" (the magazine record) and (possibly) "notifications" (any notes
@@ -124,7 +124,7 @@ function getMagazineById(context) {
 }
 
 /*
-  PUT /magazine/{id}
+  PUT /magazines/{id}
 
   Update a single magazine title record by the ID, using the JSON content in
   the request body. Return value is an object with keys "magazine" (the
@@ -159,7 +159,7 @@ function updateMagazineById(context) {
 }
 
 /*
-  DELETE /magazine/{id}
+  DELETE /magazines/{id}
 
   Delete the magazine specified by the ID parameter. The return value is an
   object with a single key, "notifications" (an array of notification objects,
@@ -194,7 +194,7 @@ function deleteMagazineById(context) {
 }
 
 /*
-  GET /magazine/{id}/withIssues
+  GET /magazines/{id}/withIssues
 
   Fetch a single magazine title by ID, with issues and per-issue references.
   Return value is an object with the keys "magazine" (the magazine record) and

@@ -8,7 +8,7 @@
 const references = require("../db/references");
 
 /*
-  POST /reference
+  POST /references
 
   Create a new reference record from the content in the request body. The
   return value is an object with the keys "reference" (new reference) and
@@ -33,7 +33,7 @@ function createReference(context) {
 }
 
 /*
-  GET /reference
+  GET /references
 
   Returns all references with a count of the total number of references. May
   be governed by query parameters, in which case the count will reflect all
@@ -61,7 +61,7 @@ function getAllReferences(context) {
 }
 
 /*
-  GET /reference/{id}
+  GET /references/{id}
 
   Fetch a single reference by ID. Return value is an object with keys
   "reference" (the reference object) and "notifications". The reference
@@ -96,7 +96,7 @@ function getReferenceById(context) {
 }
 
 /*
-  PUT /reference/{id}
+  PUT /references/{id}
 
   Update the reference indicated by the ID, using the JSON content in the
   request body. Return value is an object with keys "reference" (the updated
@@ -131,7 +131,7 @@ function updateReferenceById(context) {
 }
 
 /*
-  DELETE /reference/{id}
+  DELETE /references/{id}
 
   Delete the reference specified by the ID. Return value is an object with a
   single key, "notifications".

@@ -8,7 +8,7 @@
 const authors = require("../db/authors");
 
 /*
-  POST /author
+  POST /authors
 
   Create a new author record from the JSON content in the request body. The
   return value is an object with the keys "author" (new author object) and
@@ -34,7 +34,7 @@ function createAuthor(context) {
 }
 
 /*
-  GET /author
+  GET /authors
 
   Return all authors (with alias information), possibly limited by params
   passed in. Also returns a count of all authors that match the query, even
@@ -61,7 +61,7 @@ function getAllAuthors(context) {
 }
 
 /*
-  GET /author/withRefCount
+  GET /authors/withRefCount
 
   Return all authors (with alias information), with a "refcount" field added to
   each with the number of references they are credited on. Possibly limited by
@@ -88,7 +88,7 @@ function getAllAuthorsWithRefCount(context) {
 }
 
 /*
-  GET /author/namesAndAliases
+  GET /authors/namesAndAliases
 
   Return a list of just author names and their IDs, with aliases also in the
   list (pointing to the name they alias). May be limited by the parameters
@@ -117,7 +117,7 @@ function getAuthorNamesAndAliases(context) {
 }
 
 /*
-  GET /author/{id}
+  GET /authors/{id}
 
   Fetch a single author by the ID. Returns an object with a single field,
   "author", whose value is the author object. Alias information is included.
@@ -151,7 +151,7 @@ function getAuthorById(context) {
 }
 
 /*
-  PUT /author/{id}
+  PUT /authors/{id}
 
   Update the author specified by the ID parameter, using the JSON content in
   the request body. The return value is an object with the keys "author" (the
@@ -187,7 +187,7 @@ function updateAuthorById(context) {
 }
 
 /*
-  DELETE /author/{id}
+  DELETE /authors/{id}
 
   Delete the author specified by the ID parameter. The return value is an
   object with a single key, "notifications" (an array of notification objects,
@@ -222,7 +222,7 @@ function deleteAuthorById(context) {
 }
 
 /*
-  GET /author/{id}/withRefCount
+  GET /authors/{id}/withRefCount
 
   Fetch a single author by the ID. Returns an object with a single field,
   "author", whose value is the author object. Alias information is included.
@@ -258,7 +258,7 @@ function getAuthorByIdWithRefCount(context) {
 }
 
 /*
-  GET /author/{id}/withRefsAndAliases
+  GET /authors/{id}/withRefsAndAliases
 
   Fetch a single author by the ID. The returned author record will have all
   alias information and a "references" key that has an array of Reference

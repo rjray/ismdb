@@ -12,6 +12,8 @@ const {
   sequelize,
 } = require("../models");
 
+const { INCLUDE_REFERENCES, cleanReference } = require("./references");
+
 // Basic tag request: just the requested tag.
 const fetchSingleTagSimple = async (id) => {
   const tag = await Tag.findByPk(id).catch((error) => {
@@ -41,60 +43,23 @@ const fetchSingleTagWithRefCount = async (id) => {
     delete tag.References;
     return { tag, refcount };
   } else {
-    return tag;
+    return result;
   }
 };
 
 // Fetch a specific tag with all the tagged references.
 const fetchSingleTagWithReferences = async (id) => {
   const result = await Tag.findByPk(id, {
-    include: [
-      {
-        model: Reference,
-        as: "References",
-        include: [
-          RecordType,
-          { model: MagazineIssue, include: [Magazine] },
-          { model: Author, as: "Authors" },
-          { model: Tag, as: "Tags" },
-        ],
-      },
-    ],
+    include: [INCLUDE_REFERENCES],
   }).catch((error) => {
     throw new Error(error);
   });
 
   if (result) {
     const tag = result.get();
-    tag.references = tag.References.map((reference) => {
-      reference = reference.get();
-
-      reference.authors = reference.Authors.sort(
-        (a, b) => a.AuthorsReferences.order - b.AuthorsReferences.order
-      ).map((author) => {
-        author = author.get();
-        author.order = author.AuthorsReferences.order;
-        delete author.AuthorsReferences;
-        return author;
-      });
-      delete reference.Authors;
-
-      reference.tags = reference.Tags.map((tag) => {
-        tag = tag.get();
-        delete tag.TagsReferences;
-        return tag;
-      });
-      delete reference.Tags;
-      delete reference.TagsReferences;
-
-      if (reference.MagazineIssue) {
-        reference.Magazine = reference.MagazineIssue.Magazine.get();
-        reference.MagazineIssue = reference.MagazineIssue.get();
-        delete reference.MagazineIssue.Magazine;
-      }
-
-      return reference;
-    });
+    tag.references = tag.References.map((reference) =>
+      cleanReference(reference)
+    );
     delete tag.References;
 
     return tag;
