@@ -46,7 +46,7 @@ function getAllAuthors(context) {
   const res = context.res;
 
   return authors
-    .fetchAllAuthorsWithAliasesAndCount()
+    .fetchAllAuthorsWithAliasesAndCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })
@@ -73,7 +73,7 @@ function getAllAuthorsWithRefCount(context) {
   const res = context.res;
 
   return authors
-    .fetchAllAuthorsWithRefcountAndCount()
+    .fetchAllAuthorsWithRefcountAndCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })

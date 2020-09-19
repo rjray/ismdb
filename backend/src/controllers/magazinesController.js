@@ -46,7 +46,7 @@ function getAllMagazines(context) {
   const res = context.res;
 
   return magazines
-    .fetchAllMagazinesWithIssueCountAndCount()
+    .fetchAllMagazinesWithIssueCountAndCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })
@@ -74,7 +74,7 @@ function getAllMagazinesWithIssues(context) {
   const res = context.res;
 
   return magazines
-    .fetchAllMagazinesWithIssueNumbersAndCount()
+    .fetchAllMagazinesWithIssueNumbersAndCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })

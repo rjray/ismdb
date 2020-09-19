@@ -45,7 +45,7 @@ function getAllTags(context) {
   const res = context.res;
 
   return tags
-    .fetchAllTagsWithCount()
+    .fetchAllTagsWithCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })
@@ -73,7 +73,7 @@ function getAllTagsWithRefCount(context) {
   const res = context.res;
 
   return tags
-    .fetchAllTagsWithRefCountAndCount()
+    .fetchAllTagsWithRefCountAndCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })

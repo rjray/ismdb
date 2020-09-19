@@ -46,7 +46,7 @@ function getAllReferences(context) {
   const res = context.res;
 
   return references
-    .fetchAllReferencesCompleteWithCount()
+    .fetchAllReferencesCompleteWithCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })
