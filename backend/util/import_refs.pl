@@ -10,6 +10,20 @@ use Getopt::Long 'GetOptions';
 
 use DBI;
 
+# Used by the keyword-to-tags conversion:
+my %META_TAGS = (
+    aircraft   => 1,
+    armor      => 1,
+    figures    => 1,
+    ships      => 1,
+    techniques => 1,
+    automotive => 1,
+    diorama    => 1,
+);
+
+# This will be the global table of tags, mapping names to IDs:
+my %TAGS = ();
+
 my %opts;
 GetOptions(\%opts, qw(host=s port=i username=s password=s env:s)) or
     die "Error in command line\n";
@@ -59,10 +73,11 @@ my $dbho = DBI->connect(
     $opts{password},
     $attrs
 );
-$dbho->{mysql_enable_utf8} = 1;
+$dbho->{mysql_enable_utf8mb4} = 1;
 $dbho->do('set names "UTF8"');
 
-migrate_record_types($dbhi, $dbho);
+setup_meta_tags($dbho);
+seed_record_types($dbho);
 migrate_authors($dbhi, $dbho);
 migrate_periodicals($dbhi, $dbho);
 migrate_reference_table($dbhi, $dbho);
@@ -75,8 +90,36 @@ $dbho->disconnect;
 
 exit;
 
-sub migrate_record_types {
-    my ($dbhin, $dbhout) = @_;
+sub setup_meta_tags {
+    my $dbhout = shift;
+
+    my $sth = $dbhout->prepare(
+        'INSERT INTO `Tags` (`id`, `name`, `description`, `type`) VALUES ' .
+        '(?, ?, ?, ?)'
+    );
+
+    my $result = eval {
+        my $id = 0;
+        for my $tag (sort keys %META_TAGS) {
+            $sth->execute(++$id, $tag, q{}, 'meta');
+            $TAGS{$tag} = $id;
+        }
+
+        $dbhout->commit;
+    };
+    if (! $result) {
+        my $err = $@;
+        $dbhout->rollback;
+        die "failure in setup_meta_tags: $err\n";
+    }
+
+    print scalar(keys %META_TAGS) . " meta tags seeded to Tags\n";
+
+    return;
+}
+
+sub seed_record_types {
+    my $dbhout = shift;
 
     # For this one, nothing is read from the input DB. Just stuff the following
     # data in:
@@ -105,7 +148,7 @@ sub migrate_record_types {
         die "failure in migrate_record_types: $err\n";
     }
 
-    print scalar(@data) . " rows added to RecordTypes\n";
+    print scalar(@data) . " rows seeded to RecordTypes\n";
 
     return;
 }
@@ -212,11 +255,16 @@ sub migrate_reference_table {
         'INSERT INTO `AuthorsReferences` (`authorId`, `referenceId`, ' .
         '`order`) VALUES (?, ?, ?)'
     );
+    my $sth_tag = $dbhout->prepare('INSERT INTO `Tags` (`name`) VALUES (?)');
+    my $sth_tagref = $dbhout->prepare(
+        'INSERT INTO `TagsReferences` (`tagId`, `referenceId`) VALUES (?, ?)'
+    );
     $sth = $dbhout->prepare(
         'INSERT INTO `References` (`id`, `name`, `type`, `recordTypeId`, ' .
         '`isbn`, `language`, `keywords`, `createdAt`, `updatedAt`, ' .
         '`magazineIssueId`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
     );
+
     my $ish_id = 0;
     my %ish_map = ();
     for my $row (@{$data}) {
@@ -239,6 +287,17 @@ sub migrate_reference_table {
 
         $sth->execute(@base);
 
+        # 'keywords' is field 6:
+        my @tags = keywords2tags($base[6]);
+        for my $tag (@tags) {
+            if (! $TAGS{$tag}) {
+                $sth_tag->execute($tag);
+                $TAGS{$tag} = $sth_tag->{mysql_insertid};
+            }
+
+            $sth_tagref->execute($TAGS{$tag}, $base[0]);
+        }
+
         my $order = 0;
         for my $author (@{$row}[9..12]) {
             last if ! $author;
@@ -255,6 +314,7 @@ sub migrate_reference_table {
 
     print scalar(@{$data}) . " rows added to References\n";
     print "$ish_id rows added to MagazineIssues\n";
+    print scalar(keys %TAGS) . " total tags now in Tags\n";
 
     return;
 }
@@ -369,4 +429,45 @@ sub time2str {
         $time[0];
 
     return $str;
+}
+
+# Transform a keywords field to a list of zero or more tags.
+sub keywords2tags {
+    my $keywords = shift;
+    my @tags = ();
+
+    $keywords = lc $keywords;
+    $keywords =~ s/^\s+//;
+    $keywords =~ s/\s+$//;
+    $keywords =~ s/aicraft/aircraft/;
+
+    if ($keywords) {
+        my @keywords = split /\s*,\s*/, $keywords;
+        while (! $keywords[0]) {
+            shift @keywords;
+        }
+        if ($keywords[0] =~ /^(\S+) (\S+)$/) {
+            my ($general, $type) = ($1, $2);
+            if ($type eq 'ship') {
+                $type = 'ships';
+            } elsif ($type eq 'auto') {
+                $type = 'automotive';
+            }
+            if ($META_TAGS{$type}) {
+                splice @keywords, 0, 1, $general, $type;
+            }
+        }
+        for my $word (@keywords) {
+            next if (! $word);
+            if ($word eq 'ship') {
+                $word = 'ships';
+            } elsif ($word eq 'auto') {
+                $word = 'automotive';
+            }
+
+            push @tags, $word;
+        }
+    }
+
+    return @tags;
 }

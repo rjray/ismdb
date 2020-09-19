@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: MyMoDB API
-  version: "0.1"
+  version: "0.2.0"
 servers:
   - url: /api
 components:
@@ -55,6 +55,10 @@ components:
       type: integer
       format: int64
       minimum: 0
+    countType:
+      type: integer
+      format: int64
+      minimum: 0
     dateTimeType:
       type: string
       format: date-time
@@ -88,6 +92,15 @@ components:
     referenceKeywordsType:
       type: string
       maxLength: 2000
+    tagNameType:
+      type: string
+      maxLength: 75
+    tagDescriptionType:
+      type: string
+      maxLength: 255
+    tagTypeType:
+      type: string
+      maxLength: 10
     newAuthorAliasType:
       type: object
       required:
@@ -155,7 +168,7 @@ components:
             - refcount
           properties:
             refcount:
-              type: integer
+              $ref: "#/components/schemas/countType"
     authorWithRefsAndAliasesType:
       allOf:
         - $ref: "#/components/schemas/authorWithRefcountType"
@@ -293,7 +306,7 @@ components:
       required:
         - name
         - RecordTypeId
-        - keywords
+        - tags
       properties:
         name:
           $ref: "#/components/schemas/referenceNameType"
@@ -317,6 +330,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/selectedAuthorType"
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/tagType"
     updateReferenceType:
       allOf:
         - type: object
@@ -334,6 +351,7 @@ components:
         - RecordType
         - createdAt
         - updatedAt
+        - tags
       properties:
         id:
           $ref: "#/components/schemas/idType"
@@ -361,6 +379,50 @@ components:
           $ref: "#/components/schemas/dateTimeType"
         updatedAt:
           $ref: "#/components/schemas/dateTimeType"
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/tagType"
+    newTagType:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          $ref: "#/components/schemas/tagNameType"
+        description:
+          $ref: "#/components/schemas/tagDescriptionType"
+        type:
+          $ref: "#/components/schemas/tagTypeType"
+    tagType:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              $ref: "#/components/schemas/idType"
+        - $ref: "#/components/schemas/newTagType"
+    tagWithRefCountType:
+      allOf:
+        - $ref: "#/components/schemas/tagType"
+        - type: object
+          required:
+            - refcount
+          properties:
+            refcount:
+              $ref: "#/components/schemas/countType"
+    tagWithReferencesType:
+      allOf:
+        - $ref: "#/components/schemas/tagType"
+        - type: object
+          required:
+            - references
+          properties:
+            references:
+              type: array
+              items:
+                $ref: "#/components/schemas/referenceType"
     errorObjectType:
       type: object
       required:
@@ -422,7 +484,7 @@ components:
               notifications:
                 $ref: "#/components/schemas/notificationsType"
 paths:
-  "/author":
+  "/authors":
     x-exegesis-controller: authorsController
     post:
       summary: Create a new author
@@ -473,9 +535,7 @@ paths:
                   - authors
                 properties:
                   count:
-                    type: integer
-                    format: int64
-                    minimum: 0
+                    $ref: "#/components/schemas/countType"
                   authors:
                     type: array
                     items:
@@ -486,7 +546,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
-  "/author/withRefCount":
+  "/authors/withRefCount":
     x-exegesis-controller: authorsController
     get:
       summary: Fetch all authors with reference counts
@@ -509,9 +569,7 @@ paths:
                   - authors
                 properties:
                   count:
-                    type: integer
-                    format: int64
-                    minimum: 0
+                    $ref: "#/components/schemas/countType"
                   authors:
                     type: array
                     items:
@@ -522,7 +580,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
-  "/author/namesAndAliases":
+  "/authors/namesAndAliases":
     x-exegesis-controller: authorsController
     get:
       summary: Fetch a list of author names, including aliases
@@ -561,7 +619,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
-  "/author/{id}":
+  "/authors/{id}":
     x-exegesis-controller: authorsController
     parameters:
       - $ref: "#/components/parameters/idParam"
@@ -642,7 +700,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
-  "/author/{id}/withRefCount":
+  "/authors/{id}/withRefCount":
     x-exegesis-controller: authorsController
     parameters:
       - $ref: "#/components/parameters/idParam"
@@ -671,7 +729,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
-  "/author/{id}/withRefsAndAliases":
+  "/authors/{id}/withRefsAndAliases":
     x-exegesis-controller: authorsController
     parameters:
       - $ref: "#/components/parameters/idParam"
@@ -700,7 +758,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
-  "/magazine":
+  "/magazines":
     x-exegesis-controller: magazinesController
     post:
       summary: Create a new magazine
@@ -751,9 +809,7 @@ paths:
                   - magazines
                 properties:
                   count:
-                    type: integer
-                    format: int64
-                    minimum: 0
+                    $ref: "#/components/schemas/countType"
                   magazines:
                     type: array
                     items:
@@ -764,7 +820,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Magazines
-  "/magazine/withIssues":
+  "/magazines/withIssues":
     x-exegesis-controller: magazinesController
     get:
       summary: Fetch all magazines with issues
@@ -787,9 +843,7 @@ paths:
                   - magazines
                 properties:
                   count:
-                    type: integer
-                    format: int64
-                    minimum: 0
+                    $ref: "#/components/schemas/countType"
                   magazines:
                     type: array
                     items:
@@ -800,7 +854,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Magazines
-  "/magazine/{id}":
+  "/magazines/{id}":
     x-exegesis-controller: magazinesController
     parameters:
       - $ref: "#/components/parameters/idParam"
@@ -880,7 +934,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Magazines
-  "/magazine/{id}/withIssues":
+  "/magazines/{id}/withIssues":
     x-exegesis-controller: magazinesController
     parameters:
       - $ref: "#/components/parameters/idParam"
@@ -910,7 +964,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Magazines
-  "/issue":
+  "/issues":
     x-exegesis-controller: issuesController
     post:
       summary: Create a new magazine issue
@@ -940,7 +994,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Issues
-  "/issue/{id}":
+  "/issues/{id}":
     x-exegesis-controller: issuesController
     parameters:
       - $ref: "#/components/parameters/idParam"
@@ -1021,7 +1075,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Issues
-  "/reference":
+  "/references":
     x-exegesis-controller: referencesController
     post:
       summary: Create a new reference
@@ -1072,9 +1126,7 @@ paths:
                   - references
                 properties:
                   count:
-                    type: integer
-                    format: int64
-                    minimum: 0
+                    $ref: "#/components/schemas/countType"
                   references:
                     type: array
                     items:
@@ -1085,7 +1137,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - References
-  "/reference/{id}":
+  "/references/{id}":
     x-exegesis-controller: referencesController
     parameters:
       - $ref: "#/components/parameters/idParam"
@@ -1166,6 +1218,241 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - References
+  "/tags":
+    x-exegesis-controller: tagsController
+    post:
+      summary: Create a new tag
+      description: Create a new tag using the data in the request body.
+      operationId: createTag
+      requestBody:
+        description: Tag to add
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/newTagType"
+        required: true
+      responses:
+        "201":
+          description: New tag created
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - tag
+                properties:
+                  tag:
+                    $ref: "#/components/schemas/tagType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+    get:
+      summary: Fetch all tags
+      description: Fetch tags as an array. Includes a count of all tags.
+      operationId: getAllTags
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All tags
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - tags
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  tags:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/tagType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+  "/tags/withRefCount":
+    x-exegesis-controller: tagsController
+    get:
+      summary: Fetch all tags with count of tagged references
+      description: Fetch tags as an array. Each tag struture includes an extra
+        field that counts the number of references tagged by the tag.
+      operationId: getAllTagsWithRefCount
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All tags with reference counts
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - tags
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  tags:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/tagWithRefCountType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+  "/tags/{id}":
+    x-exegesis-controller: tagsController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single tag by ID
+      description: Retrieve a single tag by the ID. Includes full tag
+        information.
+      operationId: getTagById
+      responses:
+        "200":
+          description: Tag data
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - tag
+                properties:
+                  tag:
+                    $ref: "#/components/schemas/tagType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+    put:
+      summary: Update a tag
+      description: Update a tag with the information in the request body.
+      operationId: updateTagById
+      requestBody:
+        description: Tag to update
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/tagType"
+        required: true
+      responses:
+        "200":
+          description: Updated tag data
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - tag
+                properties:
+                  tag:
+                    $ref: "#/components/schemas/tagType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+    delete:
+      summary: Delete a tag by ID
+      description: Delete the specified tag. Removes all relational links
+        between the tag and any references.
+      operationId: deleteTagById
+      responses:
+        "200":
+          description: Tag deleted
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+  "/tags/{id}/withRefCount":
+    x-exegesis-controller: tagsController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single tag by ID with a count of tagged references
+      description: Retrieve a single tag by ID, including the count of the
+        references tagged with the given tag.
+      operationId: getTagByIdWithRefCount
+      responses:
+        "200":
+          description: Tag data with reference count
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - tag
+                properties:
+                  tag:
+                    $ref: "#/components/schemas/tagWithRefCountType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+  "/tags/{id}/withReferences":
+    x-exegesis-controller: tagsController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single tag by ID with all tagged references
+      description: Retrieve a single tag by ID, including all the tagged
+        references as an array.
+      operationId: getTagByIdWithReferences
+      responses:
+        "200":
+          description: Tag data with references
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - tag
+                properties:
+                  tag:
+                    $ref: "#/components/schemas/tagWithReferencesType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
   "/combo/referenceeditdata":
     x-exegesis-controller: comboController
     get:
@@ -1412,6 +1699,8 @@ tags:
     description: Operations that are primarily centered around magazine issues
   - name: References
     description: Operations that are primarily centered around references
+  - name: Tags
+    description: Operations that are primarily centered around tags
   - name: Combination
     description: Operations that return more than one type of data
   - name: Miscellaneous
