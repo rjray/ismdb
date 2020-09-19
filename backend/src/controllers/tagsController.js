@@ -8,7 +8,7 @@
 const tags = require("../db/tags");
 
 /*
-  POST /tag
+  POST /tags
 
   Create a new tag record from the JSON content in the request body. The return
   value is an object with keys "tag" (new tag object) and "notifications" (an
@@ -33,7 +33,7 @@ function createTag(context) {
 }
 
 /*
-  GET /tag
+  GET /tags
 
   Return all tags, possibly limited by params passed in. Also returns a count
   of all tags that match the query, even if the query itself is governed by
@@ -60,7 +60,7 @@ function getAllTags(context) {
 }
 
 /*
-  GET /tag/withRefCount
+  GET /tags/withRefCount
 
   Return all tags, possibly limited by params passed in. Also returns a count
   of all tags that match the query, even if the query itself is governed by
@@ -88,7 +88,7 @@ function getAllTagsWithRefCount(context) {
 }
 
 /*
-  GET /tag/{id}
+  GET /tags/{id}
 
   Fetch a single tag by the ID. Returns an object with the single key "tag",
   whose value is the tag object.
@@ -122,7 +122,7 @@ function getTagById(context) {
 }
 
 /*
-  PUT /tag/{id}
+  PUT /tags/{id}
 
   Update the tag specified by the ID parameter, using the data in the request
   body. The return value is an object with the keys "tag" (the updated tag
@@ -158,7 +158,7 @@ function updateTagById(context) {
 }
 
 /*
-  DELETE /tag/{id}
+  DELETE /tags/{id}
 
   Delete the tag specified by the ID parameter. The return value is an object
   with a single key, "notifications" (an array of notification objects, usually
@@ -193,7 +193,7 @@ function deleteTagById(context) {
 }
 
 /*
-  GET /tag/{id}/withRefCount
+  GET /tags/{id}/withRefCount
 
   Fetch a single tag by the ID. Returns an object with a single field,
   "tag", whose value is the tag object. The tag object has an additional field,
@@ -228,7 +228,7 @@ function getTagByIdWithRefCount(context) {
 }
 
 /*
-  GET /tag/{id}/withReferences
+  GET /tags/{id}/withReferences
 
   Fetch a single tag by the ID. Returns an object with a single field, "tag",
   whose value is the tag object. The tag object has an additional field,
