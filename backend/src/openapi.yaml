@@ -27,7 +27,7 @@ components:
     orderParam:
       name: order
       in: query
-      description: Field to sort on
+      description: Fields to sort on
       required: false
       schema:
         type: array
@@ -54,7 +54,7 @@ components:
     idType:
       type: integer
       format: int64
-      minimum: 0
+      minimum: 1
     countType:
       type: integer
       format: int64
