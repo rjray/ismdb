@@ -3,6 +3,7 @@
  */
 
 const { Tag, sequelize } = require("../models");
+const { fixAggregateOrderFields } = require("../lib/utils");
 
 const { INCLUDE_REFERENCES, cleanReference } = require("./references");
 
@@ -85,7 +86,13 @@ const fetchAllTagsWithCount = async (opts = {}) => {
 // count of the results (independent of any pagination options in opts). Each
 // tag object includes the count of associated references as "refcount".
 const fetchAllTagsWithRefCountAndCount = async (opts = {}) => {
-  const count = await Tag.count(opts);
+  const optsNoOrder = { ...opts };
+  if (opts.order) {
+    delete optsNoOrder.order;
+    opts.order = fixAggregateOrderFields(sequelize, opts.order, ["refcount"]);
+  }
+
+  const count = await Tag.count(optsNoOrder);
   const results = await Tag.findAll({
     attributes: {
       include: [

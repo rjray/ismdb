@@ -3,7 +3,7 @@
  */
 
 const { Author, AuthorAlias, Reference, sequelize } = require("../models");
-const { sortBy } = require("../lib/utils");
+const { sortBy, fixAggregateOrderFields } = require("../lib/utils");
 
 const { INCLUDE_REFERENCES, cleanReference } = require("./references");
 
@@ -107,7 +107,13 @@ const fetchAllAuthorsWithAliasesAndCount = async (opts = {}) => {
 // Fetch all authors along with a count of how many references they're credited
 // on. Returns the same shape of object as above.
 const fetchAllAuthorsWithRefcountAndCount = async (opts = {}) => {
-  const count = await Author.count(opts);
+  const optsNoOrder = { ...opts };
+  if (opts.order) {
+    delete optsNoOrder.order;
+    opts.order = fixAggregateOrderFields(sequelize, opts.order, ["refcount"]);
+  }
+
+  const count = await Author.count(optsNoOrder);
   const results = await Author.findAll({
     attributes: {
       include: [

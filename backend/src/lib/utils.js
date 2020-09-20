@@ -49,10 +49,29 @@ const sortBy = (key) => {
   return (a, b) => (a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0);
 };
 
+// Scan the array of ordering fields for any of the specified names. Those
+// will be aggregate columns and need to be replaced by "sequelize.literal()".
+const fixAggregateOrderFields = (sequelize, arr, fields) => {
+  return arr.map((elt) => {
+    if (Array.isArray(elt)) {
+      if (fields.includes(elt[0])) {
+        elt[0] = sequelize.literal(elt[0]);
+      }
+    } else {
+      if (fields.includes(elt)) {
+        elt = sequelize.literal(elt);
+      }
+    }
+
+    return elt;
+  });
+};
+
 module.exports = {
   compareVersion,
   createStringGetter,
   createStringSetter,
   objectifyError,
   sortBy,
+  fixAggregateOrderFields,
 };
