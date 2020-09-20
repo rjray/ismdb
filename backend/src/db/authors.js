@@ -30,8 +30,6 @@ const fetchSingleAuthorSimple = async (id) => {
     author = author.get();
     author.aliases = convertAliases(author.AuthorAliases);
     delete author.AuthorAliases;
-  } else {
-    author = null;
   }
 
   return author;
@@ -40,10 +38,19 @@ const fetchSingleAuthorSimple = async (id) => {
 // Single author with any aliases and a count of their references.
 const fetchSingleAuthorWithRefCount = async (id) => {
   let author = await Author.findByPk(id, {
-    include: [
-      AuthorAlias,
-      { model: Reference, as: "References", attributes: ["id"] },
-    ],
+    attributes: {
+      include: [
+        [
+          sequelize.literal(`(
+            SELECT COUNT(*)
+            FROM \`AuthorsReferences\`
+            WHERE \`authorId\` = Author.\`id\`
+          )`),
+          "refcount",
+        ],
+      ],
+    },
+    include: [AuthorAlias],
   }).catch((error) => {
     throw new Error(error);
   });
@@ -52,10 +59,6 @@ const fetchSingleAuthorWithRefCount = async (id) => {
     author = author.get();
     author.aliases = convertAliases(author.AuthorAliases);
     delete author.AuthorAliases;
-    author.refcount = author.References.length;
-    delete author.References;
-  } else {
-    author = null;
   }
 
   return author;
@@ -106,10 +109,19 @@ const fetchAllAuthorsWithAliasesAndCount = async (opts = {}) => {
 const fetchAllAuthorsWithRefcountAndCount = async (opts = {}) => {
   const count = await Author.count(opts);
   const results = await Author.findAll({
-    include: [
-      AuthorAlias,
-      { model: Reference, as: "References", attributes: ["id"] },
-    ],
+    attributes: {
+      include: [
+        [
+          sequelize.literal(`(
+            SELECT COUNT(*)
+            FROM \`AuthorsReferences\`
+            WHERE \`authorId\` = Author.\`id\`
+          )`),
+          "refcount",
+        ],
+      ],
+    },
+    include: [AuthorAlias],
     ...opts,
   });
 
@@ -117,8 +129,6 @@ const fetchAllAuthorsWithRefcountAndCount = async (opts = {}) => {
     author = author.get();
     author.aliases = convertAliases(author.AuthorAliases);
     delete author.AuthorAliases;
-    author.refcount = author.References.length;
-    delete author.References;
 
     return author;
   });
