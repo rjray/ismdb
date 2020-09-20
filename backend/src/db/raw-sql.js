@@ -1,26 +1,39 @@
+"use strict";
+
 /*
- * All database operations that require raw SQL.
+ * All database operations that require (mostly) raw SQL.
  */
 
 const { sequelize } = require("../models");
 
-// Query for all the distinct values in references' "language" field. Force
-// "English" to the top of the list.
-const fetchLanguages = async () => {
-  const langQuery = `
-    SELECT DISTINCT(language) FROM \`References\` WHERE
-    language IS NOT NULL AND language != "" AND language != "English"
-    ORDER BY language
+// Get the N magazines that have been most-recently added to. If N is 0, will
+// get all. Returns in descending order of date the most-recent-added issue
+// was created.
+const getMostRecentMagazines = async (n = 0) => {
+  let query = `
+    SELECT
+      m.\`id\`, m.\`name\`, m.\`language\`, m.\`aliases\`, m.\`notes\`,
+      m.\`createdAt\`, m.\`updatedAt\`, x.\`latest\`
+    FROM
+      \`Magazines\` AS \`m\`
+        LEFT OUTER JOIN
+      (
+        SELECT
+          \`magazineId\`, MAX(\`createdAt\`) AS \`latest\`
+        FROM
+          \`MagazineIssues\`
+        GROUP BY \`magazineId\`
+      ) AS \`x\` ON x.\`magazineId\` = m.\`id\`
+    ORDER BY x.\`latest\` DESC
   `;
+  if (n) query += `LIMIT ${n}`;
+
   const queryOptions = {
     type: sequelize.QueryTypes.SELECT,
   };
+  const magazines = await sequelize.query(query, queryOptions);
 
-  let languages = await sequelize.query(langQuery, queryOptions);
-  languages = languages.map((l) => l.language);
-  languages.unshift("English");
-
-  return languages;
+  return magazines;
 };
 
-module.exports = { fetchLanguages };
+module.exports = { getMostRecentMagazines };

@@ -6,6 +6,7 @@
  */
 
 const magazines = require("../db/magazines");
+const { getMostRecentMagazines } = require("../db/raw-sql");
 
 /*
   POST /magazines
@@ -63,7 +64,7 @@ function getAllMagazines(context) {
 /*
   GET /magazines/withIssues
 
-  Returns all magazine titles with nested issue information. Return value is an
+  Returns all magazine records with nested issue information. Return value is an
   object with keys "count" (the count of all magazine titles) and "magazines",
   an array of the magazines themselves. The returned list may be governed by
   parameters in the query. If so, the count will reflect all records that match
@@ -77,6 +78,31 @@ function getAllMagazinesWithIssues(context) {
     .fetchAllMagazinesWithIssueNumbersAndCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
+    })
+    .catch((error) => {
+      res.status(500).pureJson({
+        error: {
+          summary: error.name,
+          description: error.message,
+        },
+      });
+    });
+}
+
+/*
+  GET /magazines/mostRecentlyUpdated
+
+  Returns a list of magazine records that are reverse-sorted by the createdAt
+  field of their newest-added issue record. Defaults to all records returned,
+  unless the "count" query parameter is given.
+ */
+function getMostRecentUpdatedMagazines(context) {
+  const query = context.params.query;
+  const res = context.res;
+
+  return getMostRecentMagazines(query.count)
+    .then((magazines) => {
+      res.status(200).pureJson({ magazines });
     })
     .catch((error) => {
       res.status(500).pureJson({
@@ -232,6 +258,7 @@ module.exports = {
   createMagazine,
   getAllMagazines,
   getAllMagazinesWithIssues,
+  getMostRecentUpdatedMagazines,
   getMagazineById,
   updateMagazineById,
   deleteMagazineById,

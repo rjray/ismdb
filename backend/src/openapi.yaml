@@ -46,10 +46,19 @@ components:
       name: preferred
       in: query
       description: Preferred language, will be moved to the head of the
-        returned list of languages.
+        returned list of languages
       required: false
       schema:
         type: string
+    countParam:
+      name: count
+      in: query
+      description: A count parameter for operations that limit by count
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
   schemas:
     idType:
       type: integer
@@ -848,6 +857,35 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/magazineWithIssuesType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Magazines
+  "/magazines/getMostRecentlyUpdated":
+    x-exegesis-controller: magazinesController
+    get:
+      summary: Fetch the most-recently-added-to magazines
+      description: Fetch a number of magazines that have been most-recently
+        added to.
+      operationId: getMostRecentUpdatedMagazines
+      parameters:
+        - $ref: "#/components/parameters/countParam"
+      responses:
+        "200":
+          description: Most-recently-added-to magazines in descending order
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - magazines
+                properties:
+                  magazines:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/magazineType"
                   notifications:
                     $ref: "#/components/schemas/notificationsType"
         default:
