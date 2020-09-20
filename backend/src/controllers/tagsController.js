@@ -6,6 +6,7 @@
  */
 
 const tags = require("../db/tags");
+const { fixupOrderField } = require("../lib/utils");
 
 /*
   POST /tags
@@ -44,6 +45,10 @@ function getAllTags(context) {
   const query = context.params.query;
   const res = context.res;
 
+  if (query.order) {
+    query.order = fixupOrderField(query.order);
+  }
+
   return tags
     .fetchAllTagsWithCount(query)
     .then((results) => {
@@ -71,6 +76,10 @@ function getAllTags(context) {
 function getAllTagsWithRefCount(context) {
   const query = context.params.query;
   const res = context.res;
+
+  if (query.order) {
+    query.order = fixupOrderField(query.order);
+  }
 
   return tags
     .fetchAllTagsWithRefCountAndCount(query)

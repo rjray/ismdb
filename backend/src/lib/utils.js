@@ -67,6 +67,15 @@ const fixAggregateOrderFields = (sequelize, arr, fields) => {
   });
 };
 
+// Fix up the "order" parameter from the flat array of strings into an array
+// that has nested arrays when an ordering field has a direction included.
+const fixupOrderField = (order) => {
+  return order.map((str) => {
+    const vals = str.split(",");
+    return vals.length === 1 ? vals[0] : vals;
+  });
+};
+
 module.exports = {
   compareVersion,
   createStringGetter,
@@ -74,4 +83,5 @@ module.exports = {
   objectifyError,
   sortBy,
   fixAggregateOrderFields,
+  fixupOrderField,
 };

@@ -6,6 +6,7 @@
  */
 
 const authors = require("../db/authors");
+const { fixupOrderField } = require("../lib/utils");
 
 /*
   POST /authors
@@ -45,6 +46,10 @@ function getAllAuthors(context) {
   const query = context.params.query;
   const res = context.res;
 
+  if (query.order) {
+    query.order = fixupOrderField(query.order);
+  }
+
   return authors
     .fetchAllAuthorsWithAliasesAndCount(query)
     .then((results) => {
@@ -71,6 +76,10 @@ function getAllAuthors(context) {
 function getAllAuthorsWithRefCount(context) {
   const query = context.params.query;
   const res = context.res;
+
+  if (query.order) {
+    query.order = fixupOrderField(query.order);
+  }
 
   return authors
     .fetchAllAuthorsWithRefcountAndCount(query)
@@ -100,6 +109,10 @@ function getAllAuthorsWithRefCount(context) {
 function getAuthorNamesAndAliases(context) {
   const query = context.params.query;
   const res = context.res;
+
+  if (query.order) {
+    query.order = fixupOrderField(query.order);
+  }
 
   return authors
     .fetchAuthorsNamesAliasesList(query)

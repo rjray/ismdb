@@ -6,6 +6,7 @@
  */
 
 const references = require("../db/references");
+const { fixupOrderField } = require("../lib/utils");
 
 /*
   POST /references
@@ -44,6 +45,10 @@ function createReference(context) {
 function getAllReferences(context) {
   const query = context.params.query;
   const res = context.res;
+
+  if (query.order) {
+    query.order = fixupOrderField(query.order);
+  }
 
   return references
     .fetchAllReferencesCompleteWithCount(query)
