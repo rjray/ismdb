@@ -8,35 +8,41 @@ const { INCLUDE_REFERENCES, cleanReference } = require("./references");
 
 // Basic tag request: just the requested tag.
 const fetchSingleTagSimple = async (id) => {
-  const tag = await Tag.findByPk(id).catch((error) => {
+  let tag = await Tag.findByPk(id).catch((error) => {
     throw new Error(error);
   });
 
-  return tag ? tag.get() : tag;
+  if (tag) {
+    tag = tag.get();
+  }
+
+  return tag;
 };
 
 // Fetch a specific tag with the count of associated references as "refcount".
 const fetchSingleTagWithRefCount = async (id) => {
-  const result = await Tag.findByPk(id, {
-    include: [
-      {
-        model: Reference,
-        as: "References",
-        attributes: ["id"],
-      },
-    ],
+  let tag = await Tag.findByPk(id, {
+    attributes: {
+      include: [
+        [
+          sequelize.literal(`(
+            SELECT COUNT(*)
+            FROM \`TagsReferences\`
+            WHERE \`tagId\` = Tag.\`id\`
+          )`),
+          "refcount",
+        ],
+      ],
+    },
   }).catch((error) => {
     throw new Error(error);
   });
 
-  if (result) {
-    const tag = result.get();
-    const refcount = tag.References.length;
-    delete tag.References;
-    return { tag, refcount };
-  } else {
-    return result;
+  if (tag) {
+    tag = tag.get();
   }
+
+  return tag;
 };
 
 // Fetch a specific tag with all the tagged references.
@@ -65,7 +71,6 @@ const fetchSingleTagWithReferences = async (id) => {
 const fetchAllTagsWithCount = async (opts = {}) => {
   const count = await Tag.count(opts);
   const results = await Tag.findAll({
-    order: ["name"],
     ...opts,
   }).catch((error) => {
     throw new Error(error);
@@ -82,26 +87,24 @@ const fetchAllTagsWithCount = async (opts = {}) => {
 const fetchAllTagsWithRefCountAndCount = async (opts = {}) => {
   const count = await Tag.count(opts);
   const results = await Tag.findAll({
-    order: ["name"],
-    include: [
-      {
-        model: Reference,
-        as: "References",
-        attributes: ["id"],
-      },
-    ],
+    attributes: {
+      include: [
+        [
+          sequelize.literal(`(
+            SELECT COUNT(*)
+            FROM \`TagsReferences\`
+            WHERE \`tagId\` = Tag.\`id\`
+          )`),
+          "refcount",
+        ],
+      ],
+    },
     ...opts,
   }).catch((error) => {
     throw new Error(error);
   });
 
-  const tags = results.map((tag) => {
-    tag = tag.get();
-    tag.refcount = tag.References.length;
-    delete tag.References;
-
-    return tag;
-  });
+  const tags = results.map((tag) => tag.get());
 
   return { count, tags };
 };
