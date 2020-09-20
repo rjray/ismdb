@@ -2,7 +2,7 @@
  * All database operations that focus on tags.
  */
 
-const { Reference, Tag, sequelize } = require("../models");
+const { Tag, sequelize } = require("../models");
 
 const { INCLUDE_REFERENCES, cleanReference } = require("./references");
 
