@@ -32,7 +32,7 @@ const TopTags = ({ count }) => {
   return (
     <>
       <div>
-        <em>Top {count} most-recently-updated magazines:</em>
+        <em>Top {count} magazines:</em>
       </div>
       <div>
         <Form style={{ width: "50%", margin: "auto" }}>
