@@ -21,9 +21,9 @@ async function createServer() {
   );
 
   const app = express();
+  app.use(cors());
   app.use(exegesis);
   app.use(helmet());
-  app.use(cors());
   app.use((_, res) => {
     res.status(404).json({ message: "Not found" });
   });
@@ -37,7 +37,7 @@ async function createServer() {
 }
 
 createServer()
-  .then(server => {
+  .then((server) => {
     server.listen(port);
     console.log(`Listening on port ${port}`);
   })
