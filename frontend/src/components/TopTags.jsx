@@ -32,7 +32,7 @@ const TopTags = ({ count }) => {
   return (
     <>
       <div>
-        <em>Top {count} most-used tags:</em>
+        <em>Top {count} tags:</em>
       </div>
       <div>
         <Form style={{ width: "50%", margin: "auto" }}>
