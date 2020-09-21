@@ -12,6 +12,13 @@ module.exports = {
           fields: ["referenceId"],
           name: "authors_references_reference",
         });
+      })
+      .then(() => {
+        return queryInterface.addConstraint("AuthorsReferences", {
+          fields: ["authorId", "referenceId"],
+          name: "authors_references_unique",
+          type: "unique",
+        });
       });
   },
 
@@ -22,6 +29,12 @@ module.exports = {
         return queryInterface.removeIndex(
           "AuthorsReferences",
           "authors_references_reference"
+        );
+      })
+      .then(() => {
+        return queryInterface.removeConstraint(
+          "AuthorsReferences",
+          "authors_references_unique"
         );
       });
   },
