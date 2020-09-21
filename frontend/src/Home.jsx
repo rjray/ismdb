@@ -6,6 +6,9 @@ import Form from "react-bootstrap/Form";
 import CardDeck from "react-bootstrap/CardDeck";
 
 import HomeSearch from "./components/HomeSearch";
+import TopTags from "./components/TopTags";
+import TopMagazines from "./components/TopMagazines";
+import TopAuthors from "./components/TopAuthors";
 
 const Home = () => (
   <Container fluid>
@@ -17,9 +20,21 @@ const Home = () => (
     <Row>
       <Col xs={12}>
         <CardDeck>
-          <HomeSearch title="References" link="/references/search" />
-          <HomeSearch title="Magazines" link="/magazines/search" />
-          <HomeSearch title="Authors" link="/authors/search" />
+          <HomeSearch
+            title="References"
+            link="/references/search"
+            component={TopTags}
+          />
+          <HomeSearch
+            title="Magazines"
+            link="/magazines/search"
+            component={TopMagazines}
+          />
+          <HomeSearch
+            title="Authors"
+            link="/authors/search"
+            component={TopAuthors}
+          />
         </CardDeck>
       </Col>
     </Row>

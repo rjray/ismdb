@@ -6,21 +6,15 @@ import Header from "./Header";
 
 const HomeSearch = ({ title, copy, link, component: C, ...rest }) => (
   <Card>
-    <Card.Body>
-      <Card.Text className="mb-0" style={{ textAlign: "center" }}>
-        Search in
-      </Card.Text>
-      <Card.Title className="text-center">
+    <Card.Body className="text-center">
+      <Card.Text className="mb-0">Search in</Card.Text>
+      <Card.Title>
         <Link to={{ pathname: link }}>
           <Header>{title}</Header>
         </Link>
       </Card.Title>
       {copy && <Card.Text>{copy}</Card.Text>}
-      {C && (
-        <Card.Text>
-          <C {...rest} />
-        </Card.Text>
-      )}
+      <div class="mt-5">{C && <C {...rest} />}</div>
     </Card.Body>
   </Card>
 );
