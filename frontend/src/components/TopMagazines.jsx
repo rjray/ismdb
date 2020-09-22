@@ -5,11 +5,11 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 
 import apiEndpoint from "../utils/api-endpoint";
 
-const TopTags = ({ count }) => {
-  if (!count) count = 10;
+const TopTags = () => {
+  const count = 10;
   const url = `${apiEndpoint}/api/magazines/getMostRecentlyUpdated?count=${count}`;
 
-  const { isLoading, error, data } = useQuery(["TopMagazines", count], () => {
+  const { isLoading, error, data } = useQuery(["Top Magazines"], () => {
     return fetch(url).then((res) => res.json());
   });
 

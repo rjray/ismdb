@@ -5,8 +5,8 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 
 import apiEndpoint from "../utils/api-endpoint";
 
-const TopTags = ({ count }) => {
-  if (!count) count = 10;
+const TopTags = () => {
+  const count = 10;
   const params = [
     `limit=${count}`,
     "order=refcount,desc",
@@ -15,7 +15,7 @@ const TopTags = ({ count }) => {
   ];
   const url = `${apiEndpoint}/api/tags/withRefCount?${params.join("&")}`;
 
-  const { isLoading, error, data } = useQuery(["TopTags", count], () => {
+  const { isLoading, error, data } = useQuery(["Top Tags"], () => {
     return fetch(url).then((res) => res.json());
   });
 
