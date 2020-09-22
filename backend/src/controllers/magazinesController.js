@@ -7,7 +7,7 @@
 
 const magazines = require("../db/magazines");
 const { getMostRecentMagazines } = require("../db/raw-sql");
-const { fixupOrderField } = require("../lib/utils");
+const { fixupOrderField, fixupWhereField } = require("../lib/utils");
 
 /*
   POST /magazines
@@ -50,6 +50,9 @@ function getAllMagazines(context) {
   if (query.order) {
     query.order = fixupOrderField(query.order);
   }
+  if (query.where) {
+    query.where = fixupWhereField(query.where);
+  }
 
   return magazines
     .fetchAllMagazinesWithIssueCountAndCount(query)
@@ -81,6 +84,9 @@ function getAllMagazinesWithIssues(context) {
 
   if (query.order) {
     query.order = fixupOrderField(query.order);
+  }
+  if (query.where) {
+    query.where = fixupWhereField(query.where);
   }
 
   return magazines

@@ -4,6 +4,8 @@
 
 "use strict";
 
+const { Op } = require("sequelize");
+
 // Adapted from https://helloacm.com/the-javascript-function-to-compare-version-number-strings/
 const compareVersion = (a, b) => {
   if (typeof a !== "string") return false;
@@ -76,6 +78,28 @@ const fixupOrderField = (order) => {
   });
 };
 
+// Fix up the "where" parameter from the flat array of strings into a keyed
+// nested object for the clauses.
+const fixupWhereField = (where) => {
+  const value = where.reduce((acc, clause) => {
+    const vals = clause.split(",");
+    if (vals.length === 1) {
+      acc.push({ [vals[0]]: { [Op.not]: null } });
+    } else if (vals.length === 2) {
+      acc.push({ [vals[0]]: { [Op.eq]: vals[1] } });
+    } else {
+      if (!Op.hasOwnProperty(vals[1]))
+        throw new Error(`Unknown operand '${vals[1]}'`);
+      const val = vals.length > 3 ? vals.slice(2) : vals[2];
+      acc.push({ [vals[0]]: { [Op[vals[1]]]: val } });
+    }
+
+    return acc;
+  }, []);
+
+  return { [Op.and]: value };
+};
+
 module.exports = {
   compareVersion,
   createStringGetter,
@@ -84,4 +108,5 @@ module.exports = {
   sortBy,
   fixAggregateOrderFields,
   fixupOrderField,
+  fixupWhereField,
 };

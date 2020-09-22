@@ -35,6 +35,17 @@ components:
           type: string
       style: form
       explode: true
+    whereParam:
+      name: where
+      in: query
+      description: Fields to search on
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+      style: form
+      explode: true
     idParam:
       name: id
       in: path
@@ -532,6 +543,7 @@ paths:
         - $ref: "#/components/parameters/offsetParam"
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/whereParam"
       responses:
         "200":
           description: All authors
@@ -566,6 +578,7 @@ paths:
         - $ref: "#/components/parameters/offsetParam"
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/whereParam"
       responses:
         "200":
           description: All authors with reference counts
@@ -600,6 +613,7 @@ paths:
         - $ref: "#/components/parameters/offsetParam"
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/whereParam"
       responses:
         "200":
           description: All author names and aliases
@@ -806,6 +820,7 @@ paths:
         - $ref: "#/components/parameters/offsetParam"
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/whereParam"
       responses:
         "200":
           description: All magazines
@@ -840,6 +855,7 @@ paths:
         - $ref: "#/components/parameters/offsetParam"
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/whereParam"
       responses:
         "200":
           description: All magazines with issues
@@ -1152,6 +1168,7 @@ paths:
         - $ref: "#/components/parameters/offsetParam"
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/whereParam"
       responses:
         "200":
           description: All references
@@ -1295,6 +1312,7 @@ paths:
         - $ref: "#/components/parameters/offsetParam"
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/whereParam"
       responses:
         "200":
           description: All tags
@@ -1329,6 +1347,7 @@ paths:
         - $ref: "#/components/parameters/offsetParam"
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/whereParam"
       responses:
         "200":
           description: All tags with reference counts

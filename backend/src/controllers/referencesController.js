@@ -49,6 +49,9 @@ function getAllReferences(context) {
   if (query.order) {
     query.order = fixupOrderField(query.order);
   }
+  if (query.where) {
+    query.where = fixupWhereField(query.where);
+  }
 
   return references
     .fetchAllReferencesCompleteWithCount(query)
