@@ -31,7 +31,7 @@ const TopTags = () => {
 
   return (
     <>
-      <div>
+      <div className="mb-2">
         <em>Top {count} authors:</em>
       </div>
       <div style={{ width: "50%", margin: "auto" }}>
