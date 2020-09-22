@@ -311,6 +311,8 @@ sub migrate_reference_table {
         # 'keywords' is field 6:
         my @tags = keywords2tags($base[6]);
         for my $tag (@tags) {
+            # "review" was moved to reference's type field:
+            next if ($tag eq 'review');
             if (! $TAGS{$tag}) {
                 $sth_tag->execute($tag);
                 $TAGS{$tag} = $sth_tag->{mysql_insertid};
