@@ -1,6 +1,7 @@
 import React from "react";
 import { useQuery } from "react-query";
-import Form from "react-bootstrap/Form";
+import FormControl from "react-bootstrap/FormControl";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 import apiEndpoint from "../utils/api-endpoint";
 
@@ -13,10 +14,9 @@ const TopTags = ({ count }) => {
   });
 
   if (isLoading) {
-    console.log("Loading....");
     return (
       <div>
-        <em>Loading...</em>
+        <ScaleLoader />
       </div>
     );
   }
@@ -34,17 +34,15 @@ const TopTags = ({ count }) => {
       <div>
         <em>Top {count} authors:</em>
       </div>
-      <div>
-        <Form style={{ width: "50%", margin: "auto" }}>
-          <Form.Control as="select">
-            <option value="0">-- Select --</option>
-            {data.authors.map((author) => (
-              <option key={author.id} value={author.id}>
-                {`${author.name} (${author.refcount})`}
-              </option>
-            ))}
-          </Form.Control>
-        </Form>
+      <div style={{ width: "50%", margin: "auto" }}>
+        <FormControl as="select">
+          <option value="0">-- Select --</option>
+          {data.authors.map((author) => (
+            <option key={author.id} value={author.id}>
+              {`${author.name} (${author.refcount})`}
+            </option>
+          ))}
+        </FormControl>
       </div>
     </>
   );
