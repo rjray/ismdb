@@ -4,6 +4,7 @@ import FormControl from "react-bootstrap/FormControl";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
 import apiEndpoint from "../utils/api-endpoint";
+import "../styles/select-css.css";
 
 const TopTags = ({ count }) => {
   if (!count) count = 10;
@@ -35,7 +36,7 @@ const TopTags = ({ count }) => {
         <em>Top {count} magazines:</em>
       </div>
       <div style={{ width: "50%", margin: "auto" }}>
-        <FormControl as="select">
+        <FormControl as="select" className="select-css">
           <option value="0">-- Select --</option>
           {data.magazines.map((magazine) => (
             <option key={magazine.id} value={magazine.id}>
