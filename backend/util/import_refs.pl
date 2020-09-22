@@ -106,6 +106,7 @@ sub setup_meta_tags {
         }
 
         $dbhout->commit;
+        return $id;
     };
     if (! $result) {
         my $err = $@;
@@ -114,6 +115,26 @@ sub setup_meta_tags {
     }
 
     print scalar(keys %META_TAGS) . " meta tags seeded to Tags\n";
+
+    my @nationalities = <DATA>;
+    chomp @nationalities;
+    my $result2 = eval {
+        my $id = $result;
+        for my $tag (@nationalities) {
+            $sth->execute(++$id, $tag, q{}, 'nationality');
+            $TAGS{$tag} = $id;
+        }
+
+        $dbhout->commit;
+        return 1;
+    };
+    if (! $result2) {
+        my $err = $@;
+        $dbhout->rollback;
+        die "failure in setup_meta_tags: $err\n";
+    }
+
+    print scalar(@nationalities) . " nationality tags seeded to Tags\n";
 
     return;
 }
@@ -457,6 +478,15 @@ sub keywords2tags {
                 splice @keywords, 0, 1, $general, $type;
             }
         }
+        if ($keywords[0] eq 'luftwaffe') {
+            push @keywords, 'german';
+        }
+        if ($keywords[0] =~ /^i[ad]f/) {
+            push @keywords, 'israeli';
+        }
+        if ($keywords[0] eq 'soviet') {
+            $keywords[0] = 'russian';
+        }
         for my $word (@keywords) {
             next if (! $word);
             if ($word eq 'ship') {
@@ -471,3 +501,37 @@ sub keywords2tags {
 
     return @tags;
 }
+
+__END__
+australian
+austrian
+belgian
+chinese
+czech
+finnish
+french
+german
+greek
+indian
+iranian
+iraqi
+irish
+israeli
+italian
+japanese
+libyan
+mexican
+dutch
+pakistani
+palestinian
+polish
+russian
+saudi
+scottish
+spanish
+swedish
+swiss
+syrian
+turkish
+ukrainian
+british
