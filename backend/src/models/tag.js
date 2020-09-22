@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         set: createStringSetter("description"),
       },
       type: {
-        type: DataTypes.STRING(10),
+        type: DataTypes.STRING(15),
         get: createStringGetter("type"),
         set: createStringSetter("type"),
       },

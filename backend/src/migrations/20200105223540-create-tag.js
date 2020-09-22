@@ -18,7 +18,7 @@ module.exports = {
         type: Sequelize.STRING(255),
       },
       type: {
-        type: Sequelize.STRING(10),
+        type: Sequelize.STRING(15),
       },
     });
   },
