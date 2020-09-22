@@ -4,7 +4,6 @@ import FormControl from "react-bootstrap/FormControl";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
 import apiEndpoint from "../utils/api-endpoint";
-import "../styles/select-css.css";
 
 const TopTags = ({ count }) => {
   if (!count) count = 10;
