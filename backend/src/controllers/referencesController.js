@@ -8,6 +8,8 @@
 const references = require("../db/references");
 const { fixupOrderField } = require("../lib/utils");
 
+const canBeNull = new Set(["isbn", "language"]);
+
 /*
   POST /references
 
@@ -50,7 +52,7 @@ function getAllReferences(context) {
     query.order = fixupOrderField(query.order);
   }
   if (query.where) {
-    query.where = fixupWhereField(query.where);
+    query.where = fixupWhereField(query.where, canBeNull);
   }
 
   return references

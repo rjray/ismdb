@@ -8,6 +8,8 @@
 const tags = require("../db/tags");
 const { fixupOrderField, fixupWhereField } = require("../lib/utils");
 
+const canBeNull = new Set(["description", "type"]);
+
 /*
   POST /tags
 
@@ -49,7 +51,7 @@ function getAllTags(context) {
     query.order = fixupOrderField(query.order);
   }
   if (query.where) {
-    query.where = fixupWhereField(query.where);
+    query.where = fixupWhereField(query.where, canBeNull);
   }
 
   return tags
@@ -84,7 +86,7 @@ function getAllTagsWithRefCount(context) {
     query.order = fixupOrderField(query.order);
   }
   if (query.where) {
-    query.where = fixupWhereField(query.where);
+    query.where = fixupWhereField(query.where, canBeNull);
   }
 
   return tags
