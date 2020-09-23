@@ -5,6 +5,7 @@
 "use strict";
 
 const { Op } = require("sequelize");
+const { sequelize } = require("../models");
 
 // Adapted from https://helloacm.com/the-javascript-function-to-compare-version-number-strings/
 const compareVersion = (a, b) => {
@@ -23,19 +24,6 @@ const compareVersion = (a, b) => {
     if (a[i] < b[i]) return -1;
   }
   return a.length == b.length ? 0 : a.length < b.length ? -1 : 1;
-};
-
-const createStringGetter = (field) => {
-  return function () {
-    let value = this.getDataValue(field);
-    return value || "";
-  };
-};
-
-const createStringSetter = (field) => {
-  return function (value) {
-    this.setDataValue(field, value || null);
-  };
 };
 
 const objectifyError = (error) => {
@@ -80,7 +68,7 @@ const fixupOrderField = (order) => {
 
 // Fix up the "where" parameter from the flat array of strings into a keyed
 // nested object for the clauses.
-const fixupWhereField = (where) => {
+const fixupWhereField = (where, canBeNull = new Set()) => {
   const value = where.reduce((acc, clause) => {
     const vals = clause.split(",");
     if (vals.length === 1) {
@@ -90,8 +78,19 @@ const fixupWhereField = (where) => {
     } else {
       if (!Op.hasOwnProperty(vals[1]))
         throw new Error(`Unknown operand '${vals[1]}'`);
+
       const val = vals.length > 3 ? vals.slice(2) : vals[2];
-      acc.push({ [vals[0]]: { [Op[vals[1]]]: val } });
+      if (canBeNull.has(vals[0]) && (vals[1] === "ne" || vals[1] === "notIn")) {
+        acc.push(
+          sequelize.where(
+            sequelize.fn("COALESCE", sequelize.col(vals[0]), ""),
+            Op[vals[1]],
+            val
+          )
+        );
+      } else {
+        acc.push({ [vals[0]]: { [Op[vals[1]]]: val } });
+      }
     }
 
     return acc;
@@ -102,8 +101,6 @@ const fixupWhereField = (where) => {
 
 module.exports = {
   compareVersion,
-  createStringGetter,
-  createStringSetter,
   objectifyError,
   sortBy,
   fixAggregateOrderFields,
