@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "react-query";
-import FormControl from "react-bootstrap/FormControl";
+import Dropdown from "react-bootstrap/Dropdown";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
 import apiEndpoint from "../utils/api-endpoint";
@@ -34,16 +34,17 @@ const TopTags = () => {
       <div className="mb-2">
         <em>Top {count} magazines:</em>
       </div>
-      <div style={{ width: "50%", margin: "auto" }}>
-        <FormControl as="select" className="select-css">
-          <option value="0">-- Select --</option>
+      <Dropdown style={{ width: "50%", margin: "auto" }}>
+        <Dropdown.Toggle style={{ width: "100%" }} id="top-magazines-dropdown">
+          Select magazine to view
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu>
           {data.magazines.map((magazine) => (
-            <option key={magazine.id} value={magazine.id}>
-              {magazine.name}
-            </option>
+            <Dropdown.Item key={magazine.id}>{magazine.name}</Dropdown.Item>
           ))}
-        </FormControl>
-      </div>
+        </Dropdown.Menu>
+      </Dropdown>
     </>
   );
 };

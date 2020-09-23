@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "react-query";
-import FormControl from "react-bootstrap/FormControl";
+import Dropdown from "react-bootstrap/Dropdown";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
 import apiEndpoint from "../utils/api-endpoint";
@@ -40,17 +40,19 @@ const TopTags = () => {
       <div className="mb-2">
         <em>Top {count} tags:</em>
       </div>
-      <div style={{ width: "50%", margin: "auto" }}>
-        <FormControl as="select" className="select-css">
-          <option value="0">-- Select --</option>
+      <Dropdown style={{ width: "50%", margin: "auto" }}>
+        <Dropdown.Toggle style={{ width: "100%" }} id="top-tags-dropdown">
+          Select tag to view
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu>
           {data.tags.map((tag) => (
-            <option
-              key={tag.id}
-              value={tag.id}
-            >{`${tag.name} (${tag.refcount})`}</option>
+            <Dropdown.Item key={tag.id}>
+              {tag.name} <em>({tag.refcount})</em>
+            </Dropdown.Item>
           ))}
-        </FormControl>
-      </div>
+        </Dropdown.Menu>
+      </Dropdown>
     </>
   );
 };
