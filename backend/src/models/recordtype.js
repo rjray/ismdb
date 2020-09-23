@@ -1,7 +1,5 @@
 "use strict";
 
-const { createStringGetter, createStringSetter } = require("../lib/utils");
-
 module.exports = (sequelize, DataTypes) => {
   const RecordType = sequelize.define(
     "RecordType",
@@ -16,8 +14,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       notes: {
         type: DataTypes.STRING(255),
-        get: createStringGetter("notes"),
-        set: createStringSetter("notes"),
       },
     },
     { timestamps: false }
