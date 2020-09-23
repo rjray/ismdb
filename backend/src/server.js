@@ -4,6 +4,7 @@ const port = process.env.PORT || 3000;
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
+const compression = require("compression");
 const exegesisExpress = require("exegesis-express");
 const http = require("http");
 const path = require("path");
@@ -21,6 +22,8 @@ async function createServer() {
   );
 
   const app = express();
+  app.disable("x-powered-by");
+  app.use(compression());
   app.use(cors());
   app.use(exegesis);
   app.use(helmet());
