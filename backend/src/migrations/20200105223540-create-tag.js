@@ -16,11 +16,9 @@ module.exports = {
       },
       description: {
         type: Sequelize.STRING(255),
-        defaultValue: "",
       },
       type: {
         type: Sequelize.STRING(15),
-        defaultValue: "",
       },
     });
   },
