@@ -14,7 +14,7 @@ const HomeSearch = ({ title, copy, link, component: C, ...rest }) => (
         </Link>
       </Card.Title>
       {copy && <Card.Text>{copy}</Card.Text>}
-      <div class="mt-5">{C && <C {...rest} />}</div>
+      <div className="mt-5">{C && <C {...rest} />}</div>
     </Card.Body>
   </Card>
 );
