@@ -46,18 +46,30 @@ const fetchSingleMagazineComplete = async (id) => {
 // Get all magazines, with a count of their issues and a count of the total
 // matching magazine records.
 const fetchAllMagazinesWithIssueCountAndCount = async (opts = {}) => {
-  const count = await Magazine.count(opts);
+  const optsNoOrder = { ...opts };
+  if (opts.order) {
+    delete optsNoOrder.order;
+    opts.order = fixAggregateOrderFields(sequelize, opts.order, ["issuecount"]);
+  }
+
+  const count = await Magazine.count(optsNoOrder);
   const results = await Magazine.findAll({
-    include: [{ model: MagazineIssue, attributes: ["id"] }],
+    attributes: {
+      include: [
+        [
+          sequelize.literal(`(
+            SELECT COUNT(*)
+            FROM \`MagazineIssues\`
+            WHERE \`magazineId\` = Magazine.\`id\`
+          )`),
+          "issuecount",
+        ],
+      ],
+    },
     ...opts,
   });
 
-  const magazines = results.map((magazine) => {
-    magazine = magazine.get();
-    magazine.issues = magazine.MagazineIssues.length;
-    delete magazine.MagazineIssues;
-    return magazine;
-  });
+  const magazines = results.map((magazine) => magazine.get());
 
   return { count, magazines };
 };

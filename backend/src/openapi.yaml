@@ -235,6 +235,13 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/abbreviatedMagazineIssueType"
+    magazineWithIssueCountType:
+      allOf:
+        - $ref: "#/components/schemas/magazineType"
+        - type: object
+          properties:
+            issuecount:
+              $ref: "#/components/schemas/countType"
     magazineWithIssuesAndReferencesType:
       allOf:
         - $ref: "#/components/schemas/magazineType"
@@ -837,7 +844,7 @@ paths:
                   magazines:
                     type: array
                     items:
-                      $ref: "#/components/schemas/magazineType"
+                      $ref: "#/components/schemas/magazineWithIssueCountType"
                   notifications:
                     $ref: "#/components/schemas/notificationsType"
         default:
