@@ -180,7 +180,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/authorAliasType"
-    authorWithRefcountType:
+    authorWithRefCountType:
       allOf:
         - $ref: "#/components/schemas/authorType"
         - type: object
@@ -191,7 +191,7 @@ components:
               $ref: "#/components/schemas/countType"
     authorWithRefsAndAliasesType:
       allOf:
-        - $ref: "#/components/schemas/authorWithRefcountType"
+        - $ref: "#/components/schemas/authorWithRefCountType"
         - type: object
           required:
             - references
@@ -595,7 +595,7 @@ paths:
                   authors:
                     type: array
                     items:
-                      $ref: "#/components/schemas/authorWithRefcountType"
+                      $ref: "#/components/schemas/authorWithRefCountType"
                   notifications:
                     $ref: "#/components/schemas/notificationsType"
         default:
@@ -743,7 +743,7 @@ paths:
                   - author
                 properties:
                   author:
-                    $ref: "#/components/schemas/authorWithRefcountType"
+                    $ref: "#/components/schemas/authorWithRefCountType"
                   notifications:
                     $ref: "#/components/schemas/notificationsType"
         "404":

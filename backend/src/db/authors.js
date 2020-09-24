@@ -106,7 +106,7 @@ const fetchAllAuthorsWithAliasesAndCount = async (opts = {}) => {
 
 // Fetch all authors along with a count of how many references they're credited
 // on. Returns the same shape of object as above.
-const fetchAllAuthorsWithRefcountAndCount = async (opts = {}) => {
+const fetchAllAuthorsWithRefCountAndCount = async (opts = {}) => {
   const optsNoOrder = { ...opts };
   if (opts.order) {
     delete optsNoOrder.order;
@@ -264,7 +264,7 @@ module.exports = {
   fetchSingleAuthorWithRefCount,
   fetchSingleAuthorComplex,
   fetchAllAuthorsWithAliasesAndCount,
-  fetchAllAuthorsWithRefcountAndCount,
+  fetchAllAuthorsWithRefCountAndCount,
   fetchAuthorsNamesAliasesList,
   createAuthor,
   updateAuthor,

@@ -88,7 +88,7 @@ function getAllAuthorsWithRefCount(context) {
   }
 
   return authors
-    .fetchAllAuthorsWithRefcountAndCount(query)
+    .fetchAllAuthorsWithRefCountAndCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })
