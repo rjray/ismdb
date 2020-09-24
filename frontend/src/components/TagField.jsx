@@ -12,7 +12,7 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 import apiEndpoint from "../utils/api-endpoint";
 import { sortBy } from "../utils/no-lodash";
 
-const fontSize = (weight) => `${(Math.log10(weight) * 8).toFixed(1)}pt`;
+const fontSize = (weight) => `${(Math.log10(weight) * 75).toFixed(1)}%`;
 
 const TagWord = ({ id, name, description, refcount, includeSpace }) => {
   const tooltip = description ? (
@@ -99,13 +99,17 @@ const TagField = () => {
               {sortByName ? (
                 <strong>name</strong>
               ) : (
-                <Link onClick={() => setSortByName(true)}>name</Link>
+                <Link to="" onClick={() => setSortByName(true)}>
+                  name
+                </Link>
               )}
               {" | "}
               {!sortByName ? (
                 <strong>count</strong>
               ) : (
-                <Link onClick={() => setSortByName(false)}>count</Link>
+                <Link to="" onClick={() => setSortByName(false)}>
+                  count
+                </Link>
               )}
             </Col>
             <Col
