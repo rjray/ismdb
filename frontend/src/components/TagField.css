@@ -1,0 +1,17 @@
+.tag-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  line-height: 1.2;
+}
+
+.tag-word {
+  flex: 1;
+  flex-basis: content;
+  text-align: center;
+  white-space: nowrap;
+  padding: 0 0.25rem;
+  margin: 0;
+  /* border: thin solid black; */
+}

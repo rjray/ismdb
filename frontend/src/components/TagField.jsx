@@ -11,6 +11,7 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 
 import apiEndpoint from "../utils/api-endpoint";
 import { sortBy } from "../utils/no-lodash";
+import "./TagField.css";
 
 const fontSize = (weight) => `${(Math.log10(weight) * 75).toFixed(1)}%`;
 
@@ -27,14 +28,13 @@ const TagWord = ({ id, name, description, refcount, includeSpace }) => {
   name = name.replace(/ /g, String.fromCharCode(160));
 
   return (
-    <>
+    <div className="tag-word">
       <OverlayTrigger overlay={<Tooltip id={`tag-${id}`}>{tooltip}</Tooltip>}>
         <Link to={{ pathname: `/tags/${id}` }}>
           <span style={{ fontSize: fontSize(refcount) }}>{name}</span>
         </Link>
       </OverlayTrigger>
-      {includeSpace && " "}
-    </>
+    </div>
   );
 };
 
@@ -84,11 +84,11 @@ const TagField = () => {
     <>
       <Row xs={12} sm={{ span: 6, offset: 3 }}>
         <Col>
-          <p style={{ textAlign: "justify", textJustify: "inter-word" }}>
+          <div className="tag-field">
             {data.tags.map((tag, idx) => (
               <TagWord key={idx} {...tag} includeSpace={idx < count} />
             ))}
-          </p>
+          </div>
         </Col>
       </Row>
       <Row xs={12} sm={{ span: 6, offset: 3 }}>
