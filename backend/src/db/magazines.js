@@ -73,7 +73,6 @@ const fetchAllMagazinesWithIssueNumbersAndCount = async (opts = {}) => {
 
   const magazines = results.map((magazine) => {
     magazine = magazine.get();
-    console.log(magazine.name);
     magazine.issues = magazine.MagazineIssues;
     delete magazine.MagazineIssues;
 
