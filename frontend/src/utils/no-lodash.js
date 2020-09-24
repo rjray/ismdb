@@ -16,4 +16,8 @@ export const isEmpty = (obj) =>
   [Object, Array].includes((obj || {}).constructor) &&
   !Object.entries(obj || {}).length;
 
-export default { chunk, isEmpty };
+export const sortBy = (key) => {
+  return (a, b) => (a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0);
+};
+
+export default { chunk, isEmpty, sortBy };
