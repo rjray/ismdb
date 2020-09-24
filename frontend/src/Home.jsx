@@ -9,6 +9,7 @@ import HomeSearch from "./components/HomeSearch";
 import TopTags from "./components/TopTags";
 import TopMagazines from "./components/TopMagazines";
 import TopAuthors from "./components/TopAuthors";
+import TagField from "./components/TagField";
 
 const Home = () => (
   <Container fluid>
@@ -39,15 +40,18 @@ const Home = () => (
       </Col>
     </Row>
     <Row className="mt-4">
-      <Col xs={12} sm={3}></Col>
-      <Col className="mx-auto" xs={12} sm={6}>
+      <Col className="mx-auto" xs={12} sm={{ offset: 3, span: 6 }}>
         <Form.Control
           className="mx-0 px=0"
           type="text"
           placeholder="Quick search by name"
         />
       </Col>
-      <Col xs={12} sm={3}></Col>
+    </Row>
+    <Row>
+      <Col xs={12} sm={{ offset: 3, span: 6 }}>
+        <TagField />
+      </Col>
     </Row>
   </Container>
 );
