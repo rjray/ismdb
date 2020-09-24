@@ -5,6 +5,8 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
 import apiEndpoint from "../utils/api-endpoint";
@@ -13,18 +15,24 @@ import { sortBy } from "../utils/no-lodash";
 const fontSize = (weight) => `${(Math.log10(weight) * 8).toFixed(1)}pt`;
 
 const TagWord = ({ id, name, description, refcount, includeSpace }) => {
-  const title = description
-    ? `${description} (${refcount} references)`
-    : `${refcount} references`;
+  const tooltip = description ? (
+    <div style={{ textAlign: "left" }}>
+      {description} <em>({refcount} references)</em>
+    </div>
+  ) : (
+    <div style={{ textAlign: "left" }}>
+      <em>({refcount} references)</em>
+    </div>
+  );
   name = name.replace(/ /g, String.fromCharCode(160));
 
   return (
     <>
-      <Link to={{ pathname: `/tags/show?tag=${id}` }}>
-        <span title={title} style={{ fontSize: fontSize(refcount) }}>
-          {name}
-        </span>
-      </Link>
+      <OverlayTrigger overlay={<Tooltip id={`tag-${id}`}>{tooltip}</Tooltip>}>
+        <Link to={{ pathname: `/tags/${id}` }}>
+          <span style={{ fontSize: fontSize(refcount) }}>{name}</span>
+        </Link>
+      </OverlayTrigger>
       {includeSpace && " "}
     </>
   );
