@@ -62,44 +62,25 @@ const fetchAllMagazinesWithIssueCountAndCount = async (opts = {}) => {
   return { count, magazines };
 };
 
-// LEGACY
-// Get all magazines, with a count of their issues.
-const fetchAllMagazinesWithIssueCount = async (opts = {}) => {
-  let magazines = await Magazine.findAll({
-    include: [{ model: MagazineIssue, attributes: ["id"] }],
-    ...opts,
-  });
-
-  magazines = magazines.map((magazine) => {
-    magazine = magazine.get();
-    magazine.issues = magazine.MagazineIssues.length;
-    delete magazine.MagazineIssues;
-    return magazine;
-  });
-
-  return magazines;
-};
-
 // Get all the magazines, along with all their issue numbers and a count of all
 // (matching) magazines.
 const fetchAllMagazinesWithIssueNumbersAndCount = async (opts = {}) => {
   const count = await Magazine.count(opts);
-  const magazines = await Magazine.findAll({
-    include: [{ model: MagazineIssue, attributes: ["number"] }],
+  const results = await Magazine.findAll({
+    include: [{ model: MagazineIssue, attributes: ["id", "number"] }],
     ...opts,
+  });
+
+  const magazines = results.map((magazine) => {
+    magazine = magazine.get();
+    console.log(magazine.name);
+    magazine.issues = magazine.MagazineIssues;
+    delete magazine.MagazineIssues;
+
+    return magazine;
   });
 
   return { count, magazines };
-};
-
-// LEGACY
-// Get all the magazines, along with all their issue numbers.
-const fetchAllMagazinesWithIssueNumbers = async (opts = {}) => {
-  return Magazine.findAll({
-    order: ["name"],
-    include: [{ model: MagazineIssue, attributes: ["number"] }],
-    ...opts,
-  });
 };
 
 // Create a new magazine using the content in data.
@@ -197,9 +178,7 @@ module.exports = {
   fetchSingleMagazineSimple,
   fetchSingleMagazineComplete,
   fetchAllMagazinesWithIssueCountAndCount,
-  fetchAllMagazinesWithIssueCount,
   fetchAllMagazinesWithIssueNumbersAndCount,
-  fetchAllMagazinesWithIssueNumbers,
   createMagazine,
   updateMagazine,
   deleteMagazine,

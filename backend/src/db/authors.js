@@ -142,50 +142,6 @@ const fetchAllAuthorsWithRefcountAndCount = async (opts = {}) => {
   return { count, authors };
 };
 
-// LEGACY
-// Fetch all authors along with a count of how many references they're credited
-// on.
-const fetchAllAuthorsWithRefcount = async (opts = {}) => {
-  let authors = await Author.findAll({
-    include: [
-      AuthorAlias,
-      { model: Reference, as: "References", attributes: ["id"] },
-    ],
-    ...opts,
-  });
-
-  authors = authors.map((author) => {
-    author = author.get();
-    author.aliases = convertAliases(author.AuthorAliases);
-    delete author.AuthorAliases;
-    author.refcount = author.References.length;
-    delete author.References;
-
-    return author;
-  });
-
-  return authors;
-};
-
-// LEGACY
-// Fetch all authors along with aliases.
-const fetchAllAuthorsWithAliases = async (opts = {}) => {
-  const allAuthors = await Author.findAll({
-    include: [AuthorAlias],
-    ...opts,
-  });
-
-  const authors = allAuthors.map((author) => {
-    author = author.get();
-    author.aliases = convertAliases(author.AuthorAliases);
-    delete author.AuthorAliases;
-
-    return author;
-  });
-
-  return authors;
-};
-
 // Fetch the author names and aliases, and create an alphabetized merged list
 // that points any alias records to the actual name.
 const fetchAuthorsNamesAliasesList = async (opts = {}) => {
@@ -307,8 +263,6 @@ module.exports = {
   fetchSingleAuthorSimple,
   fetchSingleAuthorWithRefCount,
   fetchSingleAuthorComplex,
-  fetchAllAuthorsWithRefcount,
-  fetchAllAuthorsWithAliases,
   fetchAllAuthorsWithAliasesAndCount,
   fetchAllAuthorsWithRefcountAndCount,
   fetchAuthorsNamesAliasesList,

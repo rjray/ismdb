@@ -62,29 +62,6 @@ function cleanReference(reference) {
   return reference;
 }
 
-// LEGACY
-// Most-basic reference request. Single reference, with only the RecordType and
-// (if relevant) MagazineIssue+Magazine joins.
-const fetchSingleReferenceSimple = async (id) => {
-  let reference = await Reference.findByPk(id, {
-    include: [RecordType, { model: MagazineIssue, include: [Magazine] }],
-  });
-
-  if (reference) {
-    reference = reference.get();
-
-    if (reference.MagazineIssue) {
-      reference.Magazine = reference.MagazineIssue.Magazine.get();
-      reference.MagazineIssue = reference.MagazineIssue.get();
-      delete reference.MagazineIssue.Magazine;
-    }
-
-    reference.RecordType = reference.RecordType.get();
-  }
-
-  return reference;
-};
-
 // Get a single reference with all ancillary data (type, magazine, authors).
 const fetchSingleReferenceComplete = async (id) => {
   let reference = await Reference.findByPk(id, {
@@ -106,31 +83,6 @@ const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
   const references = results.map((reference) => cleanReference(reference));
 
   return { count, references };
-};
-
-// LEGACY
-// Get all references with RecordType and Magazine info. Like calling
-// fetchSingleReferenceSimple() for all refs.
-const fetchAllReferencesSimple = async (opts = {}) => {
-  let references = await Reference.findAll({
-    include: [RecordType, { model: MagazineIssue, include: [Magazine] }],
-    ...opts,
-  });
-
-  references = references.map((item) => {
-    const reference = item.get();
-
-    if (reference.MagazineIssue) {
-      reference.Magazine = reference.MagazineIssue.Magazine.get();
-      reference.MagazineIssue = reference.MagazineIssue.get();
-      delete reference.MagazineIssue.Magazine;
-    }
-    reference.RecordType = reference.RecordType.get();
-
-    return reference;
-  });
-
-  return references;
 };
 
 // Create a new reference using the content in data.
@@ -307,10 +259,8 @@ const deleteReference = async (id) => {
 module.exports = {
   INCLUDE_REFERENCES,
   cleanReference,
-  fetchSingleReferenceSimple,
   fetchSingleReferenceComplete,
   fetchAllReferencesCompleteWithCount,
-  fetchAllReferencesSimple,
   createReference,
   updateReference,
   deleteReference,
