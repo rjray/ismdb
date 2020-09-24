@@ -177,6 +177,7 @@ const fetchSingleMagazineIssueComplete = async (id) => {
   magazineissue = magazineissue.get();
 
   magazineissue.Magazine = magazineissue.Magazine.get();
+  delete magazineissue.MagazineId;
   magazineissue.references = magazineissue.References.map((reference) =>
     cleanReference(reference)
   );

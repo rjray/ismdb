@@ -47,9 +47,9 @@ function getMagazineIssueById(context) {
 
   return magazines
     .fetchSingleMagazineIssueComplete(id)
-    .then((magazineissue) => {
-      if (magazineissue) {
-        res.status(200).pureJson({ magazineissue });
+    .then((issue) => {
+      if (issue) {
+        res.status(200).pureJson({ issue });
       } else {
         res.status(404).pureJson({
           error: {
