@@ -12,13 +12,13 @@ use DBI;
 
 # Used by the keyword-to-tags conversion:
 my %META_TAGS = (
-    aircraft   => 1,
-    armor      => 1,
-    figures    => 1,
-    ships      => 1,
-    techniques => 1,
-    automotive => 1,
-    diorama    => 1,
+    aircraft   => 'An aircraft subject',
+    armor      => 'A ground vehicle subject',
+    figures    => 'A figurine subject',
+    ships      => 'A naval/nautical subject',
+    techniques => 'An article focusing on techniques',
+    automotive => 'A civilian ground vehicle subject',
+    diorama    => 'A diorama subject',
 );
 
 # This will be the global table of tags, mapping names to IDs:
@@ -101,7 +101,7 @@ sub setup_meta_tags {
     my $result = eval {
         my $id = 0;
         for my $tag (sort keys %META_TAGS) {
-            $sth->execute(++$id, $tag, q{}, 'meta');
+            $sth->execute(++$id, $tag, $META_TAGS{$tag}, 'meta');
             $TAGS{$tag} = $id;
         }
 
@@ -120,8 +120,10 @@ sub setup_meta_tags {
     chomp @nationalities;
     my $result2 = eval {
         my $id = $result;
-        for my $tag (@nationalities) {
-            $sth->execute(++$id, $tag, q{}, 'nationality');
+        for my $pair (@nationalities) {
+            my ($tag, $country) = split /,/ => $pair;
+            my $desc = "Manufactured or operated by $country";
+            $sth->execute(++$id, $tag, $desc, 'nationality');
             $TAGS{$tag} = $id;
         }
 
@@ -505,35 +507,35 @@ sub keywords2tags {
 }
 
 __END__
-australian
-austrian
-belgian
-chinese
-czech
-finnish
-french
-german
-greek
-indian
-iranian
-iraqi
-irish
-israeli
-italian
-japanese
-libyan
-mexican
-dutch
-pakistani
-palestinian
-polish
-russian
-saudi
-scottish
-spanish
-swedish
-swiss
-syrian
-turkish
-ukrainian
-british
+australian,Australia
+austrian,Austria
+belgian,Belgium
+chinese,China
+czech,The Czech Republic
+finnish,Finland
+french,France
+german,Germany
+greek,Greece
+indian,India
+iranian,Iran
+iraqi,Iraq
+irish,Ireland
+israeli,Israel
+italian,Italy
+japanese,Japan
+libyan,Libya
+mexican,Mexico
+dutch,The Netherlands
+pakistani,Pakistan
+palestinian,Palestine
+polish,Poland
+russian,Russia
+saudi,Saudi Arabia
+scottish,Scotland
+spanish,Spain
+swedish,Sweden
+swiss,Switzerland
+syrian,Syrian
+turkish,Turkey
+ukrainian,Ukraine
+british,England
