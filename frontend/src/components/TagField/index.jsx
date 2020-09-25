@@ -39,6 +39,7 @@ const TagWord = ({ id, name, description, refcount, includeSpace }) => {
 
 const TagField = () => {
   const [includeMeta, setIncludeMeta] = useState(false);
+  const [includeScale, setIncludeScale] = useState(false);
   const [includeNatl, setIncludeNatl] = useState(false);
   const [sortByName, setSortByName] = useState(true);
 
@@ -48,13 +49,16 @@ const TagField = () => {
   if (!includeMeta) {
     params.push("where=type,ne,meta");
   }
+  if (!includeScale) {
+    params.push("where=type,ne,scale");
+  }
   if (!includeNatl) {
     params.push("where=type,ne,nationality");
   }
   const url = `${apiEndpoint}/api/tags/withRefCount?${params.join("&")}`;
 
   const { isLoading, error, data } = useQuery(
-    ["Tag Field", includeMeta, includeNatl],
+    ["Tag Field", includeMeta, includeScale, includeNatl],
     () => {
       return fetch(url).then((res) => res.json());
     }
@@ -62,7 +66,7 @@ const TagField = () => {
 
   if (isLoading) {
     return (
-      <div>
+      <div className="text-center">
         <ScaleLoader />
       </div>
     );
@@ -81,7 +85,7 @@ const TagField = () => {
   }
   return (
     <>
-      <Row xs={12} sm={{ span: 6, offset: 3 }}>
+      <Row xs={12} sm={{ span: 6, offset: 3 }} className="my-2">
         <Col>
           <div className="tag-field">
             {data.tags.map((tag, idx) => (
@@ -93,7 +97,7 @@ const TagField = () => {
       <Row xs={12} sm={{ span: 6, offset: 3 }}>
         <Container>
           <Row>
-            <Col xs={12} lg={4} className="text-center">
+            <Col xs={12} className="text-center">
               <span>sort by </span>
               {sortByName ? (
                 <strong>name</strong>
@@ -111,9 +115,11 @@ const TagField = () => {
                 </Link>
               )}
             </Col>
+          </Row>
+          <Row>
             <Col
               xs={12}
-              lg={{ span: 4, order: "first" }}
+              lg={4}
               className="text-xs-center text-sm-center text-lg-left"
             >
               <span>include meta tags </span>
@@ -128,9 +134,24 @@ const TagField = () => {
                 onChange={() => setIncludeMeta((includeMeta) => !includeMeta)}
               />
             </Col>
+            <Col xs={12} lg={4} className="text-center">
+              <span>include scale tags </span>
+              <Form.Check
+                id="toggleScaleTags"
+                className="mr-0 pr-0 align-middle"
+                inline
+                custom
+                type="switch"
+                label=""
+                checked={includeScale}
+                onChange={() =>
+                  setIncludeScale((includeScale) => !includeScale)
+                }
+              />
+            </Col>
             <Col
               xs={12}
-              lg={{ span: 4, order: "last" }}
+              lg={4}
               className="text-xs-center text-sm-center text-lg-right"
             >
               <span>include nationality tags </span>
