@@ -1,31 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 
+import FormatAuthors from "../FormatAuthors";
 import FormatTags from "../FormatTags";
-
-const FormatAuthors = ({ authors }) => {
-  let content;
-
-  if (authors.length) {
-    content = [authors.length === 1 ? "Author: " : "Authors: "];
-    for (let author of authors) {
-      content.push(
-        <Link key={author.id} to={`/authors/${author.id}`}>
-          {author.name}
-        </Link>
-      );
-      content.push(", ");
-    }
-    content.pop();
-  }
-
-  return <div>{content}</div>;
-};
 
 const ReferenceExpand = ({ currentTag, data: reference }) => (
   <Container fluid className="mt-2 mb-3">
@@ -46,6 +27,7 @@ const ReferenceExpand = ({ currentTag, data: reference }) => (
     </Row>
     <Row>
       <Col>
+        {reference.authors.length === 1 ? "Author: " : "Authors: "}
         <FormatAuthors authors={reference.authors} />
       </Col>
     </Row>
