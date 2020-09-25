@@ -1,12 +1,15 @@
 import React from "react";
 import { useParams } from "react-router-dom";
+import { LinkContainer } from "react-router-bootstrap";
 import { useQuery } from "react-query";
 import { Helmet } from "react-helmet";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
 import apiEndpoint from "../../utils/api-endpoint";
+import Header from "../../components/Header";
 import ReferenceTable from "../../components/ReferenceTable";
 
 const ShowTag = () => {
@@ -37,21 +40,45 @@ const ShowTag = () => {
     );
   }
 
-  const tag = data.tag.name.replace(/ /g, String.fromCharCode(160));
+  const tag = data.tag;
+  const tagName = tag.name.replace(/ /g, String.fromCharCode(160));
 
   return (
     <>
       <Helmet>
-        <title>Tag "{tag}"</title>
+        <title>Tag "{tagName}"</title>
       </Helmet>
-      <Row className="mb-3">
-        <Col className="text-center" xs={12}>
-          <h1>References Tagged with "{tag}"</h1>
+      <Row className="my-3">
+        <Col xs={9}>
+          <Header>Tag "{tagName}"</Header>
+        </Col>
+        <Col className="text-right" xs={3}>
+          <LinkContainer to={`/tags/update/${tag.id}`}>
+            <Button>Edit</Button>
+          </LinkContainer>
         </Col>
       </Row>
       <Row>
+        <Col xs={6} sm={4} md={2} lg={1} className="text-right">
+          <strong>Type:</strong>
+        </Col>
+        <Col>{tag.type || <em>(none)</em>}</Col>
+      </Row>
+      <Row>
+        <Col xs={6} sm={4} md={2} lg={1} className="text-right">
+          <strong>Description:</strong>
+        </Col>
+        <Col>{tag.description || <em>(none)</em>}</Col>
+      </Row>
+      <Row>
+        <Col xs={6} sm={4} md={2} lg={1} className="text-right">
+          <strong>References:</strong>
+        </Col>
+        <Col>{tag.references.length}</Col>
+      </Row>
+      <Row>
         <Col>
-          <ReferenceTable currentTag={data.tag.id} data={data.tag.references} />
+          <ReferenceTable currentTag={tag.id} data={tag.references} />
         </Col>
       </Row>
     </>
