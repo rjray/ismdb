@@ -43,9 +43,9 @@ const TagField = () => {
   const [includeNatl, setIncludeNatl] = useState(false);
   const [sortByName, setSortByName] = useState(true);
 
-  // Total tags - 1, to be used in the space-insertion conditional as well:
-  const count = 99;
-  const params = [`limit=${count + 1}`, "order=refcount,desc", "order=name"];
+  // Total tags to display:
+  const count = 100;
+  const params = [`limit=${count}`, "order=refcount,desc", "order=name"];
   if (!includeMeta) {
     params.push("where=type,ne,meta");
   }
