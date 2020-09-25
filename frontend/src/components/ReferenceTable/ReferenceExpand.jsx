@@ -5,7 +5,8 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import Badge from "react-bootstrap/Badge";
+
+import FormatTags from "../FormatTags";
 
 const FormatAuthors = ({ authors }) => {
   let content;
@@ -24,24 +25,6 @@ const FormatAuthors = ({ authors }) => {
   }
 
   return <div>{content}</div>;
-};
-
-const FormatTags = ({ thisTag, tags }) => {
-  let content = [];
-
-  tags.forEach((tag) => {
-    content.push(
-      <Link key={tag.id} to={`/tags/${tag.id}`}>
-        <Badge variant={tag.name === thisTag ? "primary" : "secondary"}>
-          {tag.name}
-        </Badge>
-      </Link>
-    );
-    content.push(" ");
-  });
-  content.pop();
-
-  return <span>{content}</span>;
 };
 
 const ReferenceExpand = ({ currentTag, data: reference }) => (
@@ -68,7 +51,7 @@ const ReferenceExpand = ({ currentTag, data: reference }) => (
     </Row>
     <Row>
       <Col>
-        Tags: <FormatTags thisTag={currentTag} tags={reference.tags} />
+        Tags: <FormatTags currentTag={currentTag} tags={reference.tags} />
       </Col>
     </Row>
   </Container>
