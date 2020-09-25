@@ -25,7 +25,6 @@ const TagWord = ({ id, name, description, refcount, includeSpace }) => {
       <em>({refcount} references)</em>
     </div>
   );
-  name = name.replace(/ /g, String.fromCharCode(160));
 
   return (
     <div className="tag-word">
