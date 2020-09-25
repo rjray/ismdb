@@ -21,7 +21,7 @@ const TopTags = () => {
 
   if (isLoading) {
     return (
-      <div>
+      <div className="text-center">
         <ScaleLoader />
       </div>
     );
