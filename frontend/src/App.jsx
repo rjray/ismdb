@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { ToastProvider } from "react-toast-notifications";
 import { QueryCache, ReactQueryCacheProvider } from "react-query";
 
-import AppContext from "./AppContext";
+import AppContext from "./contexts/AppContext";
 import NavHeader from "./NavHeader";
 import Home from "./Home";
 
@@ -35,6 +35,7 @@ const App = () => {
 
             <Switch>
               <Route exact path="/" component={Home} />
+              <Route path="/tags"></Route>
             </Switch>
           </Router>
         </AppContext.Provider>
