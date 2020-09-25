@@ -7,6 +7,7 @@ import { QueryCache, ReactQueryCacheProvider } from "react-query";
 import AppContext from "./contexts/AppContext";
 import NavHeader from "./components/NavHeader";
 import Home from "./pages/Home";
+import Tags from "./pages/Tags";
 
 const queryCache = new QueryCache();
 
@@ -35,7 +36,7 @@ const App = () => {
 
             <Switch>
               <Route exact path="/" component={Home} />
-              <Route path="/tags"></Route>
+              <Route path="/tags" component={Tags} />
             </Switch>
           </Router>
         </AppContext.Provider>
