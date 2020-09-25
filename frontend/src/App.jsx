@@ -5,8 +5,8 @@ import { ToastProvider } from "react-toast-notifications";
 import { QueryCache, ReactQueryCacheProvider } from "react-query";
 
 import AppContext from "./contexts/AppContext";
-import NavHeader from "./NavHeader";
-import Home from "./Home";
+import NavHeader from "./components/NavHeader";
+import Home from "./pages/Home";
 
 const queryCache = new QueryCache();
 

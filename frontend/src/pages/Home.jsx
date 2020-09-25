@@ -5,11 +5,11 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import CardDeck from "react-bootstrap/CardDeck";
 
-import HomeSearch from "./components/HomeSearch";
-import TopTags from "./components/TopTags";
-import TopMagazines from "./components/TopMagazines";
-import TopAuthors from "./components/TopAuthors";
-import TagField from "./components/TagField";
+import HomeSearch from "../components/HomeSearch";
+import TopTags from "../components/TopTags";
+import TopMagazines from "../components/TopMagazines";
+import TopAuthors from "../components/TopAuthors";
+import TagField from "../components/TagField";
 
 const Home = () => (
   <Container fluid>
