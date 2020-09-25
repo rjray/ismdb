@@ -28,7 +28,7 @@ const App = () => {
       <ToastProvider autoDismissTimeout={3000}>
         <AppContext.Provider value={contextData}>
           <Router>
-            <Helmet titleTemplate="MyMoDB - %s">
+            <Helmet titleTemplate="ISMDB - %s">
               <title>Home</title>
             </Helmet>
 

@@ -15,7 +15,7 @@ const Home = () => (
   <Container fluid>
     <Row className="mb-3">
       <Col className="text-center" xs={12}>
-        <h1>My Modeling DB</h1>
+        <h1>Internet Scale Modeler's Database</h1>
       </Col>
     </Row>
     <Row>
