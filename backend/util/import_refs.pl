@@ -20,6 +20,10 @@ my %META_TAGS = (
     automotive => 'A civilian ground vehicle subject',
     diorama    => 'A diorama subject',
 );
+my @SCALE_TAGS = (
+    6, 8, 9, 12, 16, 20, 24, 25, 30, 32, 35, 43, 48, 72, 76, 96, 100, 144, 150,
+    200, 288, 350, 700
+);
 
 # This will be the global table of tags, mapping names to IDs:
 my %TAGS = ();
@@ -128,7 +132,7 @@ sub setup_meta_tags {
         }
 
         $dbhout->commit;
-        return 1;
+        return $id;
     };
     if (! $result2) {
         my $err = $@;
@@ -137,6 +141,27 @@ sub setup_meta_tags {
     }
 
     print scalar(@nationalities) . " nationality tags seeded to Tags\n";
+
+    my $result3 = eval {
+        my $id = $result2;
+        for my $scale (@SCALE_TAGS) {
+            my $tag = "1/$scale";
+            my $desc = "$tag scale subject";
+            $sth->execute(++$id, $tag, $desc, 'scale');
+            $TAGS{$tag} = $id;
+        }
+        $sth->execute(++$id, 'box-scale', 'Box-scale subject', 'scale');
+
+        $dbhout->commit;
+        return $id;
+    };
+    if (! $result3) {
+        my $err = $@;
+        $dbhout->rollback;
+        die "failure in setup_meta_tags: $err\n";
+    }
+
+    printf "%d scale tags seeded to Tags\n", scalar(@SCALE_TAGS) + 1;
 
     return;
 }
@@ -313,9 +338,18 @@ sub migrate_reference_table {
 
         # 'keywords' is field 6:
         my @tags = keywords2tags($keywords);
+        my %applied = ();
+        # Check for a reference to scale in the name ($base[1] is name):
+        if ($base[1] =~ m{(?:in)? 1/(\d+) (?:scale)?}) {
+            my $scale = "1/$1";
+            if ($TAGS{$scale}) {
+                push @tags, $scale;
+            }
+        }
         for my $tag (@tags) {
             # "review" was moved to reference's type field:
             next if ($tag eq 'review');
+            next if ($applied{$tag}++);
             if (! $TAGS{$tag}) {
                 $sth_tag->execute($tag);
                 $TAGS{$tag} = $sth_tag->{mysql_insertid};
