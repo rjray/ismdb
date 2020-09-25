@@ -9,8 +9,8 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../utils/api-endpoint";
-import { sortBy } from "../utils/no-lodash";
+import apiEndpoint from "../../utils/api-endpoint";
+import { sortBy } from "../../utils/no-lodash";
 import "./TagField.css";
 
 const fontSize = (weight) => `${(Math.log10(weight) * 75).toFixed(1)}%`;
