@@ -51,10 +51,7 @@ const ShowTag = () => {
       </Row>
       <Row>
         <Col>
-          <ReferenceTable
-            currentTag={data.tag.name}
-            data={data.tag.references}
-          />
+          <ReferenceTable currentTag={data.tag.id} data={data.tag.references} />
         </Col>
       </Row>
     </>
