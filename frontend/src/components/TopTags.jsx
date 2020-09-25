@@ -11,6 +11,7 @@ const TopTags = () => {
     `limit=${count}`,
     "order=refcount,desc",
     "where=type,ne,meta",
+    "where=type,ne,scale",
     "where=type,ne,nationality",
   ];
   const url = `${apiEndpoint}/api/tags/withRefCount?${params.join("&")}`;
