@@ -26,13 +26,13 @@ async function createServer() {
   app.use(compression());
   app.use(cors());
   app.use(exegesis);
-  app.use(helmet());
   app.use((_, res) => {
     res.status(404).json({ message: "Not found" });
   });
   app.use((err, _, res, __) => {
     res.status(500).json({ message: `Internal error: ${err.message}` });
   });
+  app.use(helmet());
 
   const server = http.createServer(app);
 
