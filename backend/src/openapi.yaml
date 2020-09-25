@@ -109,9 +109,6 @@ components:
     referenceIsbnType:
       type: string
       maxLength: 15
-    referenceKeywordsType:
-      type: string
-      maxLength: 2000
     tagNameType:
       type: string
       maxLength: 75
@@ -343,8 +340,6 @@ components:
           $ref: "#/components/schemas/referenceIsbnType"
         language:
           $ref: "#/components/schemas/languageType"
-        keywords:
-          $ref: "#/components/schemas/referenceKeywordsType"
         RecordTypeId:
           $ref: "#/components/schemas/idType"
         MagazineIssueId:
@@ -390,8 +385,6 @@ components:
           $ref: "#/components/schemas/referenceIsbnType"
         language:
           $ref: "#/components/schemas/languageType"
-        keywords:
-          $ref: "#/components/schemas/referenceKeywordsType"
         RecordType:
           $ref: "#/components/schemas/recordTypeType"
         MagazineIssue:

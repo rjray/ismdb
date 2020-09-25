@@ -18,9 +18,6 @@ module.exports = (sequelize, DataTypes) => {
       language: {
         type: DataTypes.STRING(50),
       },
-      keywords: {
-        type: DataTypes.STRING(2000),
-      },
     },
     {}
   );

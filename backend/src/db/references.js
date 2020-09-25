@@ -217,7 +217,7 @@ const updateReference = async (id, data) => {
         authToAdd = [];
 
       // Build up the initial fields to update.
-      for (let key of ["type", "language", "keywords", "name"]) {
+      for (let key of ["type", "language", "name"]) {
         if (data[key] !== reference[key]) {
           updates[key] = data[key];
         }

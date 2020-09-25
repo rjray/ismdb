@@ -284,8 +284,8 @@ sub migrate_reference_table {
     );
     $sth = $dbhout->prepare(
         'INSERT INTO `References` (`id`, `name`, `type`, `recordTypeId`, ' .
-        '`isbn`, `language`, `keywords`, `createdAt`, `updatedAt`, ' .
-        '`magazineIssueId`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        '`isbn`, `language`, `createdAt`, `updatedAt`, ' .
+        '`magazineIssueId`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
     );
 
     my $ish_id = 0;
@@ -308,10 +308,11 @@ sub migrate_reference_table {
             $base[9] = undef;
         }
 
+        my $keywords = splice @base, 6, 1;
         $sth->execute(@base);
 
         # 'keywords' is field 6:
-        my @tags = keywords2tags($base[6]);
+        my @tags = keywords2tags($keywords);
         for my $tag (@tags) {
             # "review" was moved to reference's type field:
             next if ($tag eq 'review');
@@ -523,6 +524,7 @@ irish,Ireland
 israeli,Israel
 italian,Italy
 japanese,Japan
+lebanese,Lebanon
 libyan,Libya
 mexican,Mexico
 dutch,The Netherlands
