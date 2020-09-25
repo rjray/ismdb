@@ -47,7 +47,7 @@ const TopTags = () => {
 
         <Dropdown.Menu>
           {data.tags.map((tag) => (
-            <Dropdown.Item key={tag.id}>
+            <Dropdown.Item key={tag.id} href={`/tags/${tag.id}`}>
               {tag.name} <em>({tag.refcount})</em>
             </Dropdown.Item>
           ))}
