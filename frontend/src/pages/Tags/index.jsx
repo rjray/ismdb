@@ -8,7 +8,7 @@ const Tags = () => {
   const match = useRouteMatch();
 
   return (
-    <Container fluid>
+    <Container>
       <Switch>
         <Route path={`${match.path}/:tagId(\\d+)`} component={ShowTag} />
         <Route path={match.path}></Route>
