@@ -12,7 +12,7 @@ import TopAuthors from "../components/TopAuthors";
 import TagField from "../components/TagField";
 
 const Home = () => (
-  <Container fluid>
+  <Container>
     <Row className="mb-3">
       <Col className="text-center" xs={12}>
         <h1>Internet Scale Modeler's Database</h1>
