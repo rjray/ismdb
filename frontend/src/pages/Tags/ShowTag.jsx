@@ -59,19 +59,19 @@ const ShowTag = () => {
         </Col>
       </Row>
       <Row>
-        <Col xs={6} sm={4} md={2} lg={1} className="text-right">
+        <Col xs={6} sm={4} md={2} xl={1} className="text-right">
           <strong>Type:</strong>
         </Col>
         <Col>{tag.type || <em>(none)</em>}</Col>
       </Row>
       <Row>
-        <Col xs={6} sm={4} md={2} lg={1} className="text-right">
+        <Col xs={6} sm={4} md={2} xl={1} className="text-right">
           <strong>Description:</strong>
         </Col>
         <Col>{tag.description || <em>(none)</em>}</Col>
       </Row>
       <Row>
-        <Col xs={6} sm={4} md={2} lg={1} className="text-right">
+        <Col xs={6} sm={4} md={2} xl={1} className="text-right">
           <strong>References:</strong>
         </Col>
         <Col>{tag.references.length}</Col>
