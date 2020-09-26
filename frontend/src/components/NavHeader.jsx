@@ -10,7 +10,7 @@ const NavHeader = () => (
   <Container fluid>
     <Navbar bg="light" expand="sm">
       <LinkContainer to="/">
-        <Navbar.Brand>ISMDB.com</Navbar.Brand>
+        <Navbar.Brand>ISMDB</Navbar.Brand>
       </LinkContainer>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
