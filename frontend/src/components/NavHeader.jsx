@@ -25,6 +25,9 @@ const NavHeader = () => (
             <LinkContainer to="/magazines">
               <NavDropdown.Item>Magazines</NavDropdown.Item>
             </LinkContainer>
+            <LinkContainer to="/tags">
+              <NavDropdown.Item>Tags</NavDropdown.Item>
+            </LinkContainer>
           </NavDropdown>
         </Nav>
       </Navbar.Collapse>
