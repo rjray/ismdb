@@ -58,7 +58,7 @@ const TagField = () => {
   const url = `${apiEndpoint}/api/tags/withRefCount?${params.join("&")}`;
 
   const { isLoading, error, data } = useQuery(
-    ["Tag Field", includeMeta, includeScale, includeNatl],
+    ["Tag Field", includeMeta, includeScale, includeNatl, sortByName],
     () => {
       return fetch(url).then((res) => res.json());
     }
