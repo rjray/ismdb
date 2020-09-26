@@ -1,7 +1,7 @@
 import React from "react";
-import { format, formatDistanceToNow } from "date-fns";
 import DataTable from "react-data-table-component";
 
+import FormatDate from "../FormatDate";
 import ReferenceExpand from "./ReferenceExpand";
 
 const columns = [
@@ -39,7 +39,7 @@ const columns = [
     sortable: true,
     minWidth: "20%",
     hide: "sm",
-    format: (row) => formatDate(row.createdAt),
+    format: (row) => <FormatDate date={row.createdAt} />,
   },
   {
     name: <b>Updated</b>,
@@ -47,16 +47,9 @@ const columns = [
     sortable: true,
     minWidth: "20%",
     hide: "md",
-    format: (row) => formatDate(row.updatedAt),
+    format: (row) => <FormatDate date={row.updatedAt} />,
   },
 ];
-
-const formatDate = (date) => {
-  const now = new Date(date);
-  const show = format(now, "PPpp");
-  const title = formatDistanceToNow(now);
-  return <span title={`${title} ago`}>{show}</span>;
-};
 
 const ReferenceTable = (props) => {
   const pagination = {};
