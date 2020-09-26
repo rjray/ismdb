@@ -41,7 +41,7 @@ const TopTags = () => {
 
         <Dropdown.Menu>
           {data.authors.map((author) => (
-            <Dropdown.Item key={author.id}>
+            <Dropdown.Item key={author.id} href={`/authors/${author.id}`}>
               {author.name} <em>({author.refcount})</em>
             </Dropdown.Item>
           ))}
