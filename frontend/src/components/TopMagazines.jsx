@@ -41,7 +41,9 @@ const TopTags = () => {
 
         <Dropdown.Menu>
           {data.magazines.map((magazine) => (
-            <Dropdown.Item key={magazine.id}>{magazine.name}</Dropdown.Item>
+            <Dropdown.Item key={magazine.id} href={`/magazines/${magazine.id}`}>
+              {magazine.name}
+            </Dropdown.Item>
           ))}
         </Dropdown.Menu>
       </Dropdown>
