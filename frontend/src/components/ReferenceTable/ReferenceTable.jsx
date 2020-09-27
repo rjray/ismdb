@@ -69,7 +69,10 @@ const ReferenceTable = (props) => {
       expandOnRowClicked
       expandableRowsHideExpander
       expandableRowsComponent={
-        <ReferenceExpand currentTag={props.currentTag} />
+        <ReferenceExpand
+          currentTag={props.currentTag}
+          currentAuthor={props.currentAuthor}
+        />
       }
       defaultSortField="name"
       columns={columns}

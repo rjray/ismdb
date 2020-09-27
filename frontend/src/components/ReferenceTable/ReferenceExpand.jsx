@@ -8,7 +8,7 @@ import Button from "react-bootstrap/Button";
 import FormatAuthors from "../FormatAuthors";
 import FormatTags from "../FormatTags";
 
-const ReferenceExpand = ({ currentTag, data: reference }) => (
+const ReferenceExpand = ({ currentTag, currentAuthor, data: reference }) => (
   <Container fluid className="mt-2 mb-3">
     <Row className="mb-1">
       <Col>
@@ -28,7 +28,10 @@ const ReferenceExpand = ({ currentTag, data: reference }) => (
     <Row>
       <Col>
         {reference.authors.length === 1 ? "Author: " : "Authors: "}
-        <FormatAuthors authors={reference.authors} />
+        <FormatAuthors
+          currentAuthor={currentAuthor}
+          authors={reference.authors}
+        />
       </Col>
     </Row>
     <Row>
