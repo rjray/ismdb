@@ -20,12 +20,14 @@ const columns = [
     name: <b>Added</b>,
     selector: "createdAt",
     hide: "sm",
+    maxWidth: "20%",
     format: (row) => <FormatDate date={row.createdAt} />,
   },
   {
     name: <b>Updated</b>,
     selector: "updatedAt",
     hide: "md",
+    maxWidth: "20%",
     format: (row) => <FormatDate date={row.updatedAt} />,
   },
 ];

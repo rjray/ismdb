@@ -22,6 +22,7 @@ let columns = [
     selector: "createdAt",
     sortable: true,
     hide: "sm",
+    maxWidth: "20%",
     format: (row) => <FormatDate date={row.createdAt} />,
   },
   {
@@ -29,6 +30,7 @@ let columns = [
     selector: "updatedAt",
     sortable: true,
     hide: "md",
+    maxWidth: "20%",
     format: (row) => <FormatDate date={row.updatedAt} />,
   },
 ];
