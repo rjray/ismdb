@@ -42,16 +42,15 @@ const ShowMagazine = () => {
   }
 
   const magazine = data.magazine;
-  const magazineName = magazine.name.replace(/ /g, String.fromCharCode(160));
 
   return (
     <>
       <Helmet>
-        <title>Magazine "{magazineName}"</title>
+        <title>Magazine: {magazine.name}</title>
       </Helmet>
       <Row className="my-3">
         <Col xs={9}>
-          <Header>Magazine "{magazineName}"</Header>
+          <Header>Magazine: {magazine.name}</Header>
         </Col>
         <Col className="text-right" xs={3}>
           <LinkContainer to={`/magazines/update/${magazine.id}`}>

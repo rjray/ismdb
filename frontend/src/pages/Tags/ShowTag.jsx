@@ -41,16 +41,15 @@ const ShowTag = () => {
   }
 
   const tag = data.tag;
-  const tagName = tag.name.replace(/ /g, String.fromCharCode(160));
 
   return (
     <>
       <Helmet>
-        <title>Tag "{tagName}"</title>
+        <title>Tag: {tag.name}</title>
       </Helmet>
       <Row className="my-3">
         <Col xs={9}>
-          <Header>Tag "{tagName}"</Header>
+          <Header>Tag: {tag.name}</Header>
         </Col>
         <Col className="text-right" xs={3}>
           <LinkContainer to={`/tags/update/${tag.id}`}>

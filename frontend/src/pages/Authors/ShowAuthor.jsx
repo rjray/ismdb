@@ -43,16 +43,15 @@ const ShowAuthor = () => {
   }
 
   const author = data.author;
-  const authorName = author.name.replace(/ /g, String.fromCharCode(160));
 
   return (
     <>
       <Helmet>
-        <title>Author "{authorName}"</title>
+        <title>Author: {author.name}</title>
       </Helmet>
       <Row className="my-3">
         <Col xs={9}>
-          <Header>Author "{authorName}"</Header>
+          <Header>Author: {author.name}</Header>
         </Col>
         <Col className="text-right" xs={3}>
           <LinkContainer to={`/authors/update/${author.id}`}>

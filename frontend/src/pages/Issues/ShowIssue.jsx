@@ -39,10 +39,7 @@ const ShowIssue = () => {
   }
 
   const issue = data.issue;
-  const issueName = `${issue.Magazine.name} ${issue.number}`.replace(
-    / /g,
-    String.fromCharCode(160)
-  );
+  const issueName = `${issue.Magazine.name} ${issue.number}`;
 
   return (
     <>
