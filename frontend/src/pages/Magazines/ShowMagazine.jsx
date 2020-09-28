@@ -94,7 +94,10 @@ const ShowMagazine = () => {
       </Row>
       <Row>
         <Col>
-          <IssueTable data={magazine.issues} />
+          <IssueTable
+            title={`Issues (${magazine.issues.length})`}
+            data={magazine.issues}
+          />
         </Col>
       </Row>
     </>

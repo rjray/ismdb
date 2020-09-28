@@ -70,14 +70,12 @@ const ShowTag = () => {
         <Col>{tag.description || <em>(none)</em>}</Col>
       </Row>
       <Row>
-        <Col xs={6} sm={4} md={2} xl={1} className="text-right">
-          <strong>References:</strong>
-        </Col>
-        <Col>{tag.references.length}</Col>
-      </Row>
-      <Row>
         <Col>
-          <ReferenceTable currentTag={tag.id} data={tag.references} />
+          <ReferenceTable
+            title={`References (${tag.references.length})`}
+            currentTag={tag.id}
+            data={tag.references}
+          />
         </Col>
       </Row>
     </>

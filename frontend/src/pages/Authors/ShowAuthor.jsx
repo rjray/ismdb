@@ -90,14 +90,12 @@ const ShowAuthor = () => {
         </Col>
       </Row>
       <Row>
-        <Col xs={6} sm={4} md={2} xl={1} className="text-right">
-          <strong>References:</strong>
-        </Col>
-        <Col>{author.references.length}</Col>
-      </Row>
-      <Row>
         <Col>
-          <ReferenceTable currentAuthor={author.id} data={author.references} />
+          <ReferenceTable
+            title={`References (${author.references.length})`}
+            currentAuthor={author.id}
+            data={author.references}
+          />
         </Col>
       </Row>
     </>
