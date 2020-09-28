@@ -1,12 +1,4 @@
 import React from "react";
-import { LinkContainer } from "react-router-bootstrap";
-import { Helmet } from "react-helmet";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
-import ScaleLoader from "react-spinners/ScaleLoader";
-import { formatDistanceToNow, format } from "date-fns";
 import DataTable from "react-data-table-component";
 
 import FormatDate from "../FormatDate";
