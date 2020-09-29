@@ -15,7 +15,7 @@ import "./TagField.css";
 
 const fontSize = (weight) => `${(Math.log10(weight) * 75).toFixed(1)}%`;
 
-const TagWord = ({ id, name, description, refcount, includeSpace }) => {
+const TagWord = ({ id, name, description, refcount }) => {
   const tooltip = description ? (
     <div style={{ textAlign: "left" }}>
       {description} <em>({refcount} references)</em>
@@ -119,7 +119,8 @@ const TagField = () => {
           <Row>
             <Col
               xs={12}
-              lg={4}
+              lg={6}
+              xl={4}
               className="text-xs-center text-sm-center text-lg-left"
             >
               <span>include meta tags </span>
@@ -134,7 +135,12 @@ const TagField = () => {
                 onChange={() => setIncludeMeta((includeMeta) => !includeMeta)}
               />
             </Col>
-            <Col xs={12} lg={4} className="text-center">
+            <Col
+              xs={12}
+              lg={{ span: 12, order: "first" }}
+              xl={{ span: 4, order: 2 }}
+              className="text-center"
+            >
               <span>include scale tags </span>
               <Form.Check
                 id="toggleScaleTags"
@@ -151,7 +157,8 @@ const TagField = () => {
             </Col>
             <Col
               xs={12}
-              lg={4}
+              lg={{ span: 6, order: "last" }}
+              xl={{ span: 4, order: "last" }}
               className="text-xs-center text-sm-center text-lg-right"
             >
               <span>include nationality tags </span>
