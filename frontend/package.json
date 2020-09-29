@@ -1,8 +1,8 @@
 {
-  "name": "mymodb-frontend",
+  "name": "ismdb-frontend",
   "version": "0.1.0",
-  "description": "Frontend for MyMoDB",
-  "repository": "https://github.com/rjray/mymodb",
+  "description": "Frontend for ISMDB",
+  "repository": "https://github.com/rjray/ismdb",
   "private": true,
   "dependencies": {
     "axios": "^0.19.2",
