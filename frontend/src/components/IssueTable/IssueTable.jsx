@@ -15,7 +15,7 @@ let columns = [
   {
     name: <b>References</b>,
     selector: "refcount",
-    format: (row) => row.references.length,
+    sortable: true,
   },
   {
     name: <b>Added</b>,
@@ -41,6 +41,11 @@ const IssueTable = ({ data: issues, ...props }) => {
     pagination.pagination = true;
     pagination.paginationPerPage = 25;
   }
+
+  issues = issues.map((issue) => {
+    issue.refcount = issue.references.length;
+    return issue;
+  });
 
   return (
     <DataTable
