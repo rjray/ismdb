@@ -41,7 +41,7 @@ const TopTags = () => {
       <div className="mb-2">
         <em>Top {count} tags:</em>
       </div>
-      <Dropdown style={{ width: "50%", margin: "auto" }}>
+      <Dropdown style={{ width: "75%", margin: "auto" }}>
         <Dropdown.Toggle style={{ width: "100%" }} id="top-tags-dropdown">
           Select tag to view
         </Dropdown.Toggle>
