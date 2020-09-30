@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from "react";
+import React from "react";
 import { Helmet } from "react-helmet";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { ToastProvider } from "react-toast-notifications";
 import { QueryCache, ReactQueryCacheProvider } from "react-query";
+import { RecoilRoot } from "recoil";
 
-import AppContext from "./contexts/AppContext";
 import NavHeader from "./components/NavHeader";
 import Home from "./pages/Home";
 import References from "./pages/References";
@@ -16,21 +16,10 @@ import Tags from "./pages/Tags";
 const queryCache = new QueryCache();
 
 const App = () => {
-  const [multientry, setMultientry] = useState(false);
-  const toggleMultientry = () => setMultientry((multientry) => !multientry);
-
-  const contextData = useMemo(
-    () => ({
-      multientry,
-      toggleMultientry,
-    }),
-    [multientry]
-  );
-
   return (
     <ReactQueryCacheProvider queryCache={queryCache}>
       <ToastProvider autoDismissTimeout={3000}>
-        <AppContext.Provider value={contextData}>
+        <RecoilRoot>
           <Router>
             <Helmet titleTemplate="ISMDB - %s">
               <title>Home</title>
@@ -47,7 +36,7 @@ const App = () => {
               <Route path="/tags" component={Tags} />
             </Switch>
           </Router>
-        </AppContext.Provider>
+        </RecoilRoot>
       </ToastProvider>
     </ReactQueryCacheProvider>
   );
