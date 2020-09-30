@@ -22,6 +22,7 @@
     "react-scripts": "^3.4.3",
     "react-spinners": "^0.9.0",
     "react-toast-notifications": "^2.4.0",
+    "recoil": "0.0.13",
     "styled-components": "^5.2.0",
     "yup": "^0.29.3"
   },
