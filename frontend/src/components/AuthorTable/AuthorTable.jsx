@@ -22,7 +22,7 @@ const lastNameFirst = (name) => {
 const columns = [
   {
     name: <b>Name</b>,
-    selector: "name",
+    selector: "dispName",
     sortable: true,
     wrap: true,
     minWidth: "30%",
@@ -59,7 +59,7 @@ const AuthorTable = ({ data: authors, ...props }) => {
   }
 
   authors = authors.map((item) => {
-    item.name = lastNameFirst(item.name);
+    item.dispName = lastNameFirst(item.name);
     return item;
   });
 
@@ -74,7 +74,7 @@ const AuthorTable = ({ data: authors, ...props }) => {
       expandOnRowClicked
       expandableRowsHideExpander
       expandableRowsComponent={<AuthorExpand />}
-      defaultSortField="name"
+      defaultSortField="dispName"
       columns={columns}
       {...pagination}
       {...props}
