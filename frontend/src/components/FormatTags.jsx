@@ -10,10 +10,10 @@ const FormatTags = ({ currentTag, tags }) => {
   [...tags].sort(sortBy("name")).forEach((tag) => {
     const formatted =
       tag.id === currentTag ? (
-        <Badge variant="primary">{tag.name}</Badge>
+        <Badge variant="secondary">{tag.name}</Badge>
       ) : (
         <Link key={tag.id} to={`/tags/${tag.id}`}>
-          <Badge variant="secondary">{tag.name}</Badge>
+          <Badge variant="primary">{tag.name}</Badge>
         </Link>
       );
     content.push(formatted, " ");
