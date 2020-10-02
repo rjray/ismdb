@@ -14,14 +14,16 @@ const {
 const { fetchAllRecordTypes, fetchAllLanguages } = require("../db/misc");
 
 /*
-  GET /combo/magazineeditdata
+  GET /combo/magazinecombo
+  GET /combo/magazinecombo/{id}
 
   Get the bundle of data required for editing/creating magazine records. If the
   "id" parameter is given, this returns the list of languages and the full
   magazine record for the ID. If "id" is not given, returns just the languages.
   May also return notifications.
  */
-function fetchCreateMagazineData(context, id) {
+function fetchMagazineCombo(context) {
+  const id = context.params.path.id || null;
   const query = context.params.query;
   const res = context.res;
 
@@ -30,7 +32,7 @@ function fetchCreateMagazineData(context, id) {
     promises.push(fetchSingleMagazineSimple(id));
   }
 
-  Promise.all(promises)
+  return Promise.all(promises)
     .then((values) => {
       const languages = values[0];
       const magazine = id ? values[1] : null;
@@ -50,6 +52,7 @@ function fetchCreateMagazineData(context, id) {
       }
     })
     .catch((error) => {
+      console.log("Error: %o", error);
       res.status(500).pureJson({
         error: {
           summary: error.name,
@@ -60,29 +63,22 @@ function fetchCreateMagazineData(context, id) {
 }
 
 /*
-  GET /combo/magazineeditdata/{id}
-
-  Front-end to the previous that extracts and passes the "id" parameter.
- */
-function fetchEditMagazineData(context) {
-  return fetchCreateMagazineData(context, context.params.path.id);
-}
-
-/*
-  GET /combo/referenceeditdata
+  GET /combo/referencecombo
+  GET /combo/referencecombo/{id}
 
   Get the bundle of data required for editing/creating reference records. The
   return value is an object with keys "languages", "recordTypes", "authors",
   and "magazines". If the "id" parameter is given, the object will include a
   key "reference". May also return notifications.
  */
-function fetchCreateReferenceData(context, id) {
+function fetchReferenceCombo(context) {
+  const id = context.params.path.id || null;
   const query = context.params.query;
   const res = context.res;
 
   const promises = [
     fetchAllRecordTypes({ order: ["id"] }),
-    fetchAllMagazinesWithIssueNumbersAndCount({ attributes: ["id", "name"] }),
+    fetchAllMagazinesWithIssueNumbersAndCount(),
     fetchAllLanguages(query),
     fetchAuthorsNamesAliasesList(),
   ];
@@ -90,7 +86,7 @@ function fetchCreateReferenceData(context, id) {
     promises.push(fetchSingleReferenceComplete(id));
   }
 
-  Promise.all(promises)
+  return Promise.all(promises)
     .then((values) => {
       const recordTypes = values[0];
       const magazines = values[1].magazines;
@@ -127,18 +123,7 @@ function fetchCreateReferenceData(context, id) {
     });
 }
 
-/*
-  GET /combo/referenceeditdata/{id}
-
-  Front-end to the previous that extracts and passes the "id" parameter.
- */
-function fetchEditReferenceData(context) {
-  return fetchCreateReferenceData(context, context.params.path.id);
-}
-
 module.exports = {
-  fetchCreateMagazineData,
-  fetchEditMagazineData,
-  fetchCreateReferenceData,
-  fetchEditReferenceData,
+  fetchMagazineCombo,
+  fetchReferenceCombo,
 };

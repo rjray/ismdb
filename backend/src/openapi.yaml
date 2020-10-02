@@ -1510,7 +1510,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Tags
-  "/combo/referenceeditdata":
+  "/combo/referencecombo":
     x-exegesis-controller: comboController
     get:
       summary: Retrieve all data needed for the reference creation form
@@ -1518,7 +1518,7 @@ paths:
         new references. Data includes all languages, all record types, author
         names and aliases, and magazine names with their respective issue
         numbers.
-      operationId: fetchCreateReferenceData
+      operationId: fetchReferenceCombo
       parameters:
         - $ref: "#/components/parameters/preferredParam"
       responses:
@@ -1566,7 +1566,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Combination
-  "/combo/referenceeditdata/{id}":
+  "/combo/referencecombo/{id}":
     x-exegesis-controller: comboController
     parameters:
       - $ref: "#/components/parameters/idParam"
@@ -1576,7 +1576,8 @@ paths:
         existing references. Data includes all languages, all record types,
         author names and aliases, magazine names with their respective issue
         numbers, and the existing reference record itself.
-      operationId: fetchEditReferenceData
+      operationId: fetchReferenceComboWithReference
+      x-exegesis-operationId: fetchReferenceCombo
       parameters:
         - $ref: "#/components/parameters/preferredParam"
       responses:
@@ -1629,13 +1630,13 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Combination
-  "/combo/magazineeditdata":
+  "/combo/magazinecombo":
     x-exegesis-controller: comboController
     get:
       summary: Retrieve all data needed for the magazine creation form
       description: Retrieve all the data needed for the form used for creating
         magazines. Data includes (for now) just languages.
-      operationId: fetchCreateMagazineData
+      operationId: fetchMagazineCombo
       parameters:
         - $ref: "#/components/parameters/preferredParam"
       responses:
@@ -1647,7 +1648,6 @@ paths:
                 type: object
                 required:
                   - languages
-                  - magazine
                 properties:
                   languages:
                     type: array
@@ -1659,7 +1659,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Combination
-  "/combo/magazineeditdata/{id}":
+  "/combo/magazinecombo/{id}":
     x-exegesis-controller: comboController
     parameters:
       - $ref: "#/components/parameters/idParam"
@@ -1668,7 +1668,8 @@ paths:
       description: Retrieve all the data needed for the form used for editing
         existing magazines. Data includes all languages, and the existing
         magazine record itself.
-      operationId: fetchEditMagazineData
+      operationId: fetchMagazineComboWithMagazine
+      x-exegesis-operationId: fetchMagazineCombo
       parameters:
         - $ref: "#/components/parameters/preferredParam"
       responses:
