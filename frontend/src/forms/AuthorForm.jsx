@@ -4,40 +4,37 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import { Formik, Field, FieldArray, ErrorMessage } from "formik";
-import { MdDelete, MdSettingsBackupRestore } from "react-icons/md";
+import {
+  BsTrashFill as IconDelete,
+  BsArrowCounterclockwise as IconRestore,
+} from "react-icons/bs";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .max(
       60,
-      <em style={{ fontSize: "75%", color: "red" }}>
-        Name cannot exceed 60 characters
-      </em>
+      <em className="form-field-error">Name cannot exceed 60 characters</em>
     )
-    .required(
-      <em style={{ fontSize: "75%", color: "red" }}>Name cannot be empty</em>
-    ),
+    .required(<em className="form-field-error">Name cannot be empty</em>),
   aliases: Yup.array().of(
     Yup.object().shape({
       name: Yup.string()
         .max(
           60,
-          <em style={{ fontSize: "75%", color: "red" }}>
+          <em className="form-field-error">
             Alias cannot exceed 60 characters
           </em>
         )
-        .required(
-          <em style={{ fontSize: "75%", color: "red" }}>
-            Alias cannot be empty
-          </em>
-        ),
+        .required(<em className="form-field-error">Alias cannot be empty</em>),
     })
   ),
 });
 
-const AuthorForm = ({ author, action, submitHandler }) => {
-  let initialValues = { ...author, action: action };
+const AuthorForm = ({ author, submitHandler }) => {
+  let initialValues = { ...author };
+  initialValues.createdAt = new Date(initialValues.createdAt);
+  initialValues.updatedAt = new Date(initialValues.updatedAt);
 
   return (
     <Formik
@@ -55,8 +52,8 @@ const AuthorForm = ({ author, action, submitHandler }) => {
       }) => (
         <Form className="mt-3">
           <Form.Group as={Form.Row} controlId="name">
-            <Form.Label column sm={2} className="text-md-right text-sm-left">
-              Name:
+            <Form.Label column sm={2} className="text-md-right text-xs-left">
+              <strong>Name:</strong>
               <ErrorMessage name="name" component="p" />
             </Form.Label>
             <Col sm={10}>
@@ -73,8 +70,8 @@ const AuthorForm = ({ author, action, submitHandler }) => {
             </Col>
           </Form.Group>
           <Form.Group as={Form.Row} controlId="aliases" className="mb-2">
-            <Form.Label column sm={2} className="text-md-right text-sm-left">
-              Aliases:
+            <Form.Label column sm={2} className="text-md-right text-xs-left">
+              <strong>Aliases:</strong>
             </Form.Label>
             <Col sm={10}>
               <Container
@@ -91,7 +88,7 @@ const AuthorForm = ({ author, action, submitHandler }) => {
                           controlId={`alias${index}`}
                           className="mb-2"
                         >
-                          <Col sm={3}>
+                          <Col xs={9} sm={3}>
                             <Field
                               as={Form.Control}
                               type="text"
@@ -106,7 +103,7 @@ const AuthorForm = ({ author, action, submitHandler }) => {
                               component="p"
                             />
                           </Col>
-                          <Col sm>
+                          <Col xs={3} sm={1}>
                             <span>
                               <Button
                                 variant="link"
@@ -125,9 +122,15 @@ const AuthorForm = ({ author, action, submitHandler }) => {
                                 }}
                               >
                                 {alias.deleted ? (
-                                  <MdSettingsBackupRestore title="Restore this alias" />
+                                  <IconRestore
+                                    size="1.5em"
+                                    title="Restore this alias"
+                                  />
                                 ) : (
-                                  <MdDelete title="Delete this alias" />
+                                  <IconDelete
+                                    size="1.5em"
+                                    title="Delete this alias"
+                                  />
                                 )}
                               </Button>
                             </span>
@@ -151,6 +154,40 @@ const AuthorForm = ({ author, action, submitHandler }) => {
               </Container>
             </Col>
           </Form.Group>
+          {author.createdAt && (
+            <Form.Group as={Form.Row} controlId="createdAt">
+              <Form.Label column sm={2} className="text-md-right text-xs-left">
+                <strong>Created:</strong>
+              </Form.Label>
+              <Col sm={10}>
+                <Field
+                  as={Form.Control}
+                  type="text"
+                  name="createdAt"
+                  tabIndex={-1}
+                  readOnly
+                  plaintext
+                />
+              </Col>
+            </Form.Group>
+          )}
+          {author.updatedAt && (
+            <Form.Group as={Form.Row} controlId="updatedAt">
+              <Form.Label column sm={2} className="text-md-right text-xs-left">
+                <strong>Updated:</strong>
+              </Form.Label>
+              <Col sm={10}>
+                <Field
+                  as={Form.Control}
+                  type="text"
+                  name="updatedAt"
+                  tabIndex={-1}
+                  readOnly
+                  plaintext
+                />
+              </Col>
+            </Form.Group>
+          )}
           <Form.Group as={Form.Row} className="mt-3">
             <Col sm={{ span: 10, offset: 2 }}>
               <Button
