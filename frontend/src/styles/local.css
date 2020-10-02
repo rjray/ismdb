@@ -14,6 +14,11 @@
   text-decoration: line-through;
 }
 
+.form-field-error {
+  font-size: 75%;
+  color: red;
+}
+
 @media (max-width: 767px) {
   .text-xs-center {
     text-align: center;
