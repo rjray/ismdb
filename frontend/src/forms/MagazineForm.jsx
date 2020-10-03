@@ -53,7 +53,7 @@ const MagazineForm = ({ magazine, languages, submitHandler }) => {
         <Form className="mt-3">
           <Form.Group as={Form.Row} controlId="name">
             <Form.Label column sm={2} className="text-md-right text-xs-left">
-              Name:
+              <strong>Name:</strong>
               <ErrorMessage name="name" component="p" />
             </Form.Label>
             <Col sm={10}>
@@ -71,7 +71,7 @@ const MagazineForm = ({ magazine, languages, submitHandler }) => {
           </Form.Group>
           <Form.Group as={Form.Row} controlId="language">
             <Form.Label column sm={2} className="text-md-right text-xs-left">
-              Language:
+              <strong>Language:</strong>
               <ErrorMessage name="language" component="p" />
             </Form.Label>
             <Col sm={10}>
@@ -94,7 +94,7 @@ const MagazineForm = ({ magazine, languages, submitHandler }) => {
           </Form.Group>
           <Form.Group as={Form.Row} controlId="aliases">
             <Form.Label column sm={2} className="text-md-right text-xs-left">
-              Aliases:
+              <strong>Aliases:</strong>
               <ErrorMessage name="aliases" component="p" />
             </Form.Label>
             <Col sm={10}>
@@ -111,7 +111,7 @@ const MagazineForm = ({ magazine, languages, submitHandler }) => {
           </Form.Group>
           <Form.Group as={Form.Row} controlId="notes">
             <Form.Label column sm={2} className="text-md-right text-xs-left">
-              Notes:
+              <strong>Notes:</strong>
               <ErrorMessage name="notes" component="p" />
             </Form.Label>
             <Col sm={10}>
@@ -130,7 +130,7 @@ const MagazineForm = ({ magazine, languages, submitHandler }) => {
           {magazine.createdAt && (
             <Form.Group as={Form.Row} controlId="createdAt">
               <Form.Label column sm={2} className="text-md-right text-xs-left">
-                Created:
+                <strong>Created:</strong>
               </Form.Label>
               <Col sm={10}>
                 <Field
@@ -147,7 +147,7 @@ const MagazineForm = ({ magazine, languages, submitHandler }) => {
           {magazine.updatedAt && (
             <Form.Group as={Form.Row} controlId="updatedAt">
               <Form.Label column sm={2} className="text-md-right text-xs-left">
-                Updated:
+                <strong>Updated:</strong>
               </Form.Label>
               <Col sm={10}>
                 <Field
