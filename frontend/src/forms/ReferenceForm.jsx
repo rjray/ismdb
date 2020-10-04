@@ -1,36 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import { LinkContainer } from "react-router-bootstrap";
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
-import { Typeahead, Highlighter } from "react-bootstrap-typeahead";
+import {
+  AsyncTypeahead,
+  Typeahead,
+  Highlighter,
+} from "react-bootstrap-typeahead";
 import { Formik, Field, FieldArray, ErrorMessage } from "formik";
-import { MdLink, MdDelete, MdSettingsBackupRestore } from "react-icons/md";
+import {
+  BsLink as IconLink,
+  BsTrashFill as IconDelete,
+  BsArrowCounterclockwise as IconRestore,
+} from "react-icons/bs";
 import * as Yup from "yup";
 
 import "react-bootstrap-typeahead/css/Typeahead.css";
 
+import apiEndpoint from "../utils/api-endpoint";
 import compareVersion from "../utils/compare-version";
+import { sortBy } from "../utils/no-lodash";
+
+const sortByName = sortBy("name");
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .max(
       255,
-      <em style={{ fontSize: "75%", color: "red" }}>
-        Name cannot exceed 255 characters
-      </em>
+      <em className="form-field-error">Name cannot exceed 255 characters</em>
     )
-    .required(
-      <em style={{ fontSize: "75%", color: "red" }}>Name cannot be empty</em>
-    ),
+    .required(<em className="form-field-error">Name cannot be empty</em>),
   RecordTypeId: Yup.string().required(
-    <em style={{ fontSize: "75%", color: "red" }}>Must choose a record type</em>
+    <em className="form-field-error">Must choose a record type</em>
   ),
   isbn: Yup.string()
     .max(
       15,
-      <em style={{ fontSize: "75%", color: "red" }}>
+      <em className="form-field-error">
         ISBN cannot exceed 15 characters (no hyphens)
       </em>
     )
@@ -38,7 +46,7 @@ const validationSchema = Yup.object().shape({
   MagazineIssueNumber: Yup.string()
     .max(
       50,
-      <em style={{ fontSize: "75%", color: "red" }}>
+      <em className="form-field-error">
         Magazine issue label cannot exceed 50 characters
       </em>
     )
@@ -48,47 +56,23 @@ const validationSchema = Yup.object().shape({
       name: Yup.string()
         .max(
           60,
-          <em style={{ fontSize: "75%", color: "red" }}>
-            Name cannot exceed 60 characters
-          </em>
+          <em className="form-field-error">Name cannot exceed 60 characters</em>
         )
-        .required(
-          <em style={{ fontSize: "75%", color: "red" }}>
-            Name cannot be empty
-          </em>
-        ),
+        .required(<em className="form-field-error">Name cannot be empty</em>),
     })
   ),
   type: Yup.string()
     .max(
       75,
-      <em style={{ fontSize: "75%", color: "red" }}>
-        Type cannot exceed 75 characters
-      </em>
+      <em className="form-field-error">Type cannot exceed 75 characters</em>
     )
-    .required(
-      <em style={{ fontSize: "75%", color: "red" }}>Type cannot be empty</em>
-    ),
+    .required(<em className="form-field-error">Type cannot be empty</em>),
   language: Yup.string()
     .max(
       50,
-      <em style={{ fontSize: "75%", color: "red" }}>
-        Language cannot exceed 50 characters
-      </em>
+      <em className="form-field-error">Language cannot exceed 50 characters</em>
     )
     .nullable(),
-  keywords: Yup.string()
-    .max(
-      1000,
-      <em style={{ fontSize: "75%", color: "red" }}>
-        Keywords cannot exceed 1000 characters
-      </em>
-    )
-    .required(
-      <em style={{ fontSize: "75%", color: "red" }}>
-        Keywords cannot be empty
-      </em>
-    ),
 });
 
 const formatAuthor = (option, props) => {
@@ -98,28 +82,43 @@ const formatAuthor = (option, props) => {
     </Highlighter>,
   ];
   if (option.aliasOf) {
-    author.push(<em>→ {option.aliasOf}</em>);
+    author.push(<em key="alias">→ {option.aliasOf}</em>);
   }
 
   return author;
 };
 
 const ReferenceForm = ({
-  recordtypes,
+  recordTypes,
   magazines,
   languages,
-  authorlist,
+  authors: authorlist,
   reference,
-  action,
   submitHandler,
 }) => {
-  let initialValues = { ...reference, action: action };
+  const [loadingTagList, setLoadingTagList] = useState(false);
+  const [tagList, setTagList] = useState([]);
+  const initialValues = { ...reference };
+  initialValues.tags.sort(sortByName);
 
-  let issues = {};
+  const handleTagsSearch = (query) => {
+    setLoadingTagList(true);
+    const url = `${apiEndpoint}/api/tags/queryWithRefCount?query=${query}`;
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        const tagList = data.tags;
+        setTagList(tagList);
+        setLoadingTagList(false);
+      });
+  };
+
+  const issues = {};
   for (let magazine of magazines) {
-    issues[magazine.id] = magazine.MagazineIssues.map((i) => i.number).sort(
-      compareVersion
-    );
+    issues[magazine.id] = magazine.issues
+      .map((i) => i.number)
+      .sort(compareVersion);
   }
 
   return (
@@ -139,7 +138,7 @@ const ReferenceForm = ({
         <Form className="mt-3">
           <Form.Group as={Form.Row} controlId="name" className="mb-2">
             <Form.Label column sm={2} className="text-md-right text-sm-left">
-              Name:
+              <strong>Name:</strong>
               <ErrorMessage name="name" component="p" />
             </Form.Label>
             <Col sm={10}>
@@ -157,7 +156,7 @@ const ReferenceForm = ({
           </Form.Group>
           <Form.Group as={Form.Row} controlId="RecordTypeId" className="mb-2">
             <Form.Label column sm={2} className="text-md-right text-sm-left">
-              Record Type:
+              <strong>Record Type:</strong>
             </Form.Label>
             <Col sm={10}>
               <Container fluid className="pl-0">
@@ -177,9 +176,9 @@ const ReferenceForm = ({
                       style={{ width: "100%", marginTop: "0.35rem" }}
                     >
                       <option value="">-- Choose --</option>
-                      {recordtypes.map((type, index) => (
-                        <option key={index} value={type.id}>
-                          {type.notes}
+                      {recordTypes.map((type) => (
+                        <option key={type.id} value={type.id}>
+                          {type.description}
                         </option>
                       ))}
                     </Field>
@@ -191,7 +190,7 @@ const ReferenceForm = ({
           {values.RecordTypeId === "1" && (
             <Form.Group as={Form.Row} controlId="isbn" className="mb-2">
               <Form.Label column sm={2} className="text-md-right text-sm-left">
-                ISBN:
+                <strong>ISBN:</strong>
               </Form.Label>
               <Col sm={10}>
                 <Container fluid className="pl-0">
@@ -213,7 +212,7 @@ const ReferenceForm = ({
           {(values.RecordTypeId === "2" || values.RecordTypeId === "3") && (
             <Form.Group as={Form.Row} controlId="magazine" className="mb-2">
               <Form.Label column sm={2} className="text-md-right text-sm-left">
-                Magazine:
+                <strong>Magazine:</strong>
               </Form.Label>
               <Col sm={10}>
                 <Container fluid className="pl-0">
@@ -261,7 +260,7 @@ const ReferenceForm = ({
           )}
           <Form.Group as={Form.Row} controlId="authors" className="mb-2">
             <Form.Label column sm={2} className="text-md-right text-sm-left">
-              Authors:
+              <strong>Authors:</strong>
             </Form.Label>
             <Col sm={10}>
               <Container
@@ -290,14 +289,13 @@ const ReferenceForm = ({
                               minLength={2}
                               allowNew
                               newSelectionPrefix="New author: "
-                              selectHintOnEnter
                               disabled={author.deleted}
                               options={authorlist}
                               placeholder="Author name"
                               defaultInputValue={author.name}
                               renderMenuItemChildren={formatAuthor}
                               inputProps={{
-                                ["data-lpignore"]: "true",
+                                "data-lpignore": "true",
                                 className: author.deleted
                                   ? "strikethrough"
                                   : "",
@@ -342,9 +340,15 @@ const ReferenceForm = ({
                                 }}
                               >
                                 {author.deleted ? (
-                                  <MdSettingsBackupRestore title="Restore this author" />
+                                  <IconRestore
+                                    size="1.5em"
+                                    title="Restore this author"
+                                  />
                                 ) : (
-                                  <MdDelete title="Delete this author" />
+                                  <IconDelete
+                                    size="1.5em"
+                                    title="Delete this author"
+                                  />
                                 )}
                               </Button>
                               {author.id ? (
@@ -354,7 +358,10 @@ const ReferenceForm = ({
                                     className="text-reset"
                                     tabIndex={-1}
                                   >
-                                    <MdLink title="Author info" />
+                                    <IconLink
+                                      size="1.5em"
+                                      title="Author info"
+                                    />
                                   </Button>
                                 </LinkContainer>
                               ) : (
@@ -388,7 +395,7 @@ const ReferenceForm = ({
           </Form.Group>
           <Form.Group as={Form.Row} controlId="type" className="mb-2">
             <Form.Label column sm={2} className="text-md-right text-sm-left">
-              Type:
+              <strong>Type:</strong>
               <ErrorMessage name="type" component="p" />
             </Form.Label>
             <Col sm={10}>
@@ -405,7 +412,7 @@ const ReferenceForm = ({
           </Form.Group>
           <Form.Group as={Form.Row} controlId="language" className="mb-2">
             <Form.Label column sm={2} className="text-md-right text-sm-left">
-              Language:
+              <strong>Language:</strong>
               <ErrorMessage name="language" component="p" />
             </Form.Label>
             <Col sm={10}>
@@ -426,28 +433,55 @@ const ReferenceForm = ({
               </datalist>
             </Col>
           </Form.Group>
-          <Form.Group as={Form.Row} controlId="keywords" className="mb-2">
+          <Form.Group as={Form.Row} controlId="tags" className="mb-2">
             <Form.Label column sm={2} className="text-md-right text-sm-left">
-              Keywords:
-              <ErrorMessage name="keywords" component="p" />
+              <strong>Tags:</strong>
+              <ErrorMessage name="type" component="p" />
             </Form.Label>
             <Col sm={10}>
-              <Field
-                as={Form.Control}
-                component="textarea"
-                className="form-control"
+              <AsyncTypeahead
+                isLoading={loadingTagList}
+                multiple
+                id="tags"
+                name="tags"
+                labelKey="name"
+                align="left"
+                maxResults={10}
+                paginate
+                minLength={2}
+                allowNew
+                newSelectionPrefix={<strong>New tag: </strong>}
+                options={tagList}
+                selected={values.tags}
+                placeholder="Tags"
+                renderMenuItemChildren={(option) => (
+                  <>
+                    <span>{option.name}</span>
+                    <em> ({option.refcount})</em>
+                  </>
+                )}
+                inputProps={{ "data-lpignore": "true" }}
                 onBlur={handleBlur}
-                onChange={handleChange}
-                rows={4}
-                name="keywords"
-                placeholder="Keywords"
+                onSearch={handleTagsSearch}
+                // onChange={handleChange}
+                onChange={(selected) => {
+                  const seen = new Set();
+                  selected = selected
+                    .filter((item) => {
+                      if (seen.has(item.name)) return false;
+                      seen.add(item.name);
+                      return true;
+                    })
+                    .sort(sortByName);
+                  // handleChange(selected);
+                }}
               />
             </Col>
           </Form.Group>
           {reference.createdAt && (
             <Form.Group as={Form.Row} controlId="createdAt" className="mb-2">
               <Form.Label column sm={2} className="text-md-right text-sm-left">
-                Created:
+                <strong>Created:</strong>
               </Form.Label>
               <Col sm={10}>
                 <Field
@@ -464,7 +498,7 @@ const ReferenceForm = ({
           {reference.updatedAt && (
             <Form.Group as={Form.Row} controlId="updatedAt" className="mb-2">
               <Form.Label column sm={2} className="text-md-right text-sm-left">
-                Updated:
+                <strong>Updated:</strong>
               </Form.Label>
               <Col sm={10}>
                 <Field
