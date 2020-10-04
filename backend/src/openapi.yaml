@@ -24,6 +24,13 @@ components:
         type: integer
         format: int32
         minimum: 0
+    queryParam:
+      name: query
+      in: query
+      description: Shorthand option for substring matching of name fields
+      required: true
+      schema:
+        type: string
     orderParam:
       name: order
       in: query
@@ -1351,6 +1358,42 @@ paths:
       responses:
         "200":
           description: All tags with reference counts
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - tags
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  tags:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/tagWithRefCountType"
+                  notifications:
+                    $ref: "#/components/schemas/notificationsType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+  "/tags/queryWithRefCount":
+    x-exegesis-controller: tagsController
+    get:
+      summary: Fetch all matching tags with count of tagged references
+      description: Fetch tags whose name matches the query value, as an array.
+        Each tag struture includes an extra field that counts the number of
+        references tagged by the tag.
+      operationId: getTagsQueryWithRefCount
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/queryParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All matched tags with reference counts
           content:
             "application/json":
               schema:

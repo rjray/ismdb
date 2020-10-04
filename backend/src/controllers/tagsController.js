@@ -105,6 +105,44 @@ function getAllTagsWithRefCount(context) {
 }
 
 /*
+  GET /tags/queryWithRefcount
+
+  A specialized form of getAllTagsWithRefCount(), that only queries against
+  the name field. Also returns a count of all tags that match the query, even
+  if the query itself is governed by skip and/or limit. The returned object has
+  keys "count" (integer) and "tags" (array of tag objects). Each tag object has
+  an extra key, "refcount", that\ is the number of references tagged by this
+  tag.
+ */
+function getTagsQueryWithRefCount(context) {
+  const query = context.params.query;
+  const res = context.res;
+
+  if (query.order) {
+    query.order = fixupOrderField(query.order);
+  } else {
+    query.order = ["name"];
+  }
+
+  query.where = fixupWhereField([`name,substring,${query.query}`]);
+  delete query.query;
+
+  return tags
+    .fetchAllTagsWithRefCountAndCount(query)
+    .then((results) => {
+      res.status(200).pureJson(results);
+    })
+    .catch((error) => {
+      res.status(500).pureJson({
+        error: {
+          sumary: error.name,
+          description: error.message,
+        },
+      });
+    });
+}
+
+/*
   GET /tags/{id}
 
   Fetch a single tag by the ID. Returns an object with the single key "tag",
@@ -283,6 +321,7 @@ module.exports = {
   createTag,
   getAllTags,
   getAllTagsWithRefCount,
+  getTagsQueryWithRefCount,
   getTagById,
   updateTagById,
   deleteTagById,
