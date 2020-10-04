@@ -8,15 +8,22 @@ import compareVersion from "../../utils/compare-version";
 import { chunk } from "../../utils/no-lodash";
 
 const IssuesRow = ({ row }) => {
-  while (row.length < 10) {
-    row.push({ id: 0, number: "" });
+  if (row.length < 10) {
+    let counter = 0;
+    while (row.length < 10) {
+      row.push({ id: `dummy${counter++}`, number: "" });
+    }
   }
 
   return (
     <Row>
-      {row.map((item, idx) => (
-        <Col key={idx} xs={5} md={1}>
-          {item.id ? <Link to={`/issues/${item.id}`}>{item.number}</Link> : ""}
+      {row.map((item) => (
+        <Col key={item.id} xs={5} md={1}>
+          {typeof item.id === "number" ? (
+            <Link to={`/issues/${item.id}`}>{item.number}</Link>
+          ) : (
+            ""
+          )}
         </Col>
       ))}
     </Row>

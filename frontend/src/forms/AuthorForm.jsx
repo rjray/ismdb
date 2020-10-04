@@ -83,7 +83,7 @@ const AuthorForm = ({ author, submitHandler }) => {
                     <>
                       {values.aliases.map((alias, index) => (
                         <Form.Group
-                          key={index}
+                          key={alias.id}
                           as={Form.Row}
                           controlId={`alias${index}`}
                           className="mb-2"

@@ -89,7 +89,7 @@ const TagField = () => {
         <Col>
           <div className="tag-field">
             {data.tags.map((tag, idx) => (
-              <TagWord key={idx} {...tag} includeSpace={idx < count} />
+              <TagWord key={tag.id} {...tag} includeSpace={idx < count} />
             ))}
           </div>
         </Col>

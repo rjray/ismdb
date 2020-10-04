@@ -230,8 +230,8 @@ const ReferenceForm = ({
                         style={{ width: "100%", marginTop: "0.35rem" }}
                       >
                         <option value="">-- Choose --</option>
-                        {magazines.map((magazine, index) => (
-                          <option key={index} value={magazine.id}>
+                        {magazines.map((magazine) => (
+                          <option key={magazine.id} value={magazine.id}>
                             {magazine.name}
                           </option>
                         ))}
@@ -248,8 +248,8 @@ const ReferenceForm = ({
                       />
                       <datalist id="magazine-issues">
                         {values.MagazineId &&
-                          issues[+values.MagazineId].map((issue, index) => (
-                            <option key={index} value={issue}></option>
+                          issues[+values.MagazineId].map((issue) => (
+                            <option key={issue} value={issue}></option>
                           ))}
                       </datalist>
                     </Col>
@@ -272,7 +272,7 @@ const ReferenceForm = ({
                     <>
                       {values.authors.map((author, index) => (
                         <Form.Group
-                          key={index}
+                          key={author.id}
                           as={Form.Row}
                           controlId={`author${index}`}
                           className="mb-2"
@@ -427,8 +427,11 @@ const ReferenceForm = ({
                 data-lpignore="true"
               />
               <datalist id="language-list">
-                {languages.map((language, index) => (
-                  <option key={index} value={language}></option>
+                {languages.map((language) => (
+                  <option
+                    key={language.replace(" ", "")}
+                    value={language}
+                  ></option>
                 ))}
               </datalist>
             </Col>

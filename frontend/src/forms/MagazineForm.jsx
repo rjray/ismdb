@@ -86,8 +86,11 @@ const MagazineForm = ({ magazine, languages, submitHandler }) => {
                 data-lpignore="true"
               />
               <datalist id="language-list">
-                {languages.map((language, index) => (
-                  <option key={index} value={language}></option>
+                {languages.map((language) => (
+                  <option
+                    key={language.replace(" ", "")}
+                    value={language}
+                  ></option>
                 ))}
               </datalist>
             </Col>
