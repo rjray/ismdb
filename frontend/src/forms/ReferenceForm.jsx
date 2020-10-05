@@ -133,6 +133,7 @@ const ReferenceForm = ({
         handleBlur,
         handleSubmit,
         handleReset,
+        setFieldValue,
         isSubmitting,
       }) => (
         <Form className="mt-3">
@@ -448,7 +449,7 @@ const ReferenceForm = ({
                 id="tags"
                 name="tags"
                 labelKey="name"
-                align="left"
+                align="justify"
                 maxResults={10}
                 paginate
                 minLength={2}
@@ -466,7 +467,6 @@ const ReferenceForm = ({
                 inputProps={{ "data-lpignore": "true" }}
                 onBlur={handleBlur}
                 onSearch={handleTagsSearch}
-                // onChange={handleChange}
                 onChange={(selected) => {
                   const seen = new Set();
                   selected = selected
@@ -476,7 +476,7 @@ const ReferenceForm = ({
                       return true;
                     })
                     .sort(sortByName);
-                  // handleChange(selected);
+                  setFieldValue("tags", selected);
                 }}
               />
             </Col>
