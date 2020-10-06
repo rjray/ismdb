@@ -125,6 +125,12 @@ components:
     tagTypeType:
       type: string
       maxLength: 10
+    matchNameType:
+      type: string
+      maxLength: 255
+    matchTypeType:
+      type: string
+      maxLength: 10
     newAuthorAliasType:
       type: object
       required:
@@ -483,6 +489,22 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/notificationType"
+    queryMatchType:
+      type: object
+      required:
+        - id
+        - name
+        - type
+        - length
+      properties:
+        id:
+          $ref: "#/components/schemas/idType"
+        name:
+          $ref: "#/components/schemas/matchNameType"
+        type:
+          $ref: "#/components/schemas/matchTypeType"
+        length:
+          $ref: "#/components/schemas/countType"
   responses:
     generalErrorResponse:
       description: An error has occurred
@@ -1787,6 +1809,34 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/languageType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Miscellaneous
+  "/misc/quicksearch":
+    x-exegesis-controller: miscController
+    get:
+      summary: Quick search by name across the major tables
+      description: Fetch all records from tags, references, magazines and
+        authors where the "name" field matches the query.
+      operationId: quickSearchName
+      parameters:
+        - $ref: "#/components/parameters/queryParam"
+        - $ref: "#/components/parameters/countParam"
+      responses:
+        "200":
+          description: Matching names
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - matches
+                properties:
+                  matches:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/queryMatchType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:

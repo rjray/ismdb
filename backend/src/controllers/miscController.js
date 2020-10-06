@@ -6,6 +6,7 @@
  */
 
 const { fetchAllRecordTypes, fetchAllLanguages } = require("../db/misc");
+const { quickSearchByName } = require("../db/raw-sql");
 
 /*
   GET /misc/recordtypes
@@ -59,7 +60,36 @@ function getAllLanguages(context) {
     });
 }
 
+/*
+  GET /misc/quicksearch
+
+  Get the records that match the "query" parameter in a substring context on
+  their "name" fields. The return value is an object with one key, "matches",
+  that is an array of match objects. Each match object consists of the fields
+  "id", "name", "type" and "length". The "id" is the record's ID in its own
+  table, "name" is the record's name, "length" is the length of "name", and
+  "type" is one of (tags, references, magazines, authors).
+ */
+function quickSearchName(context) {
+  const { query, count } = context.params.query;
+  const res = context.res;
+
+  return quickSearchByName(query, count)
+    .then((matches) => {
+      res.status(200).pureJson({ matches });
+    })
+    .catch((error) => {
+      res.status(500).pureJson({
+        error: {
+          summary: error.name,
+          description: error.message,
+        },
+      });
+    });
+}
+
 module.exports = {
   getAllRecordTypes,
   getAllLanguages,
+  quickSearchName,
 };
