@@ -2,13 +2,13 @@ import React from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
 import CardDeck from "react-bootstrap/CardDeck";
 
 import HomeSearch from "../components/HomeSearch";
 import TopTags from "../components/TopTags";
 import TopMagazines from "../components/TopMagazines";
 import TopAuthors from "../components/TopAuthors";
+import QuickSearch from "../components/QuickSearch";
 import TagField from "../components/TagField";
 
 const Home = () => (
@@ -41,11 +41,7 @@ const Home = () => (
     </Row>
     <Row className="mt-4">
       <Col className="mx-auto" xs={12} sm={{ offset: 3, span: 6 }}>
-        <Form.Control
-          className="mx-0 px=0"
-          type="text"
-          placeholder="Quick search by name"
-        />
+        <QuickSearch />
       </Col>
     </Row>
     <Row>
