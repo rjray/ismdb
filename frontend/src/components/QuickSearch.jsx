@@ -4,6 +4,8 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
+import "react-bootstrap-typeahead/css/Typeahead.css";
+
 import apiEndpoint from "../utils/api-endpoint";
 
 const typeMap = {
