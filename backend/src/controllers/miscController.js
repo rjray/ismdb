@@ -20,7 +20,6 @@ function getAllRecordTypes(context) {
 
   return fetchAllRecordTypes({ order: ["id"] })
     .then((recordTypes) => {
-      recordTypes = recordTypes.map((item) => item.get());
       res.status(200).pureJson({ recordTypes });
     })
     .catch((error) => {

@@ -8,7 +8,10 @@ const { RecordType, Reference, Sequelize } = require("../models");
 
 // Fetch all RecordType entities.
 const fetchAllRecordTypes = async (opts = {}) => {
-  return RecordType.findAll({ ...opts });
+  const results = await RecordType.findAll({ ...opts });
+  const recordTypes = results.map((rt) => rt.get());
+
+  return recordTypes;
 };
 
 // Fetch all distinct languages referred to in references.
