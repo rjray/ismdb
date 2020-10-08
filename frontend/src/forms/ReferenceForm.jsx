@@ -1,14 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { LinkContainer } from "react-router-bootstrap";
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
-import {
-  AsyncTypeahead,
-  Typeahead,
-  Highlighter,
-} from "react-bootstrap-typeahead";
+import { Typeahead, Highlighter } from "react-bootstrap-typeahead";
 import { Formik, Field, FieldArray, ErrorMessage } from "formik";
 import {
   BsLink as IconLink,
@@ -19,9 +15,9 @@ import * as Yup from "yup";
 
 import "react-bootstrap-typeahead/css/Typeahead.css";
 
-import apiEndpoint from "../utils/api-endpoint";
 import compareVersion from "../utils/compare-version";
 import { sortBy } from "../utils/no-lodash";
+import TagEditorInput from "../components/TagEditorInput";
 
 const sortByName = sortBy("name");
 
@@ -73,6 +69,22 @@ const validationSchema = Yup.object().shape({
       <em className="form-field-error">Language cannot exceed 50 characters</em>
     )
     .nullable(),
+  tags: Yup.array()
+    .of(
+      Yup.object().shape({
+        name: Yup.string()
+          .max(
+            75,
+            <em className="form-field-error">
+              Tag name cannot exceed 75 characters
+            </em>
+          )
+          .required(
+            <em className="form-field-error">Tag name cannot be empty</em>
+          ),
+      })
+    )
+    .required(<em className="form-field-error">Tags cannot be empty</em>),
 });
 
 const formatAuthor = (option, props) => {
@@ -96,23 +108,8 @@ const ReferenceForm = ({
   reference,
   submitHandler,
 }) => {
-  const [loadingTagList, setLoadingTagList] = useState(false);
-  const [tagList, setTagList] = useState([]);
   const initialValues = { ...reference };
   initialValues.tags.sort(sortByName);
-
-  const handleTagsSearch = (query) => {
-    setLoadingTagList(true);
-    const url = `${apiEndpoint}/api/tags/queryWithRefCount?query=${query}`;
-
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        const tagList = data.tags;
-        setTagList(tagList);
-        setLoadingTagList(false);
-      });
-  };
 
   const issues = {};
   for (let magazine of magazines) {
@@ -133,7 +130,6 @@ const ReferenceForm = ({
         handleBlur,
         handleSubmit,
         handleReset,
-        setFieldValue,
         isSubmitting,
       }) => (
         <Form className="mt-3">
@@ -443,41 +439,12 @@ const ReferenceForm = ({
               <ErrorMessage name="type" component="p" />
             </Form.Label>
             <Col sm={10}>
-              <AsyncTypeahead
-                isLoading={loadingTagList}
-                multiple
-                id="tags"
-                name="tags"
-                labelKey="name"
-                align="justify"
-                maxResults={10}
-                paginate
-                minLength={2}
-                allowNew
-                newSelectionPrefix={<strong>New tag: </strong>}
-                options={tagList}
-                selected={values.tags}
-                placeholder="Tags"
-                renderMenuItemChildren={(option) => (
-                  <>
-                    <span>{option.name}</span>
-                    <em> ({option.refcount})</em>
-                  </>
-                )}
-                inputProps={{ "data-lpignore": "true" }}
+              <Field
+                as={Form.Control}
+                component={TagEditorInput}
                 onBlur={handleBlur}
-                onSearch={handleTagsSearch}
-                onChange={(selected) => {
-                  const seen = new Set();
-                  selected = selected
-                    .filter((item) => {
-                      if (seen.has(item.name)) return false;
-                      seen.add(item.name);
-                      return true;
-                    })
-                    .sort(sortByName);
-                  setFieldValue("tags", selected);
-                }}
+                name="tags"
+                placeholder="Tags"
               />
             </Col>
           </Form.Group>
