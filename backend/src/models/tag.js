@@ -1,5 +1,10 @@
 "use strict";
 
+const {
+  createStringGetter,
+  createStringSetter,
+} = require("../lib/getter-setter");
+
 module.exports = (sequelize, DataTypes) => {
   const Tag = sequelize.define(
     "Tag",
@@ -11,9 +16,13 @@ module.exports = (sequelize, DataTypes) => {
       },
       description: {
         type: DataTypes.STRING(255),
+        get: createStringGetter("description"),
+        set: createStringSetter("description"),
       },
       type: {
         type: DataTypes.STRING(15),
+        get: createStringGetter("type"),
+        set: createStringSetter("type"),
       },
     },
     { timestamps: false }
