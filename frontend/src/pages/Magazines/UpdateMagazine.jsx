@@ -16,14 +16,11 @@ import MagazineForm from "../../forms/MagazineForm";
 const MagazineUpdate = () => {
   const { magazineId } = useParams();
 
-  const url = `${apiEndpoint}/api/combo/magazinecombo/${magazineId}`;
+  const url = `${apiEndpoint}/api/magazines/${magazineId}`;
 
-  const { isLoading, error, data } = useQuery(
-    ["magazine combo", magazineId],
-    () => {
-      return fetch(url).then((res) => res.json());
-    }
-  );
+  const { isLoading, error, data } = useQuery(["magazine", magazineId], () => {
+    return fetch(url).then((res) => res.json());
+  });
 
   if (isLoading) {
     return (
@@ -41,8 +38,6 @@ const MagazineUpdate = () => {
     );
   }
 
-  const magazine = data.magazine;
-
   const submitHandler = (values, formikBag) => {
     alert(JSON.stringify(values, null, 2));
     formikBag.setSubmitting(false);
@@ -59,7 +54,7 @@ const MagazineUpdate = () => {
             <Header>Magazine Update</Header>
           </Col>
           <Col className="text-right">
-            <LinkContainer to={`/magazines/delete/${magazine.id}`}>
+            <LinkContainer to={`/magazines/delete/${data.magazine.id}`}>
               <Button>Delete</Button>
             </LinkContainer>
           </Col>
