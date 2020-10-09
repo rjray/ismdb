@@ -18,7 +18,7 @@ const fetchAllRecordTypes = async (opts = {}) => {
 const fetchAllLanguages = async (opts = {}) => {
   const preferred = opts.preferred || "English";
 
-  const results = await Reference.findAll({
+  const languages = await Reference.findAll({
     attributes: [
       [Sequelize.fn("DISTINCT", Sequelize.col("language")), "language"],
     ],
@@ -44,8 +44,7 @@ const fetchAllLanguages = async (opts = {}) => {
     order: ["language"],
   });
 
-  const languages = results.map((l) => l.language);
-  languages.unshift(preferred);
+  languages.unshift({ language: preferred });
   return languages;
 };
 
@@ -76,7 +75,7 @@ const fetchAllTagTypes = async () => {
 
 // Fetch all distinct "types" referred to in the tags.
 const fetchAllReferenceTypes = async (opts = {}) => {
-  const results = await Reference.findAll({
+  const types = await Reference.findAll({
     attributes: [[Sequelize.fn("DISTINCT", Sequelize.col("type")), "type"]],
     where: {
       [Op.and]: [
@@ -96,7 +95,6 @@ const fetchAllReferenceTypes = async (opts = {}) => {
     ...opts,
   });
 
-  const types = results.map((result) => result.type);
   return types;
 };
 
