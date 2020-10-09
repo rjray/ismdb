@@ -38,6 +38,7 @@ const MagazineForm = ({ magazine, submitHandler }) => {
   let initialValues = { ...magazine };
   initialValues.createdAt = new Date(initialValues.createdAt);
   initialValues.updatedAt = new Date(initialValues.updatedAt);
+  initialValues.language = { language: initialValues.language };
 
   return (
     <Formik
