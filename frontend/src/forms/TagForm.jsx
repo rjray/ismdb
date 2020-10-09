@@ -1,9 +1,14 @@
 import React from "react";
+import { useQuery } from "react-query";
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
+import BeatLoader from "react-spinners/BeatLoader";
 import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+
+import apiEndpoint from "../utils/api-endpoint";
+const tagTypesUrl = `${apiEndpoint}/api/misc/tagtypes`;
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -22,14 +27,17 @@ const validationSchema = Yup.object().shape({
     .nullable(),
   type: Yup.string()
     .max(
-      15,
-      <em className="form-field-error">Type cannot exceed 15 characters</em>
+      25,
+      <em className="form-field-error">Type cannot exceed 25 characters</em>
     )
     .nullable(),
 });
 
 const TagForm = ({ tag, submitHandler }) => {
   const initialValues = { ...tag };
+  const { isLoading, isError, data, error } = useQuery(["tag-types"], () => {
+    return fetch(tagTypesUrl).then((res) => res.json());
+  });
 
   return (
     <Formik
@@ -69,15 +77,36 @@ const TagForm = ({ tag, submitHandler }) => {
               <ErrorMessage name="type" component="p" />
             </Form.Label>
             <Col sm={10}>
-              <Field
-                as={Form.Control}
-                onBlur={handleBlur}
-                onChange={handleChange}
-                type="text"
-                name="type"
-                placeholder="Type"
-                data-lpignore="true"
-              />
+              {isLoading && (
+                <div className="mt-2">
+                  <BeatLoader size={8} />
+                </div>
+              )}
+              {isError && (
+                <em className="form-field-error">
+                  Error loading types: {error.message}
+                </em>
+              )}
+              {data && data.types && (
+                <>
+                  <Field
+                    as={Form.Control}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    type="text"
+                    name="type"
+                    placeholder="Type"
+                    list="tag-type-list"
+                    data-lpignore="true"
+                    autocomplete="off"
+                  />
+                  <datalist id="tag-type-list">
+                    {data.types.map((type) => (
+                      <option key={type} value={type} />
+                    ))}
+                  </datalist>
+                </>
+              )}
             </Col>
           </Form.Group>
           <Form.Group as={Form.Row} controlId="name">
