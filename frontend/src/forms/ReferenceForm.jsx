@@ -17,7 +17,9 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 
 import compareVersion from "../utils/compare-version";
 import { sortBy } from "../utils/no-lodash";
-import TagEditorInput from "../components/TagEditorInput";
+import ReferenceType from "../components/CustomInputs/ReferenceType";
+import Language from "../components/CustomInputs/Language";
+import TagEditor from "../components/CustomInputs/TagEditor";
 
 const sortByName = sortBy("name");
 
@@ -103,13 +105,14 @@ const formatAuthor = (option, props) => {
 const ReferenceForm = ({
   recordTypes,
   magazines,
-  languages,
   authors: authorlist,
   reference,
   submitHandler,
 }) => {
   const initialValues = { ...reference };
   initialValues.tags.sort(sortByName);
+  initialValues.type = { type: initialValues.type };
+  initialValues.language = { language: initialValues.language };
 
   const issues = {};
   for (let magazine of magazines) {
@@ -241,6 +244,7 @@ const ReferenceForm = ({
                         name="MagazineIssueNumber"
                         placeholder="Issue Number"
                         list="magazine-issues"
+                        className="mt-1"
                         data-lpignore="true"
                       />
                       <datalist id="magazine-issues">
@@ -398,12 +402,10 @@ const ReferenceForm = ({
             <Col sm={10}>
               <Field
                 as={Form.Control}
-                type="text"
-                name="type"
+                component={ReferenceType}
                 onBlur={handleBlur}
-                onChange={handleChange}
+                name="type"
                 placeholder="Type"
-                data-lpignore="true"
               />
             </Col>
           </Form.Group>
@@ -415,33 +417,22 @@ const ReferenceForm = ({
             <Col sm={10}>
               <Field
                 as={Form.Control}
-                type="text"
-                name="language"
+                component={Language}
                 onBlur={handleBlur}
-                onChange={handleChange}
+                name="language"
                 placeholder="Language"
-                list="language-list"
-                data-lpignore="true"
               />
-              <datalist id="language-list">
-                {languages.map((language) => (
-                  <option
-                    key={language.replace(" ", "")}
-                    value={language}
-                  ></option>
-                ))}
-              </datalist>
             </Col>
           </Form.Group>
           <Form.Group as={Form.Row} controlId="tags" className="mb-2">
             <Form.Label column sm={2} className="text-md-right text-sm-left">
               <strong>Tags:</strong>
-              <ErrorMessage name="type" component="p" />
+              <ErrorMessage name="tags" component="p" />
             </Form.Label>
             <Col sm={10}>
               <Field
                 as={Form.Control}
-                component={TagEditorInput}
+                component={TagEditor}
                 onBlur={handleBlur}
                 name="tags"
                 placeholder="Tags"
