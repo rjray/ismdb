@@ -8,59 +8,9 @@
 const { fetchAuthorsNamesAliasesList } = require("../db/authors");
 const { fetchSingleReferenceComplete } = require("../db/references");
 const {
-  fetchSingleMagazineSimple,
   fetchAllMagazinesWithIssueNumbersAndCount,
 } = require("../db/magazines");
 const { fetchAllRecordTypes, fetchAllLanguages } = require("../db/misc");
-
-/*
-  GET /combo/magazinecombo
-  GET /combo/magazinecombo/{id}
-
-  Get the bundle of data required for editing/creating magazine records. If the
-  "id" parameter is given, this returns the list of languages and the full
-  magazine record for the ID. If "id" is not given, returns just the languages.
-  May also return notifications.
- */
-function fetchMagazineCombo(context) {
-  const id = context.params.path.id || null;
-  const query = context.params.query;
-  const res = context.res;
-
-  const promises = [fetchAllLanguages(query)];
-  if (id) {
-    promises.push(fetchSingleMagazineSimple(id));
-  }
-
-  return Promise.all(promises)
-    .then((values) => {
-      const languages = values[0];
-      const magazine = id ? values[1] : null;
-
-      if (id & !magazine) {
-        res.status(404).pureJson({
-          error: {
-            summary: "Not found",
-            description: `No magazine with this ID (${id}) found`,
-          },
-        });
-      } else {
-        const results = { languages };
-        if (id) results.magazine = magazine;
-
-        res.status(200).pureJson(results);
-      }
-    })
-    .catch((error) => {
-      console.log("Error: %o", error);
-      res.status(500).pureJson({
-        error: {
-          summary: error.name,
-          description: error.message,
-        },
-      });
-    });
-}
 
 /*
   GET /combo/referencecombo
@@ -124,6 +74,5 @@ function fetchReferenceCombo(context) {
 }
 
 module.exports = {
-  fetchMagazineCombo,
   fetchReferenceCombo,
 };
