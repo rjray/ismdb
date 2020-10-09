@@ -6,7 +6,7 @@
  */
 
 const references = require("../db/references");
-const { fixupOrderField } = require("../lib/utils");
+const { fixupOrderField, fixupWhereField } = require("../lib/utils");
 
 const canBeNull = new Set(["isbn", "language"]);
 
