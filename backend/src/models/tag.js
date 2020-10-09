@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         set: createStringSetter("description"),
       },
       type: {
-        type: DataTypes.STRING(15),
+        type: DataTypes.STRING(25),
         get: createStringGetter("type"),
         set: createStringSetter("type"),
       },

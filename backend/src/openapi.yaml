@@ -131,7 +131,7 @@ components:
       maxLength: 255
     tagTypeType:
       type: string
-      maxLength: 10
+      maxLength: 25
     matchNameType:
       type: string
       maxLength: 255
