@@ -31,6 +31,13 @@ components:
       required: true
       schema:
         type: string
+    typeParam:
+      name: type
+      in: query
+      description: Substring to search for in reference type fields
+      required: false
+      schema:
+        type: string
     orderParam:
       name: order
       in: query
@@ -1809,6 +1816,59 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/languageType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Miscellaneous
+  "/misc/tagtypes":
+    x-exegesis-controller: miscController
+    get:
+      summary: Fetch all tag type strings as an array
+      description: Fetch all tag type strings currently in use from the
+        database as an array of strings.
+      operationId: getAllTagTypes
+      responses:
+        "200":
+          description: All tag types
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - types
+                properties:
+                  types:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/tagTypeType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Miscellaneous
+  "/misc/referencetypes":
+    x-exegesis-controller: miscController
+    get:
+      summary: Fetch all reference type strings as an array
+      description: Fetch all reference type strings currently in use from the
+        database as an array of strings.
+      operationId: getAllReferenceTypes
+      parameters:
+        - $ref:  "#/components/parameters/typeParam"  
+        - $ref:  "#/components/parameters/limitParam"
+      responses:
+        "200":
+          description: All matching reference types
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - types
+                properties:
+                  types:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/referenceTypeType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:

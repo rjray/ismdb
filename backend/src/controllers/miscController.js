@@ -5,8 +5,14 @@
   API paths at/below "/misc").
  */
 
-const { fetchAllRecordTypes, fetchAllLanguages } = require("../db/misc");
+const {
+  fetchAllRecordTypes,
+  fetchAllLanguages,
+  fetchAllTagTypes,
+  fetchAllReferenceTypes,
+} = require("../db/misc");
 const { quickSearchByName } = require("../db/raw-sql");
+const { fixupWhereField } = require("../lib/utils");
 
 /*
   GET /misc/recordtypes
@@ -60,6 +66,61 @@ function getAllLanguages(context) {
 }
 
 /*
+  GET /misc/tagtypes
+
+  Get all distinct "type" values from the tags table. The return value is an
+  object with one key, "types", that is an array of the types in alphabetic
+  order.
+ */
+function getAllTagTypes(context) {
+  const res = context.res;
+
+  return fetchAllTagTypes()
+    .then((types) => {
+      res.status(200).pureJson({ types });
+    })
+    .catch((error) => {
+      res.status(500).pureJson({
+        error: {
+          summary: error.name,
+          description: error.message,
+        },
+      });
+    });
+}
+
+/*
+  GET /misc/referencetypes
+
+  Get all distinct "type" values from the references table. The return value is
+  an object with one key, "types", that is an array of the types in alphabetic
+  order. The query parameter "type" limits the matching returned, and the
+  parameter "limit" limits the number of values returned. Both are optional.
+ */
+function getAllReferenceTypes(context) {
+  const query = context.params.query;
+  const res = context.res;
+
+  if (query.type) {
+    query.where = fixupWhereField([`type,substring,${query.type}`]);
+    delete query.type;
+  }
+
+  return fetchAllReferenceTypes(query)
+    .then((types) => {
+      res.status(200).pureJson({ types });
+    })
+    .catch((error) => {
+      res.status(500).pureJson({
+        error: {
+          summary: error.name,
+          description: error.message,
+        },
+      });
+    });
+}
+
+/*
   GET /misc/quicksearch
 
   Get the records that match the "query" parameter in a substring context on
@@ -90,5 +151,7 @@ function quickSearchName(context) {
 module.exports = {
   getAllRecordTypes,
   getAllLanguages,
+  getAllTagTypes,
+  getAllReferenceTypes,
   quickSearchName,
 };
