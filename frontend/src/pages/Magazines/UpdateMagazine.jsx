@@ -19,7 +19,7 @@ const MagazineUpdate = () => {
   const url = `${apiEndpoint}/api/combo/magazinecombo/${magazineId}`;
 
   const { isLoading, error, data } = useQuery(
-    ["magazine-combo", magazineId],
+    ["magazine combo", magazineId],
     () => {
       return fetch(url).then((res) => res.json());
     }

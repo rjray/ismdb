@@ -18,7 +18,7 @@ const ShowTag = () => {
   const url = `${apiEndpoint}/api/tags/${tagId}/withReferences`;
 
   const { isLoading, error, data } = useQuery(
-    ["tag-with-references", tagId],
+    ["tag with references", tagId],
     () => {
       return fetch(url).then((res) => res.json());
     }

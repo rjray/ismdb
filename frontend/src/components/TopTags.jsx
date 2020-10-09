@@ -16,7 +16,7 @@ const TopTags = () => {
   ];
   const url = `${apiEndpoint}/api/tags/withRefCount?${params.join("&")}`;
 
-  const { isLoading, error, data } = useQuery(["Top Tags"], () => {
+  const { isLoading, error, data } = useQuery("top tags", () => {
     return fetch(url).then((res) => res.json());
   });
 

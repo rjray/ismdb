@@ -9,7 +9,7 @@ const TopTags = () => {
   const count = 10;
   const url = `${apiEndpoint}/api/authors/withRefCount?limit=${count}&order=refcount,desc`;
 
-  const { isLoading, error, data } = useQuery(["Top Authors"], () => {
+  const { isLoading, error, data } = useQuery("top authors", () => {
     return fetch(url).then((res) => res.json());
   });
 

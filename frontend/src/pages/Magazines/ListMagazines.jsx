@@ -15,7 +15,7 @@ const ListMagazines = () => {
   const url = `${apiEndpoint}/api/magazines/withIssues`;
 
   const { isLoading, error, data } = useQuery(
-    ["all-magazines-with-issues"],
+    "all magazines with issues",
     () => {
       return fetch(url).then((res) => res.json());
     }

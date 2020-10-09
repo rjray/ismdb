@@ -14,12 +14,9 @@ import TagTable from "../../components/TagTable";
 const ListTags = () => {
   const url = `${apiEndpoint}/api/tags/withRefCount`;
 
-  const { isLoading, error, data } = useQuery(
-    ["all-tags-with-refcount"],
-    () => {
-      return fetch(url).then((res) => res.json());
-    }
-  );
+  const { isLoading, error, data } = useQuery("all tags with refcount", () => {
+    return fetch(url).then((res) => res.json());
+  });
 
   if (isLoading) {
     return (

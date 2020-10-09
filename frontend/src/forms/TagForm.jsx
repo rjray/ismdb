@@ -35,7 +35,7 @@ const validationSchema = Yup.object().shape({
 
 const TagForm = ({ tag, submitHandler }) => {
   const initialValues = { ...tag };
-  const { isLoading, isError, data, error } = useQuery(["tag-types"], () => {
+  const { isLoading, isError, data, error } = useQuery("tag types", () => {
     return fetch(tagTypesUrl).then((res) => res.json());
   });
 

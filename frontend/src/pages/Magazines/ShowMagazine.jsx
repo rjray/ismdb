@@ -19,7 +19,7 @@ const ShowMagazine = () => {
   const url = `${apiEndpoint}/api/magazines/${magazineId}/withIssues`;
 
   const { isLoading, error, data } = useQuery(
-    ["magazine-with-issues", magazineId],
+    ["magazine with issues", magazineId],
     () => {
       return fetch(url).then((res) => res.json());
     }

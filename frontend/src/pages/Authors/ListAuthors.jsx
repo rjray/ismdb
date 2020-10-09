@@ -15,7 +15,7 @@ const ListAuthors = () => {
   const url = `${apiEndpoint}/api/authors/withRefCount`;
 
   const { isLoading, error, data } = useQuery(
-    ["all-authors-with-refcount"],
+    "all authors with refcount",
     () => {
       return fetch(url).then((res) => res.json());
     }

@@ -14,7 +14,7 @@ import ReferenceTable from "../../components/ReferenceTable";
 const ListReferences = () => {
   const url = `${apiEndpoint}/api/references`;
 
-  const { isLoading, error, data } = useQuery(["all-references"], () => {
+  const { isLoading, error, data } = useQuery("all references", () => {
     return fetch(url).then((res) => res.json());
   });
 

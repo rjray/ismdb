@@ -20,7 +20,7 @@ const ShowAuthor = () => {
   const url = `${apiEndpoint}/api/authors/${authorId}/withRefsAndAliases`;
 
   const { isLoading, error, data } = useQuery(
-    ["author-with-references", authorId],
+    ["author with references", authorId],
     () => {
       return fetch(url).then((res) => res.json());
     }

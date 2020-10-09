@@ -9,7 +9,7 @@ const TopTags = () => {
   const count = 10;
   const url = `${apiEndpoint}/api/magazines/getMostRecentlyUpdated?count=${count}`;
 
-  const { isLoading, error, data } = useQuery(["Top Magazines"], () => {
+  const { isLoading, error, data } = useQuery("top magazines", () => {
     return fetch(url).then((res) => res.json());
   });
 

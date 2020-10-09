@@ -19,7 +19,7 @@ const ReferenceUpdate = () => {
   const url = `${apiEndpoint}/api/combo/referencecombo/${referenceId}`;
 
   const { isLoading, error, data } = useQuery(
-    ["reference-combo", referenceId],
+    ["reference combo", referenceId],
     () => {
       return fetch(url).then((res) => res.json());
     }
