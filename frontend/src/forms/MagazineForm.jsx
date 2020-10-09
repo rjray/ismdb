@@ -5,6 +5,8 @@ import Button from "react-bootstrap/Button";
 import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
+import Language from "../components/CustomInputs/Language";
+
 const validationSchema = Yup.object().shape({
   name: Yup.string()
     .max(
@@ -32,7 +34,7 @@ const validationSchema = Yup.object().shape({
     .nullable(),
 });
 
-const MagazineForm = ({ magazine, languages, submitHandler }) => {
+const MagazineForm = ({ magazine, submitHandler }) => {
   let initialValues = { ...magazine };
   initialValues.createdAt = new Date(initialValues.createdAt);
   initialValues.updatedAt = new Date(initialValues.updatedAt);
@@ -77,22 +79,11 @@ const MagazineForm = ({ magazine, languages, submitHandler }) => {
             <Col sm={10}>
               <Field
                 as={Form.Control}
-                type="text"
-                name="language"
+                component={Language}
                 onBlur={handleBlur}
-                onChange={handleChange}
+                name="language"
                 placeholder="Language"
-                list="language-list"
-                data-lpignore="true"
               />
-              <datalist id="language-list">
-                {languages.map((language) => (
-                  <option
-                    key={language.replace(" ", "")}
-                    value={language}
-                  ></option>
-                ))}
-              </datalist>
             </Col>
           </Form.Group>
           <Form.Group as={Form.Row} controlId="aliases">
