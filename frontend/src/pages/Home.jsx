@@ -5,6 +5,7 @@ import Col from "react-bootstrap/Col";
 import CardDeck from "react-bootstrap/CardDeck";
 
 import HomeSearch from "../components/HomeSearch";
+import TopReferences from "../components/TopReferences";
 import TopTags from "../components/TopTags";
 import TopMagazines from "../components/TopMagazines";
 import TopAuthors from "../components/TopAuthors";
@@ -24,7 +25,7 @@ const Home = () => (
           <HomeSearch
             title="References"
             link="/references/search"
-            component={TopTags}
+            component={TopReferences}
           />
           <HomeSearch
             title="Magazines"
@@ -36,6 +37,7 @@ const Home = () => (
             link="/authors/search"
             component={TopAuthors}
           />
+          <HomeSearch title="Tags" link="/tags/search" component={TopTags} />
         </CardDeck>
       </Col>
     </Row>
