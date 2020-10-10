@@ -16,10 +16,10 @@ import ReferenceForm from "../../forms/ReferenceForm";
 const ReferenceUpdate = () => {
   const { referenceId } = useParams();
 
-  const url = `${apiEndpoint}/api/combo/referencecombo/${referenceId}`;
+  const url = `${apiEndpoint}/api/references/${referenceId}`;
 
   const { isLoading, error, data } = useQuery(
-    ["reference combo", referenceId],
+    ["reference", referenceId],
     () => {
       return fetch(url).then((res) => res.json());
     }
@@ -84,7 +84,7 @@ const ReferenceUpdate = () => {
             </LinkContainer>
           </Col>
         </Row>
-        <ReferenceForm {...data} submitHandler={submitHandler} />
+        <ReferenceForm reference={reference} submitHandler={submitHandler} />
       </Container>
     </>
   );
