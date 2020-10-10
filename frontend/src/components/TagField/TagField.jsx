@@ -45,7 +45,12 @@ const TagField = () => {
 
   // Total tags to display:
   const count = 100;
-  const params = [`limit=${count}`, "order=refcount,desc", "order=name"];
+  const params = [
+    `limit=${count}`,
+    "order=refcount,desc",
+    "order=name",
+    "where=name,ne,placeholder",
+  ];
   if (!includeMeta) {
     params.push("where=type,ne,meta");
   }
