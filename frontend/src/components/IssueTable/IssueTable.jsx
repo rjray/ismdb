@@ -5,7 +5,7 @@ import compareVersion from "../../utils/compare-version";
 import FormatDate from "../FormatDate";
 import IssueExpand from "./IssueExpand";
 
-let columns = [
+const columns = [
   {
     name: <b>Number</b>,
     selector: "number",

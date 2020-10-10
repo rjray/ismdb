@@ -35,7 +35,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const MagazineForm = ({ magazine, submitHandler }) => {
-  let initialValues = { ...magazine };
+  const initialValues = { ...magazine };
   initialValues.createdAt = new Date(initialValues.createdAt);
   initialValues.updatedAt = new Date(initialValues.updatedAt);
   initialValues.language = { language: initialValues.language };

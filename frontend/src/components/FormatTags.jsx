@@ -5,7 +5,7 @@ import Badge from "react-bootstrap/Badge";
 import { sortBy } from "../utils/no-lodash";
 
 const FormatTags = ({ currentTag, tags }) => {
-  let content = [];
+  const content = [];
 
   [...tags].sort(sortBy("name")).forEach((tag) => {
     const formatted =

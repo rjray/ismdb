@@ -113,7 +113,7 @@ const ReferenceForm = ({ reference, submitHandler }) => {
   const issues = {};
 
   if (magazinesQuery.data?.magazines) {
-    for (let magazine of magazinesQuery.data.magazines) {
+    for (const magazine of magazinesQuery.data.magazines) {
       issues[magazine.id] = magazine.issues
         .map((i) => i.number)
         .sort(compareVersion);

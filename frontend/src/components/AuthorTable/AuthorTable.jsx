@@ -9,7 +9,7 @@ const lastNameFirst = (name) => {
     return "";
   }
 
-  let parts = name.replace(/,/, "").split(" ");
+  const parts = name.replace(/,/, "").split(" ");
   let lastName = parts.pop();
   if (lastName.match(/^jr[.]?$/i)) {
     lastName = parts.pop();

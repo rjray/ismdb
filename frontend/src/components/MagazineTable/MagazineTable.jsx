@@ -4,7 +4,7 @@ import DataTable from "react-data-table-component";
 import FormatDate from "../FormatDate";
 import MagazineExpand from "./MagazineExpand";
 
-let columns = [
+const columns = [
   {
     name: <b>Name</b>,
     selector: "name",
