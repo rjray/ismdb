@@ -13,7 +13,14 @@ import Magazines from "./pages/Magazines";
 import Issues from "./pages/Issues";
 import Tags from "./pages/Tags";
 
-const queryCache = new QueryCache();
+const queryCache = new QueryCache({
+  defaultConfig: {
+    queries: {
+      staleTime: Infinity,
+      cacheTime: 24 * 60 * 60 * 1000,
+    },
+  },
+});
 
 const App = () => {
   return (
