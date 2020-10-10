@@ -3,8 +3,8 @@
  */
 
 const { Magazine, MagazineIssue, sequelize } = require("../models");
-
 const { INCLUDE_REFERENCES, cleanReference } = require("./references");
+const { fixAggregateOrderFields } = require("../lib/utils");
 
 // Most-basic magazine request. Single magazine without issues or anything.
 const fetchSingleMagazineSimple = async (id) => {
