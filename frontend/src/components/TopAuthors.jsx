@@ -1,4 +1,5 @@
 import React from "react";
+import { LinkContainer } from "react-router-bootstrap";
 import { useQuery } from "react-query";
 import Dropdown from "react-bootstrap/Dropdown";
 import ScaleLoader from "react-spinners/ScaleLoader";
@@ -32,18 +33,20 @@ const TopTags = () => {
   return (
     <>
       <div className="mb-2">
-        <em>Top {count} authors:</em>
+        <em>Top authors by credits:</em>
       </div>
-      <Dropdown style={{ width: "75%", margin: "auto" }}>
+      <Dropdown>
         <Dropdown.Toggle style={{ width: "100%" }} id="top-authors-dropdown">
           Select author to view
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
           {data.authors.map((author) => (
-            <Dropdown.Item key={author.id} href={`/authors/${author.id}`}>
-              {author.name} <em>({author.refcount})</em>
-            </Dropdown.Item>
+            <LinkContainer key={author.id} to={`/authors/${author.id}`}>
+              <Dropdown.Item>
+                {author.name} <em>({author.refcount})</em>
+              </Dropdown.Item>
+            </LinkContainer>
           ))}
         </Dropdown.Menu>
       </Dropdown>

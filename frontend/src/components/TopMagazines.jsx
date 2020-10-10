@@ -1,4 +1,5 @@
 import React from "react";
+import { LinkContainer } from "react-router-bootstrap";
 import { useQuery } from "react-query";
 import Dropdown from "react-bootstrap/Dropdown";
 import ScaleLoader from "react-spinners/ScaleLoader";
@@ -32,18 +33,18 @@ const TopTags = () => {
   return (
     <>
       <div className="mb-2">
-        <em>Top {count} magazines:</em>
+        <em>Most-recently updated magazines:</em>
       </div>
-      <Dropdown style={{ width: "75%", margin: "auto" }}>
+      <Dropdown>
         <Dropdown.Toggle style={{ width: "100%" }} id="top-magazines-dropdown">
           Select magazine to view
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
           {data.magazines.map((magazine) => (
-            <Dropdown.Item key={magazine.id} href={`/magazines/${magazine.id}`}>
-              {magazine.name}
-            </Dropdown.Item>
+            <LinkContainer key={magazine.id} to={`/magazines/${magazine.id}`}>
+              <Dropdown.Item>{magazine.name}</Dropdown.Item>
+            </LinkContainer>
           ))}
         </Dropdown.Menu>
       </Dropdown>
