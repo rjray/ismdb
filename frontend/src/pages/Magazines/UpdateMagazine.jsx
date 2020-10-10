@@ -38,6 +38,8 @@ const MagazineUpdate = () => {
     );
   }
 
+  const magazine = { ...data.magazine };
+
   const submitHandler = (values, formikBag) => {
     alert(JSON.stringify(values, null, 2));
     formikBag.setSubmitting(false);
@@ -59,7 +61,7 @@ const MagazineUpdate = () => {
             </LinkContainer>
           </Col>
         </Row>
-        <MagazineForm submitHandler={submitHandler} {...data} />
+        <MagazineForm magazine={magazine} submitHandler={submitHandler} />
       </Container>
     </>
   );

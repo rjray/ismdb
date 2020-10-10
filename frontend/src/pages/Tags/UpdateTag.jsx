@@ -38,7 +38,7 @@ const TagUpdate = () => {
     );
   }
 
-  const tag = data.tag;
+  const tag = { ...data.tag };
   const splittable = tag.name.match(/ /);
 
   const submitHandler = (values, formikBag) => {

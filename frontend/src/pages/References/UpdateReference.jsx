@@ -41,7 +41,7 @@ const ReferenceUpdate = () => {
     );
   }
 
-  const reference = data.reference;
+  const reference = { ...data.reference };
 
   reference.authors = reference.authors.map((item) => {
     return { ...item, deleted: false };

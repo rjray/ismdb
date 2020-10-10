@@ -38,7 +38,7 @@ const AuthorUpdate = () => {
     );
   }
 
-  const author = data.author;
+  const author = { ...data.author };
 
   const submitHandler = (values, formikBag) => {
     alert(JSON.stringify(values, null, 2));
