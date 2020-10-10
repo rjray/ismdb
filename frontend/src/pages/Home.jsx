@@ -42,12 +42,22 @@ const Home = () => (
       </Col>
     </Row>
     <Row className="mt-4">
-      <Col className="mx-auto" xs={12} sm={{ offset: 3, span: 6 }}>
+      <Col
+        className="mx-auto"
+        xs={12}
+        sm={{ offset: 1, span: 10 }}
+        md={{ offset: 2, span: 8 }}
+      >
         <QuickSearch />
       </Col>
     </Row>
     <Row>
-      <Col xs={12} sm={{ offset: 3, span: 6 }}>
+      <Col
+        className="mx-auto"
+        xs={12}
+        sm={{ offset: 1, span: 10 }}
+        md={{ offset: 2, span: 8 }}
+      >
         <TagField />
       </Col>
     </Row>
