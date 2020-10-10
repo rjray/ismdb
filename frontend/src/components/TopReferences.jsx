@@ -6,11 +6,11 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 
 import apiEndpoint from "../utils/api-endpoint";
 
-const TopReferences = () => {
-  const count = 10;
-  const params = [`limit=${count}`, "order=updatedAt,desc"];
-  const url = `${apiEndpoint}/api/references?${params.join("&")}`;
+const count = 10;
+const params = [`limit=${count}`, "order=updatedAt,desc"];
+const url = `${apiEndpoint}/api/references?${params.join("&")}`;
 
+const TopReferences = () => {
   const { isLoading, error, data } = useQuery("top references", () => {
     return fetch(url).then((res) => res.json());
   });

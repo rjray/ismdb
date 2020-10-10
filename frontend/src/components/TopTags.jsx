@@ -6,17 +6,11 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 
 import apiEndpoint from "../utils/api-endpoint";
 
-const TopTags = () => {
-  const count = 10;
-  const params = [
-    `limit=${count}`,
-    "order=refcount,desc",
-    "where=type,ne,meta",
-    "where=type,ne,scale",
-    "where=type,ne,nationality",
-  ];
-  const url = `${apiEndpoint}/api/tags/withRefCount?${params.join("&")}`;
+const count = 10;
+const params = [`limit=${count}`, "order=refcount,desc"];
+const url = `${apiEndpoint}/api/tags/withRefCount?${params.join("&")}`;
 
+const TopTags = () => {
   const { isLoading, error, data } = useQuery("top tags", () => {
     return fetch(url).then((res) => res.json());
   });

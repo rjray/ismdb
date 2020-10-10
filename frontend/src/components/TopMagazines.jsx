@@ -6,10 +6,13 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 
 import apiEndpoint from "../utils/api-endpoint";
 
-const TopTags = () => {
-  const count = 10;
-  const url = `${apiEndpoint}/api/magazines/getMostRecentlyUpdated?count=${count}`;
+const count = 10;
+const params = [`count=${count}`];
+const url = `${apiEndpoint}/api/magazines/getMostRecentlyUpdated?${params.join(
+  "&"
+)}`;
 
+const TopTags = () => {
   const { isLoading, error, data } = useQuery("top magazines", () => {
     return fetch(url).then((res) => res.json());
   });
