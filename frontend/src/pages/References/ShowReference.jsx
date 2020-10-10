@@ -105,6 +105,12 @@ const ShowReference = () => {
       </Row>
       <Row>
         <Col xs={6} sm={4} md={2} xl={1} className="text-right">
+          <strong>Language:</strong>
+        </Col>
+        <Col>{reference.language || "English"}</Col>
+      </Row>
+      <Row>
+        <Col xs={6} sm={4} md={2} xl={1} className="text-right">
           <strong>Tags:</strong>
         </Col>
         <Col>
@@ -126,12 +132,6 @@ const ShowReference = () => {
         <Col>
           <FormatDate date={reference.updatedAt} />
         </Col>
-      </Row>
-      <Row>
-        <Col xs={6} sm={4} md={2} xl={1} className="text-right">
-          <strong>Language:</strong>
-        </Col>
-        <Col>{reference.language || "English"}</Col>
       </Row>
     </>
   );
