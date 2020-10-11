@@ -13,7 +13,7 @@ import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import ReferenceForm from "../../forms/ReferenceForm";
 
-const ReferenceUpdate = () => {
+const UpdateReference = () => {
   const { referenceId } = useParams();
 
   const url = `${apiEndpoint}/api/references/${referenceId}`;
@@ -90,4 +90,4 @@ const ReferenceUpdate = () => {
   );
 };
 
-export default ReferenceUpdate;
+export default UpdateReference;

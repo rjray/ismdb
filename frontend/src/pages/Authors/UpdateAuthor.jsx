@@ -13,7 +13,7 @@ import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import AuthorForm from "../../forms/AuthorForm";
 
-const AuthorUpdate = () => {
+const UpdateAuthor = () => {
   const { authorId } = useParams();
 
   const url = `${apiEndpoint}/api/authors/${authorId}`;
@@ -72,4 +72,4 @@ const AuthorUpdate = () => {
   );
 };
 
-export default AuthorUpdate;
+export default UpdateAuthor;

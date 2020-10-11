@@ -13,7 +13,7 @@ import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import MagazineForm from "../../forms/MagazineForm";
 
-const MagazineUpdate = () => {
+const UpdateMagazine = () => {
   const { magazineId } = useParams();
 
   const url = `${apiEndpoint}/api/magazines/${magazineId}`;
@@ -67,4 +67,4 @@ const MagazineUpdate = () => {
   );
 };
 
-export default MagazineUpdate;
+export default UpdateMagazine;

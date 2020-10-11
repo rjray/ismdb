@@ -13,7 +13,7 @@ import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import TagForm from "../../forms/TagForm";
 
-const TagUpdate = () => {
+const UpdateTag = () => {
   const { tagId } = useParams();
 
   const url = `${apiEndpoint}/api/tags/${tagId}`;
@@ -79,4 +79,4 @@ const TagUpdate = () => {
   );
 };
 
-export default TagUpdate;
+export default UpdateTag;
