@@ -5,7 +5,6 @@ import { ToastProvider } from "react-toast-notifications";
 import { QueryCache, ReactQueryCacheProvider } from "react-query";
 import { RecoilRoot } from "recoil";
 
-import NavHeader from "./components/NavHeader";
 import Home from "./pages/Home";
 import References from "./pages/References";
 import Authors from "./pages/Authors";
@@ -31,9 +30,6 @@ const App = () => {
             <Helmet titleTemplate="ISMDB - %s">
               <title>Home</title>
             </Helmet>
-
-            <NavHeader />
-
             <Switch>
               <Route exact path="/" component={Home} />
               <Route path="/references" component={References} />
