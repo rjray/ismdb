@@ -33,8 +33,6 @@ const validationSchema = Yup.object().shape({
 
 const AuthorForm = ({ author, submitHandler }) => {
   const initialValues = { ...author };
-  initialValues.createdAt = new Date(initialValues.createdAt);
-  initialValues.updatedAt = new Date(initialValues.updatedAt);
 
   return (
     <Formik

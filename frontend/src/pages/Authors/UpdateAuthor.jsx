@@ -40,6 +40,9 @@ const UpdateAuthor = () => {
 
   const author = { ...data.author };
 
+  author.createdAt = new Date(author.createdAt);
+  author.updatedAt = new Date(author.updatedAt);
+
   const submitHandler = (values, formikBag) => {
     alert(JSON.stringify(values, null, 2));
     formikBag.setSubmitting(false);
