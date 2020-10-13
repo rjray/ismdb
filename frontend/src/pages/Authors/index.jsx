@@ -4,6 +4,7 @@ import Container from "react-bootstrap/Container";
 
 import NavHeader from "../../components/NavHeader";
 import ShowAuthor from "./ShowAuthor";
+import CreateAuthor from "./CreateAuthor";
 import UpdateAuthor from "./UpdateAuthor";
 import ListAuthors from "./ListAuthors";
 
@@ -19,6 +20,7 @@ const Authors = () => {
             path={`${match.path}/:authorId(\\d+)`}
             component={ShowAuthor}
           />
+          <Route path={`${match.path}/create`} component={CreateAuthor} />
           <Route
             path={`${match.path}/update/:authorId(\\d+)`}
             component={UpdateAuthor}
