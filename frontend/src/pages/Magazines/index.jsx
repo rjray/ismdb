@@ -6,6 +6,7 @@ import NavHeader from "../../components/NavHeader";
 import ShowMagazine from "./ShowMagazine";
 import UpdateMagazine from "./UpdateMagazine";
 import ListMagazines from "./ListMagazines";
+import CreateMagazine from "./CreateMagazine";
 
 const Magazines = () => {
   const match = useRouteMatch();
@@ -19,6 +20,7 @@ const Magazines = () => {
             path={`${match.path}/:magazineId(\\d+)`}
             component={ShowMagazine}
           />
+          <Route path={`${match.path}/create`} component={CreateMagazine} />
           <Route
             path={`${match.path}/update/:magazineId(\\d+)`}
             component={UpdateMagazine}
