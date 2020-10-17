@@ -6,6 +6,7 @@ import NavHeader from "../../components/NavHeader";
 import ShowReference from "./ShowReference";
 import UpdateReference from "./UpdateReference";
 import ListReferences from "./ListReferences";
+import CreateReference from "./CreateReference";
 
 const References = () => {
   const match = useRouteMatch();
@@ -19,6 +20,7 @@ const References = () => {
             path={`${match.path}/:referenceId(\\d+)`}
             component={ShowReference}
           />
+          <Route path={`${match.path}/create`} component={CreateReference} />
           <Route
             path={`${match.path}/update/:referenceId(\\d+)`}
             component={UpdateReference}
