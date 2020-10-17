@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
-export const multientry = atom({
-  key: "dataMultientry",
+export const multientrySwitch = atom({
+  key: "multientrySwitch",
   default: false,
 });
