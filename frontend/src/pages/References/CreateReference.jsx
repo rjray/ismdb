@@ -57,7 +57,7 @@ const CreateReference = () => {
           </Col>
           <Col className="text-right">
             <div className="mr-0 pr-0 align-middle">
-              <span>Enter multiple records: </span>
+              <span>Enter multiple references: </span>
               <Form.Check
                 id="enterMultiple"
                 inline
