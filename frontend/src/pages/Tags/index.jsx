@@ -6,6 +6,7 @@ import NavHeader from "../../components/NavHeader";
 import ShowTag from "./ShowTag";
 import UpdateTag from "./UpdateTag";
 import ListTags from "./ListTags";
+import CreateTag from "./CreateTag";
 
 const Tags = () => {
   const match = useRouteMatch();
@@ -16,6 +17,7 @@ const Tags = () => {
       <Container>
         <Switch>
           <Route path={`${match.path}/:tagId(\\d+)`} component={ShowTag} />
+          <Route path={`${match.path}/create`} component={CreateTag} />
           <Route
             path={`${match.path}/update/:tagId(\\d+)`}
             component={UpdateTag}
