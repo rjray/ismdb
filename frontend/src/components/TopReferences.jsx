@@ -7,7 +7,7 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 import apiEndpoint from "../utils/api-endpoint";
 
 const count = 10;
-const params = [`limit=${count}`, "order=updatedAt,desc"];
+const params = [`limit=${count}`, "order=createdAt,desc"];
 const url = `${apiEndpoint}/api/references?${params.join("&")}`;
 
 const TopReferences = () => {
@@ -34,7 +34,7 @@ const TopReferences = () => {
   return (
     <>
       <div className="mb-2">
-        <em>Most-recently updated references:</em>
+        <em>Most-recently created references:</em>
       </div>
       <Dropdown style={{ width: "100%", margin: "auto" }}>
         <Dropdown.Toggle style={{ width: "100%" }} id="top-references-dropdown">
