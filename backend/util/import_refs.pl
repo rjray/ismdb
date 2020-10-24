@@ -15,6 +15,7 @@ my %META_TAGS = (
     aircraft   => 'An aircraft subject',
     armor      => 'A ground vehicle subject',
     figures    => 'A figurine subject',
+    scifi      => 'A science fiction/fantasy subject',
     ships      => 'A naval/nautical subject',
     techniques => 'An article focusing on techniques',
     automotive => 'A civilian ground vehicle subject',
@@ -22,7 +23,7 @@ my %META_TAGS = (
 );
 my @SCALE_TAGS = (
     6, 8, 9, 12, 16, 20, 24, 25, 30, 32, 35, 43, 48, 72, 76, 96, 100, 144, 150,
-    200, 288, 350, 700
+    200, 288, 350, 700,
 );
 
 # This will be the global table of tags, mapping names to IDs:
