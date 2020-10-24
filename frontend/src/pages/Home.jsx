@@ -27,20 +27,20 @@ const Home = () => (
           <CardDeck>
             <HomeSearch
               title="References"
-              link="/references/search"
+              link="/references"
               component={TopReferences}
             />
             <HomeSearch
               title="Magazines"
-              link="/magazines/search"
+              link="/magazines"
               component={TopMagazines}
             />
             <HomeSearch
               title="Authors"
-              link="/authors/search"
+              link="/authors"
               component={TopAuthors}
             />
-            <HomeSearch title="Tags" link="/tags/search" component={TopTags} />
+            <HomeSearch title="Tags" link="/tags" component={TopTags} />
           </CardDeck>
         </Col>
       </Row>
