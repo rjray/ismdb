@@ -109,10 +109,10 @@ const TagForm = ({ tag, submitHandler }) => {
               )}
             </Col>
           </Form.Group>
-          <Form.Group as={Form.Row} controlId="name">
+          <Form.Group as={Form.Row} controlId="description">
             <Form.Label column sm={2} className="text-md-right text-xs-left">
               <strong>Description:</strong>
-              <ErrorMessage name="name" component="p" />
+              <ErrorMessage name="description" component="p" />
             </Form.Label>
             <Col sm={10}>
               <Field
