@@ -98,7 +98,7 @@ const TagForm = ({ tag, submitHandler }) => {
                     placeholder="Type"
                     list="tag-type-list"
                     data-lpignore="true"
-                    autocomplete="off"
+                    autoComplete="off"
                   />
                   <datalist id="tag-type-list">
                     {data.types.map((type) => (
