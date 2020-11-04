@@ -24,7 +24,7 @@ const queryCache = new QueryCache({
 const App = () => {
   return (
     <ReactQueryCacheProvider queryCache={queryCache}>
-      <ToastProvider autoDismissTimeout={3000}>
+      <ToastProvider autoDismissTimeout={4000} autoDismiss={true}>
         <RecoilRoot>
           <Router>
             <Helmet titleTemplate="ISMDB - %s">
