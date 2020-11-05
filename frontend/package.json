@@ -23,6 +23,7 @@
     "react-toast-notifications": "^2.4.0",
     "recoil": "0.0.13",
     "styled-components": "^5.2.0",
+    "xregexp": "^4.4.0",
     "yup": "^0.29.3"
   },
   "scripts": {
