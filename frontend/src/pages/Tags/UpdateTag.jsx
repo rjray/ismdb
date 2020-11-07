@@ -9,18 +9,14 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import TagForm from "../../forms/TagForm";
+import { getTagById } from "../../utils/queries";
 
 const UpdateTag = () => {
   const { tagId } = useParams();
 
-  const url = `${apiEndpoint}/api/tags/${tagId}`;
-
-  const { isLoading, error, data } = useQuery(["tag", tagId], () => {
-    return fetch(url).then((res) => res.json());
-  });
+  const { isLoading, error, data } = useQuery(["tag", tagId], getTagById);
 
   if (isLoading) {
     return (
