@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createRef } from "react";
 import { useQuery } from "react-query";
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
@@ -7,6 +7,7 @@ import BeatLoader from "react-spinners/BeatLoader";
 import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
+import FocusFormControl from "../components/CustomInputs/FocusFormControl";
 import apiEndpoint from "../utils/api-endpoint";
 const tagTypesUrl = `${apiEndpoint}/api/misc/tagtypes`;
 
@@ -33,11 +34,12 @@ const validationSchema = Yup.object().shape({
     .nullable(),
 });
 
-const TagForm = ({ tag, submitHandler }) => {
+const TagForm = ({ tag, submitHandler, autoFocusRef }) => {
   const initialValues = { ...tag };
   const { isLoading, isError, data, error } = useQuery("tag types", () => {
     return fetch(tagTypesUrl).then((res) => res.json());
   });
+  if (!autoFocusRef) autoFocusRef = createRef(null);
 
   return (
     <Formik
@@ -60,11 +62,12 @@ const TagForm = ({ tag, submitHandler }) => {
             </Form.Label>
             <Col sm={10}>
               <Field
-                as={Form.Control}
+                as={FocusFormControl}
                 onBlur={handleBlur}
                 onChange={handleChange}
                 type="text"
                 name="name"
+                innerRef={(el) => (autoFocusRef.current = el)}
                 placeholder="Name"
                 autoFocus
                 data-lpignore="true"
