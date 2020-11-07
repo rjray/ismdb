@@ -15,8 +15,8 @@ import Tags from "./pages/Tags";
 const queryCache = new QueryCache({
   defaultConfig: {
     queries: {
-      staleTime: Infinity,
-      cacheTime: 24 * 60 * 60 * 1000,
+      staleTime: 24 * 60 * 60 * 1000,
+      cacheTime: 10 * 60 * 1000,
     },
   },
 });
