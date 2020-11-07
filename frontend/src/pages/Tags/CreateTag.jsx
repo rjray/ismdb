@@ -1,29 +1,66 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { useRecoilState } from "recoil";
+import { useQueryCache, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { useToasts } from "react-toast-notifications";
 
 import Header from "../../components/Header";
 import TagForm from "../../forms/TagForm";
 import { multientrySwitch } from "../../atoms";
+import { useFocus } from "../../utils/focus";
+import { createTag } from "../../utils/queries";
 
 const CreateTag = () => {
   const [multientry, setMultientry] = useRecoilState(multientrySwitch);
-  const [createdTag, setCreatedTag] = useState(false);
+  const [createdTag, setCreatedTag] = useState(0);
+  const queryCache = useQueryCache();
+  const [mutate] = useMutation(createTag);
+  const { addToast } = useToasts();
+  const [focus, setFocus] = useFocus();
 
   const toggleMultientry = () => setMultientry((current) => !current);
 
   const submitHandler = (values, formikBag) => {
-    alert(JSON.stringify(values, null, 2));
-    formikBag.setSubmitting(false);
+    mutate(values, {
+      onSuccess: (data) => {
+        const { error, tag } = data;
+        formikBag.setSubmitting(false);
+
+        if (error) {
+          addToast(error.description, { appearance: "error" });
+        } else {
+          if (multientry) {
+            formikBag.resetForm();
+            setFocus();
+          }
+
+          queryCache.invalidateQueries(["tags", { withRefcount: true }]);
+          queryCache.setQueryData(["tag", tag.id], tag);
+
+          addToast(`Tag "${tag.name}" created`, { appearance: "success" });
+          setCreatedTag(tag.id);
+        }
+      },
+      onError: (error) => {
+        if (error.response) {
+          addToast(error.response.data.error.description, {
+            appearance: "error",
+          });
+        } else {
+          addToast(error.message, { appearance: "error" });
+        }
+        formikBag.setSubmitting(false);
+      },
+    });
   };
 
   if (createdTag && !multientry) {
-    return <Redirect push to={{ pathname: "/tags" }} />;
+    return <Redirect push to={{ pathname: `/tags/update/${createdTag}` }} />;
   }
 
   return (
@@ -55,6 +92,7 @@ const CreateTag = () => {
         <TagForm
           submitHandler={submitHandler}
           tag={{ name: "", description: "", type: "" }}
+          autoFocusRef={focus}
         />
       </Container>
     </>
