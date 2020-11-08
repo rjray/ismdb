@@ -13,7 +13,7 @@ import { multientrySwitch } from "../../atoms";
 
 const CreateReference = () => {
   const [multientry, setMultientry] = useRecoilState(multientrySwitch);
-  const [createdReference, setCreatedReference] = useState(null);
+  const [createdReference, setCreatedReference] = useState(0);
 
   const toggleMultientry = () => setMultientry((current) => !current);
 
@@ -24,12 +24,7 @@ const CreateReference = () => {
 
   if (createdReference && !multientry) {
     return (
-      <Redirect
-        push
-        to={{
-          pathname: `/references/update/${createdReference.id}`,
-        }}
-      />
+      <Redirect push to={{ pathname: `/references/${createdReference}` }} />
     );
   }
 

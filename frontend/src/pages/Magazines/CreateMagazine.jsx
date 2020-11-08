@@ -13,7 +13,7 @@ import { multientrySwitch } from "../../atoms";
 
 const CreateMagazine = () => {
   const [multientry, setMultientry] = useRecoilState(multientrySwitch);
-  const [createdMagazine, setCreatedMagazine] = useState(null);
+  const [createdMagazine, setCreatedMagazine] = useState(0);
 
   const toggleMultientry = () => setMultientry((current) => !current);
 
@@ -23,14 +23,7 @@ const CreateMagazine = () => {
   };
 
   if (createdMagazine && !multientry) {
-    return (
-      <Redirect
-        push
-        to={{
-          pathname: `/magazines/update/${createdMagazine.id}`,
-        }}
-      />
-    );
+    return <Redirect push to={{ pathname: `/magazines/${createdMagazine}` }} />;
   }
 
   const emptyMagazine = { name: "", language: "", aliases: "", notes: "" };

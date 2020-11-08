@@ -60,7 +60,7 @@ const CreateTag = () => {
   };
 
   if (createdTag && !multientry) {
-    return <Redirect push to={{ pathname: `/tags/update/${createdTag}` }} />;
+    return <Redirect push to={{ pathname: `/tags/${createdTag}` }} />;
   }
 
   return (

@@ -13,7 +13,7 @@ import { multientrySwitch } from "../../atoms";
 
 const CreateAuthor = () => {
   const [multientry, setMultientry] = useRecoilState(multientrySwitch);
-  const [createdAuthor, setCreatedAuthor] = useState(false);
+  const [createdAuthor, setCreatedAuthor] = useState(0);
 
   const toggleMultientry = () => setMultientry((current) => !current);
 
@@ -23,7 +23,7 @@ const CreateAuthor = () => {
   };
 
   if (createdAuthor && !multientry) {
-    return <Redirect push to={{ pathname: "/authors" }} />;
+    return <Redirect push to={{ pathname: `/authors/${createdAuthor}` }} />;
   }
 
   return (
