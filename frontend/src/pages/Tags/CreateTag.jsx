@@ -39,7 +39,7 @@ const CreateTag = () => {
             setFocus();
           }
 
-          queryCache.invalidateQueries(["tags", { withRefCount: true }]);
+          queryCache.invalidateQueries(["tags"]);
           queryCache.setQueryData(["tag", tag.id], tag);
 
           addToast(`Tag "${tag.name}" created`, { appearance: "success" });
