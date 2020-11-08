@@ -1,21 +1,24 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { useQuery } from "react-query";
+import { useQuery, useQueryCache, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import { useToasts } from "react-toast-notifications";
 
 import Header from "../../components/Header";
 import TagForm from "../../forms/TagForm";
-import { getTagById } from "../../utils/queries";
+import { getTagById, updateTagById } from "../../utils/queries";
 
 const UpdateTag = () => {
   const { tagId } = useParams();
-
+  const queryCache = useQueryCache();
+  const [mutate] = useMutation(updateTagById);
+  const { addToast } = useToasts();
   const { isLoading, error, data } = useQuery(["tag", tagId], getTagById);
 
   if (isLoading) {
@@ -38,8 +41,31 @@ const UpdateTag = () => {
   const splittable = tag.name.match(/ /);
 
   const submitHandler = (values, formikBag) => {
-    alert(JSON.stringify(values, null, 2));
-    formikBag.setSubmitting(false);
+    mutate(values, {
+      onSuccess: (data) => {
+        const { error, tag } = data;
+        formikBag.setSubmitting(false);
+
+        if (error) {
+          addToast(error.description, { appearance: "error" });
+        } else {
+          queryCache.invalidateQueries(["tags"]);
+          queryCache.setQueryData(["tag", tag.id], tag);
+
+          addToast(`Tag "${tag.name}" updated`, { appearance: "success" });
+        }
+      },
+      onError: (error) => {
+        if (error.response) {
+          addToast(error.response.data.error.description, {
+            appearance: "error",
+          });
+        } else {
+          addToast(error.message, { appearance: "error" });
+        }
+        formikBag.setSubmitting(false);
+      },
+    });
   };
 
   return (
