@@ -151,12 +151,11 @@ components:
         - type: object
           required:
             - id
-            - authorId
           properties:
             id:
-              $ref: "#/components/schemas/idType"
-            authorId:
-              $ref: "#/components/schemas/idType"
+              type: integer
+              format: int64
+              minimum: 0
     newAuthorType:
       type: object
       required:
@@ -1666,8 +1665,8 @@ paths:
         database as an array of strings.
       operationId: getAllReferenceTypes
       parameters:
-        - $ref:  "#/components/parameters/typeParam"  
-        - $ref:  "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/typeParam"
+        - $ref: "#/components/parameters/limitParam"
       responses:
         "200":
           description: All matching reference types
