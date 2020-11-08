@@ -61,7 +61,7 @@ const DeleteTag = () => {
         } else {
           setDeleted(true);
           queryCache.invalidateQueries(["tags"]);
-          queryCache.invalidateQueries(["tag", String(tag.id)]);
+          queryCache.removeQueries(["tag", String(tag.id)]);
 
           addToast(`Tag "${tag.name}" deleted`, { appearance: "success" });
         }
