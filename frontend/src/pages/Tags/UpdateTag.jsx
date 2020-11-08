@@ -50,7 +50,7 @@ const UpdateTag = () => {
           addToast(error.description, { appearance: "error" });
         } else {
           queryCache.invalidateQueries(["tags"]);
-          queryCache.setQueryData(["tag", tag.id], tag);
+          queryCache.setQueryData(["tag", String(tag.id)], { tag });
 
           addToast(`Tag "${tag.name}" updated`, { appearance: "success" });
         }
