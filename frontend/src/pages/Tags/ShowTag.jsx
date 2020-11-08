@@ -8,20 +8,16 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import ReferenceTable from "../../components/ReferenceTable";
+import { getTagByIdWithReferences } from "../../utils/queries";
 
 const ShowTag = () => {
   const { tagId } = useParams();
 
-  const url = `${apiEndpoint}/tags/${tagId}/withReferences`;
-
   const { isLoading, error, data } = useQuery(
-    ["tag with references", tagId],
-    () => {
-      return fetch(url).then((res) => res.json());
-    }
+    ["tag", tagId, { withReferences: true }],
+    getTagByIdWithReferences
   );
 
   if (isLoading) {
