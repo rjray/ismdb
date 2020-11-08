@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createRef } from "react";
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
@@ -9,6 +9,8 @@ import {
   BsArrowCounterclockwise as IconRestore,
 } from "react-icons/bs";
 import * as Yup from "yup";
+
+import FocusFormControl from "../components/CustomInputs/FocusFormControl";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -31,8 +33,9 @@ const validationSchema = Yup.object().shape({
   ),
 });
 
-const AuthorForm = ({ author, submitHandler }) => {
+const AuthorForm = ({ author, submitHandler, autoFocusRef }) => {
   const initialValues = { ...author };
+  if (!autoFocusRef) autoFocusRef = createRef(null);
 
   return (
     <Formik
@@ -56,11 +59,12 @@ const AuthorForm = ({ author, submitHandler }) => {
             </Form.Label>
             <Col sm={10}>
               <Field
-                as={Form.Control}
+                as={FocusFormControl}
                 onBlur={handleBlur}
                 onChange={handleChange}
                 type="text"
                 name="name"
+                innerRef={(el) => (autoFocusRef.current = el)}
                 placeholder="Name"
                 autoFocus
                 data-lpignore="true"
