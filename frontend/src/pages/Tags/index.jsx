@@ -7,6 +7,7 @@ import ShowTag from "./ShowTag";
 import UpdateTag from "./UpdateTag";
 import ListTags from "./ListTags";
 import CreateTag from "./CreateTag";
+import DeleteTag from "./DeleteTag";
 
 const Tags = () => {
   const match = useRouteMatch();
@@ -21,6 +22,10 @@ const Tags = () => {
           <Route
             path={`${match.path}/update/:tagId(\\d+)`}
             component={UpdateTag}
+          />
+          <Route
+            path={`${match.path}/delete/:tagId(\\d+)`}
+            component={DeleteTag}
           />
           <Route path={match.path} component={ListTags} />
         </Switch>
