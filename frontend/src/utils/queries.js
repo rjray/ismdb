@@ -66,38 +66,89 @@ export function makeRequest(...args) {
 }
 
 function createWrapper(type) {
-  return (data) => makeRequest({ url: `/api/${type}`, data, method: "post" });
+  return (data) => makeRequest({ url: `/${type}`, data, method: "post" });
 }
 
-function getByIdWrapper(type) {
-  return (_, id) =>
-    makeRequest({ url: `/api/${type}/{id}`, method: "get", path: { id } });
+function updateWrapper(type) {
+  return (data) =>
+    makeRequest({
+      url: `/${type}/{id}`,
+      data,
+      method: "put",
+      path: { id: data.id },
+    });
+}
+
+function deleteWrapper(type) {
+  return (id) =>
+    makeRequest({ url: `/${type}/{id}`, method: "delete", path: { id } });
+}
+
+function getByIdWrapper(type, extra) {
+  const url = extra ? `/${type}/{id}/${extra}` : `/${type}/{id}`;
+  return (_, id) => makeRequest({ url, method: "get", path: { id } });
+}
+
+function getWithParamsWrapper(url) {
+  return (_, params) => makeRequest({ url, method: "get", ...params });
 }
 
 /*
-  /api/tags
+  /tags functionality
  */
 
 export const createTag = createWrapper("tags");
+export const getAllTags = getWithParamsWrapper("/tags");
+export const getAllTagsWithRefCount = getWithParamsWrapper(
+  "/tags/withRefCount"
+);
+export const getTagsQueryWithRefCount = getWithParamsWrapper(
+  "/tags/queryWithRefCount"
+);
 export const getTagById = getByIdWrapper("tags");
+export const updateTagById = updateWrapper("tags");
+export const deleteTagById = deleteWrapper("tags");
+export const getTagByIdWithRefCount = getByIdWrapper("tags", "withRefCount");
+export const getTagByIdWithReferences = getByIdWrapper(
+  "tags",
+  "withReferences"
+);
 
 /*
-  /api/authors
+  /authors functionality
  */
 
 export const createAuthor = createWrapper("authors");
 export const getAuthorById = getByIdWrapper("authors");
+export const updateAuthorById = updateWrapper("authors");
+export const deleteAuthorById = deleteWrapper("authors");
 
 /*
-  /api/magazines
+  /magazines functionality
  */
 
 export const createMagazine = createWrapper("magazines");
 export const getMagazineById = getByIdWrapper("magazines");
+export const updateMagazineById = updateWrapper("magazines");
+export const deleteMagazineById = deleteWrapper("magazines");
 
 /*
-  /api/references
+  /references functionality
  */
 
 export const createReference = createWrapper("references");
 export const getReferenceById = getByIdWrapper("references");
+export const updateReferenceById = updateWrapper("references");
+export const deleteReferenceById = deleteWrapper("references");
+
+/*
+  /misc functionality
+ */
+
+export const getAllRecordTypes = getWithParamsWrapper("/misc/recordtypes");
+export const getAllLanguages = getWithParamsWrapper("/misc/languages");
+export const getAllTagTypes = getWithParamsWrapper("/misc/tagtypes");
+export const getAllReferenceTypes = getWithParamsWrapper(
+  "/misc/referencetypes"
+);
+export const quickSearchName = getWithParamsWrapper("/misc/quicksearch");
