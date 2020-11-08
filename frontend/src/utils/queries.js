@@ -94,6 +94,37 @@ function getWithParamsWrapper(url) {
 }
 
 /*
+  /authors functionality
+ */
+
+export const createAuthor = createWrapper("authors");
+export const getAuthorById = getByIdWrapper("authors");
+export const updateAuthorById = updateWrapper("authors");
+export const deleteAuthorById = deleteWrapper("authors");
+
+/*
+  /magazines functionality
+ */
+
+export const createMagazine = createWrapper("magazines");
+export const getMagazineById = getByIdWrapper("magazines");
+export const updateMagazineById = updateWrapper("magazines");
+export const deleteMagazineById = deleteWrapper("magazines");
+
+/*
+  /issues functionality
+ */
+
+/*
+  /references functionality
+ */
+
+export const createReference = createWrapper("references");
+export const getReferenceById = getByIdWrapper("references");
+export const updateReferenceById = updateWrapper("references");
+export const deleteReferenceById = deleteWrapper("references");
+
+/*
   /tags functionality
  */
 
@@ -113,33 +144,6 @@ export const getTagByIdWithReferences = getByIdWrapper(
   "tags",
   "withReferences"
 );
-
-/*
-  /authors functionality
- */
-
-export const createAuthor = createWrapper("authors");
-export const getAuthorById = getByIdWrapper("authors");
-export const updateAuthorById = updateWrapper("authors");
-export const deleteAuthorById = deleteWrapper("authors");
-
-/*
-  /magazines functionality
- */
-
-export const createMagazine = createWrapper("magazines");
-export const getMagazineById = getByIdWrapper("magazines");
-export const updateMagazineById = updateWrapper("magazines");
-export const deleteMagazineById = deleteWrapper("magazines");
-
-/*
-  /references functionality
- */
-
-export const createReference = createWrapper("references");
-export const getReferenceById = getByIdWrapper("references");
-export const updateReferenceById = updateWrapper("references");
-export const deleteReferenceById = deleteWrapper("references");
 
 /*
   /misc functionality
