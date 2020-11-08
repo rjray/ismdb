@@ -79,12 +79,7 @@ const UpdateTag = () => {
             <Header>Update Tag: {tag.name}</Header>
           </Col>
           <Col className="text-right">
-            <LinkContainer
-              to={{
-                pathname: `/tags/delete/${tag.id}`,
-                state: { tag },
-              }}
-            >
+            <LinkContainer to={`/tags/delete/${tag.id}`}>
               <Button>Delete</Button>
             </LinkContainer>
             {splittable && (
