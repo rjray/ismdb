@@ -7,16 +7,15 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import TagTable from "../../components/TagTable";
+import { getAllTagsWithRefCount } from "../../utils/queries";
 
 const ListTags = () => {
-  const url = `${apiEndpoint}/tags/withRefCount`;
-
-  const { isLoading, error, data } = useQuery("all tags with refcount", () => {
-    return fetch(url).then((res) => res.json());
-  });
+  const { isLoading, error, data } = useQuery(
+    ["tags", { withRefCount: true }],
+    getAllTagsWithRefCount
+  );
 
   if (isLoading) {
     return (
