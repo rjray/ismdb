@@ -17,7 +17,7 @@ import FormatTags from "../../components/FormatTags";
 const ShowReference = () => {
   const { referenceId } = useParams();
 
-  const url = `${apiEndpoint}/api/references/${referenceId}`;
+  const url = `${apiEndpoint}/references/${referenceId}`;
 
   const { isLoading, error, data } = useQuery(
     ["reference", referenceId],

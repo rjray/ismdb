@@ -16,7 +16,7 @@ import ReferenceForm from "../../forms/ReferenceForm";
 const UpdateReference = () => {
   const { referenceId } = useParams();
 
-  const url = `${apiEndpoint}/api/references/${referenceId}`;
+  const url = `${apiEndpoint}/references/${referenceId}`;
 
   const { isLoading, error, data } = useQuery(
     ["reference", referenceId],

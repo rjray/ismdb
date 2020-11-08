@@ -16,7 +16,7 @@ import AuthorForm from "../../forms/AuthorForm";
 const UpdateAuthor = () => {
   const { authorId } = useParams();
 
-  const url = `${apiEndpoint}/api/authors/${authorId}`;
+  const url = `${apiEndpoint}/authors/${authorId}`;
 
   const { isLoading, error, data } = useQuery(["author", authorId], () => {
     return fetch(url).then((res) => res.json());

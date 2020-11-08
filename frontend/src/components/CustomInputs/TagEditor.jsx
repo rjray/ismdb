@@ -21,7 +21,7 @@ const TagEditor = ({ field, form, ...props }) => {
 
   const handleTagsSearch = (query) => {
     setLoadingTagList(true);
-    const url = `${apiEndpoint}/api/tags/queryWithRefCount?query=${query}`;
+    const url = `${apiEndpoint}/tags/queryWithRefCount?query=${query}`;
 
     fetch(url)
       .then((response) => response.json())

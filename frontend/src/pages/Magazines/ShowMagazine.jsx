@@ -16,7 +16,7 @@ import IssueTable from "../../components/IssueTable";
 const ShowMagazine = () => {
   const { magazineId } = useParams();
 
-  const url = `${apiEndpoint}/api/magazines/${magazineId}/withIssues`;
+  const url = `${apiEndpoint}/magazines/${magazineId}/withIssues`;
 
   const { isLoading, error, data } = useQuery(
     ["magazine with issues", magazineId],

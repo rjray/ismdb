@@ -16,7 +16,7 @@ import IssueReferenceTable from "../../components/IssueReferenceTable";
 const ShowIssue = () => {
   const { issueId } = useParams();
 
-  const url = `${apiEndpoint}/api/issues/${issueId}`;
+  const url = `${apiEndpoint}/issues/${issueId}`;
 
   const { isLoading, error, data } = useQuery(["issue", issueId], () => {
     return fetch(url).then((res) => res.json());

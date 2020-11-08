@@ -8,7 +8,7 @@ import apiEndpoint from "../utils/api-endpoint";
 
 const count = 10;
 const params = [`limit=${count}`, "order=refcount,desc"];
-const url = `${apiEndpoint}/api/tags/withRefCount?${params.join("&")}`;
+const url = `${apiEndpoint}/tags/withRefCount?${params.join("&")}`;
 
 const TopTags = () => {
   const { isLoading, error, data } = useQuery("top tags", () => {

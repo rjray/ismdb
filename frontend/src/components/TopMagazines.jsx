@@ -8,7 +8,7 @@ import apiEndpoint from "../utils/api-endpoint";
 
 const count = 10;
 const params = [`count=${count}`];
-const url = `${apiEndpoint}/api/magazines/getMostRecentlyUpdated?${params.join(
+const url = `${apiEndpoint}/magazines/getMostRecentlyUpdated?${params.join(
   "&"
 )}`;
 

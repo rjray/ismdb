@@ -6,7 +6,7 @@ import BeatLoader from "react-spinners/BeatLoader";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 
 import apiEndpoint from "../../utils/api-endpoint";
-const languagesUrl = `${apiEndpoint}/api/misc/languages`;
+const languagesUrl = `${apiEndpoint}/misc/languages`;
 
 const Language = ({ field, form, ...props }) => {
   const { isLoading, isError, data, error } = useQuery("languages", () => {

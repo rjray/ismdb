@@ -17,7 +17,7 @@ import ReferenceTable from "../../components/ReferenceTable";
 const ShowAuthor = () => {
   const { authorId } = useParams();
 
-  const url = `${apiEndpoint}/api/authors/${authorId}/withRefsAndAliases`;
+  const url = `${apiEndpoint}/authors/${authorId}/withRefsAndAliases`;
 
   const { isLoading, error, data } = useQuery(
     ["author with references", authorId],

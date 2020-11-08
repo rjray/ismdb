@@ -11,7 +11,7 @@ const ReferenceType = ({ field, form, ...props }) => {
 
   const handleTypesSearch = (type) => {
     setLoadingTypesList(true);
-    const url = `${apiEndpoint}/api/misc/referencetypes?type=${type}`;
+    const url = `${apiEndpoint}/misc/referencetypes?type=${type}`;
 
     fetch(url)
       .then((response) => response.json())

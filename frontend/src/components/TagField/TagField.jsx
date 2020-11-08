@@ -60,7 +60,7 @@ const TagField = () => {
   if (!includeNatl) {
     params.push("where=type,ne,nationality");
   }
-  const url = `${apiEndpoint}/api/tags/withRefCount?${params.join("&")}`;
+  const url = `${apiEndpoint}/tags/withRefCount?${params.join("&")}`;
 
   const { isLoading, error, data } = useQuery(
     ["tag field", includeMeta, includeScale, includeNatl, sortByName],

@@ -12,7 +12,7 @@ import Header from "../../components/Header";
 import TagTable from "../../components/TagTable";
 
 const ListTags = () => {
-  const url = `${apiEndpoint}/api/tags/withRefCount`;
+  const url = `${apiEndpoint}/tags/withRefCount`;
 
   const { isLoading, error, data } = useQuery("all tags with refcount", () => {
     return fetch(url).then((res) => res.json());

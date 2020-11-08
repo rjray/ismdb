@@ -35,7 +35,7 @@ const QuickSearch = (props) => {
 
   const handleQuickSearch = (query) => {
     setLoadingQuery(true);
-    const url = `${apiEndpoint}/api/misc/quicksearch?query=${query}`;
+    const url = `${apiEndpoint}/misc/quicksearch?query=${query}`;
 
     fetch(url)
       .then((response) => response.json())

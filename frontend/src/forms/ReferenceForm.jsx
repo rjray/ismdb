@@ -25,9 +25,9 @@ import Language from "../components/CustomInputs/Language";
 import TagEditor from "../components/CustomInputs/TagEditor";
 
 const sortByName = sortBy("name");
-const recordTypesUrl = `${apiEndpoint}/api/misc/recordtypes`;
-const magazinesUrl = `${apiEndpoint}/api/magazines/withIssues?order=name`;
-const authorlistUrl = `${apiEndpoint}/api/authors/namesAndAliases`;
+const recordTypesUrl = `${apiEndpoint}/misc/recordtypes`;
+const magazinesUrl = `${apiEndpoint}/magazines/withIssues?order=name`;
+const authorlistUrl = `${apiEndpoint}/authors/namesAndAliases`;
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()

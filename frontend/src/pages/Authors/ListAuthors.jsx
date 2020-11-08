@@ -12,7 +12,7 @@ import Header from "../../components/Header";
 import AuthorTable from "../../components/AuthorTable";
 
 const ListAuthors = () => {
-  const url = `${apiEndpoint}/api/authors/withRefCount`;
+  const url = `${apiEndpoint}/authors/withRefCount`;
 
   const { isLoading, error, data } = useQuery(
     "all authors with refcount",

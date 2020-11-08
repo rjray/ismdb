@@ -12,7 +12,7 @@ import Header from "../../components/Header";
 import MagazineTable from "../../components/MagazineTable";
 
 const ListMagazines = () => {
-  const url = `${apiEndpoint}/api/magazines/withIssues`;
+  const url = `${apiEndpoint}/magazines/withIssues`;
 
   const { isLoading, error, data } = useQuery(
     "all magazines with issues",

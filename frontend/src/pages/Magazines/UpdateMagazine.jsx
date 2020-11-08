@@ -16,7 +16,7 @@ import MagazineForm from "../../forms/MagazineForm";
 const UpdateMagazine = () => {
   const { magazineId } = useParams();
 
-  const url = `${apiEndpoint}/api/magazines/${magazineId}`;
+  const url = `${apiEndpoint}/magazines/${magazineId}`;
 
   const { isLoading, error, data } = useQuery(["magazine", magazineId], () => {
     return fetch(url).then((res) => res.json());

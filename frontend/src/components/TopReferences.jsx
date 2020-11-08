@@ -8,7 +8,7 @@ import apiEndpoint from "../utils/api-endpoint";
 
 const count = 10;
 const params = [`limit=${count}`, "order=createdAt,desc"];
-const url = `${apiEndpoint}/api/references?${params.join("&")}`;
+const url = `${apiEndpoint}/references?${params.join("&")}`;
 
 const TopReferences = () => {
   const { isLoading, error, data } = useQuery("top references", () => {

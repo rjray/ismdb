@@ -15,7 +15,7 @@ import ReferenceTable from "../../components/ReferenceTable";
 const ShowTag = () => {
   const { tagId } = useParams();
 
-  const url = `${apiEndpoint}/api/tags/${tagId}/withReferences`;
+  const url = `${apiEndpoint}/tags/${tagId}/withReferences`;
 
   const { isLoading, error, data } = useQuery(
     ["tag with references", tagId],

@@ -9,7 +9,7 @@ import * as Yup from "yup";
 
 import FocusFormControl from "../components/CustomInputs/FocusFormControl";
 import apiEndpoint from "../utils/api-endpoint";
-const tagTypesUrl = `${apiEndpoint}/api/misc/tagtypes`;
+const tagTypesUrl = `${apiEndpoint}/misc/tagtypes`;
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
