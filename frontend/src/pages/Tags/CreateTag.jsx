@@ -40,7 +40,7 @@ const CreateTag = () => {
           }
 
           queryCache.invalidateQueries(["tags"]);
-          queryCache.setQueryData(["tag", tag.id], { tag });
+          queryCache.setQueryData(["tag", String(tag.id)], { tag });
 
           addToast(`Tag "${tag.name}" created`, { appearance: "success" });
           setCreatedTag(tag.id);
