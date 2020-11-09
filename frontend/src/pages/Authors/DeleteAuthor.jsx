@@ -1,0 +1,151 @@
+import React, { useState } from "react";
+import { useParams, Redirect } from "react-router-dom";
+import { LinkContainer } from "react-router-bootstrap";
+import { useQuery, useQueryCache, useMutation } from "react-query";
+import { Helmet } from "react-helmet";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import ScaleLoader from "react-spinners/ScaleLoader";
+import { useToasts } from "react-toast-notifications";
+
+import Header from "../../components/Header";
+import FormatDate from "../../components/FormatDate";
+import FormatAuthorAliases from "../../components/FormatAuthorAliases";
+import {
+  getAuthorByIdWithRefCount,
+  deleteAuthorById,
+} from "../../utils/queries";
+
+const DeleteAuthor = () => {
+  const { authorId } = useParams();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleted, setDeleted] = useState(false);
+  const queryCache = useQueryCache();
+  const [mutate] = useMutation(deleteAuthorById);
+  const { addToast } = useToasts();
+  const { isLoading, error, data } = useQuery(
+    ["author", authorId, { withRefCount: true }],
+    getAuthorByIdWithRefCount,
+    { enabled: !deleted }
+  );
+
+  if (isLoading) {
+    return (
+      <div className="text-center">
+        <ScaleLoader />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div>
+        <strong>Error: {error.message}</strong>
+      </div>
+    );
+  }
+
+  if (deleted) {
+    return <Redirect push to={{ pathname: "/authors" }} />;
+  }
+
+  const author = data.author;
+  const refcount = author.refcount;
+  const noun = refcount === 1 ? "reference" : "references";
+
+  const confirmDelete = () => {
+    setIsDeleting(true);
+    mutate(author.id, {
+      onSuccess: (data) => {
+        const { error } = data;
+        setIsDeleting(false);
+
+        if (error) {
+          addToast(error.description, { appearance: "error" });
+        } else {
+          setDeleted(true);
+          queryCache.invalidateQueries(["authors"]);
+          queryCache.removeQueries(["author", String(author.id)]);
+
+          addToast(`Author "${author.name}" deleted`, {
+            appearance: "success",
+          });
+        }
+      },
+      onError: (error) => {
+        if (error.response) {
+          addToast(error.response.data.error.description, {
+            appearance: "error",
+          });
+        } else {
+          addToast(error.message, { appearance: "error" });
+        }
+
+        setIsDeleting(false);
+      },
+    });
+  };
+
+  return (
+    <>
+      <Helmet>
+        <title>Delete Author</title>
+      </Helmet>
+      <Row className="my-3">
+        <Col xs={9}>
+          <Header>Delete Author: {author.name}</Header>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={6} sm={4} md={2} xl={1} className="text-right">
+          <strong>Added:</strong>
+        </Col>
+        <Col>
+          <FormatDate date={author.createdAt} />
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={6} sm={4} md={2} xl={1} className="text-right">
+          <strong>Updated:</strong>
+        </Col>
+        <Col>
+          <FormatDate date={author.updatedAt} />
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={6} sm={4} md={2} xl={1} className="text-right">
+          <strong>
+            {author.aliases.length === 1 ? "Alias: " : "Aliases: "}
+          </strong>
+        </Col>
+        <Col>
+          {author.aliases.length ? (
+            <FormatAuthorAliases aliases={author.aliases} />
+          ) : (
+            "none"
+          )}
+        </Col>
+      </Row>
+      <Row className="mt-5">
+        <Col>
+          <p>
+            This will remove the author "{author.name}" from {refcount} {noun}.
+          </p>
+        </Col>
+      </Row>
+      <Row className="mt-3">
+        <Col sm={{ span: 10, offset: 2 }}>
+          <Button type="submit" onClick={confirmDelete} disabled={isDeleting}>
+            Delete
+          </Button>{" "}
+          <LinkContainer to="/authors">
+            <Button>Cancel</Button>
+          </LinkContainer>
+        </Col>
+      </Row>
+    </>
+  );
+};
+
+export default DeleteAuthor;

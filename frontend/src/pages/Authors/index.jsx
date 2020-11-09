@@ -7,6 +7,7 @@ import ShowAuthor from "./ShowAuthor";
 import CreateAuthor from "./CreateAuthor";
 import UpdateAuthor from "./UpdateAuthor";
 import ListAuthors from "./ListAuthors";
+import DeleteAuthor from "./DeleteAuthor";
 
 const Authors = () => {
   const match = useRouteMatch();
@@ -24,6 +25,10 @@ const Authors = () => {
           <Route
             path={`${match.path}/update/:authorId(\\d+)`}
             component={UpdateAuthor}
+          />
+          <Route
+            path={`${match.path}/delete/:authorId(\\d+)`}
+            component={DeleteAuthor}
           />
           <Route path={match.path} component={ListAuthors} />
         </Switch>
