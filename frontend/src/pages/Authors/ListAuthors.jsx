@@ -7,18 +7,14 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import AuthorTable from "../../components/AuthorTable";
+import { getAllAuthorsWithRefCount } from "../../utils/queries";
 
 const ListAuthors = () => {
-  const url = `${apiEndpoint}/authors/withRefCount`;
-
   const { isLoading, error, data } = useQuery(
-    "all authors with refcount",
-    () => {
-      return fetch(url).then((res) => res.json());
-    }
+    ["authors", { withRefCount: true }],
+    getAllAuthorsWithRefCount
   );
 
   if (isLoading) {
