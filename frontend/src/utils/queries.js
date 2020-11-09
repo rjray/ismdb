@@ -98,9 +98,24 @@ function getWithParamsWrapper(url) {
  */
 
 export const createAuthor = createWrapper("authors");
+export const getAllAuthors = getWithParamsWrapper("/authors");
+export const getAllAuthorsWithRefCount = getWithParamsWrapper(
+  "/authors/withRefCount"
+);
+export const getAuthorNamesAndAliases = getWithParamsWrapper(
+  "/authors/namesAndAliases"
+);
 export const getAuthorById = getByIdWrapper("authors");
 export const updateAuthorById = updateWrapper("authors");
 export const deleteAuthorById = deleteWrapper("authors");
+export const getAuthorByIdWithRefCount = getByIdWrapper(
+  "authors",
+  "withRefCount"
+);
+export const getAuthorByIdWithReferences = getByIdWrapper(
+  "authors",
+  "withRefsAndAliases"
+);
 
 /*
   /magazines functionality
