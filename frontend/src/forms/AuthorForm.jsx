@@ -85,7 +85,7 @@ const AuthorForm = ({ author, submitHandler, autoFocusRef }) => {
                     <>
                       {values.aliases.map((alias, index) => (
                         <Form.Group
-                          key={alias.id}
+                          key={index}
                           as={Form.Row}
                           controlId={`alias${index}`}
                           className="mb-2"
