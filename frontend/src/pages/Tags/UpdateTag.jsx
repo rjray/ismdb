@@ -12,6 +12,7 @@ import { useToasts } from "react-toast-notifications";
 
 import Header from "../../components/Header";
 import TagForm from "../../forms/TagForm";
+import { useFocus } from "../../utils/focus";
 import { getTagById, updateTagById } from "../../utils/queries";
 
 const UpdateTag = () => {
@@ -19,6 +20,7 @@ const UpdateTag = () => {
   const queryCache = useQueryCache();
   const [mutate] = useMutation(updateTagById);
   const { addToast } = useToasts();
+  const [focus, setFocus] = useFocus();
   const { isLoading, error, data } = useQuery(["tag", tagId], getTagById);
 
   if (isLoading) {
@@ -45,6 +47,7 @@ const UpdateTag = () => {
       onSuccess: (data) => {
         const { error, tag } = data;
         formikBag.setSubmitting(false);
+        setFocus();
 
         if (error) {
           addToast(error.description, { appearance: "error" });
@@ -90,7 +93,7 @@ const UpdateTag = () => {
             )}
           </Col>
         </Row>
-        <TagForm tag={tag} submitHandler={submitHandler} />
+        <TagForm tag={tag} submitHandler={submitHandler} autoFocusRef={focus} />
       </Container>
     </>
   );

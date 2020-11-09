@@ -12,6 +12,7 @@ import { useToasts } from "react-toast-notifications";
 
 import Header from "../../components/Header";
 import AuthorForm from "../../forms/AuthorForm";
+import { useFocus } from "../../utils/focus";
 import { getAuthorById, updateAuthorById } from "../../utils/queries";
 
 const UpdateAuthor = () => {
@@ -19,6 +20,7 @@ const UpdateAuthor = () => {
   const queryCache = useQueryCache();
   const [mutate] = useMutation(updateAuthorById);
   const { addToast } = useToasts();
+  const [focus, setFocus] = useFocus();
   const { isLoading, error, data } = useQuery(
     ["author", authorId],
     getAuthorById
@@ -50,6 +52,7 @@ const UpdateAuthor = () => {
       onSuccess: (data) => {
         const { error, author } = data;
         formikBag.setSubmitting(false);
+        setFocus();
 
         if (error) {
           addToast(error.description, { appearance: "error" });
@@ -96,7 +99,11 @@ const UpdateAuthor = () => {
             </LinkContainer>
           </Col>
         </Row>
-        <AuthorForm author={author} submitHandler={submitHandler} />
+        <AuthorForm
+          author={author}
+          submitHandler={submitHandler}
+          autoFocusRef={focus}
+        />
       </Container>
     </>
   );
