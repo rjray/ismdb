@@ -8,22 +8,18 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import FormatDate from "../../components/FormatDate";
 import FormatAuthorAliases from "../../components/FormatAuthorAliases";
 import ReferenceTable from "../../components/ReferenceTable";
+import { getAuthorByIdWithReferences } from "../../utils/queries";
 
 const ShowAuthor = () => {
   const { authorId } = useParams();
 
-  const url = `${apiEndpoint}/authors/${authorId}/withRefsAndAliases`;
-
   const { isLoading, error, data } = useQuery(
-    ["author with references", authorId],
-    () => {
-      return fetch(url).then((res) => res.json());
-    }
+    ["author", authorId, { withRefsAndAliases: true }],
+    getAuthorByIdWithReferences
   );
 
   if (isLoading) {
