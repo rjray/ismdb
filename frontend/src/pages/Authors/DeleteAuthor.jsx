@@ -57,16 +57,16 @@ const DeleteAuthor = () => {
   const confirmDelete = () => {
     setIsDeleting(true);
     mutate(author.id, {
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         const { error } = data;
         setIsDeleting(false);
 
         if (error) {
           addToast(error.description, { appearance: "error" });
         } else {
-          setDeleted(true);
-          queryCache.invalidateQueries(["authors"]);
           queryCache.removeQueries(["author", String(author.id)]);
+          await queryCache.invalidateQueries(["authors"]);
+          setDeleted(true);
 
           addToast(`Author "${author.name}" deleted`, {
             appearance: "success",
@@ -129,14 +129,29 @@ const DeleteAuthor = () => {
       </Row>
       <Row className="mt-5">
         <Col>
-          <p>
-            This will remove the author "{author.name}" from {refcount} {noun}.
-          </p>
+          {refcount ? (
+            <>
+              <p>
+                The author "{author.name}" cannot be removed. They are
+                associated with {refcount} {noun}.
+              </p>
+              <p>Click "Cancel", below, to return to the authors listing.</p>
+            </>
+          ) : (
+            <p>
+              Click "Delete" to permanently delete this author. This cannot be
+              undone.
+            </p>
+          )}
         </Col>
       </Row>
       <Row className="mt-3">
         <Col sm={{ span: 10, offset: 2 }}>
-          <Button type="submit" onClick={confirmDelete} disabled={isDeleting}>
+          <Button
+            type="submit"
+            onClick={confirmDelete}
+            disabled={refcount || isDeleting}
+          >
             Delete
           </Button>{" "}
           <LinkContainer to="/authors">

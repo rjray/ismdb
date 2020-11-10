@@ -52,16 +52,17 @@ const DeleteTag = () => {
   const confirmDelete = () => {
     setIsDeleting(true);
     mutate(tag.id, {
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         const { error } = data;
         setIsDeleting(false);
 
         if (error) {
           addToast(error.description, { appearance: "error" });
         } else {
-          setDeleted(true);
-          queryCache.invalidateQueries(["tags"]);
           queryCache.removeQueries(["tag", String(tag.id)]);
+          queryCache.invalidateQueries(["references"]);
+          await queryCache.invalidateQueries(["tags"]);
+          setDeleted(true);
 
           addToast(`Tag "${tag.name}" deleted`, { appearance: "success" });
         }
