@@ -13,7 +13,10 @@ import { useToasts } from "react-toast-notifications";
 import Header from "../../components/Header";
 import AuthorForm from "../../forms/AuthorForm";
 import { useFocus } from "../../utils/focus";
-import { getAuthorById, updateAuthorById } from "../../utils/queries";
+import {
+  getAuthorByIdWithRefCount,
+  updateAuthorById,
+} from "../../utils/queries";
 
 const UpdateAuthor = () => {
   const { authorId } = useParams();
@@ -23,7 +26,7 @@ const UpdateAuthor = () => {
   const [focus, setFocus] = useFocus();
   const { isLoading, error, data } = useQuery(
     ["author", authorId],
-    getAuthorById
+    getAuthorByIdWithRefCount
   );
 
   if (isLoading) {
@@ -43,6 +46,9 @@ const UpdateAuthor = () => {
   }
 
   const author = { ...data.author };
+  const deletable = author.refcount === 0;
+  // Remove this so it doesn't carry over to the form:
+  delete author.refcount;
 
   author.createdAt = new Date(author.createdAt);
   author.updatedAt = new Date(author.updatedAt);
@@ -89,13 +95,8 @@ const UpdateAuthor = () => {
             <Header>Update Author: {author.name}</Header>
           </Col>
           <Col className="text-right">
-            <LinkContainer
-              to={{
-                pathname: `/authors/delete/${author.id}`,
-                state: { author },
-              }}
-            >
-              <Button>Delete</Button>
+            <LinkContainer to={`/authors/delete/${author.id}`}>
+              <Button disabled={!deletable}>Delete</Button>
             </LinkContainer>
           </Col>
         </Row>
