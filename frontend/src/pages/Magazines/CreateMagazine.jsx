@@ -1,25 +1,70 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { useRecoilState } from "recoil";
+import { useQueryCache, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { useToasts } from "react-toast-notifications";
 
 import Header from "../../components/Header";
 import MagazineForm from "../../forms/MagazineForm";
 import { multientrySwitch } from "../../atoms";
+import { useFocus } from "../../utils/focus";
+import { createMagazine } from "../../utils/queries";
 
 const CreateMagazine = () => {
   const [multientry, setMultientry] = useRecoilState(multientrySwitch);
   const [createdMagazine, setCreatedMagazine] = useState(0);
+  const queryCache = useQueryCache();
+  const [mutate] = useMutation(createMagazine);
+  const { addToast } = useToasts();
+  const [focus, setFocus] = useFocus();
 
   const toggleMultientry = () => setMultientry((current) => !current);
 
   const submitHandler = (values, formikBag) => {
-    alert(JSON.stringify(values, null, 2));
-    formikBag.setSubmitting(false);
+    // The "language" key is indirected for use by Typeahead:
+    values = { ...values };
+    values.language = values.language.language;
+
+    mutate(values, {
+      onSuccess: (data) => {
+        const { error, magazine } = data;
+        formikBag.setSubmitting(false);
+
+        if (error) {
+          addToast(error.description, { appearance: "error" });
+        } else {
+          if (multientry) {
+            formikBag.resetForm();
+            setFocus();
+          }
+
+          queryCache.invalidateQueries(["magazines"]);
+          queryCache.setQueryData(["magazine", String(magazine.id)], {
+            magazine,
+          });
+
+          addToast(`Magazine "${magazine.name}" created`, {
+            appearance: "success",
+          });
+          setCreatedMagazine(magazine.id);
+        }
+      },
+      onError: (error) => {
+        if (error.response) {
+          addToast(error.response.data.error.description, {
+            appearance: "error",
+          });
+        } else {
+          addToast(error.message, { appearance: "error" });
+        }
+        formikBag.setSubmitting(false);
+      },
+    });
   };
 
   if (createdMagazine && !multientry) {
@@ -54,7 +99,11 @@ const CreateMagazine = () => {
             </div>
           </Col>
         </Row>
-        <MagazineForm submitHandler={submitHandler} magazine={emptyMagazine} />
+        <MagazineForm
+          submitHandler={submitHandler}
+          magazine={emptyMagazine}
+          autoFocusRef={focus}
+        />
       </Container>
     </>
   );
