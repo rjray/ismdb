@@ -1,26 +1,30 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { useQuery } from "react-query";
+import { useQuery, useQueryCache, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import { useToasts } from "react-toast-notifications";
 
-import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import MagazineForm from "../../forms/MagazineForm";
+import { useFocus } from "../../utils/focus";
+import { getMagazineById, updateMagazineById } from "../../utils/queries";
 
 const UpdateMagazine = () => {
   const { magazineId } = useParams();
-
-  const url = `${apiEndpoint}/magazines/${magazineId}`;
-
-  const { isLoading, error, data } = useQuery(["magazine", magazineId], () => {
-    return fetch(url).then((res) => res.json());
-  });
+  const queryCache = useQueryCache();
+  const [mutate] = useMutation(updateMagazineById);
+  const { addToast } = useToasts();
+  const [focus, setFocus] = useFocus();
+  const { isLoading, error, data } = useQuery(
+    ["magazine", magazineId],
+    getMagazineById
+  );
 
   if (isLoading) {
     return (
@@ -44,27 +48,63 @@ const UpdateMagazine = () => {
   magazine.updatedAt = new Date(magazine.updatedAt);
 
   const submitHandler = (values, formikBag) => {
-    alert(JSON.stringify(values, null, 2));
-    formikBag.setSubmitting(false);
+    // The "language" key is indirected for use by Typeahead:
+    values = { ...values };
+    values.language = values.language.language;
+
+    mutate(values, {
+      onSuccess: (data) => {
+        const { error, magazine } = data;
+        formikBag.setSubmitting(false);
+        setFocus();
+
+        if (error) {
+          addToast(error.description, { appearance: "error" });
+        } else {
+          queryCache.invalidateQueries(["magazines"]);
+          queryCache.setQueryData(["magazine", String(magazine.id)], {
+            magazine,
+          });
+
+          addToast(`Magazine "${magazine.name}" updated`, {
+            appearance: "success",
+          });
+        }
+      },
+      onError: (error) => {
+        if (error.response) {
+          addToast(error.response.data.error.description, {
+            appearance: "error",
+          });
+        } else {
+          addToast(error.message, { appearance: "error" });
+        }
+        formikBag.setSubmitting(false);
+      },
+    });
   };
 
   return (
     <>
       <Helmet>
-        <title>Magazine Update</title>
+        <title>Update Magazine</title>
       </Helmet>
       <Container className="mt-2">
         <Row>
           <Col>
-            <Header>Magazine Update</Header>
+            <Header>Update Magazine: {magazine.name}</Header>
           </Col>
           <Col className="text-right">
-            <LinkContainer to={`/magazines/delete/${data.magazine.id}`}>
+            <LinkContainer to={`/magazines/delete/${magazine.id}`}>
               <Button>Delete</Button>
             </LinkContainer>
           </Col>
         </Row>
-        <MagazineForm magazine={magazine} submitHandler={submitHandler} />
+        <MagazineForm
+          magazine={magazine}
+          submitHandler={submitHandler}
+          autoFocusRef={focus}
+        />
       </Container>
     </>
   );

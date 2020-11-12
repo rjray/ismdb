@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
+import FocusFormControl from "../components/CustomInputs/FocusFormControl";
 import Language from "../components/CustomInputs/Language";
 
 const validationSchema = Yup.object().shape({
@@ -34,7 +35,7 @@ const validationSchema = Yup.object().shape({
     .nullable(),
 });
 
-const MagazineForm = ({ magazine, submitHandler }) => {
+const MagazineForm = ({ magazine, submitHandler, autoFocusRef }) => {
   const initialValues = { ...magazine };
   initialValues.language = { language: initialValues.language };
 
@@ -59,11 +60,12 @@ const MagazineForm = ({ magazine, submitHandler }) => {
             </Form.Label>
             <Col sm={10}>
               <Field
-                as={Form.Control}
+                as={FocusFormControl}
                 type="text"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 name="name"
+                innerRef={(el) => (autoFocusRef.current = el)}
                 placeholder="Name"
                 autoFocus
                 data-lpignore="true"
