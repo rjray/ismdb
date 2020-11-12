@@ -7,18 +7,14 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import MagazineTable from "../../components/MagazineTable";
+import { getAllMagazinesWithIssues } from "../../utils/queries";
 
 const ListMagazines = () => {
-  const url = `${apiEndpoint}/magazines/withIssues`;
-
   const { isLoading, error, data } = useQuery(
-    "all magazines with issues",
-    () => {
-      return fetch(url).then((res) => res.json());
-    }
+    ["magazines", { withIssues: true }],
+    getAllMagazinesWithIssues
   );
 
   if (isLoading) {
