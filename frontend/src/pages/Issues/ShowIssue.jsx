@@ -51,8 +51,8 @@ const ShowIssue = () => {
           <Header>{issueName}</Header>
         </Col>
         <Col className="text-right" xs={3}>
-          <LinkContainer to={`/issues/update/${issue.id}`}>
-            <Button>Edit</Button>
+          <LinkContainer to={`/issues/delete/${issue.id}`}>
+            <Button>Delete</Button>
           </LinkContainer>
         </Col>
       </Row>
