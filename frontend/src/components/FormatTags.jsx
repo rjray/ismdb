@@ -7,10 +7,16 @@ const sortByName = sortBy("name");
 
 function createBadge(tag, current, nolink) {
   if (nolink) {
-    return <Badge variant="primary">{tag.name}</Badge>;
+    return (
+      <Badge key={tag.id} variant="primary">
+        {tag.name}
+      </Badge>
+    );
   } else {
     return tag.id === current ? (
-      <Badge variant="secondary">{tag.name}</Badge>
+      <Badge key={tag.id} variant="secondary">
+        {tag.name}
+      </Badge>
     ) : (
       <Link key={tag.id} to={`/tags/${tag.id}`}>
         <Badge variant="primary">{tag.name}</Badge>

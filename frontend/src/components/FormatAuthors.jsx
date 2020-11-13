@@ -6,10 +6,10 @@ const sortByOrder = sortBy("order");
 
 function createAuthor(author, current, nolink) {
   if (nolink) {
-    return <span>{author.name}</span>;
+    return <span key={author.id}>{author.name}</span>;
   } else {
     return current === author.id ? (
-      <span>{author.name}</span>
+      <span key={author.id}>{author.name}</span>
     ) : (
       <Link key={author.id} to={`/authors/${author.id}`}>
         {author.name}
