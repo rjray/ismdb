@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import { useQueryCache } from "react-query";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
 import "react-bootstrap-typeahead/css/Typeahead.css";
 
-import apiEndpoint from "../utils/api-endpoint";
+import { quickSearchName } from "../utils/queries";
 
 const typeMap = {
   references: "Reference",
@@ -29,16 +30,16 @@ const FormatMatch = (option, props) => (
 );
 
 const QuickSearch = (props) => {
+  const queryCache = useQueryCache();
   const [loadingQuery, setLoadingQuery] = useState(false);
   const [queryMatches, setQueryMatches] = useState([]);
   const history = useHistory();
 
   const handleQuickSearch = (query) => {
     setLoadingQuery(true);
-    const url = `${apiEndpoint}/misc/quicksearch?query=${query}`;
 
-    fetch(url)
-      .then((response) => response.json())
+    queryCache
+      .fetchQuery(["quicksearch", { query: { query } }], quickSearchName)
       .then((data) => {
         setQueryMatches(data.matches);
         setLoadingQuery(false);

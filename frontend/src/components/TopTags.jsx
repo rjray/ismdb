@@ -4,16 +4,18 @@ import { useQuery } from "react-query";
 import Dropdown from "react-bootstrap/Dropdown";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../utils/api-endpoint";
+import { getAllTagsWithRefCount } from "../utils/queries";
 
 const count = 10;
-const params = [`limit=${count}`, "order=refcount,desc"];
-const url = `${apiEndpoint}/tags/withRefCount?${params.join("&")}`;
 
 const TopTags = () => {
-  const { isLoading, error, data } = useQuery("top tags", () => {
-    return fetch(url).then((res) => res.json());
-  });
+  const { isLoading, error, data } = useQuery(
+    [
+      "tags",
+      { withRefCount: true, query: { limit: count, order: "refcount,desc" } },
+    ],
+    getAllTagsWithRefCount
+  );
 
   if (isLoading) {
     return (

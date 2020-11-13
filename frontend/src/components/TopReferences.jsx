@@ -4,16 +4,15 @@ import { useQuery } from "react-query";
 import Dropdown from "react-bootstrap/Dropdown";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../utils/api-endpoint";
+import { getAllReferences } from "../utils/queries";
 
 const count = 10;
-const params = [`limit=${count}`, "order=createdAt,desc"];
-const url = `${apiEndpoint}/references?${params.join("&")}`;
 
 const TopReferences = () => {
-  const { isLoading, error, data } = useQuery("top references", () => {
-    return fetch(url).then((res) => res.json());
-  });
+  const { isLoading, error, data } = useQuery(
+    ["references", { query: { limit: count, order: "createdAt,desc" } }],
+    getAllReferences
+  );
 
   if (isLoading) {
     return (

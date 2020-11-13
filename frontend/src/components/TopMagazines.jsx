@@ -4,18 +4,15 @@ import { useQuery } from "react-query";
 import Dropdown from "react-bootstrap/Dropdown";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../utils/api-endpoint";
+import { getMostRecentUpdatedMagazines } from "../utils/queries";
 
 const count = 10;
-const params = [`count=${count}`];
-const url = `${apiEndpoint}/magazines/getMostRecentlyUpdated?${params.join(
-  "&"
-)}`;
 
 const TopTags = () => {
-  const { isLoading, error, data } = useQuery("top magazines", () => {
-    return fetch(url).then((res) => res.json());
-  });
+  const { isLoading, error, data } = useQuery(
+    ["magazines", { getMostRecentlyUpdated: true, query: { count } }],
+    getMostRecentUpdatedMagazines
+  );
 
   if (isLoading) {
     return (

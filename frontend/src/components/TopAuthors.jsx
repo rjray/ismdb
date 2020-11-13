@@ -4,16 +4,18 @@ import { useQuery } from "react-query";
 import Dropdown from "react-bootstrap/Dropdown";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../utils/api-endpoint";
+import { getAllAuthorsWithRefCount } from "../utils/queries";
 
 const count = 10;
-const params = [`limit=${count}`, "order=refcount,desc"];
-const url = `${apiEndpoint}/authors/withRefCount?${params.join("&")}`;
 
 const TopTags = () => {
-  const { isLoading, error, data } = useQuery("top authors", () => {
-    return fetch(url).then((res) => res.json());
-  });
+  const { isLoading, error, data } = useQuery(
+    [
+      "authors",
+      { withRefCount: true, query: { limit: count, order: "refcount,desc" } },
+    ],
+    getAllAuthorsWithRefCount
+  );
 
   if (isLoading) {
     return (
