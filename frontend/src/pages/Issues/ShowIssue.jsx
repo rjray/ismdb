@@ -8,19 +8,17 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import FormatDate from "../../components/FormatDate";
 import IssueReferenceTable from "../../components/IssueReferenceTable";
+import { getMagazineIssueById } from "../../utils/queries";
 
 const ShowIssue = () => {
   const { issueId } = useParams();
-
-  const url = `${apiEndpoint}/issues/${issueId}`;
-
-  const { isLoading, error, data } = useQuery(["issue", issueId], () => {
-    return fetch(url).then((res) => res.json());
-  });
+  const { isLoading, error, data } = useQuery(
+    ["issue", issueId],
+    getMagazineIssueById
+  );
 
   if (isLoading) {
     return (

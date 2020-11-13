@@ -1,20 +1,21 @@
 import React, { useState } from "react";
+import { useQueryCache } from "react-query";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 
 import "react-bootstrap-typeahead/css/Typeahead.css";
 
-import apiEndpoint from "../../utils/api-endpoint";
+import { getAllReferenceTypes } from "../../utils/queries";
 
 const ReferenceType = ({ field, form, ...props }) => {
+  const queryCache = useQueryCache();
   const [loadingTypesList, setLoadingTypesList] = useState(false);
   const [typesList, setTypesList] = useState([field.value]);
 
   const handleTypesSearch = (type) => {
     setLoadingTypesList(true);
-    const url = `${apiEndpoint}/misc/referencetypes?type=${type}`;
 
-    fetch(url)
-      .then((response) => response.json())
+    queryCache
+      .fetchQuery(["referencetypes", { query: { type } }], getAllReferenceTypes)
       .then((data) => {
         const typesList = data.types;
         setTypesList(typesList);

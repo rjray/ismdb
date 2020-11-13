@@ -8,22 +8,17 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import FormatDate from "../../components/FormatDate";
 import FormatAuthors from "../../components/FormatAuthors";
 import FormatTags from "../../components/FormatTags";
+import { getReferenceById } from "../../utils/queries";
 
 const ShowReference = () => {
   const { referenceId } = useParams();
-
-  const url = `${apiEndpoint}/references/${referenceId}`;
-
   const { isLoading, error, data } = useQuery(
     ["reference", referenceId],
-    () => {
-      return fetch(url).then((res) => res.json());
-    }
+    getReferenceById
   );
 
   if (isLoading) {

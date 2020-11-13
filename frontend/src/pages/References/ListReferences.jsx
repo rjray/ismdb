@@ -7,16 +7,12 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import ReferenceTable from "../../components/ReferenceTable";
+import { getAllReferences } from "../../utils/queries";
 
 const ListReferences = () => {
-  const url = `${apiEndpoint}/references`;
-
-  const { isLoading, error, data } = useQuery("all references", () => {
-    return fetch(url).then((res) => res.json());
-  });
+  const { isLoading, error, data } = useQuery("references", getAllReferences);
 
   if (isLoading) {
     return (

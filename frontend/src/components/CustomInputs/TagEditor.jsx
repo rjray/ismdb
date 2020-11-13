@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import { useQueryCache } from "react-query";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
 import "react-bootstrap-typeahead/css/Typeahead.css";
 
-import apiEndpoint from "../../utils/api-endpoint";
+import { getTagsQueryWithRefCount } from "../../utils/queries";
 import { sortBy } from "../../utils/no-lodash";
 
 const sortByName = sortBy("name");
@@ -16,15 +17,18 @@ const FormatMatch = (option, props) => (
 );
 
 const TagEditor = ({ field, form, ...props }) => {
+  const queryCache = useQueryCache();
   const [loadingTagList, setLoadingTagList] = useState(false);
   const [tagList, setTagList] = useState([]);
 
   const handleTagsSearch = (query) => {
     setLoadingTagList(true);
-    const url = `${apiEndpoint}/tags/queryWithRefCount?query=${query}`;
 
-    fetch(url)
-      .then((response) => response.json())
+    queryCache
+      .fetchQuery(
+        ["tags", { queryWithRefCount: true, query: { query } }],
+        getTagsQueryWithRefCount
+      )
       .then((data) => {
         const tagList = data.tags;
         setTagList(tagList);
