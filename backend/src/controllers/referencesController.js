@@ -151,7 +151,7 @@ function deleteReferenceById(context) {
   const res = context.res;
 
   return references
-    .deleteReferences(id)
+    .deleteReference(id)
     .then((number) => {
       if (number) {
         res.status(200).pureJson({});
