@@ -2,20 +2,27 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { sortBy } from "../utils/no-lodash";
+const sortByOrder = sortBy("order");
 
-const FormatAuthors = ({ currentAuthor, authors }) => {
+function createAuthor(author, current, nolink) {
+  if (nolink) {
+    return <span>{author.name}</span>;
+  } else {
+    return current === author.id ? (
+      <span>{author.name}</span>
+    ) : (
+      <Link key={author.id} to={`/authors/${author.id}`}>
+        {author.name}
+      </Link>
+    );
+  }
+}
+
+const FormatAuthors = ({ currentAuthor, authors, nolink }) => {
   const content = [];
 
-  [...authors].sort(sortBy("order")).forEach((author) => {
-    const formatted =
-      currentAuthor === author.id ? (
-        <span>{author.name}</span>
-      ) : (
-        <Link key={author.id} to={`/authors/${author.id}`}>
-          {author.name}
-        </Link>
-      );
-    content.push(formatted, ", ");
+  [...authors].sort(sortByOrder).forEach((author) => {
+    content.push(createAuthor(author, currentAuthor, nolink), ", ");
   });
   content.pop();
 
