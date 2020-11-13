@@ -107,6 +107,7 @@ const ReferenceForm = ({ reference, submitHandler, autoFocusRef }) => {
     "authors/namesAndAliases",
     getAuthorNamesAndAliases
   );
+  if (!autoFocusRef) autoFocusRef = createRef(null);
 
   const initialValues = { ...reference };
   initialValues.tags.sort(sortByName);
