@@ -9,11 +9,13 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import apiEndpoint from "../../utils/api-endpoint";
-import { sortBy } from "../../utils/no-lodash";
 import "./TagField.css";
+import { sortBy } from "../../utils/no-lodash";
+import { getAllTagsWithRefCount } from "../../utils/queries";
 
 const fontSize = (weight) => `${(Math.log10(weight) * 75).toFixed(1)}%`;
+const nameSort = sortBy("name");
+const refcountSort = sortBy("refcount");
 
 const TagWord = ({ id, name, description, refcount }) => {
   const tooltip = description ? (
@@ -45,28 +47,24 @@ const TagField = () => {
 
   // Total tags to display:
   const count = 100;
-  const params = [
-    `limit=${count}`,
-    "order=refcount,desc",
-    "order=name",
-    "where=name,ne,placeholder",
-  ];
+  const query = {
+    limit: count,
+    order: ["refcount,desc", "name"],
+    where: ["name,ne,placeholder"],
+  };
   if (!includeMeta) {
-    params.push("where=type,ne,meta");
+    query.where.push("type,ne,meta");
   }
   if (!includeScale) {
-    params.push("where=type,ne,scale");
+    query.where.push("type,ne,scale");
   }
   if (!includeNatl) {
-    params.push("where=type,ne,nationality");
+    query.where.push("type,ne,nationality");
   }
-  const url = `${apiEndpoint}/tags/withRefCount?${params.join("&")}`;
 
   const { isLoading, error, data } = useQuery(
-    ["tag field", includeMeta, includeScale, includeNatl, sortByName],
-    () => {
-      return fetch(url).then((res) => res.json());
-    }
+    ["tags", { withRefCount: true, query }],
+    getAllTagsWithRefCount
   );
 
   if (isLoading) {
@@ -86,15 +84,18 @@ const TagField = () => {
   }
 
   if (sortByName) {
-    data.tags.sort(sortBy("name"));
+    data.tags.sort(nameSort);
+  } else {
+    data.tags.sort(refcountSort);
   }
+
   return (
     <>
       <Row xs={12} sm={{ span: 6, offset: 3 }} className="my-2">
         <Col>
           <div className="tag-field">
-            {data.tags.map((tag, idx) => (
-              <TagWord key={tag.id} {...tag} includeSpace={idx < count} />
+            {data.tags.map((tag) => (
+              <TagWord key={tag.id} {...tag} />
             ))}
           </div>
         </Col>

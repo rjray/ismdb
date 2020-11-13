@@ -5,13 +5,13 @@ import BeatLoader from "react-spinners/BeatLoader";
 
 import "react-bootstrap-typeahead/css/Typeahead.css";
 
-import apiEndpoint from "../../utils/api-endpoint";
-const languagesUrl = `${apiEndpoint}/misc/languages`;
+import { getAllLanguages } from "../../utils/queries";
 
 const Language = ({ field, form, ...props }) => {
-  const { isLoading, isError, data, error } = useQuery("languages", () => {
-    return fetch(languagesUrl).then((res) => res.json());
-  });
+  const { isLoading, isError, data, error } = useQuery(
+    "languages",
+    getAllLanguages
+  );
 
   if (isLoading) {
     return (
