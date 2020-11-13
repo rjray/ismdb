@@ -7,6 +7,7 @@ import ShowReference from "./ShowReference";
 import UpdateReference from "./UpdateReference";
 import ListReferences from "./ListReferences";
 import CreateReference from "./CreateReference";
+import DeleteReference from "./DeleteReference";
 
 const References = () => {
   const match = useRouteMatch();
@@ -24,6 +25,10 @@ const References = () => {
           <Route
             path={`${match.path}/update/:referenceId(\\d+)`}
             component={UpdateReference}
+          />
+          <Route
+            path={`${match.path}/delete/:referenceId(\\d+)`}
+            component={DeleteReference}
           />
           <Route path={match.path} component={ListReferences} />
         </Switch>
