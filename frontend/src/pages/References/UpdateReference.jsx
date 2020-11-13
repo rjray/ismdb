@@ -1,28 +1,29 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { useQuery } from "react-query";
+import { useQuery, useQueryCache, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import { useToasts } from "react-toast-notifications";
 
-import apiEndpoint from "../../utils/api-endpoint";
 import Header from "../../components/Header";
 import ReferenceForm from "../../forms/ReferenceForm";
+import { useFocus } from "../../utils/focus";
+import { getReferenceById, updateReferenceById } from "../../utils/queries";
 
 const UpdateReference = () => {
   const { referenceId } = useParams();
-
-  const url = `${apiEndpoint}/references/${referenceId}`;
-
+  const queryCache = useQueryCache();
+  const [mutate] = useMutation(updateReferenceById);
+  const { addToast } = useToasts();
+  const [focus, setFocus] = useFocus();
   const { isLoading, error, data } = useQuery(
     ["reference", referenceId],
-    () => {
-      return fetch(url).then((res) => res.json());
-    }
+    getReferenceById
   );
 
   if (isLoading) {
@@ -59,8 +60,41 @@ const UpdateReference = () => {
   reference.RecordTypeId = String(reference.RecordTypeId);
 
   const submitHandler = (values, formikBag) => {
-    alert(JSON.stringify(values, null, 2));
-    formikBag.setSubmitting(false);
+    // The "language" and "type" keys are indirected for use by Typeahead:
+    values = { ...values };
+    values.language = values.language.language;
+    values.type = values.type.type;
+
+    mutate(values, {
+      onSuccess: (data) => {
+        const { error, reference } = data;
+        formikBag.setSubmitting(false);
+        setFocus();
+
+        if (error) {
+          addToast(error.description, { appearance: "error" });
+        } else {
+          queryCache.invalidateQueries(["references"]);
+          queryCache.setQueryData(["reference", String(reference.id)], {
+            reference,
+          });
+
+          addToast(`Reference "${reference.name}" updated`, {
+            appearance: "success",
+          });
+        }
+      },
+      onError: (error) => {
+        if (error.response) {
+          addToast(error.response.data.error.description, {
+            appearance: "error",
+          });
+        } else {
+          addToast(error.message, { appearance: "error" });
+        }
+        formikBag.setSubmitting(false);
+      },
+    });
   };
 
   return (
@@ -84,7 +118,11 @@ const UpdateReference = () => {
             </LinkContainer>
           </Col>
         </Row>
-        <ReferenceForm reference={reference} submitHandler={submitHandler} />
+        <ReferenceForm
+          reference={reference}
+          submitHandler={submitHandler}
+          autoFocusRef={focus}
+        />
       </Container>
     </>
   );

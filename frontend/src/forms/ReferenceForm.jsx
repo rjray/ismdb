@@ -17,17 +17,19 @@ import * as Yup from "yup";
 
 import "react-bootstrap-typeahead/css/Typeahead.css";
 
-import apiEndpoint from "../utils/api-endpoint";
 import compareVersion from "../utils/compare-version";
 import { sortBy } from "../utils/no-lodash";
+import FocusFormControl from "../components/CustomInputs/FocusFormControl";
 import ReferenceType from "../components/CustomInputs/ReferenceType";
 import Language from "../components/CustomInputs/Language";
 import TagEditor from "../components/CustomInputs/TagEditor";
+import {
+  getAllRecordTypes,
+  getAllMagazinesWithIssues,
+  getAuthorNamesAndAliases,
+} from "../utils/queries";
 
 const sortByName = sortBy("name");
-const recordTypesUrl = `${apiEndpoint}/misc/recordtypes`;
-const magazinesUrl = `${apiEndpoint}/magazines/withIssues?order=name`;
-const authorlistUrl = `${apiEndpoint}/authors/namesAndAliases`;
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -95,16 +97,16 @@ const validationSchema = Yup.object().shape({
     .required(<em className="form-field-error">Tags cannot be empty</em>),
 });
 
-const ReferenceForm = ({ reference, submitHandler }) => {
-  const recordTypesQuery = useQuery("/misc/recordtypes", () => {
-    return fetch(recordTypesUrl).then((res) => res.json());
-  });
-  const magazinesQuery = useQuery("/magazines/withIssues", () => {
-    return fetch(magazinesUrl).then((res) => res.json());
-  });
-  const authorlistQuery = useQuery("/authors/namesAndAliases", () => {
-    return fetch(authorlistUrl).then((res) => res.json());
-  });
+const ReferenceForm = ({ reference, submitHandler, autoFocusRef }) => {
+  const recordTypesQuery = useQuery("recordtypes", getAllRecordTypes);
+  const magazinesQuery = useQuery(
+    ["magazines", { withIssues: true }],
+    getAllMagazinesWithIssues
+  );
+  const authorlistQuery = useQuery(
+    "authors/namesAndAliases",
+    getAuthorNamesAndAliases
+  );
 
   const initialValues = { ...reference };
   initialValues.tags.sort(sortByName);
@@ -142,9 +144,10 @@ const ReferenceForm = ({ reference, submitHandler }) => {
             </Form.Label>
             <Col sm={10}>
               <Field
-                as={Form.Control}
+                as={FocusFormControl}
                 type="text"
                 name="name"
+                innerRef={(el) => (autoFocusRef.current = el)}
                 onBlur={handleBlur}
                 onChange={handleChange}
                 placeholder="Name"
