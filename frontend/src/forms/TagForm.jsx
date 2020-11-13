@@ -8,8 +8,7 @@ import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 import FocusFormControl from "../components/CustomInputs/FocusFormControl";
-import apiEndpoint from "../utils/api-endpoint";
-const tagTypesUrl = `${apiEndpoint}/misc/tagtypes`;
+import { getAllTagTypes } from "../utils/queries";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -36,9 +35,10 @@ const validationSchema = Yup.object().shape({
 
 const TagForm = ({ tag, submitHandler, autoFocusRef }) => {
   const initialValues = { ...tag };
-  const { isLoading, isError, data, error } = useQuery("tag types", () => {
-    return fetch(tagTypesUrl).then((res) => res.json());
-  });
+  const { isLoading, isError, data, error } = useQuery(
+    "tagtypes",
+    getAllTagTypes
+  );
   if (!autoFocusRef) autoFocusRef = createRef(null);
 
   return (
