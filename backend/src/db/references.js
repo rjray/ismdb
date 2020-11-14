@@ -90,10 +90,6 @@ const createReference = async (data) => {
   const notifications = [];
   const authorsAdded = [];
 
-  // Explicitly set these.
-  data.createdAt = new Date();
-  data.updatedAt = new Date();
-
   // Remove the authors, that will be processed separately.
   const authors = data.authors.filter((author) => !author.deleted);
   delete data.authors;
@@ -222,8 +218,6 @@ const updateReference = async (id, data) => {
           updates[key] = data[key];
         }
       }
-      // This always updates.
-      updates.updatedAt = new Date();
 
       // Check for the type of record to have changed.
       const newRecordTypeId = Number(data.RecordTypeId);

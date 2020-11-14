@@ -96,10 +96,6 @@ const fetchAllMagazinesWithIssueNumbersAndCount = async (opts = {}) => {
 
 // Create a new magazine using the content in data.
 const createMagazine = async (data) => {
-  // Explicitly set these.
-  data.createdAt = new Date();
-  data.updatedAt = new Date();
-
   const magazine = await Magazine.create(data).catch((error) => {
     if (error.hasOwnProperty("errors")) {
       const specific = error.errors[0];
@@ -116,10 +112,6 @@ const createMagazine = async (data) => {
 const updateMagazine = async (id, data) => {
   return Magazine.findByPk(id).then((magazine) => {
     return sequelize.transaction(async (txn) => {
-      data.createdAt = new Date(data.createdAt);
-      // Since we're updating...
-      data.updatedAt = new Date();
-
       magazine = await magazine.update(data, { transaction: txn });
       return magazine.get();
     });
@@ -133,10 +125,6 @@ const deleteMagazine = async (id) => {
 
 // Create a MagazineIssue record.
 const createMagazineIssue = async (data) => {
-  // Explicitly set these:
-  data.createdAt = new Date();
-  data.updatedAt = new Date();
-
   const magazineissue = await MagazineIssue.create(data).catch((error) => {
     if (error.hasOwnProperty("errors")) {
       const specific = error.errors[0];
@@ -153,10 +141,6 @@ const createMagazineIssue = async (data) => {
 const updateMagazineIssue = async (id, data) => {
   return MagazineIssue.findByPk(id).then((magazineissue) => {
     return sequelize.transaction(async (txn) => {
-      data.createdAt = new Date(data.createdAt);
-      // Since we're updating...
-      data.updatedAt = new Date();
-
       magazineissue = await magazineissue.update(data, { transaction: txn });
       return magazineissue.get();
     });
