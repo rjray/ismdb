@@ -2,7 +2,7 @@
  * All database operations that focus on authors.
  */
 
-const { Author, AuthorAlias, Reference, sequelize } = require("../models");
+const { Author, AuthorAlias, sequelize } = require("../models");
 const { sortBy, fixAggregateOrderFields } = require("../lib/utils");
 
 const { INCLUDE_REFERENCES, cleanReference } = require("./references");
