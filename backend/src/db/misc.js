@@ -18,7 +18,7 @@ const fetchAllRecordTypes = async (opts = {}) => {
 const fetchAllLanguages = async (opts = {}) => {
   const preferred = opts.preferred || "English";
 
-  const languages = await Reference.findAll({
+  const languagesList = await Reference.findAll({
     attributes: [
       [Sequelize.fn("DISTINCT", Sequelize.col("language")), "language"],
     ],
@@ -44,7 +44,9 @@ const fetchAllLanguages = async (opts = {}) => {
     order: ["language"],
   });
 
-  languages.unshift({ language: preferred });
+  const languages = languagesList.map((i) => i.language);
+  languages.unshift(preferred);
+
   return languages;
 };
 
@@ -95,7 +97,7 @@ const fetchAllReferenceTypes = async (opts = {}) => {
     ...opts,
   });
 
-  return types;
+  return types.map((i) => i.type);
 };
 
 module.exports = {
