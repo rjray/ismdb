@@ -6,6 +6,9 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 
 import { getAllReferenceTypes } from "../../utils/queries";
 
+// Limit the number of matches returned at a time
+const limit = 20;
+
 const ReferenceType = ({ field, form, ...props }) => {
   const queryCache = useQueryCache();
   const [loadingTypesList, setLoadingTypesList] = useState(false);
@@ -15,7 +18,10 @@ const ReferenceType = ({ field, form, ...props }) => {
     setLoadingTypesList(true);
 
     queryCache
-      .fetchQuery(["referencetypes", { query: { type } }], getAllReferenceTypes)
+      .fetchQuery(
+        ["referencetypes", { query: { limit, type } }],
+        getAllReferenceTypes
+      )
       .then((data) => {
         const typesList = data.types;
         setTypesList(typesList);
@@ -30,8 +36,6 @@ const ReferenceType = ({ field, form, ...props }) => {
       name={field.name}
       labelKey="type"
       align="left"
-      maxResults={20}
-      paginate
       minLength={2}
       allowNew
       newSelectionPrefix={<strong>New type: </strong>}
