@@ -111,8 +111,6 @@ const ReferenceForm = ({ reference, submitHandler, autoFocusRef }) => {
 
   const initialValues = { ...reference };
   initialValues.tags.sort(sortByName);
-  initialValues.type = { type: initialValues.type };
-  initialValues.language = { language: initialValues.language };
   const issues = {};
 
   if (magazinesQuery.data?.magazines) {

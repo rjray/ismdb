@@ -26,9 +26,7 @@ const CreateMagazine = () => {
   const toggleMultientry = () => setMultientry((current) => !current);
 
   const submitHandler = (values, formikBag) => {
-    // The "language" key is indirected for use by Typeahead:
     values = { ...values };
-    values.language = values.language.language;
 
     mutate(values, {
       onSuccess: (data) => {

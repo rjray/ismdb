@@ -37,7 +37,6 @@ const validationSchema = Yup.object().shape({
 
 const MagazineForm = ({ magazine, submitHandler, autoFocusRef }) => {
   const initialValues = { ...magazine };
-  initialValues.language = { language: initialValues.language };
 
   return (
     <Formik

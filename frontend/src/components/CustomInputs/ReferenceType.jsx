@@ -23,8 +23,7 @@ const ReferenceType = ({ field, form, ...props }) => {
         getAllReferenceTypes
       )
       .then((data) => {
-        const typesList = data.types;
-        setTypesList(typesList);
+        setTypesList(data.types);
         setLoadingTypesList(false);
       });
   };
@@ -34,7 +33,6 @@ const ReferenceType = ({ field, form, ...props }) => {
       isLoading={loadingTypesList}
       id={field.name}
       name={field.name}
-      labelKey="type"
       align="left"
       minLength={2}
       allowNew
@@ -46,7 +44,6 @@ const ReferenceType = ({ field, form, ...props }) => {
           form.setFieldValue(field.name, selected[0]);
         }
       }}
-      placeholder="Type"
       inputProps={{ "data-lpignore": "true", id: `rti-${field.name}-input` }}
       onSearch={handleTypesSearch}
       onBlur={form.handleBlur}

@@ -48,9 +48,7 @@ const UpdateMagazine = () => {
   magazine.updatedAt = new Date(magazine.updatedAt);
 
   const submitHandler = (values, formikBag) => {
-    // The "language" key is indirected for use by Typeahead:
     values = { ...values };
-    values.language = values.language.language;
 
     mutate(values, {
       onSuccess: (data) => {

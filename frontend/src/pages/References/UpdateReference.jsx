@@ -60,10 +60,11 @@ const UpdateReference = () => {
   reference.RecordTypeId = String(reference.RecordTypeId);
 
   const submitHandler = (values, formikBag) => {
-    // The "language" and "type" keys are indirected for use by Typeahead:
+    alert(JSON.stringify(values, null, 2));
+    formikBag.setSubmitting(false);
+    return;
+
     values = { ...values };
-    values.language = values.language.language;
-    values.type = values.type.type;
 
     mutate(values, {
       onSuccess: (data) => {

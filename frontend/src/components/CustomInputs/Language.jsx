@@ -33,7 +33,6 @@ const Language = ({ field, form, ...props }) => {
     <Typeahead
       id={field.name}
       name={field.name}
-      labelKey="language"
       align="left"
       maxResults={20}
       paginate
@@ -47,7 +46,6 @@ const Language = ({ field, form, ...props }) => {
           form.setFieldValue(field.name, selected[0]);
         }
       }}
-      placeholder="Language"
       inputProps={{ "data-lpignore": "true", id: `li-${field.name}-input` }}
       onBlur={form.handleBlur}
       {...props}
