@@ -88,7 +88,6 @@ const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
 
 // Create a new reference using the content in data.
 const createReference = async (data) => {
-  console.log(JSON.stringify(data, null, 2));
   // The notifications array will tell the front-end if anything extra was
   // done, such as creating new authors and/or tags.
   const notifications = [];
