@@ -4,8 +4,9 @@
 
 const { Author, AuthorAlias, sequelize } = require("../models");
 const { sortBy, fixAggregateOrderFields } = require("../lib/utils");
-
 const { INCLUDE_REFERENCES, cleanReference } = require("./references");
+
+const sortByName = sortBy("name");
 
 function convertAliases(aliasList) {
   const aliases = aliasList.map((item) => {
@@ -13,7 +14,7 @@ function convertAliases(aliasList) {
     delete item.AuthorId;
     return item;
   });
-  aliases.sort(sortBy("name"));
+  aliases.sort(sortByName);
 
   return aliases;
 }
@@ -158,7 +159,7 @@ const fetchAuthorsNamesAliasesList = async (opts = {}) => {
       authors.push({ id, name: alias.name, aliasOf: name });
     }
   }
-  authors.sort(sortBy("name"));
+  authors.sort(sortByName);
 
   return authors;
 };
