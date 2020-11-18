@@ -111,3 +111,4 @@ dist
 backend/.vscode/snipsnap.code-snippets
 frontend/.vscode/snipsnap.code-snippets
 frontend/.vscode/settings.json
+backend/.vscode/settings.json
