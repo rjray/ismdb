@@ -10,6 +10,7 @@ const {
   Magazine,
   Author,
   AuthorsReferences,
+  TagsReferences,
   sequelize,
 } = require("../models");
 
@@ -87,13 +88,18 @@ const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
 
 // Create a new reference using the content in data.
 const createReference = async (data) => {
+  console.log(JSON.stringify(data, null, 2));
+  // The notifications array will tell the front-end if anything extra was
+  // done, such as creating new authors and/or tags.
   const notifications = [];
-  const authorsAdded = [];
 
   // Remove the authors, that will be processed separately.
   const authors = data.authors.filter((author) => !author.deleted);
   delete data.authors;
-  delete data.action;
+
+  // Likewise, tags will be handled separately.
+  const tags = data.tags;
+  delete data.tags;
 
   // Convert this one.
   data.RecordTypeId = parseInt(data.RecordTypeId, 10);
@@ -155,7 +161,7 @@ const createReference = async (data) => {
       }
     });
 
-    // Connect the authors to the new reference
+    // Connect the authors to the new reference, creating new ones as needed.
     const newAuthors = [];
     let authorIndex = 0;
     for (const author of authors) {
@@ -168,16 +174,13 @@ const createReference = async (data) => {
           order: authorIndex,
         });
       } else {
-        // This author has no ID. Since the Typeahead widget handles the
-        // onChange/onBlur for a name that is typed in without explicitly
-        // selecting it, this can only mean a brand-new author.
+        // A new author. Must be created.
         const newAuthor = await Author.create({ name: author.name });
         notifications.push({
-          status: "success",
-          result: "Creation success",
-          resultMessage: `Author "${author.name}" successfully created`,
+          type: "success",
+          summary: "Author creation success",
+          message: `Author "${author.name}" successfully created`,
         });
-        authorsAdded.push({ name: newAuthor.name, id: newAuthor.id });
         newAuthors.push({
           authorId: newAuthor.id,
           referenceId: newReference.id,
@@ -186,19 +189,39 @@ const createReference = async (data) => {
       }
       authorIndex++;
     }
-
     await AuthorsReferences.bulkCreate(newAuthors, { transaction: txn });
+
+    const newTags = [];
+    for (const tag of tags) {
+      if (tag.id) {
+        // This is an existing tag, so just create the new TagsReferences struct
+        // directly from the data.
+        newTags.push({
+          tagId: tag.id,
+          referenceId: newReference.id,
+        });
+      } else {
+        // A new tag. Needs to be created.
+        const newTag = await Tag.create({ name: tag.name });
+        notifications.push({
+          type: "success",
+          summary: "Tag creation success",
+          message: `Tag "${tag.name}" successfully created`,
+        });
+        newTags.push({
+          tagId: newTag.id,
+          referenceId: newReference.id,
+        });
+      }
+    }
+    await TagsReferences.bulkCreate(newTags, { transaction: txn });
 
     return newReference.id;
   });
 
   const reference = await fetchSingleReferenceComplete(newId);
-  notifications.push({
-    status: "success",
-    result: "Creation success",
-    resultMessage: `Reference "${reference.name}" successfully created`,
-  });
-  return { reference, authorsAdded, notifications };
+
+  return { reference, notifications };
 };
 
 // Update a single reference using the content in data. This has to include

@@ -22,8 +22,8 @@ function createReference(context) {
 
   return references
     .createReference(requestBody)
-    .then((reference) => {
-      res.status(201).pureJson({ reference });
+    .then((response) => {
+      res.status(201).pureJson(response);
     })
     .catch((error) => {
       res.status(500).pureJson({
