@@ -26,15 +26,25 @@ const CreateReference = () => {
   const toggleMultientry = () => setMultientry((current) => !current);
 
   const submitHandler = (values, formikBag) => {
-    alert(JSON.stringify(values, null, 2));
-    formikBag.setSubmitting(false);
-    return;
-
     values = { ...values };
+
+    values.authors = values.authors
+      .filter((a) => !a.deleted)
+      .map((a) => {
+        delete a.deleted;
+        if (typeof a.id === "string") a.id = 0;
+        return a;
+      });
+    values.tags = values.tags.map(({ id, name }) => {
+      if (typeof id === "string") id = 0;
+      return { id, name };
+    });
+    values.RecordTypeId = parseInt(values.RecordTypeId);
+    values.MagazineId = parseInt(values.MagazineId) || 0;
 
     mutate(values, {
       onSuccess: (data) => {
-        const { error, reference } = data;
+        const { error, reference, notifications } = data;
         formikBag.setSubmitting(false);
 
         if (error) {
@@ -53,11 +63,18 @@ const CreateReference = () => {
           addToast(`Reference "${reference.name}" created`, {
             appearance: "success",
           });
+
+          if (notifications && notifications.length) {
+            notifications.forEach((n) =>
+              addToast(n.message, { appearance: n.type })
+            );
+          }
+
           setCreatedReference(reference.id);
         }
       },
       onError: (error) => {
-        if (error.response) {
+        if (error.response?.data?.error) {
           addToast(error.response.data.error.description, {
             appearance: "error",
           });

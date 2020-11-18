@@ -104,7 +104,7 @@ const ReferenceForm = ({ reference, submitHandler, autoFocusRef }) => {
     getAllMagazinesWithIssues
   );
   const authorlistQuery = useQuery(
-    "authors/namesAndAliases",
+    ["authors", { namesAndAliases: true }],
     getAuthorNamesAndAliases
   );
   if (!autoFocusRef) autoFocusRef = createRef(null);
@@ -120,6 +120,8 @@ const ReferenceForm = ({ reference, submitHandler, autoFocusRef }) => {
         .sort(compareVersion);
     }
   }
+
+  let newAuthorCounter = 0;
 
   return (
     <Formik
@@ -354,7 +356,7 @@ const ReferenceForm = ({ reference, submitHandler, autoFocusRef }) => {
                                     newItem.deleted = false;
                                     if (selected[0].customOption) {
                                       newItem.name = selected[0].name;
-                                      newItem.id = 0;
+                                      newItem.id = selected[0].id;
                                     } else {
                                       newItem.name =
                                         selected[0].aliasOf || selected[0].name;
@@ -399,7 +401,7 @@ const ReferenceForm = ({ reference, submitHandler, autoFocusRef }) => {
                                     />
                                   )}
                                 </Button>
-                                {author.id ? (
+                                {typeof author.id !== "string" ? (
                                   <LinkContainer to={`/authors/${author.id}`}>
                                     <Button
                                       variant="link"
@@ -425,7 +427,7 @@ const ReferenceForm = ({ reference, submitHandler, autoFocusRef }) => {
                               onClick={() =>
                                 helpers.push({
                                   name: "",
-                                  id: 0,
+                                  id: `new-${newAuthorCounter++}`,
                                   order: 0,
                                   deleted: false,
                                 })
