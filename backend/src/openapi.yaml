@@ -1375,7 +1375,7 @@ paths:
     x-exegesis-controller: tagsController
     get:
       summary: Fetch all tags with count of tagged references
-      description: Fetch tags as an array. Each tag struture includes an extra
+      description: Fetch tags as an array. Each tag structure includes an extra
         field that counts the number of references tagged by the tag.
       operationId: getAllTagsWithRefCount
       parameters:
@@ -1411,7 +1411,7 @@ paths:
     get:
       summary: Fetch all matching tags with count of tagged references
       description: Fetch tags whose name matches the query value, as an array.
-        Each tag struture includes an extra field that counts the number of
+        Each tag structure includes an extra field that counts the number of
         references tagged by the tag.
       operationId: getTagsQueryWithRefCount
       parameters:
