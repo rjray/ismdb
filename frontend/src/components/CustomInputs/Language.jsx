@@ -40,7 +40,9 @@ const Language = ({ field, form, ...props }) => {
       allowNew
       newSelectionPrefix={<strong>New language: </strong>}
       options={data.languages}
-      defaultInputValue={field.value.language}
+      defaultInputValue={
+        typeof field.value === "object" ? field.value.label : field.value
+      }
       onChange={(selected) => {
         if (selected && selected[0]) {
           form.setFieldValue(field.name, selected[0]);

@@ -42,6 +42,10 @@ const CreateReference = () => {
     values.RecordTypeId = parseInt(values.RecordTypeId);
     values.MagazineId = parseInt(values.MagazineId) || 0;
 
+    if (typeof values.type === "object") values.type = values.type.label;
+    if (typeof values.language === "object")
+      values.language = values.language.label;
+
     mutate(values, {
       onSuccess: (data) => {
         const { error, reference, notifications, addedAuthors } = data;

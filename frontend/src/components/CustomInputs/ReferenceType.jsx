@@ -38,7 +38,9 @@ const ReferenceType = ({ field, form, ...props }) => {
       allowNew
       newSelectionPrefix={<strong>New type: </strong>}
       options={typesList}
-      defaultInputValue={field.value.type}
+      defaultInputValue={
+        typeof field.value === "object" ? field.value.label : field.value
+      }
       onChange={(selected) => {
         if (selected && selected[0]) {
           form.setFieldValue(field.name, selected[0]);
