@@ -301,8 +301,8 @@ sub migrate_reference_table {
         '`createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?)'
     );
     my $sth_auth = $dbhout->prepare(
-        'INSERT INTO `AuthorsReferences` (`authorId`, `referenceId`, ' .
-        '`order`) VALUES (?, ?, ?)'
+        'INSERT INTO `AuthorsReferences` (`authorId`, `referenceId`) ' .
+        'VALUES (?, ?)'
     );
     my $sth_tag = $dbhout->prepare('INSERT INTO `Tags` (`name`) VALUES (?)');
     my $sth_tagref = $dbhout->prepare(
@@ -359,15 +359,13 @@ sub migrate_reference_table {
             $sth_tagref->execute($TAGS{$tag}, $base[0]);
         }
 
-        my $order = 0;
         for my $author (@{$row}[9..12]) {
             last if ! $author;
             if (! $authors->{$author}) {
                 print "  Invalid author ($author) for reference $base[0]\n";
                 next;
             }
-            $order++;
-            $sth_auth->execute($author, $base[0], $order);
+            $sth_auth->execute($author, $base[0]);
         }
     }
 

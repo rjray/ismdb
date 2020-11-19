@@ -21,10 +21,6 @@ module.exports = {
         },
         onDelete: "CASCADE",
       },
-      order: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
     });
   },
   down: (queryInterface) => {

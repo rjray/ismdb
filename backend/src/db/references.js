@@ -31,11 +31,8 @@ function cleanReference(reference) {
   reference = reference.get();
 
   if (reference.Authors) {
-    reference.authors = reference.Authors.sort(
-      (a, b) => a.AuthorsReferences.order - b.AuthorsReferences.order
-    ).map((author) => {
+    reference.authors = reference.Authors.map((author) => {
       author = author.get();
-      author.order = author.AuthorsReferences.order;
       delete author.AuthorsReferences;
       return author;
     });
@@ -165,7 +162,6 @@ const createReference = async (data) => {
 
     // Connect the authors to the new reference, creating new ones as needed.
     const newAuthors = [];
-    let authorIndex = 0;
     for (const author of authors) {
       if (author.id) {
         // This is an existing author, so just create the new AuthorsReferences
@@ -173,7 +169,6 @@ const createReference = async (data) => {
         newAuthors.push({
           authorId: author.id,
           referenceId: newReference.id,
-          order: authorIndex,
         });
       } else {
         // A new author. Must be created.
@@ -186,11 +181,9 @@ const createReference = async (data) => {
         newAuthors.push({
           authorId: newAuthor.id,
           referenceId: newReference.id,
-          order: authorIndex,
         });
         addedAuthors++;
       }
-      authorIndex++;
     }
     await AuthorsReferences.bulkCreate(newAuthors, { transaction: txn });
 
