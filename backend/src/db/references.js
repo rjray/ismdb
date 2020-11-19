@@ -91,6 +91,9 @@ const createReference = async (data) => {
   // The notifications array will tell the front-end if anything extra was
   // done, such as creating new authors and/or tags.
   const notifications = [];
+  // Keep a count of any added authors, so that the front-end can know to
+  // invalidate the cache of author data.
+  let addedAuthors = 0;
 
   // Remove the authors, that will be processed separately.
   const authors = data.authors.filter((author) => !author.deleted);
@@ -185,6 +188,7 @@ const createReference = async (data) => {
           referenceId: newReference.id,
           order: authorIndex,
         });
+        addedAuthors++;
       }
       authorIndex++;
     }
@@ -220,7 +224,7 @@ const createReference = async (data) => {
 
   const reference = await fetchSingleReferenceComplete(newId);
 
-  return { reference, notifications };
+  return { reference, notifications, addedAuthors };
 };
 
 // Update a single reference using the content in data. This has to include

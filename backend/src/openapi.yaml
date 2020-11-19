@@ -1185,11 +1185,15 @@ paths:
                 type: object
                 required:
                   - reference
+                  - notifications
+                  - addedAuthors
                 properties:
                   reference:
                     $ref: "#/components/schemas/referenceType"
                   notifications:
                     $ref: "#/components/schemas/notificationsType"
+                  addedAuthors:
+                    type: integer
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
