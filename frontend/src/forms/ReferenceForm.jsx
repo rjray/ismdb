@@ -428,7 +428,6 @@ const ReferenceForm = ({ reference, submitHandler, autoFocusRef }) => {
                                 helpers.push({
                                   name: "",
                                   id: `new-${newAuthorCounter++}`,
-                                  order: 0,
                                   deleted: false,
                                 })
                               }

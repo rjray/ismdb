@@ -1,9 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { sortBy } from "../utils/no-lodash";
-const sortByOrder = sortBy("order");
-
 function createAuthor(author, current, nolink) {
   if (nolink) {
     return <span key={author.id}>{author.name}</span>;
@@ -21,7 +18,7 @@ function createAuthor(author, current, nolink) {
 const FormatAuthors = ({ currentAuthor, authors, nolink }) => {
   const content = [];
 
-  [...authors].sort(sortByOrder).forEach((author) => {
+  authors.forEach((author) => {
     content.push(createAuthor(author, currentAuthor, nolink), ", ");
   });
   content.pop();
