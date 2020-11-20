@@ -13,6 +13,32 @@
         "ecmaVersion": 12
     },
     "rules": {
-        "quotes": ["error", "double"]
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "no-return-assign": [
+            "error",
+            "except-parens"
+        ],
+        "no-param-reassign": [
+            "error",
+            {
+                "props": true,
+                "ignorePropertyModificationsForRegex": [
+                    "[Rr]ef$"
+                ]
+            }
+        ],
+        "no-plusplus": "off",
+        "no-restricted-syntax": "off",
+        "no-nested-ternary": "off",
+        "no-unused-expressions": [
+            "error",
+            {
+                "allowShortCircuit": true
+            }
+        ],
+        "no-prototype-builtins": "off"
     }
 }
