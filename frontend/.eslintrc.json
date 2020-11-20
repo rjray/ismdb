@@ -5,7 +5,8 @@
     },
     "extends": [
         "eslint:recommended",
-        "plugin:react/recommended"
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended"
     ],
     "parserOptions": {
         "ecmaFeatures": {
@@ -15,8 +16,14 @@
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react",
+        "jsx-a11y"
     ],
     "rules": {
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
     }
 }
