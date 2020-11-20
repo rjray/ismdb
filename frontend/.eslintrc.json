@@ -23,7 +23,47 @@
         "jsx-a11y"
     ],
     "rules": {
-        "quotes": ["error", "double"]
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "no-return-assign": [
+            "error",
+            "except-parens"
+        ],
+        "no-param-reassign": [
+            "error",
+            {
+                "props": true,
+                "ignorePropertyModificationsForRegex": [
+                    "[Rr]ef$"
+                ]
+            }
+        ],
+        "no-plusplus": "off",
+        "no-restricted-syntax": "off",
+        "no-nested-ternary": "off",
+        "no-unused-expressions": [
+            "error",
+            {
+                "allowShortCircuit": true
+            }
+        ],
+        "react/forbid-prop-types": "off",
+        "react/jsx-props-no-spreading": "off",
+        "react/jsx-one-expression-per-line": "off",
+        "react/jsx-indent": "off",
+        "react/jsx-curly-newline": "off",
+        "react/no-unescaped-entities": [
+            "error",
+            {
+                "forbid": [
+                    ">",
+                    "}"
+                ]
+            }
+        ],
+        "jsx-a11y/control-has-associated-label": "off"
     },
     "settings": {
         "react": {
