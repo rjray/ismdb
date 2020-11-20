@@ -12,7 +12,7 @@ import { useToasts } from "react-toast-notifications";
 import Header from "../../components/Header";
 import ReferenceForm from "../../forms/ReferenceForm";
 import { multientrySwitch } from "../../atoms";
-import { useFocus } from "../../utils/focus";
+import useFocus from "../../utils/focus";
 import { createReference } from "../../utils/queries";
 
 const CreateReference = () => {
@@ -21,26 +21,27 @@ const CreateReference = () => {
   const queryCache = useQueryCache();
   const [mutate] = useMutation(createReference);
   const { addToast } = useToasts();
-  const [focus, setFocus] = useFocus();
+  const [focusOnName, setFocusOnName] = useFocus();
 
   const toggleMultientry = () => setMultientry((current) => !current);
 
-  const submitHandler = (values, formikBag) => {
-    values = { ...values };
+  const submitHandler = (valuesIn, formikBag) => {
+    const values = { ...valuesIn };
 
     values.authors = values.authors
       .filter((a) => !a.deleted)
-      .map((a) => {
-        delete a.deleted;
-        if (typeof a.id === "string") a.id = 0;
-        return a;
+      .map(({ id, name }) => {
+        // eslint-disable-next-line no-param-reassign
+        if (typeof id === "string") id = 0;
+        return { id, name };
       });
     values.tags = values.tags.map(({ id, name }) => {
+      // eslint-disable-next-line no-param-reassign
       if (typeof id === "string") id = 0;
       return { id, name };
     });
-    values.RecordTypeId = parseInt(values.RecordTypeId);
-    values.MagazineId = parseInt(values.MagazineId) || 0;
+    values.RecordTypeId = parseInt(values.RecordTypeId, 10);
+    values.MagazineId = parseInt(values.MagazineId, 10) || 0;
 
     if (typeof values.type === "object") values.type = values.type.label;
     if (typeof values.language === "object")
@@ -56,7 +57,7 @@ const CreateReference = () => {
         } else {
           if (multientry) {
             formikBag.resetForm();
-            setFocus();
+            setFocusOnName();
           }
 
           queryCache.invalidateQueries(["references"]);
@@ -138,7 +139,7 @@ const CreateReference = () => {
         <ReferenceForm
           submitHandler={submitHandler}
           reference={emptyReference}
-          autoFocusRef={focus}
+          autoFocusRef={focusOnName}
         />
       </Container>
     </>
