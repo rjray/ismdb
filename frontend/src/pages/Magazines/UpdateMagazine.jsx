@@ -12,7 +12,7 @@ import { useToasts } from "react-toast-notifications";
 
 import Header from "../../components/Header";
 import MagazineForm from "../../forms/MagazineForm";
-import { useFocus } from "../../utils/focus";
+import useFocus from "../../utils/focus";
 import { getMagazineById, updateMagazineById } from "../../utils/queries";
 
 const UpdateMagazine = () => {
@@ -20,7 +20,7 @@ const UpdateMagazine = () => {
   const queryCache = useQueryCache();
   const [mutate] = useMutation(updateMagazineById);
   const { addToast } = useToasts();
-  const [focus, setFocus] = useFocus();
+  const [focusOnName, setFocusOnName] = useFocus();
   const { isLoading, error, data } = useQuery(
     ["magazine", magazineId],
     getMagazineById
@@ -47,31 +47,31 @@ const UpdateMagazine = () => {
   magazine.createdAt = new Date(magazine.createdAt);
   magazine.updatedAt = new Date(magazine.updatedAt);
 
-  const submitHandler = (values, formikBag) => {
-    values = { ...values };
+  const submitHandler = (valuesIn, formikBag) => {
+    const values = { ...valuesIn };
 
     mutate(values, {
-      onSuccess: (data) => {
-        const { error, magazine } = data;
+      onSuccess: (mutatedData) => {
+        const { error: mutationError, magazine: mutatedMagazine } = mutatedData;
         formikBag.setSubmitting(false);
-        setFocus();
+        setFocusOnName();
 
-        if (error) {
-          addToast(error.description, { appearance: "error" });
+        if (mutationError) {
+          addToast(mutationError.description, { appearance: "error" });
         } else {
           queryCache.invalidateQueries(["magazines"]);
-          queryCache.setQueryData(["magazine", String(magazine.id)], {
-            magazine,
+          queryCache.setQueryData(["magazine", String(mutatedMagazine.id)], {
+            mutatedMagazine,
           });
 
-          addToast(`Magazine "${magazine.name}" updated`, {
+          addToast(`Magazine "${mutatedMagazine.name}" updated`, {
             appearance: "success",
           });
         }
       },
-      onError: (error) => {
-        if (error.response) {
-          addToast(error.response.data.error.description, {
+      onError: (mutationError) => {
+        if (mutationError.response) {
+          addToast(mutationError.response.data.error.description, {
             appearance: "error",
           });
         } else {
@@ -101,7 +101,7 @@ const UpdateMagazine = () => {
         <MagazineForm
           magazine={magazine}
           submitHandler={submitHandler}
-          autoFocusRef={focus}
+          autoFocusRef={focusOnName}
         />
       </Container>
     </>

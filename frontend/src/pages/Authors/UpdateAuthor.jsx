@@ -12,7 +12,7 @@ import { useToasts } from "react-toast-notifications";
 
 import Header from "../../components/Header";
 import AuthorForm from "../../forms/AuthorForm";
-import { useFocus } from "../../utils/focus";
+import useFocus from "../../utils/focus";
 import {
   getAuthorByIdWithRefCount,
   updateAuthorById,
@@ -55,29 +55,31 @@ const UpdateAuthor = () => {
 
   const submitHandler = (values, formikBag) => {
     mutate(values, {
-      onSuccess: (data) => {
-        const { error, author } = data;
+      onSuccess: (mutatedData) => {
+        const { error: mutationError, mutatedAuthor } = mutatedData;
         formikBag.setSubmitting(false);
         setFocus();
 
-        if (error) {
-          addToast(error.description, { appearance: "error" });
+        if (mutationError) {
+          addToast(mutationError.description, { appearance: "error" });
         } else {
           queryCache.invalidateQueries(["authors"]);
-          queryCache.setQueryData(["author", String(author.id)], { author });
+          queryCache.setQueryData(["author", String(mutatedAuthor.id)], {
+            author: mutatedAuthor,
+          });
 
-          addToast(`Author "${author.name}" updated`, {
+          addToast(`Author "${mutatedAuthor.name}" updated`, {
             appearance: "success",
           });
         }
       },
-      onError: (error) => {
-        if (error.response) {
-          addToast(error.response.data.error.description, {
+      onError: (mutationError) => {
+        if (mutationError.response) {
+          addToast(mutationError.response.data.error.description, {
             appearance: "error",
           });
         } else {
-          addToast(error.message, { appearance: "error" });
+          addToast(mutationError.message, { appearance: "error" });
         }
         formikBag.setSubmitting(false);
       },

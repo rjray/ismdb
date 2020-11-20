@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { useQueryCache } from "react-query";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
@@ -9,9 +10,9 @@ import { sortBy } from "../../utils/no-lodash";
 
 const sortByName = sortBy("name");
 
-const FormatMatch = (option, props) => (
+const FormatMatch = (option, { text }) => (
   <div style={{ whiteSpace: "normal" }}>
-    <Highlighter search={props.text}>{option.name}</Highlighter>
+    <Highlighter search={text}>{option.name}</Highlighter>
     <em> ({option.refcount})</em>
   </div>
 );
@@ -30,8 +31,8 @@ const TagEditor = ({ field, form, ...props }) => {
         getTagsQueryWithRefCount
       )
       .then((data) => {
-        const tagList = data.tags;
-        setTagList(tagList);
+        const newTagList = data.tags;
+        setTagList(newTagList);
         setLoadingTagList(false);
       });
   };
@@ -57,18 +58,23 @@ const TagEditor = ({ field, form, ...props }) => {
       onSearch={handleTagsSearch}
       onChange={(selected) => {
         const seen = new Set();
-        selected = selected
+        const filteredSelected = selected
           .filter((item) => {
             if (seen.has(item.name)) return false;
             seen.add(item.name);
             return true;
           })
           .sort(sortByName);
-        form.setFieldValue(field.name, selected);
+        form.setFieldValue(field.name, filteredSelected);
       }}
       {...props}
     />
   );
+};
+
+TagEditor.propTypes = {
+  field: PropTypes.object.isRequired,
+  form: PropTypes.object.isRequired,
 };
 
 export default TagEditor;

@@ -16,11 +16,11 @@ const typeMap = {
   tags: "Tag",
 };
 
-const FormatMatch = (option, props) => (
+const FormatMatch = (option, { text }) => (
   <Row>
     <Col xs={12} md={9}>
       <div style={{ whiteSpace: "normal" }}>
-        <Highlighter search={props.text}>{option.name}</Highlighter>
+        <Highlighter search={text}>{option.name}</Highlighter>
       </div>
     </Col>
     <Col xs={12} md={3} className="text-right">

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { createRef } from "react";
+import PropTypes from "prop-types";
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
@@ -173,6 +174,19 @@ const MagazineForm = ({ magazine, submitHandler, autoFocusRef }) => {
       )}
     </Formik>
   );
+};
+
+MagazineForm.propTypes = {
+  magazine: PropTypes.object.isRequired,
+  submitHandler: PropTypes.func.isRequired,
+  autoFocusRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.any }),
+  ]),
+};
+
+MagazineForm.defaultProps = {
+  autoFocusRef: createRef(null),
 };
 
 export default MagazineForm;

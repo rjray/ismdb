@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { LinkContainer } from "react-router-bootstrap";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -48,5 +49,9 @@ const MagazineExpand = ({ data: magazine }) => (
     </Row>
   </Container>
 );
+
+MagazineExpand.propTypes = {
+  data: PropTypes.object.isRequired,
+};
 
 export default MagazineExpand;

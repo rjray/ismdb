@@ -1,4 +1,5 @@
 import React, { createRef } from "react";
+import PropTypes from "prop-types";
 import { useQuery } from "react-query";
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
@@ -39,7 +40,6 @@ const TagForm = ({ tag, submitHandler, autoFocusRef }) => {
     "tagtypes",
     getAllTagTypes
   );
-  if (!autoFocusRef) autoFocusRef = createRef(null);
 
   return (
     <Formik
@@ -148,6 +148,19 @@ const TagForm = ({ tag, submitHandler, autoFocusRef }) => {
       )}
     </Formik>
   );
+};
+
+TagForm.propTypes = {
+  tag: PropTypes.object.isRequired,
+  submitHandler: PropTypes.func.isRequired,
+  autoFocusRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.any }),
+  ]),
+};
+
+TagForm.defaultProps = {
+  autoFocusRef: createRef(null),
 };
 
 export default TagForm;

@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import DataTable from "react-data-table-component";
 
 import TagExpand from "./TagExpand";
@@ -30,9 +31,9 @@ const columns = [
   },
 ];
 
-const TagTable = (props) => {
+const TagTable = ({ data, ...props }) => {
   const pagination = {};
-  if (props.data.length > 25) {
+  if (data.length > 25) {
     pagination.pagination = true;
     pagination.paginationPerPage = 25;
   }
@@ -50,10 +51,15 @@ const TagTable = (props) => {
       expandableRowsComponent={<TagExpand />}
       defaultSortField="name"
       columns={columns}
+      data={data}
       {...pagination}
       {...props}
     />
   );
+};
+
+TagTable.propTypes = {
+  data: PropTypes.array.isRequired,
 };
 
 export default TagTable;

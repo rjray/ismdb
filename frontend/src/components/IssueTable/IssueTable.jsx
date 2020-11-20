@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import DataTable from "react-data-table-component";
 
 import compareVersion from "../../utils/compare-version";
@@ -42,9 +43,9 @@ const IssueTable = ({ data: issues, ...props }) => {
     pagination.paginationPerPage = 25;
   }
 
-  issues = issues.map((issue) => {
-    issue.refcount = issue.references.length;
-    return issue;
+  const sortedIssues = issues.map((issue) => {
+    const refcount = issue.references.length;
+    return { ...issue, refcount };
   });
 
   return (
@@ -61,11 +62,15 @@ const IssueTable = ({ data: issues, ...props }) => {
       expandableRowsHideExpander
       expandableRowsComponent={<IssueExpand />}
       columns={columns}
-      data={issues}
+      data={sortedIssues}
       {...pagination}
       {...props}
     />
   );
+};
+
+IssueTable.propTypes = {
+  data: PropTypes.array.isRequired,
 };
 
 export default IssueTable;

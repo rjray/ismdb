@@ -38,7 +38,7 @@ const ShowAuthor = () => {
     );
   }
 
-  const author = data.author;
+  const { author } = data;
 
   return (
     <>

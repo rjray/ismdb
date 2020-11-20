@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { LinkContainer } from "react-router-bootstrap";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -27,5 +28,9 @@ const TagExpand = ({ data: tag }) => (
     </Row>
   </Container>
 );
+
+TagExpand.propTypes = {
+  data: PropTypes.object.isRequired,
+};
 
 export default TagExpand;

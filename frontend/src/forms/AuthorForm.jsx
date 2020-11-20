@@ -1,4 +1,5 @@
 import React, { createRef } from "react";
+import PropTypes from "prop-types";
 import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
@@ -35,7 +36,6 @@ const validationSchema = Yup.object().shape({
 
 const AuthorForm = ({ author, submitHandler, autoFocusRef }) => {
   const initialValues = { ...author };
-  if (!autoFocusRef) autoFocusRef = createRef(null);
 
   return (
     <Formik
@@ -85,7 +85,10 @@ const AuthorForm = ({ author, submitHandler, autoFocusRef }) => {
                     <>
                       {values.aliases.map((alias, index) => (
                         <Form.Group
-                          key={index}
+                          key={`alias-${(alias.name || "").replace(
+                            /[^a-zA-Z]/g,
+                            ""
+                          )}`}
                           as={Form.Row}
                           controlId={`alias${index}`}
                           className="mb-2"
@@ -208,6 +211,19 @@ const AuthorForm = ({ author, submitHandler, autoFocusRef }) => {
       )}
     </Formik>
   );
+};
+
+AuthorForm.propTypes = {
+  author: PropTypes.object.isRequired,
+  submitHandler: PropTypes.func.isRequired,
+  autoFocusRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.any }),
+  ]),
+};
+
+AuthorForm.defaultProps = {
+  autoFocusRef: createRef(null),
 };
 
 export default AuthorForm;

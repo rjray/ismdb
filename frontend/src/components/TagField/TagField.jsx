@@ -1,4 +1,6 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { useQuery } from "react-query";
 import Container from "react-bootstrap/Container";
@@ -37,6 +39,17 @@ const TagWord = ({ id, name, description, refcount }) => {
       </OverlayTrigger>
     </div>
   );
+};
+
+TagWord.propTypes = {
+  id: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  refcount: PropTypes.number.isRequired,
+};
+
+TagWord.defaultProps = {
+  description: "",
 };
 
 const TagField = () => {
@@ -138,7 +151,7 @@ const TagField = () => {
                 type="switch"
                 label=""
                 checked={includeMeta}
-                onChange={() => setIncludeMeta((includeMeta) => !includeMeta)}
+                onChange={() => setIncludeMeta((current) => !current)}
               />
             </Col>
             <Col
@@ -156,9 +169,7 @@ const TagField = () => {
                 type="switch"
                 label=""
                 checked={includeScale}
-                onChange={() =>
-                  setIncludeScale((includeScale) => !includeScale)
-                }
+                onChange={() => setIncludeScale((current) => !current)}
               />
             </Col>
             <Col
@@ -176,7 +187,7 @@ const TagField = () => {
                 type="switch"
                 label=""
                 checked={includeNatl}
-                onChange={() => setIncludeNatl((includeNatl) => !includeNatl)}
+                onChange={() => setIncludeNatl((current) => !current)}
               />
             </Col>
           </Row>

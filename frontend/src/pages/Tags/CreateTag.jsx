@@ -12,7 +12,7 @@ import { useToasts } from "react-toast-notifications";
 import Header from "../../components/Header";
 import TagForm from "../../forms/TagForm";
 import { multientrySwitch } from "../../atoms";
-import { useFocus } from "../../utils/focus";
+import useFocus from "../../utils/focus";
 import { createTag } from "../../utils/queries";
 
 const CreateTag = () => {

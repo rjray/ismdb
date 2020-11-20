@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import Card from "react-bootstrap/Card";
 
@@ -22,5 +23,11 @@ const HomeSearch = ({ title, link, component: C, ...rest }) => (
     </Card.Body>
   </Card>
 );
+
+HomeSearch.propTypes = {
+  title: PropTypes.string.isRequired,
+  link: PropTypes.string.isRequired,
+  component: PropTypes.elementType.isRequired,
+};
 
 export default HomeSearch;

@@ -1,8 +1,10 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import Badge from "react-bootstrap/Badge";
 
 import { sortBy } from "../utils/no-lodash";
+
 const sortByName = sortBy("name");
 
 function createBadge(tag, current, nolink) {
@@ -12,17 +14,17 @@ function createBadge(tag, current, nolink) {
         {tag.name}
       </Badge>
     );
-  } else {
-    return tag.id === current ? (
-      <Badge key={tag.id} variant="secondary">
-        {tag.name}
-      </Badge>
-    ) : (
-      <Link key={tag.id} to={`/tags/${tag.id}`}>
-        <Badge variant="primary">{tag.name}</Badge>
-      </Link>
-    );
   }
+
+  return tag.id === current ? (
+    <Badge key={tag.id} variant="secondary">
+      {tag.name}
+    </Badge>
+  ) : (
+    <Link key={tag.id} to={`/tags/${tag.id}`}>
+      <Badge variant="primary">{tag.name}</Badge>
+    </Link>
+  );
 }
 
 const FormatTags = ({ currentTag, tags, nolink }) => {
@@ -34,6 +36,16 @@ const FormatTags = ({ currentTag, tags, nolink }) => {
   content.pop();
 
   return <span>{content}</span>;
+};
+
+FormatTags.propTypes = {
+  currentTag: PropTypes.number.isRequired,
+  tags: PropTypes.array.isRequired,
+  nolink: PropTypes.bool,
+};
+
+FormatTags.defaultProps = {
+  nolink: false,
 };
 
 export default FormatTags;

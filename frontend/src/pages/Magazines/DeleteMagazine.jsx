@@ -49,24 +49,24 @@ const DeleteMagazine = () => {
     return <Redirect push to={{ pathname: "/magazines" }} />;
   }
 
-  const magazine = data.magazine;
+  const { magazine } = data;
   const issuecount = magazine.issues.length;
   const refcount = magazine.issues.reduce(
     (prev, curr) => prev + curr.references.length,
     0
   );
-  const issnoun = issuecount === 1 ? "issue" : "issues";
-  const refnoun = refcount === 1 ? "reference" : "references";
+  const issueNoun = issuecount === 1 ? "issue" : "issues";
+  const refNoun = refcount === 1 ? "reference" : "references";
 
   const confirmDelete = () => {
     setIsDeleting(true);
     mutate(magazine.id, {
-      onSuccess: async (data) => {
-        const { error } = data;
+      onSuccess: async (mutatedData) => {
+        const { error: mutationError } = mutatedData;
         setIsDeleting(false);
 
-        if (error) {
-          addToast(error.description, { appearance: "error" });
+        if (mutationError) {
+          addToast(mutationError.description, { appearance: "error" });
         } else {
           queryCache.removeQueries(["magazine", String(magazine.id)]);
           queryCache.invalidateQueries(["references"]);
@@ -78,9 +78,9 @@ const DeleteMagazine = () => {
           });
         }
       },
-      onError: (error) => {
-        if (error.response) {
-          addToast(error.response.data.error.description, {
+      onError: (mutationError) => {
+        if (mutationError.response) {
+          addToast(mutationError.response.data.error.description, {
             appearance: "error",
           });
         } else {
@@ -140,7 +140,7 @@ const DeleteMagazine = () => {
         <Col>
           <p>
             This will remove the magazine "{magazine.name}". This will also
-            remove {issuecount} {issnoun} with {refcount} {refnoun}.
+            remove {issuecount} {issueNoun} with {refcount} {refNoun}.
           </p>
         </Col>
       </Row>

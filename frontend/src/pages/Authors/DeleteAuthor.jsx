@@ -50,19 +50,19 @@ const DeleteAuthor = () => {
     return <Redirect push to={{ pathname: "/authors" }} />;
   }
 
-  const author = data.author;
-  const refcount = author.refcount;
+  const { author } = data;
+  const { refcount } = author;
   const noun = refcount === 1 ? "reference" : "references";
 
   const confirmDelete = () => {
     setIsDeleting(true);
     mutate(author.id, {
-      onSuccess: async (data) => {
-        const { error } = data;
+      onSuccess: async (mutatedData) => {
+        const { error: mutationError } = mutatedData;
         setIsDeleting(false);
 
-        if (error) {
-          addToast(error.description, { appearance: "error" });
+        if (mutationError) {
+          addToast(mutationError.description, { appearance: "error" });
         } else {
           queryCache.removeQueries(["author", String(author.id)]);
           await queryCache.invalidateQueries(["authors"]);
@@ -73,13 +73,13 @@ const DeleteAuthor = () => {
           });
         }
       },
-      onError: (error) => {
-        if (error.response) {
-          addToast(error.response.data.error.description, {
+      onError: (mutationError) => {
+        if (mutationError.response) {
+          addToast(mutationError.response.data.error.description, {
             appearance: "error",
           });
         } else {
-          addToast(error.message, { appearance: "error" });
+          addToast(mutationError.message, { appearance: "error" });
         }
 
         setIsDeleting(false);

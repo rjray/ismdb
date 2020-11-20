@@ -36,7 +36,7 @@ const ShowIssue = () => {
     );
   }
 
-  const issue = data.issue;
+  const { issue } = data;
   const issueName = `${issue.Magazine.name} ${issue.number}`;
 
   return (

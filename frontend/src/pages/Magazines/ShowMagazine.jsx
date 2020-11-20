@@ -37,7 +37,7 @@ const ShowMagazine = () => {
     );
   }
 
-  const magazine = data.magazine;
+  const { magazine } = data;
 
   return (
     <>

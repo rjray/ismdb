@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -30,17 +31,27 @@ const IssuesRow = ({ row }) => {
   );
 };
 
+IssuesRow.propTypes = {
+  row: PropTypes.array.isRequired,
+};
+
 const MagazineIssues = ({ issues }) => {
-  issues = issues.sort((a, b) => compareVersion(a.number, b.number));
-  const rows = chunk(issues, 10);
+  const sortedIssues = issues.sort((a, b) =>
+    compareVersion(a.number, b.number)
+  );
+  const rows = chunk(sortedIssues, 10);
 
   return (
     <Container fluid>
-      {rows.map((row, idx) => (
-        <IssuesRow key={idx} row={row} />
+      {rows.map((row) => (
+        <IssuesRow key={row[0].number} row={row} />
       ))}
     </Container>
   );
+};
+
+MagazineIssues.propTypes = {
+  issues: PropTypes.array.isRequired,
 };
 
 export default MagazineIssues;

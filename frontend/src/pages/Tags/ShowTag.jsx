@@ -36,7 +36,7 @@ const ShowTag = () => {
     );
   }
 
-  const tag = data.tag;
+  const { tag } = data;
 
   return (
     <>

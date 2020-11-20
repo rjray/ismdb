@@ -1,4 +1,6 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React from "react";
+import PropTypes from "prop-types";
 import DataTable from "react-data-table-component";
 
 import FormatDate from "../FormatDate";
@@ -51,9 +53,9 @@ const columns = [
   },
 ];
 
-const ReferenceTable = (props) => {
+const ReferenceTable = ({ data, currentTag, currentAuthor, ...props }) => {
   const pagination = {};
-  if (props.data.length > 25) {
+  if (data.length > 25) {
     pagination.pagination = true;
     pagination.paginationPerPage = 25;
   }
@@ -70,16 +72,23 @@ const ReferenceTable = (props) => {
       expandableRowsHideExpander
       expandableRowsComponent={
         <ReferenceExpand
-          currentTag={props.currentTag}
-          currentAuthor={props.currentAuthor}
+          currentTag={currentTag}
+          currentAuthor={currentAuthor}
         />
       }
       defaultSortField="name"
       columns={columns}
+      data={data}
       {...pagination}
       {...props}
     />
   );
+};
+
+ReferenceTable.propTypes = {
+  data: PropTypes.array.isRequired,
+  currentTag: PropTypes.number.isRequired,
+  currentAuthor: PropTypes.number.isRequired,
 };
 
 export default ReferenceTable;

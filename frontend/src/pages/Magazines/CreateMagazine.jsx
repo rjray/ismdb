@@ -12,7 +12,7 @@ import { useToasts } from "react-toast-notifications";
 import Header from "../../components/Header";
 import MagazineForm from "../../forms/MagazineForm";
 import { multientrySwitch } from "../../atoms";
-import { useFocus } from "../../utils/focus";
+import useFocus from "../../utils/focus";
 import { createMagazine } from "../../utils/queries";
 
 const CreateMagazine = () => {
@@ -21,12 +21,12 @@ const CreateMagazine = () => {
   const queryCache = useQueryCache();
   const [mutate] = useMutation(createMagazine);
   const { addToast } = useToasts();
-  const [focus, setFocus] = useFocus();
+  const [focusOnName, setFocusOnName] = useFocus();
 
   const toggleMultientry = () => setMultientry((current) => !current);
 
-  const submitHandler = (values, formikBag) => {
-    values = { ...values };
+  const submitHandler = (valuesIn, formikBag) => {
+    const values = { ...valuesIn };
 
     mutate(values, {
       onSuccess: (data) => {
@@ -38,7 +38,7 @@ const CreateMagazine = () => {
         } else {
           if (multientry) {
             formikBag.resetForm();
-            setFocus();
+            setFocusOnName();
           }
 
           queryCache.invalidateQueries(["magazines"]);
@@ -100,7 +100,7 @@ const CreateMagazine = () => {
         <MagazineForm
           submitHandler={submitHandler}
           magazine={emptyMagazine}
-          autoFocusRef={focus}
+          autoFocusRef={focusOnName}
         />
       </Container>
     </>

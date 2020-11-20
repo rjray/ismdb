@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 // Adapted from https://helloacm.com/the-javascript-function-to-compare-version-number-strings/
 const compareVersion = (a, b) => {
   if (typeof a !== "string") return false;

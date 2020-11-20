@@ -12,7 +12,7 @@ import { useToasts } from "react-toast-notifications";
 import Header from "../../components/Header";
 import AuthorForm from "../../forms/AuthorForm";
 import { multientrySwitch } from "../../atoms";
-import { useFocus } from "../../utils/focus";
+import useFocus from "../../utils/focus";
 import { createAuthor } from "../../utils/queries";
 
 const CreateAuthor = () => {

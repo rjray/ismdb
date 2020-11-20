@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import DataTable from "react-data-table-component";
 
 import FormatDate from "../FormatDate";
@@ -58,9 +59,9 @@ const AuthorTable = ({ data: authors, ...props }) => {
     pagination.paginationPerPage = 25;
   }
 
-  authors = authors.map((item) => {
-    item.dispName = lastNameFirst(item.name);
-    return item;
+  const sortedAuthors = authors.map((item) => {
+    const dispName = lastNameFirst(item.name);
+    return { ...item, dispName };
   });
 
   return (
@@ -78,9 +79,13 @@ const AuthorTable = ({ data: authors, ...props }) => {
       columns={columns}
       {...pagination}
       {...props}
-      data={authors}
+      data={sortedAuthors}
     />
   );
+};
+
+AuthorTable.propTypes = {
+  data: PropTypes.object.isRequired,
 };
 
 export default AuthorTable;

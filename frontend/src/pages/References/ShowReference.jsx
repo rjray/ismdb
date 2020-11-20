@@ -37,7 +37,7 @@ const ShowReference = () => {
     );
   }
 
-  const reference = data.reference;
+  const { reference } = data;
   let source;
   if (reference.RecordType.name === "book") {
     source = reference.isbn ? `ISBN ${reference.isbn}` : "Book";

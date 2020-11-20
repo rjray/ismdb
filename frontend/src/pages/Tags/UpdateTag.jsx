@@ -12,7 +12,7 @@ import { useToasts } from "react-toast-notifications";
 
 import Header from "../../components/Header";
 import TagForm from "../../forms/TagForm";
-import { useFocus } from "../../utils/focus";
+import useFocus from "../../utils/focus";
 import { getTagById, updateTagById } from "../../utils/queries";
 
 const UpdateTag = () => {
@@ -20,7 +20,7 @@ const UpdateTag = () => {
   const queryCache = useQueryCache();
   const [mutate] = useMutation(updateTagById);
   const { addToast } = useToasts();
-  const [focus, setFocus] = useFocus();
+  const [focusOnName, setFocusOnName] = useFocus();
   const { isLoading, error, data } = useQuery(["tag", tagId], getTagById);
 
   if (isLoading) {
@@ -44,27 +44,31 @@ const UpdateTag = () => {
 
   const submitHandler = (values, formikBag) => {
     mutate(values, {
-      onSuccess: (data) => {
-        const { error, tag } = data;
+      onSuccess: (mutatedData) => {
+        const { error: mutationError, tag: mutatedTag } = mutatedData;
         formikBag.setSubmitting(false);
-        setFocus();
+        setFocusOnName();
 
-        if (error) {
-          addToast(error.description, { appearance: "error" });
+        if (mutationError) {
+          addToast(mutationError.description, { appearance: "error" });
         } else {
           queryCache.invalidateQueries(["tags"]);
-          queryCache.setQueryData(["tag", String(tag.id)], { tag });
+          queryCache.setQueryData(["tag", String(mutatedTag.id)], {
+            tag: mutatedTag,
+          });
 
-          addToast(`Tag "${tag.name}" updated`, { appearance: "success" });
+          addToast(`Tag "${mutatedTag.name}" updated`, {
+            appearance: "success",
+          });
         }
       },
-      onError: (error) => {
-        if (error.response) {
-          addToast(error.response.data.error.description, {
+      onError: (mutationError) => {
+        if (mutationError.response) {
+          addToast(mutationError.response.data.error.description, {
             appearance: "error",
           });
         } else {
-          addToast(error.message, { appearance: "error" });
+          addToast(mutationError.message, { appearance: "error" });
         }
         formikBag.setSubmitting(false);
       },
@@ -93,7 +97,11 @@ const UpdateTag = () => {
             )}
           </Col>
         </Row>
-        <TagForm tag={tag} submitHandler={submitHandler} autoFocusRef={focus} />
+        <TagForm
+          tag={tag}
+          submitHandler={submitHandler}
+          autoFocusRef={focusOnName}
+        />
       </Container>
     </>
   );

@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import Form from "react-bootstrap/Form";
 
 /*
@@ -8,5 +9,12 @@ import Form from "react-bootstrap/Form";
 const FocusFormControl = ({ innerRef, ...props }) => (
   <Form.Control ref={innerRef} {...props} />
 );
+
+FocusFormControl.propTypes = {
+  innerRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.any }),
+  ]).isRequired,
+};
 
 export default FocusFormControl;

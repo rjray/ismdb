@@ -45,19 +45,19 @@ const DeleteTag = () => {
     return <Redirect push to={{ pathname: "/tags" }} />;
   }
 
-  const tag = data.tag;
-  const refcount = tag.refcount;
+  const { tag } = data;
+  const { refcount } = tag;
   const noun = refcount === 1 ? "reference" : "references";
 
   const confirmDelete = () => {
     setIsDeleting(true);
     mutate(tag.id, {
-      onSuccess: async (data) => {
-        const { error } = data;
+      onSuccess: async (mutatedData) => {
+        const { error: mutationError } = mutatedData;
         setIsDeleting(false);
 
-        if (error) {
-          addToast(error.description, { appearance: "error" });
+        if (mutationError) {
+          addToast(mutationError.description, { appearance: "error" });
         } else {
           queryCache.removeQueries(["tag", String(tag.id)]);
           queryCache.invalidateQueries(["references"]);
@@ -67,13 +67,13 @@ const DeleteTag = () => {
           addToast(`Tag "${tag.name}" deleted`, { appearance: "success" });
         }
       },
-      onError: (error) => {
-        if (error.response) {
-          addToast(error.response.data.error.description, {
+      onError: (mutationError) => {
+        if (mutationError.response) {
+          addToast(mutationError.response.data.error.description, {
             appearance: "error",
           });
         } else {
-          addToast(error.message, { appearance: "error" });
+          addToast(mutationError.message, { appearance: "error" });
         }
 
         setIsDeleting(false);

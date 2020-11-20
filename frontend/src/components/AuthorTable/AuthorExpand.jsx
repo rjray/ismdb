@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { LinkContainer } from "react-router-bootstrap";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -32,5 +33,9 @@ const AuthorExpand = ({ data: author }) => (
     </Row>
   </Container>
 );
+
+AuthorExpand.propTypes = {
+  data: PropTypes.object.isRequired,
+};
 
 export default AuthorExpand;
