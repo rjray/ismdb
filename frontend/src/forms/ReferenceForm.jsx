@@ -1,4 +1,5 @@
 import React, { createRef } from "react";
+import PropTypes from "prop-types";
 import { useQuery } from "react-query";
 import { LinkContainer } from "react-router-bootstrap";
 import Form from "react-bootstrap/Form";
@@ -107,7 +108,6 @@ const ReferenceForm = ({ reference, submitHandler, autoFocusRef }) => {
     ["authors", { namesAndAliases: true }],
     getAuthorNamesAndAliases
   );
-  if (!autoFocusRef) autoFocusRef = createRef(null);
 
   const initialValues = { ...reference };
   initialValues.tags.sort(sortByName);
@@ -278,7 +278,7 @@ const ReferenceForm = ({ reference, submitHandler, autoFocusRef }) => {
                         <datalist id="magazine-issues">
                           {values.MagazineId &&
                             issues[+values.MagazineId].map((issue) => (
-                              <option key={issue} value={issue}></option>
+                              <option key={issue} value={issue} />
                             ))}
                         </datalist>
                       </Col>
@@ -336,6 +336,7 @@ const ReferenceForm = ({ reference, submitHandler, autoFocusRef }) => {
                                 defaultInputValue={author.name}
                                 renderMenuItemChildren={(option, props) => (
                                   <>
+                                    {/* eslint-disable-next-line react/prop-types */}
                                     <Highlighter search={props.text}>
                                       {option.name}
                                     </Highlighter>
@@ -540,6 +541,19 @@ const ReferenceForm = ({ reference, submitHandler, autoFocusRef }) => {
       )}
     </Formik>
   );
+};
+
+ReferenceForm.propTypes = {
+  reference: PropTypes.object.isRequired,
+  submitHandler: PropTypes.func.isRequired,
+  autoFocusRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.any }),
+  ]),
+};
+
+ReferenceForm.defaultProps = {
+  autoFocusRef: createRef(null),
 };
 
 export default ReferenceForm;

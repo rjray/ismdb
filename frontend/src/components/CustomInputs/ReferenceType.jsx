@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { useQueryCache } from "react-query";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 
@@ -52,6 +53,11 @@ const ReferenceType = ({ field, form, ...props }) => {
       {...props}
     />
   );
+};
+
+ReferenceType.propTypes = {
+  field: PropTypes.object.isRequired,
+  form: PropTypes.object.isRequired,
 };
 
 export default ReferenceType;

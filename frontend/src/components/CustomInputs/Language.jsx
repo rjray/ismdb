@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { useQuery } from "react-query";
 import { Typeahead } from "react-bootstrap-typeahead";
 import BeatLoader from "react-spinners/BeatLoader";
@@ -53,6 +54,11 @@ const Language = ({ field, form, ...props }) => {
       {...props}
     />
   );
+};
+
+Language.propTypes = {
+  field: PropTypes.object.isRequired,
+  form: PropTypes.object.isRequired,
 };
 
 export default Language;
