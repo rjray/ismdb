@@ -39,6 +39,7 @@
                 "allowShortCircuit": true
             }
         ],
-        "no-prototype-builtins": "off"
+        "no-prototype-builtins": "off",
+        "func-names": "off"
     }
 }
