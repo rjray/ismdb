@@ -1,5 +1,3 @@
-"use strict";
-
 /*
  * All database operations that require (mostly) raw SQL.
  */

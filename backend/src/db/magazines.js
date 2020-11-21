@@ -27,8 +27,8 @@ const fetchSingleMagazineComplete = async (id) => {
 
   if (magazine) {
     magazine = magazine.get();
-    magazine.issues = magazine.MagazineIssues.map((issue) => {
-      issue = issue.get();
+    magazine.issues = magazine.MagazineIssues.map((issueIn) => {
+      const issue = issueIn.get();
       delete issue.MagazineId;
       issue.references = issue.References.map((reference) =>
         cleanReference(reference)
@@ -45,8 +45,9 @@ const fetchSingleMagazineComplete = async (id) => {
 
 // Get all magazines, with a count of their issues and a count of the total
 // matching magazine records.
-const fetchAllMagazinesWithIssueCountAndCount = async (opts = {}) => {
-  const optsNoOrder = { ...opts };
+const fetchAllMagazinesWithIssueCountAndCount = async (optsIn = {}) => {
+  const opts = { ...optsIn };
+  const optsNoOrder = { ...optsIn };
   if (opts.order) {
     delete optsNoOrder.order;
     opts.order = fixAggregateOrderFields(sequelize, opts.order, ["issuecount"]);
@@ -83,8 +84,8 @@ const fetchAllMagazinesWithIssueNumbersAndCount = async (opts = {}) => {
     ...opts,
   });
 
-  const magazines = results.map((magazine) => {
-    magazine = magazine.get();
+  const magazines = results.map((magazineIn) => {
+    const magazine = magazineIn.get();
     magazine.issues = magazine.MagazineIssues;
     delete magazine.MagazineIssues;
 
@@ -112,8 +113,8 @@ const createMagazine = async (data) => {
 const updateMagazine = async (id, data) => {
   return Magazine.findByPk(id).then((magazine) => {
     return sequelize.transaction(async (txn) => {
-      magazine = await magazine.update(data, { transaction: txn });
-      return magazine.get();
+      const updatedMagazine = await magazine.update(data, { transaction: txn });
+      return updatedMagazine.get();
     });
   });
 };
@@ -141,8 +142,10 @@ const createMagazineIssue = async (data) => {
 const updateMagazineIssue = async (id, data) => {
   return MagazineIssue.findByPk(id).then((magazineissue) => {
     return sequelize.transaction(async (txn) => {
-      magazineissue = await magazineissue.update(data, { transaction: txn });
-      return magazineissue.get();
+      const updatedMagazineissue = await magazineissue.update(data, {
+        transaction: txn,
+      });
+      return updatedMagazineissue.get();
     });
   });
 };

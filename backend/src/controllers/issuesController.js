@@ -1,25 +1,20 @@
-"use strict";
-
 /*
   This is the exegesis controller module for all magazine issue operations (all
   API paths at/below "/issue").
  */
 
-const magazines = require("../db/magazines");
+const Magazines = require("../db/magazines");
 
 /*
   POST /issues
 
   Create a new magazine issue record from the content in the request body. The
-  return value is an object with the keys "magazineissue" (new magazine issue)
-  and "notifications" (array of notification objects, usually just one
-  element).
+  return value is an object with the keys "magazineissue" (new magazine issue).
  */
 function createMagazineIssue(context) {
   const { res, requestBody } = context;
 
-  return magazines
-    .createMagazineIssue(requestBody)
+  return Magazines.createMagazineIssue(requestBody)
     .then((magazineissue) => {
       res.status(201).pureJson({ magazineissue });
     })
@@ -38,15 +33,14 @@ function createMagazineIssue(context) {
 
   Retrieve a single magazine issue record by ID from the database, with all the
   associated references. Returns an object with a single key, "magazineissue",
-  that is the magazine issue data with an extra field ("referemces") containing
+  that is the magazine issue data with an extra field ("references") containing
   an array of reference objects.
  */
 function getMagazineIssueById(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return magazines
-    .fetchSingleMagazineIssueComplete(id)
+  return Magazines.fetchSingleMagazineIssueComplete(id)
     .then((issue) => {
       if (issue) {
         res.status(200).pureJson({ issue });
@@ -73,15 +67,14 @@ function getMagazineIssueById(context) {
   PUT /issues/{id}
 
   Update the magazine issue record indicated by the ID parameter, using the
-  content of the request body. Return value is an object with the keys
-  "magazineissue" (the updated issue record) and "notifications".
+  content of the request body. Return value is an object with the key
+  "magazineissue" (the updated issue record).
  */
 function updateMagazineIssueById(context) {
-  const id = context.params.path.id;
+  const { id } = context.params.path;
   const { res, requestBody } = context;
 
-  return magazines
-    .updateMagazineIssue(id, requestBody)
+  return Magazines.updateMagazineIssue(id, requestBody)
     .then((magazineissue) => {
       if (magazineissue) {
         res.status(200).pureJson({ magazineissue });
@@ -108,14 +101,13 @@ function updateMagazineIssueById(context) {
   DELETE /issues/{id}
 
   Delete the magazine issue record indicated by the ID parameter. Returns an
-  object with one key, "notifications".
+  empty object.
  */
 function deleteMagazineIssueById(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return magazines
-    .deleteMagazineIssue(id)
+  return Magazines.deleteMagazineIssue(id)
     .then((number) => {
       if (number) {
         res.status(200).pureJson({});

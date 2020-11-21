@@ -54,17 +54,18 @@ const fetchSingleTagWithReferences = async (id) => {
     throw new Error(error);
   });
 
+  let tag = null;
   if (result) {
-    const tag = result.get();
+    tag = result.get();
     tag.references = tag.References.map((reference) =>
       cleanReference(reference)
     );
     delete tag.References;
 
     return tag;
-  } else {
-    return result;
   }
+
+  return tag;
 };
 
 // Fetch all tags as an array, returning an object with the results and the
@@ -85,8 +86,9 @@ const fetchAllTagsWithCount = async (opts = {}) => {
 // Fetch all tags as an array, returning an object with the results and the
 // count of the results (independent of any pagination options in opts). Each
 // tag object includes the count of associated references as "refcount".
-const fetchAllTagsWithRefCountAndCount = async (opts = {}) => {
-  const optsNoOrder = { ...opts };
+const fetchAllTagsWithRefCountAndCount = async (optsIn = {}) => {
+  const opts = { ...optsIn };
+  const optsNoOrder = { ...optsIn };
   if (opts.order) {
     delete optsNoOrder.order;
     opts.order = fixAggregateOrderFields(sequelize, opts.order, ["refcount"]);
@@ -134,8 +136,8 @@ const createTag = async (data) => {
 const updateTag = async (id, data) => {
   return Tag.findByPk(id).then((tag) => {
     return sequelize.transaction(async (txn) => {
-      tag = await tag.update(data, { transaction: txn });
-      return tag;
+      const updatedTag = await tag.update(data, { transaction: txn });
+      return updatedTag.get();
     });
   });
 };

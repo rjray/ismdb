@@ -1,11 +1,9 @@
-"use strict";
-
 /*
   This is the exegesis controller module for all reference operations (all API
   paths at/below "/reference").
  */
 
-const references = require("../db/references");
+const References = require("../db/references");
 const { fixupOrderField, fixupWhereField } = require("../lib/utils");
 
 const canBeNull = new Set(["isbn", "language"]);
@@ -14,14 +12,12 @@ const canBeNull = new Set(["isbn", "language"]);
   POST /references
 
   Create a new reference record from the content in the request body. The
-  return value is an object with the keys "reference" (new reference) and
-  "notifications" (array of notification objects, usually just one element).
+  return value is an object with the key "reference" (new reference).
  */
 function createReference(context) {
   const { res, requestBody } = context;
 
-  return references
-    .createReference(requestBody)
+  return References.createReference(requestBody)
     .then((response) => {
       res.status(201).pureJson(response);
     })
@@ -45,8 +41,8 @@ function createReference(context) {
   objects) and "notifications".
  */
 function getAllReferences(context) {
-  const query = context.params.query;
-  const res = context.res;
+  const { query } = context.params;
+  const { res } = context;
 
   if (query.order) {
     query.order = fixupOrderField(query.order);
@@ -55,8 +51,7 @@ function getAllReferences(context) {
     query.where = fixupWhereField(query.where, canBeNull);
   }
 
-  return references
-    .fetchAllReferencesCompleteWithCount(query)
+  return References.fetchAllReferencesCompleteWithCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })
@@ -78,11 +73,10 @@ function getAllReferences(context) {
   object will have RecordType, Magazine (when apropos) and Author information.
  */
 function getReferenceById(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return references
-    .fetchSingleReferenceComplete(id)
+  return References.fetchSingleReferenceComplete(id)
     .then((reference) => {
       if (reference) {
         res.status(200).pureJson({ reference });
@@ -109,15 +103,14 @@ function getReferenceById(context) {
   PUT /references/{id}
 
   Update the reference indicated by the ID, using the JSON content in the
-  request body. Return value is an object with keys "reference" (the updated
-  reference) and "notifications".
+  request body. Return value is an object with the key "reference" (the updated
+  reference).
  */
 function updateReferenceById(context) {
-  const id = context.params.path.id;
+  const { id } = context.params.path;
   const { res, requestBody } = context;
 
-  return references
-    .updateReference(id, requestBody)
+  return References.updateReference(id, requestBody)
     .then((reference) => {
       if (reference) {
         res.status(200).pureJson({ reference });
@@ -143,15 +136,13 @@ function updateReferenceById(context) {
 /*
   DELETE /references/{id}
 
-  Delete the reference specified by the ID. Return value is an object with a
-  single key, "notifications".
+  Delete the reference specified by the ID. Return value is an empty object.
  */
 function deleteReferenceById(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return references
-    .deleteReference(id)
+  return References.deleteReference(id)
     .then((number) => {
       if (number) {
         res.status(200).pureJson({});

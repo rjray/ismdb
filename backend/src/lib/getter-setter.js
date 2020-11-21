@@ -2,11 +2,9 @@
  * Getter/setter creators for model definitions.
  */
 
-"use strict";
-
 const createStringGetter = (field) => {
   return function () {
-    let value = this.getDataValue(field);
+    const value = this.getDataValue(field);
     return value || "";
   };
 };

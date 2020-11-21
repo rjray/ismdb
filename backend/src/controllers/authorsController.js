@@ -1,26 +1,21 @@
-"use strict";
-
 /*
   This is the exegesis controller module for all author operations (all API
   paths at/below "/author").
  */
 
-const authors = require("../db/authors");
+const Authors = require("../db/authors");
 const { fixupOrderField, fixupWhereField } = require("../lib/utils");
 
 /*
   POST /authors
 
   Create a new author record from the JSON content in the request body. The
-  return value is an object with the keys "author" (new author object) and
-  "notifications" (an array of notification objects, usually just one element
-  in this case).
+  return value is an object with the key "author" (new author object).
  */
 function createAuthor(context) {
   const { res, requestBody } = context;
 
-  return authors
-    .createAuthor(requestBody)
+  return Authors.createAuthor(requestBody)
     .then((author) => {
       res.status(201).pureJson({ author });
     })
@@ -43,8 +38,8 @@ function createAuthor(context) {
   has keys "count" (integer) and "authors" (list of author objects).
  */
 function getAllAuthors(context) {
-  const query = context.params.query;
-  const res = context.res;
+  const { query } = context.params;
+  const { res } = context;
 
   if (query.order) {
     query.order = fixupOrderField(query.order);
@@ -53,8 +48,7 @@ function getAllAuthors(context) {
     query.where = fixupWhereField(query.where);
   }
 
-  return authors
-    .fetchAllAuthorsWithAliasesAndCount(query)
+  return Authors.fetchAllAuthorsWithAliasesAndCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })
@@ -77,8 +71,8 @@ function getAllAuthors(context) {
   the added field to each author object).
  */
 function getAllAuthorsWithRefCount(context) {
-  const query = context.params.query;
-  const res = context.res;
+  const { query } = context.params;
+  const { res } = context;
 
   if (query.order) {
     query.order = fixupOrderField(query.order);
@@ -87,8 +81,7 @@ function getAllAuthorsWithRefCount(context) {
     query.where = fixupWhereField(query.where);
   }
 
-  return authors
-    .fetchAllAuthorsWithRefCountAndCount(query)
+  return Authors.fetchAllAuthorsWithRefCountAndCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })
@@ -113,8 +106,8 @@ function getAllAuthorsWithRefCount(context) {
   "name".
  */
 function getAuthorNamesAndAliases(context) {
-  const query = context.params.query;
-  const res = context.res;
+  const { query } = context.params;
+  const { res } = context;
 
   if (query.order) {
     query.order = fixupOrderField(query.order);
@@ -123,8 +116,7 @@ function getAuthorNamesAndAliases(context) {
     query.where = fixupWhereField(query.where);
   }
 
-  return authors
-    .fetchAuthorsNamesAliasesList(query)
+  return Authors.fetchAuthorsNamesAliasesList(query)
     .then((authors) => {
       res.status(200).pureJson({ authors });
     })
@@ -145,11 +137,10 @@ function getAuthorNamesAndAliases(context) {
   "author", whose value is the author object. Alias information is included.
  */
 function getAuthorById(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return authors
-    .fetchSingleAuthorSimple(id)
+  return Authors.fetchSingleAuthorSimple(id)
     .then((author) => {
       if (author) {
         res.status(200).pureJson({ author });
@@ -176,16 +167,14 @@ function getAuthorById(context) {
   PUT /authors/{id}
 
   Update the author specified by the ID parameter, using the JSON content in
-  the request body. The return value is an object with the keys "author" (the
-  updated author object) and "notifications" (an array of notification objects,
-  usually just one element in this case).
+  the request body. The return value is an object with the key "author" (the
+  updated author object).
  */
 function updateAuthorById(context) {
-  const id = context.params.path.id;
+  const { id } = context.params.path;
   const { res, requestBody } = context;
 
-  return authors
-    .updateAuthor(id, requestBody)
+  return Authors.updateAuthor(id, requestBody)
     .then((author) => {
       if (author) {
         res.status(200).pureJson({ author });
@@ -212,15 +201,13 @@ function updateAuthorById(context) {
   DELETE /authors/{id}
 
   Delete the author specified by the ID parameter. The return value is an
-  object with a single key, "notifications" (an array of notification objects,
-  usually just one element in this case).
+  empty object.
  */
 function deleteAuthorById(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return authors
-    .deleteAuthor(id)
+  return Authors.deleteAuthor(id)
     .then((number) => {
       if (number) {
         res.status(200).pureJson({});
@@ -252,11 +239,10 @@ function deleteAuthorById(context) {
   the number of references they are credited with.
  */
 function getAuthorByIdWithRefCount(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return authors
-    .fetchSingleAuthorWithRefCount(id)
+  return Authors.fetchSingleAuthorWithRefCount(id)
     .then((author) => {
       if (author) {
         res.status(200).pureJson({ author });
@@ -288,11 +274,10 @@ function getAuthorByIdWithRefCount(context) {
   on. The list is not ordered.
  */
 function getAuthorByIdWithReferences(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return authors
-    .fetchSingleAuthorComplex(id)
+  return Authors.fetchSingleAuthorComplex(id)
     .then((author) => {
       if (author) {
         res.status(200).pureJson({ author });

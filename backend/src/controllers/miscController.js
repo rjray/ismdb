@@ -1,5 +1,3 @@
-"use strict";
-
 /*
   This is the exegesis controller module for all miscellaneous operations (all
   API paths at/below "/misc").
@@ -22,7 +20,7 @@ const { fixupWhereField } = require("../lib/utils");
   object with "id", "name", "description" and "notes" keys.
  */
 function getAllRecordTypes(context) {
-  const res = context.res;
+  const { res } = context;
 
   return fetchAllRecordTypes({ order: ["id"] })
     .then((recordTypes) => {
@@ -48,8 +46,8 @@ function getAllRecordTypes(context) {
   list (added if it isn't already there).
  */
 function getAllLanguages(context) {
-  const query = context.params.query;
-  const res = context.res;
+  const { query } = context.params;
+  const { res } = context;
 
   return fetchAllLanguages(query)
     .then((languages) => {
@@ -73,7 +71,7 @@ function getAllLanguages(context) {
   order.
  */
 function getAllTagTypes(context) {
-  const res = context.res;
+  const { res } = context;
 
   return fetchAllTagTypes()
     .then((types) => {
@@ -98,8 +96,8 @@ function getAllTagTypes(context) {
   parameter "limit" limits the number of values returned. Both are optional.
  */
 function getAllReferenceTypes(context) {
-  const query = context.params.query;
-  const res = context.res;
+  const { query } = context.params;
+  const { res } = context;
 
   if (query.type) {
     query.where = fixupWhereField([`type,substring,${query.type}`]);
@@ -132,7 +130,7 @@ function getAllReferenceTypes(context) {
  */
 function quickSearchName(context) {
   const { query, count } = context.params.query;
-  const res = context.res;
+  const { res } = context;
 
   return quickSearchByName(query, count)
     .then((matches) => {

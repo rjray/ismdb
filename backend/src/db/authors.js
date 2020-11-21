@@ -10,9 +10,9 @@ const sortByName = sortBy("name");
 
 function convertAliases(aliasList) {
   const aliases = aliasList.map((item) => {
-    item = item.get();
-    delete item.AuthorId;
-    return item;
+    const alias = item.get();
+    delete alias.AuthorId;
+    return alias;
   });
   aliases.sort(sortByName);
 
@@ -94,8 +94,8 @@ const fetchAllAuthorsWithAliasesAndCount = async (opts = {}) => {
     ...opts,
   });
 
-  const authors = results.map((author) => {
-    author = author.get();
+  const authors = results.map((item) => {
+    const author = item.get();
     author.aliases = convertAliases(author.AuthorAliases);
     delete author.AuthorAliases;
 
@@ -107,8 +107,9 @@ const fetchAllAuthorsWithAliasesAndCount = async (opts = {}) => {
 
 // Fetch all authors along with a count of how many references they're credited
 // on. Returns the same shape of object as above.
-const fetchAllAuthorsWithRefCountAndCount = async (opts = {}) => {
-  const optsNoOrder = { ...opts };
+const fetchAllAuthorsWithRefCountAndCount = async (optsIn = {}) => {
+  const opts = { ...optsIn };
+  const optsNoOrder = { ...optsIn };
   if (opts.order) {
     delete optsNoOrder.order;
     opts.order = fixAggregateOrderFields(sequelize, opts.order, ["refcount"]);
@@ -132,8 +133,8 @@ const fetchAllAuthorsWithRefCountAndCount = async (opts = {}) => {
     ...opts,
   });
 
-  const authors = results.map((author) => {
-    author = author.get();
+  const authors = results.map((item) => {
+    const author = item.get();
     author.aliases = convertAliases(author.AuthorAliases);
     delete author.AuthorAliases;
 
@@ -180,12 +181,13 @@ const createAuthor = async (data) => {
     });
 
     if (data.aliases.length) {
-      let aliases = data.aliases
+      const aliases = data.aliases
         .filter((item) => !item.deleted)
         .map((alias) => alias.name);
 
-      for (let name of aliases) {
-        await author.createAuthorAlias({ name: name }, { transaction: txn });
+      for (const name of aliases) {
+        // eslint-disable-next-line no-await-in-loop
+        await author.createAuthorAlias({ name }, { transaction: txn });
       }
     }
 
@@ -204,16 +206,16 @@ const updateAuthor = async (id, data) => {
           await author.update({ name: data.name }, { transaction: txn });
         }
 
-        let aliases = {},
-          toDelete = [],
-          toAdd = [],
-          toUpdate = [];
+        const aliases = {};
+        const toDelete = [];
+        const toAdd = [];
+        const toUpdate = [];
         author.AuthorAliases.forEach((alias) => (aliases[alias.id] = alias));
 
         // Gather those that should be deleted. This will create an array of
         // objects due to using the table derived from author.
         data.aliases
-          .filter((alias) => alias.id != 0 && alias.deleted)
+          .filter((alias) => alias.id !== 0 && alias.deleted)
           .forEach((alias) => {
             if (aliases.hasOwnProperty(alias.id)) {
               toDelete.push(aliases[alias.id]);
@@ -222,31 +224,35 @@ const updateAuthor = async (id, data) => {
         // Gather those that should be added. For this, we only need the name
         // field.
         data.aliases
-          .filter((alias) => alias.id == 0 && alias.name.length != 0)
+          .filter((alias) => alias.id === 0 && alias.name.length !== 0)
           .forEach((alias) => toAdd.push(alias.name));
         // Gather the ones that need to be updated. Here we store the object
         // itself (as taken from the table).
         data.aliases
-          .filter((alias) => alias.id != 0 && !alias.deleted)
+          .filter((alias) => alias.id !== 0 && !alias.deleted)
           .forEach((alias) => {
             if (aliases.hasOwnProperty(alias.id)) {
-              if (aliases[alias.id].name != alias.name) {
-                let aliasToUpdate = aliases[alias.id];
+              if (aliases[alias.id].name !== alias.name) {
+                const aliasToUpdate = aliases[alias.id];
                 aliasToUpdate.name = alias.name;
                 toUpdate.push(aliasToUpdate);
               }
             }
           });
 
-        for (let alias of toDelete) {
+        for (const alias of toDelete) {
+          // eslint-disable-next-line no-await-in-loop
           await author.removeAuthorAlias(alias, { transaction: txn });
+          // eslint-disable-next-line no-await-in-loop
           await alias.destroy({ transaction: txn });
         }
-        for (let alias of toUpdate) {
+        for (const alias of toUpdate) {
+          // eslint-disable-next-line no-await-in-loop
           await alias.save({ transaction: txn });
         }
-        for (let name of toAdd) {
-          await author.createAuthorAlias({ name: name }, { transaction: txn });
+        for (const name of toAdd) {
+          // eslint-disable-next-line no-await-in-loop
+          await author.createAuthorAlias({ name }, { transaction: txn });
         }
       });
     })

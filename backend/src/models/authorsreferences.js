@@ -1,5 +1,3 @@
-"use strict";
-
 module.exports = (sequelize) => {
   const AuthorsReferences = sequelize.define(
     "AuthorsReferences",

@@ -1,5 +1,3 @@
-"use strict";
-
 const port = process.env.PORT || 3000;
 const express = require("express");
 const helmet = require("helmet");
@@ -29,7 +27,7 @@ async function createServer() {
   app.use((_, res) => {
     res.status(404).json({ message: "Not found" });
   });
-  app.use((err, _, res, __) => {
+  app.use((err, _, res) => {
     res.status(500).json({ message: `Internal error: ${err.message}` });
   });
   app.use(helmet());

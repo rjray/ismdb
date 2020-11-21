@@ -1,5 +1,3 @@
-"use strict";
-
 module.exports = {
   up: (queryInterface) => {
     if (queryInterface.sequelize.getDialect() === "mysql") {
@@ -7,9 +5,9 @@ module.exports = {
         `ALTER DATABASE ${queryInterface.sequelize.config.database}
           CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
       );
-    } else {
-      return Promise.resolve(null);
     }
+
+    return Promise.resolve(null);
   },
   down: () => {},
 };

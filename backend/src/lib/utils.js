@@ -1,8 +1,7 @@
+/* eslint-disable no-param-reassign */
 /*
  * Various functions for misc stuff
  */
-
-"use strict";
 
 const { Op } = require("sequelize");
 const { sequelize } = require("../models");
@@ -23,7 +22,7 @@ const compareVersion = (a, b) => {
     if (a[i] > b[i]) return 1;
     if (a[i] < b[i]) return -1;
   }
-  return a.length == b.length ? 0 : a.length < b.length ? -1 : 1;
+  return a.length === b.length ? 0 : a.length < b.length ? -1 : 1;
 };
 
 const objectifyError = (error) => {
@@ -41,16 +40,14 @@ const sortBy = (key) => {
 
 // Scan the array of ordering fields for any of the specified names. Those
 // will be aggregate columns and need to be replaced by "sequelize.literal()".
-const fixAggregateOrderFields = (sequelize, arr, fields) => {
+const fixAggregateOrderFields = (seq, arr, fields) => {
   return arr.map((elt) => {
     if (Array.isArray(elt)) {
       if (fields.includes(elt[0])) {
-        elt[0] = sequelize.literal(elt[0]);
+        elt[0] = seq.literal(elt[0]);
       }
-    } else {
-      if (fields.includes(elt)) {
-        elt = sequelize.literal(elt);
-      }
+    } else if (fields.includes(elt)) {
+      elt = seq.literal(elt);
     }
 
     return elt;

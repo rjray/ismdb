@@ -1,5 +1,3 @@
-"use strict";
-
 module.exports = (sequelize, DataTypes) => {
   const MagazineIssue = sequelize.define(
     "MagazineIssue",

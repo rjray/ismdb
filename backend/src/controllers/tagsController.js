@@ -1,11 +1,9 @@
-"use strict";
-
 /*
   This is the exegesis controller module for all tag operations (all API
   paths at/below "/tag").
  */
 
-const tags = require("../db/tags");
+const Tags = require("../db/tags");
 const { fixupOrderField, fixupWhereField } = require("../lib/utils");
 
 const canBeNull = new Set(["description", "type"]);
@@ -14,14 +12,12 @@ const canBeNull = new Set(["description", "type"]);
   POST /tags
 
   Create a new tag record from the JSON content in the request body. The return
-  value is an object with keys "tag" (new tag object) and "notifications" (an
-  array of notification objects).
+  value is an object with the key "tag" (new tag object).
  */
 function createTag(context) {
   const { res, requestBody } = context;
 
-  return tags
-    .createTag(requestBody)
+  return Tags.createTag(requestBody)
     .then((tag) => {
       res.status(201).pureJson({ tag });
     })
@@ -44,8 +40,8 @@ function createTag(context) {
   (array of tag objects).
  */
 function getAllTags(context) {
-  const query = context.params.query;
-  const res = context.res;
+  const { query } = context.params;
+  const { res } = context;
 
   if (query.order) {
     query.order = fixupOrderField(query.order);
@@ -54,8 +50,7 @@ function getAllTags(context) {
     query.where = fixupWhereField(query.where, canBeNull);
   }
 
-  return tags
-    .fetchAllTagsWithCount(query)
+  return Tags.fetchAllTagsWithCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })
@@ -79,8 +74,8 @@ function getAllTags(context) {
   is the number of references tagged by this tag.
  */
 function getAllTagsWithRefCount(context) {
-  const query = context.params.query;
-  const res = context.res;
+  const { query } = context.params;
+  const { res } = context;
 
   if (query.order) {
     query.order = fixupOrderField(query.order);
@@ -89,8 +84,7 @@ function getAllTagsWithRefCount(context) {
     query.where = fixupWhereField(query.where, canBeNull);
   }
 
-  return tags
-    .fetchAllTagsWithRefCountAndCount(query)
+  return Tags.fetchAllTagsWithRefCountAndCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })
@@ -111,12 +105,12 @@ function getAllTagsWithRefCount(context) {
   the name field. Also returns a count of all tags that match the query, even
   if the query itself is governed by skip and/or limit. The returned object has
   keys "count" (integer) and "tags" (array of tag objects). Each tag object has
-  an extra key, "refcount", that\ is the number of references tagged by this
+  an extra key, "refcount", that is the number of references tagged by this
   tag.
  */
 function getTagsQueryWithRefCount(context) {
-  const query = context.params.query;
-  const res = context.res;
+  const { query } = context.params;
+  const { res } = context;
 
   if (query.order) {
     query.order = fixupOrderField(query.order);
@@ -127,8 +121,7 @@ function getTagsQueryWithRefCount(context) {
   query.where = fixupWhereField([`name,substring,${query.query}`]);
   delete query.query;
 
-  return tags
-    .fetchAllTagsWithRefCountAndCount(query)
+  return Tags.fetchAllTagsWithRefCountAndCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })
@@ -149,11 +142,10 @@ function getTagsQueryWithRefCount(context) {
   whose value is the tag object.
  */
 function getTagById(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return tags
-    .fetchSingleTagSimple(id)
+  return Tags.fetchSingleTagSimple(id)
     .then((tag) => {
       if (tag) {
         res.status(200).pureJson({ tag });
@@ -180,16 +172,14 @@ function getTagById(context) {
   PUT /tags/{id}
 
   Update the tag specified by the ID parameter, using the data in the request
-  body. The return value is an object with the keys "tag" (the updated tag
-  object) and "notifications" (an array of notification objects, usually just
-  one element in this case).
+  body. The return value is an object with the key "tag" (the updated tag
+  object).
  */
 function updateTagById(context) {
-  const id = context.params.path.id;
+  const { id } = context.params.path;
   const { res, requestBody } = context;
 
-  return tags
-    .updateTag(id, requestBody)
+  return Tags.updateTag(id, requestBody)
     .then((tag) => {
       if (tag) {
         res.status(200).pureJson({ tag });
@@ -215,16 +205,14 @@ function updateTagById(context) {
 /*
   DELETE /tags/{id}
 
-  Delete the tag specified by the ID parameter. The return value is an object
-  with a single key, "notifications" (an array of notification objects, usually
-  just one element in this case).
+  Delete the tag specified by the ID parameter. The return value is an empty
+  object.
  */
 function deleteTagById(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return tags
-    .deleteTag(id)
+  return Tags.deleteTag(id)
     .then((number) => {
       if (number) {
         res.status(200).pureJson({});
@@ -255,11 +243,10 @@ function deleteTagById(context) {
   "refcount" (integer), that has the number of references tagged with this tag.
  */
 function getTagByIdWithRefCount(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return tags
-    .fetchSingleTagWithRefCount(id)
+  return Tags.fetchSingleTagWithRefCount(id)
     .then((tag) => {
       if (tag) {
         res.status(200).pureJson({ tag });
@@ -290,11 +277,10 @@ function getTagByIdWithRefCount(context) {
   "references", that is an array of the references tagged with this tag.
  */
 function getTagByIdWithReferences(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return tags
-    .fetchSingleTagWithReferences(id)
+  return Tags.fetchSingleTagWithReferences(id)
     .then((tag) => {
       if (tag) {
         res.status(200).pureJson({ tag });

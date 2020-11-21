@@ -1,11 +1,9 @@
-"use strict";
-
 /*
   This is the exegesis controller module for all magazine operations (all API
   paths at/below "/magazine").
  */
 
-const magazines = require("../db/magazines");
+const Magazines = require("../db/magazines");
 const { getMostRecentMagazines } = require("../db/raw-sql");
 const { fixupOrderField, fixupWhereField } = require("../lib/utils");
 
@@ -15,14 +13,12 @@ const canBeNull = new Set(["language", "aliases", "notes"]);
   POST /magazines
 
   Create a new magazine record from the content in the request body. The
-  return value is an object with the keys "magazine" (new magazine) and
-  "notifications" (array of notification objects, usually just one element).
+  return value is an object with the key "magazine" (new magazine).
  */
 function createMagazine(context) {
   const { res, requestBody } = context;
 
-  return magazines
-    .createMagazine(requestBody)
+  return Magazines.createMagazine(requestBody)
     .then((magazine) => {
       res.status(201).pureJson({ magazine });
     })
@@ -46,8 +42,8 @@ function createMagazine(context) {
   records that match the query, regardless of "limit" or "skip".
  */
 function getAllMagazines(context) {
-  const query = context.params.query;
-  const res = context.res;
+  const { query } = context.params;
+  const { res } = context;
 
   if (query.order) {
     query.order = fixupOrderField(query.order);
@@ -56,8 +52,7 @@ function getAllMagazines(context) {
     query.where = fixupWhereField(query.where, canBeNull);
   }
 
-  return magazines
-    .fetchAllMagazinesWithIssueCountAndCount(query)
+  return Magazines.fetchAllMagazinesWithIssueCountAndCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })
@@ -81,8 +76,8 @@ function getAllMagazines(context) {
   the query, regardless of "limit" or "skip".
  */
 function getAllMagazinesWithIssues(context) {
-  const query = context.params.query;
-  const res = context.res;
+  const { query } = context.params;
+  const { res } = context;
 
   if (query.order) {
     query.order = fixupOrderField(query.order);
@@ -91,8 +86,7 @@ function getAllMagazinesWithIssues(context) {
     query.where = fixupWhereField(query.where, canBeNull);
   }
 
-  return magazines
-    .fetchAllMagazinesWithIssueNumbersAndCount(query)
+  return Magazines.fetchAllMagazinesWithIssueNumbersAndCount(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })
@@ -114,8 +108,8 @@ function getAllMagazinesWithIssues(context) {
   unless the "count" query parameter is given.
  */
 function getMostRecentUpdatedMagazines(context) {
-  const query = context.params.query;
-  const res = context.res;
+  const { query } = context.params;
+  const { res } = context;
 
   if (query.order) {
     query.order = fixupOrderField(query.order);
@@ -138,16 +132,14 @@ function getMostRecentUpdatedMagazines(context) {
 /*
   GET /magazines/{id}
 
-  Fetch a single magazine title by ID. Return value is an object with the keys
-  "magazine" (the magazine record) and (possibly) "notifications" (any notes
-  from the operation).
+  Fetch a single magazine title by ID. Return value is an object with the key
+  "magazine" (the magazine record).
  */
 function getMagazineById(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return magazines
-    .fetchSingleMagazineSimple(id)
+  return Magazines.fetchSingleMagazineSimple(id)
     .then((magazine) => {
       if (magazine) {
         res.status(200).pureJson({ magazine });
@@ -174,15 +166,14 @@ function getMagazineById(context) {
   PUT /magazines/{id}
 
   Update a single magazine title record by the ID, using the JSON content in
-  the request body. Return value is an object with keys "magazine" (the
-  updated magazine record) and "notifications".
+  the request body. Return value is an object with the key "magazine" (the
+  updated magazine record).
  */
 function updateMagazineById(context) {
-  const id = context.params.path.id;
+  const { id } = context.params.path;
   const { res, requestBody } = context;
 
-  return magazines
-    .updateMagazine(id, requestBody)
+  return Magazines.updateMagazine(id, requestBody)
     .then((magazine) => {
       if (magazine) {
         res.status(200).pureJson({ magazine });
@@ -209,15 +200,13 @@ function updateMagazineById(context) {
   DELETE /magazines/{id}
 
   Delete the magazine specified by the ID parameter. The return value is an
-  object with a single key, "notifications" (an array of notification objects,
-  usually just one element in this case).
+  empty object.
  */
 function deleteMagazineById(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return magazines
-    .deleteMagazine(id)
+  return Magazines.deleteMagazine(id)
     .then((number) => {
       if (number) {
         res.status(200).pureJson({});
@@ -244,15 +233,13 @@ function deleteMagazineById(context) {
   GET /magazines/{id}/withIssues
 
   Fetch a single magazine title by ID, with issues and per-issue references.
-  Return value is an object with the keys "magazine" (the magazine record) and
-  (possibly) "notifications" (any notes from the operation).
+  Return value is an object with the key "magazine".
  */
 function getMagazineByIdWithIssues(context) {
-  const id = context.params.path.id;
-  const res = context.res;
+  const { id } = context.params.path;
+  const { res } = context;
 
-  return magazines
-    .fetchSingleMagazineComplete(id)
+  return Magazines.fetchSingleMagazineComplete(id)
     .then((magazine) => {
       if (magazine) {
         res.status(200).pureJson({ magazine });
