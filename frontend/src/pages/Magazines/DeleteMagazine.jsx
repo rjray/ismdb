@@ -46,7 +46,7 @@ const DeleteMagazine = () => {
   }
 
   if (deleted) {
-    return <Redirect push to={{ pathname: "/magazines" }} />;
+    return <Redirect to={{ pathname: "/magazines" }} />;
   }
 
   const { magazine } = data;

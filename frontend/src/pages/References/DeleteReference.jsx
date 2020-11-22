@@ -45,7 +45,7 @@ const DeleteReference = () => {
   }
 
   if (deleted) {
-    return <Redirect push to={{ pathname: "/references" }} />;
+    return <Redirect to={{ pathname: "/references" }} />;
   }
 
   const { reference } = data;

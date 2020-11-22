@@ -47,7 +47,7 @@ const DeleteAuthor = () => {
   }
 
   if (deleted) {
-    return <Redirect push to={{ pathname: "/authors" }} />;
+    return <Redirect to={{ pathname: "/authors" }} />;
   }
 
   const { author } = data;

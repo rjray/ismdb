@@ -42,7 +42,7 @@ const DeleteTag = () => {
   }
 
   if (deleted) {
-    return <Redirect push to={{ pathname: "/tags" }} />;
+    return <Redirect to={{ pathname: "/tags" }} />;
   }
 
   const { tag } = data;
