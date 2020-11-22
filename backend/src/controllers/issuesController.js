@@ -100,8 +100,8 @@ function updateMagazineIssueById(context) {
 /*
   DELETE /issues/{id}
 
-  Delete the magazine issue record indicated by the ID parameter. Returns an
-  empty object.
+  Delete the magazine issue record indicated by the ID parameter. No return
+  value.
  */
 function deleteMagazineIssueById(context) {
   const { id } = context.params.path;
@@ -110,7 +110,7 @@ function deleteMagazineIssueById(context) {
   return Magazines.deleteMagazineIssue(id)
     .then((number) => {
       if (number) {
-        res.status(200).pureJson({});
+        res.status(200);
       } else {
         res.status(404).pureJson({
           error: {

@@ -136,7 +136,7 @@ function updateReferenceById(context) {
 /*
   DELETE /references/{id}
 
-  Delete the reference specified by the ID. Return value is an empty object.
+  Delete the reference specified by the ID. No return value.
  */
 function deleteReferenceById(context) {
   const { id } = context.params.path;
@@ -145,7 +145,7 @@ function deleteReferenceById(context) {
   return References.deleteReference(id)
     .then((number) => {
       if (number) {
-        res.status(200).pureJson({});
+        res.status(200);
       } else {
         res.status(404).pureJson({
           error: {

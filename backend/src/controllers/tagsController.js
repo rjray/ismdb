@@ -205,8 +205,7 @@ function updateTagById(context) {
 /*
   DELETE /tags/{id}
 
-  Delete the tag specified by the ID parameter. The return value is an empty
-  object.
+  Delete the tag specified by the ID parameter. No return value.
  */
 function deleteTagById(context) {
   const { id } = context.params.path;
@@ -215,7 +214,7 @@ function deleteTagById(context) {
   return Tags.deleteTag(id)
     .then((number) => {
       if (number) {
-        res.status(200).pureJson({});
+        res.status(200);
       } else {
         res.status(404).pureJson({
           error: {

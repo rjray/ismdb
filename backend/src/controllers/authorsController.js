@@ -200,8 +200,7 @@ function updateAuthorById(context) {
 /*
   DELETE /authors/{id}
 
-  Delete the author specified by the ID parameter. The return value is an
-  empty object.
+  Delete the author specified by the ID parameter. No return value.
  */
 function deleteAuthorById(context) {
   const { id } = context.params.path;
@@ -210,7 +209,7 @@ function deleteAuthorById(context) {
   return Authors.deleteAuthor(id)
     .then((number) => {
       if (number) {
-        res.status(200).pureJson({});
+        res.status(200);
       } else {
         res.status(404).pureJson({
           error: {
