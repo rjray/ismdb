@@ -27,12 +27,12 @@ const INCLUDE_REFERENCES = {
 };
 
 // "Clean" a reference record by stripping it down to a plain JS object.
-function cleanReference(reference) {
-  reference = reference.get();
+function cleanReference(referenceIn) {
+  const reference = referenceIn.get();
 
   if (reference.Authors) {
-    reference.authors = reference.Authors.map((author) => {
-      author = author.get();
+    reference.authors = reference.Authors.map((authIn) => {
+      const author = authIn.get();
       delete author.AuthorsReferences;
       return author;
     });
@@ -40,8 +40,8 @@ function cleanReference(reference) {
   }
 
   if (reference.Tags) {
-    reference.tags = reference.Tags.map((tag) => {
-      tag = tag.get();
+    reference.tags = reference.Tags.map((tagIn) => {
+      const tag = tagIn.get();
       delete tag.TagsReferences;
       return tag;
     });
@@ -62,7 +62,7 @@ function cleanReference(reference) {
 
 // Get a single reference with all ancillary data (type, magazine, authors).
 const fetchSingleReferenceComplete = async (id) => {
-  let reference = await Reference.findByPk(id, {
+  const reference = await Reference.findByPk(id, {
     include: includesForReference,
   });
 
@@ -84,7 +84,9 @@ const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
 };
 
 // Create a new reference using the content in data.
-const createReference = async (data) => {
+const createReference = async (dataIn) => {
+  const data = { ...dataIn };
+
   // The notifications array will tell the front-end if anything extra was
   // done, such as creating new authors and/or tags.
   const notifications = [];
@@ -97,7 +99,7 @@ const createReference = async (data) => {
   delete data.authors;
 
   // Likewise, tags will be handled separately.
-  const tags = data.tags;
+  const { tags } = data;
   delete data.tags;
 
   // Convert this one.
@@ -172,6 +174,7 @@ const createReference = async (data) => {
         });
       } else {
         // A new author. Must be created.
+        // eslint-disable-next-line no-await-in-loop
         const newAuthor = await Author.create({ name: author.name });
         notifications.push({
           type: "success",
@@ -198,6 +201,7 @@ const createReference = async (data) => {
         });
       } else {
         // A new tag. Needs to be created.
+        // eslint-disable-next-line no-await-in-loop
         const newTag = await Tag.create({ name: tag.name });
         notifications.push({
           type: "success",
@@ -221,46 +225,33 @@ const createReference = async (data) => {
 };
 
 // Update a single reference using the content in data. This has to include
-// author data, author linkage, and possible magazine issue linkage.
-const updateReference = async (id, data) => {
+// author data, author linkage, tags stuff and possible magazine issue linkage.
+const updateReference = async (id, dataIn) => {
+  const data = { ...dataIn };
+
   return Reference.findByPk(id, {
     include: includesForReference,
   }).then((reference) => {
-    return sequelize.transaction(async (txn) => {
-      let updates = {},
-        authToDelete = [],
-        authToAdd = [];
-
-      // Build up the initial fields to update.
-      for (let key of ["type", "language", "name"]) {
-        if (data[key] !== reference[key]) {
-          updates[key] = data[key];
-        }
+    // Check for the type of record to have changed.
+    if (data.RecordTypeId !== reference.RecordTypeId) {
+      if (data.RecordTypeId === 1) {
+        // This is now a book. For this, I need to null out the magazine
+        // fields and delete the linkage to the issue. Should delete issue
+        // if this was the only linked reference?
+        data.MagazineIssueId = null;
+      } else if (data.RecordTypeId === 2 || data.RecordTypeId === 3) {
+        // This is now a magazine feature or placeholder. But it isn't enough
+        // to just null out the ISBN-- also have to locate the issue ID of
+        // the specified magazine/issue #, possibly creating a new issue
+        // record.
+        data.isbn = null;
+      } else {
+        // This is something else entirely
+        data.MagazineIssueId = null;
+        data.isbn = null;
       }
-
-      // Check for the type of record to have changed.
-      const newRecordTypeId = Number(data.RecordTypeId);
-      if (newRecordTypeId !== reference.RecordTypeId) {
-        updates.RecordTypeId = newRecordTypeId;
-
-        if (newRecordTypeId === 1) {
-          // This is now a book. This is easy, just null out the issue ID and
-          // add the ISBN.
-          updates.MagazineIssueId = null;
-          updates.isbn = data.isbn;
-        } else if (newRecordTypeId === 2 || newRecordTypeId === 3) {
-          // This is now a magazine feature or placeholder. But it isn't enough
-          // to just null out the ISBN-- also have to locate the issue ID of
-          // the specified magazine/issue #, possibly creating a new issue
-          // record.
-          updates.isbn = null;
-        } else {
-          // This is something else entirely
-          updates.MagazineIssueId = null;
-          updates.isbn = null;
-        }
-      }
-    });
+    }
+    return sequelize.transaction(async (txn) => {});
   });
 };
 
