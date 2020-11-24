@@ -12,7 +12,7 @@ import { useToasts } from "react-toast-notifications";
 
 import Header from "../../components/Header";
 import ReferenceForm from "../../forms/ReferenceForm";
-import { useFocus } from "../../utils/focus";
+import useFocus from "../../utils/focus";
 import { getReferenceById, updateReferenceById } from "../../utils/queries";
 
 const UpdateReference = () => {
@@ -20,7 +20,7 @@ const UpdateReference = () => {
   const queryCache = useQueryCache();
   const [mutate] = useMutation(updateReferenceById);
   const { addToast } = useToasts();
-  const [focus, setFocus] = useFocus();
+  const [focusOnName, setFocusOnName] = useFocus();
   const { isLoading, error, data } = useQuery(
     ["reference", referenceId],
     getReferenceById
@@ -59,39 +59,55 @@ const UpdateReference = () => {
   // Force this to a string:
   reference.RecordTypeId = String(reference.RecordTypeId);
 
-  const submitHandler = (values, formikBag) => {
-    alert(JSON.stringify(values, null, 2));
-    formikBag.setSubmitting(false);
-    return;
+  const submitHandler = (valuesIn, formikBag) => {
+    const values = { ...valuesIn };
 
-    values = { ...values };
+    values.authors = values.authors
+      .filter((a) => !a.deleted)
+      .map(({ id, name }) => {
+        // eslint-disable-next-line no-param-reassign
+        if (typeof id === "string") id = 0;
+        return { id, name };
+      });
+    values.tags = values.tags.map(({ id, name }) => {
+      // eslint-disable-next-line no-param-reassign
+      if (typeof id === "string") id = 0;
+      return { id, name };
+    });
+    values.RecordTypeId = parseInt(values.RecordTypeId, 10);
+    values.MagazineId = parseInt(values.MagazineId, 10) || 0;
+    delete values.createdAt;
+    delete values.updatedAt;
+    if (typeof values.type === "object") values.type = values.type.label;
+    if (typeof values.language === "object")
+      values.language = values.language.label;
 
     mutate(values, {
-      onSuccess: (data) => {
-        const { error, reference } = data;
+      onSuccess: (mutatedData) => {
+        const { error: mutationError, mutatedReference } = mutatedData;
         formikBag.setSubmitting(false);
-        setFocus();
+        setFocusOnName();
 
-        if (error) {
-          addToast(error.description, { appearance: "error" });
+        if (mutationError) {
+          addToast(mutationError.description, { appearance: "error" });
         } else {
           queryCache.invalidateQueries(["references"]);
-          queryCache.setQueryData(["reference", String(reference.id)], {
-            reference,
+          queryCache.setQueryData(["reference", String(mutatedReference.id)], {
+            mutatedReference,
           });
 
-          addToast(`Reference "${reference.name}" updated`, {
+          addToast(`Reference "${mutatedReference.name}" updated`, {
             appearance: "success",
           });
         }
       },
-      onError: (error) => {
-        if (error.response) {
-          addToast(error.response.data.error.description, {
+      onError: (mutationError) => {
+        if (mutationError.response) {
+          addToast(mutationError.response.data.error.description, {
             appearance: "error",
           });
         } else {
-          addToast(error.message, { appearance: "error" });
+          addToast(mutationError.message, { appearance: "error" });
         }
         formikBag.setSubmitting(false);
       },
@@ -122,7 +138,7 @@ const UpdateReference = () => {
         <ReferenceForm
           reference={reference}
           submitHandler={submitHandler}
-          autoFocusRef={focus}
+          autoFocusRef={focusOnName}
         />
       </Container>
     </>
