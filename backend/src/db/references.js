@@ -229,30 +229,31 @@ const createReference = async (dataIn) => {
 const updateReference = async (id, dataIn) => {
   const data = { ...dataIn };
 
-  return Reference.findByPk(id, {
+  const reference = await Reference.findByPk(id, {
     include: includesForReference,
-  }).then((reference) => {
-    // Check for the type of record to have changed.
-    if (data.RecordTypeId !== reference.RecordTypeId) {
-      if (data.RecordTypeId === 1) {
-        // This is now a book. For this, I need to null out the magazine
-        // fields and delete the linkage to the issue. Should delete issue
-        // if this was the only linked reference?
-        data.MagazineIssueId = null;
-      } else if (data.RecordTypeId === 2 || data.RecordTypeId === 3) {
-        // This is now a magazine feature or placeholder. But it isn't enough
-        // to just null out the ISBN-- also have to locate the issue ID of
-        // the specified magazine/issue #, possibly creating a new issue
-        // record.
-        data.isbn = null;
-      } else {
-        // This is something else entirely
-        data.MagazineIssueId = null;
-        data.isbn = null;
-      }
-    }
-    return sequelize.transaction(async (txn) => {});
   });
+  if (!reference) return null;
+
+  // Check for the type of record to have changed.
+  if (data.RecordTypeId !== reference.RecordTypeId) {
+    if (data.RecordTypeId === 1) {
+      // This is now a book. For this, I need to null out the magazine
+      // fields and delete the linkage to the issue. Should delete issue
+      // if this was the only linked reference?
+      data.MagazineIssueId = null;
+    } else if (data.RecordTypeId === 2 || data.RecordTypeId === 3) {
+      // This is now a magazine feature or placeholder. But it isn't enough
+      // to just null out the ISBN-- also have to locate the issue ID of
+      // the specified magazine/issue #, possibly creating a new issue
+      // record.
+      data.isbn = null;
+    } else {
+      // This is something else entirely
+      data.MagazineIssueId = null;
+      data.isbn = null;
+    }
+  }
+  return sequelize.transaction(async (txn) => {});
 };
 
 // Delete a single Reference from the database.
