@@ -49,7 +49,7 @@ const CreateReference = () => {
 
     mutate(values, {
       onSuccess: (data) => {
-        const { error, reference, notifications, addedAuthors } = data;
+        const { error, reference, notifications } = data;
         formikBag.setSubmitting(false);
 
         if (error) {
@@ -61,7 +61,8 @@ const CreateReference = () => {
           }
 
           queryCache.invalidateQueries(["references"]);
-          if (addedAuthors) queryCache.invalidateQueries(["authors"]);
+          queryCache.invalidateQueries(["authors"]);
+          queryCache.invalidateQueries(["tags"]);
           queryCache.setQueryData(["reference", String(reference.id)], {
             reference,
           });
