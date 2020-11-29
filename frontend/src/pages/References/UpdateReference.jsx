@@ -84,7 +84,13 @@ const UpdateReference = () => {
 
     mutate(values, {
       onSuccess: (mutatedData) => {
-        const { error: mutationError, mutatedReference } = mutatedData;
+        const {
+          error: mutationError,
+          reference: mutatedReference,
+          notifications,
+          authorsUpdated,
+          tagsUpdated,
+        } = mutatedData;
         formikBag.setSubmitting(false);
         setFocusOnName();
 
@@ -92,6 +98,8 @@ const UpdateReference = () => {
           addToast(mutationError.description, { appearance: "error" });
         } else {
           queryCache.invalidateQueries(["references"]);
+          if (authorsUpdated) queryCache.invalidateQueries(["authors"]);
+          if (tagsUpdated) queryCache.invalidateQueries(["tags"]);
           queryCache.setQueryData(["reference", String(mutatedReference.id)], {
             mutatedReference,
           });
@@ -99,6 +107,12 @@ const UpdateReference = () => {
           addToast(`Reference "${mutatedReference.name}" updated`, {
             appearance: "success",
           });
+
+          if (notifications && notifications.length) {
+            notifications.forEach((n) =>
+              addToast(n.message, { appearance: n.type })
+            );
+          }
         }
       },
       onError: (mutationError) => {
