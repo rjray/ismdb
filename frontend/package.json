@@ -29,7 +29,7 @@
     "yup": "^0.29.3"
   },
   "scripts": {
-    "start": "SKIP_PREFLIGHT_CHECK=true PORT=3001 HTTPS=true SSL_CRT_FILE=cert.pem SSL_KEY_FILE=key.pem react-scripts start",
+    "start": "SKIP_PREFLIGHT_CHECK=true HTTPS=true SSL_CRT_FILE=cert.pem SSL_KEY_FILE=key.pem react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test"
   },
