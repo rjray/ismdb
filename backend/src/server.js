@@ -2,6 +2,7 @@ const port = process.env.PORT || 3001;
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
+const morgan = require("morgan");
 const compression = require("compression");
 const exegesisExpress = require("exegesis-express");
 const http = require("http");
@@ -21,6 +22,7 @@ async function createServer() {
 
   const app = express();
   app.disable("x-powered-by");
+  app.use(morgan(process.env.NODE_ENV === "production" ? "common" : "dev"));
   app.use(compression());
   app.use(cors());
   app.use(exegesis);
