@@ -12,22 +12,21 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
       },
       password: {
-        type: DataTypes.STRING(60),
+        type: DataTypes.STRING(75),
         allowNull: false,
       },
     },
     {}
   );
   User.associate = function (models) {
-    User.hasMany(models.OAuthToken);
-    User.belongsToMany(models.OAuthClient, {
+    User.belongsToMany(models.AuthClient, {
       as: "Clients",
-      through: { model: models.UsersOAuthClients },
+      through: { model: models.UsersAuthClients },
       foreignKey: "userId",
     });
-    User.belongsToMany(models.OAuthScope, {
+    User.belongsToMany(models.AuthScope, {
       as: "Scopes",
-      through: { model: models.UsersOAuthScopes },
+      through: { model: models.UsersAuthScopes },
       foreignKey: "userId",
     });
   };

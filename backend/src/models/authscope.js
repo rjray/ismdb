@@ -4,8 +4,8 @@ const {
 } = require("../lib/getter-setter");
 
 module.exports = (sequelize, DataTypes) => {
-  const OAuthScope = sequelize.define(
-    "OAuthScope",
+  const AuthScope = sequelize.define(
+    "AuthScope",
     {
       name: {
         type: DataTypes.STRING(50),
@@ -22,13 +22,13 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: false,
     }
   );
-  OAuthScope.associate = function (models) {
-    OAuthScope.belongsToMany(models.User, {
+  AuthScope.associate = function (models) {
+    AuthScope.belongsToMany(models.User, {
       as: "Users",
-      through: { model: models.UsersOAuthScopes },
-      foreignKey: "oauthScopeId",
+      through: { model: models.UsersAuthScopes },
+      foreignKey: "authScopeId",
     });
   };
 
-  return OAuthScope;
+  return AuthScope;
 };

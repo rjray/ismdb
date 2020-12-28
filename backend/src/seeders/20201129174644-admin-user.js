@@ -19,15 +19,15 @@ module.exports = {
     ]);
 
     const { sequelize } = queryInterface;
-    const scopes = await sequelize.query("SELECT id FROM OAuthScopes", {
+    const scopes = await sequelize.query("SELECT id FROM AuthScopes", {
       type: sequelize.QueryTypes.SELECT,
     });
     const linkage = scopes.map((scope) => ({
       userId: process.env.ADMINUSER_ID,
-      oauthScopeId: scope.id,
+      authScopeId: scope.id,
     }));
 
-    return queryInterface.bulkInsert("UsersOAuthScopes", linkage);
+    return queryInterface.bulkInsert("UsersAuthScopes", linkage);
   },
 
   down: async (queryInterface) => {

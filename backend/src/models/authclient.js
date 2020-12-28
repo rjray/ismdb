@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const OAuthClient = sequelize.define(
-    "OAuthClient",
+  const AuthClient = sequelize.define(
+    "AuthClient",
     {
       name: {
         type: DataTypes.STRING(75),
@@ -8,25 +8,24 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
       },
       secret: {
-        type: DataTypes.STRING(60),
+        type: DataTypes.STRING(256),
         allowNull: false,
       },
       redirectUri: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(256),
         allowNull: false,
         unique: true,
       },
     },
     {}
   );
-  OAuthClient.associate = function (models) {
-    OAuthClient.hasMany(models.OAuthToken);
-    OAuthClient.belongsToMany(models.User, {
+  AuthClient.associate = function (models) {
+    AuthClient.belongsToMany(models.User, {
       as: "Users",
-      through: { model: models.UsersOAuthClients },
-      foreignKey: "oauthClientId",
+      through: { model: models.UsersAuthClients },
+      foreignKey: "authClientId",
     });
   };
 
-  return OAuthClient;
+  return AuthClient;
 };

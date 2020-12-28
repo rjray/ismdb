@@ -6,7 +6,7 @@ const now = new Date();
 
 module.exports = {
   up: async (queryInterface) => {
-    return queryInterface.bulkInsert("OAuthClients", [
+    return queryInterface.bulkInsert("AuthClients", [
       {
         id: process.env.WEBCLIENT_ID,
         name: process.env.WEBCLIENT_NAME,
@@ -19,6 +19,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    return queryInterface.bulkDelete("OAuthClients", null, {});
+    return queryInterface.bulkDelete("AuthClients", null, {});
   },
 };

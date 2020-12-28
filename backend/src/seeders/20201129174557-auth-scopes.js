@@ -1,6 +1,6 @@
 module.exports = {
   up: async (queryInterface) => {
-    return queryInterface.bulkInsert("OAuthScopes", [
+    return queryInterface.bulkInsert("AuthScopes", [
       {
         name: "admin",
         description: "Administrative access",
@@ -17,6 +17,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    return queryInterface.bulkDelete("OAuthScopes", null, {});
+    return queryInterface.bulkDelete("AuthScopes", null, {});
   },
 };

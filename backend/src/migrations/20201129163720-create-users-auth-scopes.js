@@ -1,6 +1,6 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("UsersOAuthScopes", {
+    await queryInterface.createTable("UsersAuthScopes", {
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -10,11 +10,11 @@ module.exports = {
         },
         onDelete: "CASCADE",
       },
-      oauthScopeId: {
+      authScopeId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "OAuthScopes",
+          model: "AuthScopes",
           key: "id",
         },
         onDelete: "CASCADE",
@@ -22,6 +22,6 @@ module.exports = {
     });
   },
   down: async (queryInterface) => {
-    await queryInterface.dropTable("UsersOAuthScopes");
+    await queryInterface.dropTable("UsersAuthScopes");
   },
 };

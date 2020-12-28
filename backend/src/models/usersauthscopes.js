@@ -1,9 +1,9 @@
 module.exports = (sequelize) => {
-  const UsersOAuthScopes = sequelize.define(
-    "UsersOAuthScopes",
+  const UsersAuthScopes = sequelize.define(
+    "UsersAuthScopes",
     {},
     { timestamps: false }
   );
 
-  return UsersOAuthScopes;
+  return UsersAuthScopes;
 };

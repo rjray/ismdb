@@ -1,6 +1,6 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("OAuthClients", {
+    await queryInterface.createTable("AuthClients", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -13,11 +13,11 @@ module.exports = {
         unique: true,
       },
       secret: {
-        type: Sequelize.STRING(60),
+        type: Sequelize.STRING(256),
         allowNull: false,
       },
       redirectUri: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.STRING(256),
         allowNull: false,
         unique: true,
       },
@@ -32,6 +32,6 @@ module.exports = {
     });
   },
   down: async (queryInterface) => {
-    await queryInterface.dropTable("OAuthClients");
+    await queryInterface.dropTable("AuthClients");
   },
 };
