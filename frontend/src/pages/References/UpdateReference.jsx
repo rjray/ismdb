@@ -44,9 +44,10 @@ const UpdateReference = () => {
 
   const reference = { ...data.reference };
 
-  reference.authors = reference.authors.map((item) => {
-    return { ...item, deleted: false };
-  });
+  reference.authors = reference.authors.map((item) => ({
+    ...item,
+    deleted: false,
+  }));
   reference.createdAt = new Date(reference.createdAt);
   reference.updatedAt = new Date(reference.updatedAt);
   reference.MagazineId = reference.Magazine ? reference.Magazine.id : "";
