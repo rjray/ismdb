@@ -6,7 +6,7 @@
 import axios from "axios";
 import XRegExp from "xregexp";
 
-import apiEndpoint from "./api-endpoint";
+import { apiEndpoint } from "./endpoints";
 
 // Use this regexp to find/replace the tokens in the strings:
 const expandUrlTokens = XRegExp("(?:[{](?<ident>\\w+)[}])", "g");
