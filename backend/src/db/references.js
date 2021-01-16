@@ -257,9 +257,7 @@ const updateReference = async (id, dataIn) => {
 };
 
 // Delete a single Reference from the database.
-const deleteReference = async (id) => {
-  return Reference.destroy({ where: { id } });
-};
+const deleteReference = async (id) => Reference.destroy({ where: { id } });
 
 module.exports = {
   INCLUDE_REFERENCES,
