@@ -7,7 +7,6 @@ import { RecoilRoot } from "recoil";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 import References from "./pages/References";
 import Authors from "./pages/Authors";
 import Magazines from "./pages/Magazines";
@@ -34,7 +33,6 @@ const App = () => (
           <Switch>
             <Route exact path="/" component={Home} />
             <Route exact path="/login" component={Login} />
-            <Route exact path="/signup" component={Signup} />
             <Route path="/references" component={References} />
             <Route path="/authors" component={Authors} />
             <Route path="/magazines" component={Magazines} />

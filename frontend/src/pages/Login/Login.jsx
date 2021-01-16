@@ -1,51 +1,233 @@
-import React, { useState } from "react";
+import React from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Tab from "react-bootstrap/Tab";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import Nav from "react-bootstrap/Nav";
+import { Formik, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 import LoginHeader from "../../components/LoginHeader";
 import "./Login.css";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const loginValidationSchema = Yup.object().shape({
+  email: Yup.string()
+    .required(<em className="form-field-error">Email is required</em>)
+    .email(<em className="form-field-error">Must be an email address</em>),
+  password: Yup.string().required(
+    <em className="form-field-error">Password is required</em>
+  ),
+});
 
-  function validateForm() {
-    return email.length > 0 && password.length > 0;
+const LoginForm = () => {
+  function submitHandler(values, bag) {
+    alert(JSON.stringify(values, null, 2));
+    bag.resetForm();
+    bag.setSubmitting(false);
   }
 
+  return (
+    <Formik
+      initialValues={{
+        email: "",
+        password: "",
+      }}
+      onSubmit={submitHandler}
+      validationSchema={loginValidationSchema}
+    >
+      {({ handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+        <Form>
+          <Form.Group size="lg" controlId="email">
+            <Form.Label>
+              Email
+              <ErrorMessage name="email" component="p" />
+            </Form.Label>
+            <Field
+              as={Form.Control}
+              autoFocus
+              name="email"
+              type="email"
+              onBlur={handleBlur}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group size="lg" controlId="password">
+            <Form.Label>
+              Password
+              <ErrorMessage name="password" component="p" />
+            </Form.Label>
+            <Field
+              as={Form.Control}
+              name="password"
+              type="password"
+              onBlur={handleBlur}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Button
+            block
+            size="lg"
+            type="submit"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            Log In
+          </Button>
+        </Form>
+      )}
+    </Formik>
+  );
+};
+
+const signupValidationSchema = Yup.object().shape({
+  name: Yup.string()
+    .required(<em className="form-field-error">Name is required</em>)
+    .max(
+      75,
+      <em className="form-field-error">Name cannot exceed 75 characters</em>
+    ),
+  email: Yup.string()
+    .required(<em className="form-field-error">Email is required</em>)
+    .max(
+      100,
+      <em className="form-field-error">Email cannot exceed 100 characters</em>
+    )
+    .email(<em className="form-field-error">Must be an email address</em>),
+  password: Yup.string()
+    .required(<em className="form-field-error">Password is required</em>)
+    .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/, {
+      message: (
+        <em className="form-field-error">
+          Password must be at least 8 characters and contain at least one each
+          of: upper-case, lower-case, digit, special character
+        </em>
+      ),
+    }),
+  confirmPassword: Yup.string().when("password", {
+    is: (val) => !!(val && val.length > 0),
+    then: Yup.string().oneOf(
+      [Yup.ref("password")],
+      <em className="form-field-error">Passwords do not match</em>
+    ),
+  }),
+});
+
+const SignupForm = () => {
   function submitHandler(event) {
     event.preventDefault();
   }
 
   return (
-    <>
-      <LoginHeader page="Login" />
-      <div className="Login">
-        <Form onSubmit={submitHandler}>
+    <Formik
+      initialValues={{
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      }}
+      onSubmit={submitHandler}
+      validationSchema={signupValidationSchema}
+    >
+      {({ handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+        <Form>
           <Form.Group size="lg" controlId="email">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              autoFocus
+            <Form.Label>
+              Name
+              <ErrorMessage name="name" component="p" />
+            </Form.Label>
+            <Field
+              as={Form.Control}
+              name="name"
+              type="text"
+              onBlur={handleBlur}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group size="lg" controlId="email">
+            <Form.Label>
+              Email
+              <ErrorMessage name="email" component="p" />
+            </Form.Label>
+            <Field
+              as={Form.Control}
               name="email"
               type="email"
-              onChange={(e) => setEmail(e.target.value)}
+              onBlur={handleBlur}
+              onChange={handleChange}
             />
           </Form.Group>
           <Form.Group size="lg" controlId="password">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
+            <Form.Label>
+              Password
+              <ErrorMessage name="password" component="p" />
+            </Form.Label>
+            <Field
+              as={Form.Control}
               name="password"
               type="password"
-              onChange={(e) => setPassword(e.target.value)}
+              onBlur={handleBlur}
+              onChange={handleChange}
             />
           </Form.Group>
-          <Button block size="lg" type="submit" disabled={!validateForm()}>
-            Login
+          <Form.Group size="lg" controlId="confirmPassword">
+            <Form.Label>
+              Confirm Password
+              <ErrorMessage name="confirmPassword" component="p" />
+            </Form.Label>
+            <Field
+              as={Form.Control}
+              name="confirmPassword"
+              type="password"
+              onBlur={handleBlur}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Button
+            block
+            size="lg"
+            type="submit"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            Sign Up
           </Button>
         </Form>
-      </div>
-    </>
+      )}
+    </Formik>
   );
 };
+
+const Login = () => (
+  <>
+    <LoginHeader />
+    <div className="Login">
+      <Tab.Container id="login-tabs" defaultActiveKey="login">
+        <Row>
+          <Col sm={3}>
+            <Nav variant="pills" className="flex-column">
+              <Nav.Item>
+                <Nav.Link eventKey="login">Log In</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="signup">Sign Up</Nav.Link>
+              </Nav.Item>
+            </Nav>
+          </Col>
+          <Col sm={9}>
+            <Tab.Content>
+              <Tab.Pane eventKey="login">
+                <LoginForm />
+              </Tab.Pane>
+              <Tab.Pane eventKey="signup">
+                <SignupForm />
+              </Tab.Pane>
+            </Tab.Content>
+          </Col>
+        </Row>
+      </Tab.Container>
+    </div>
+  </>
+);
 
 export default Login;
