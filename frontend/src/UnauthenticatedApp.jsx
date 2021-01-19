@@ -1,4 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
+import Container from "react-bootstrap/Container";
+import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Tab from "react-bootstrap/Tab";
@@ -8,8 +11,9 @@ import Nav from "react-bootstrap/Nav";
 import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
-import LoginHeader from "../../components/LoginHeader";
-import "./Login.css";
+import { useAuth } from "./auth";
+
+import "./styles/Login.css";
 
 const loginValidationSchema = Yup.object().shape({
   email: Yup.string()
@@ -114,8 +118,10 @@ const signupValidationSchema = Yup.object().shape({
 });
 
 const SignupForm = () => {
-  function submitHandler(event) {
-    event.preventDefault();
+  function submitHandler({ values, bag }) {
+    alert(JSON.stringify(values, null, 2));
+    bag.resetForm();
+    bag.setSubmitting(false);
   }
 
   return (
@@ -198,36 +204,53 @@ const SignupForm = () => {
   );
 };
 
-const Login = () => (
-  <>
-    <LoginHeader />
-    <div className="Login">
-      <Tab.Container id="login-tabs" defaultActiveKey="login">
-        <Row>
-          <Col sm={3}>
-            <Nav variant="pills" className="flex-column">
-              <Nav.Item>
-                <Nav.Link eventKey="login">Log In</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="signup">Sign Up</Nav.Link>
-              </Nav.Item>
-            </Nav>
-          </Col>
-          <Col sm={9}>
-            <Tab.Content>
-              <Tab.Pane eventKey="login">
-                <LoginForm />
-              </Tab.Pane>
-              <Tab.Pane eventKey="signup">
-                <SignupForm />
-              </Tab.Pane>
-            </Tab.Content>
-          </Col>
-        </Row>
-      </Tab.Container>
-    </div>
-  </>
+const Login = ({ login, register }) => (
+  <div className="Login">
+    <Tab.Container id="login-tabs" defaultActiveKey="login">
+      <Row>
+        <Col sm={3}>
+          <Nav variant="pills" className="flex-column">
+            <Nav.Item>
+              <Nav.Link eventKey="login">Log In</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="signup">Sign Up</Nav.Link>
+            </Nav.Item>
+          </Nav>
+        </Col>
+        <Col sm={9}>
+          <Tab.Content>
+            <Tab.Pane eventKey="login">
+              <LoginForm login={login} />
+            </Tab.Pane>
+            <Tab.Pane eventKey="signup">
+              <SignupForm register={register} />
+            </Tab.Pane>
+          </Tab.Content>
+        </Col>
+      </Row>
+    </Tab.Container>
+  </div>
 );
 
-export default Login;
+Login.propTypes = {
+  login: PropTypes.func.isRequired,
+  register: PropTypes.func.isRequired,
+};
+
+const UnauthenticatedApp = () => {
+  const { login, register } = useAuth();
+
+  return (
+    <>
+      <Container fluid>
+        <Navbar bg="light" expand="sm">
+          <Navbar.Brand>ISMDB</Navbar.Brand>
+        </Navbar>
+      </Container>
+      <Login login={login} register={register} />
+    </>
+  );
+};
+
+export default UnauthenticatedApp;

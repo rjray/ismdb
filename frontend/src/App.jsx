@@ -6,7 +6,6 @@ import { QueryCache, ReactQueryCacheProvider } from "react-query";
 import { RecoilRoot } from "recoil";
 
 import Home from "./pages/Home";
-import Login from "./pages/Login";
 import References from "./pages/References";
 import Authors from "./pages/Authors";
 import Magazines from "./pages/Magazines";
@@ -32,7 +31,6 @@ const App = () => (
           </Helmet>
           <Switch>
             <Route exact path="/" component={Home} />
-            <Route exact path="/login" component={Login} />
             <Route path="/references" component={References} />
             <Route path="/authors" component={Authors} />
             <Route path="/magazines" component={Magazines} />
