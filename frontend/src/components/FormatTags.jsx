@@ -39,12 +39,13 @@ const FormatTags = ({ currentTag, tags, nolink }) => {
 };
 
 FormatTags.propTypes = {
-  currentTag: PropTypes.number.isRequired,
+  currentTag: PropTypes.number,
   tags: PropTypes.array.isRequired,
   nolink: PropTypes.bool,
 };
 
 FormatTags.defaultProps = {
+  currentTag: null,
   nolink: false,
 };
 

@@ -28,12 +28,13 @@ const FormatAuthors = ({ currentAuthor, authors, nolink }) => {
 };
 
 FormatAuthors.propTypes = {
-  currentAuthor: PropTypes.number.isRequired,
+  currentAuthor: PropTypes.number,
   authors: PropTypes.array.isRequired,
   nolink: PropTypes.bool,
 };
 
 FormatAuthors.defaultProps = {
+  currentAuthor: null,
   nolink: false,
 };
 
