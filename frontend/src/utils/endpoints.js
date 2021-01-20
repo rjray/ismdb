@@ -3,9 +3,7 @@
  * related env variable in one place.
  */
 
-const endpoint =
+export const endpoint =
   process.env.NODE_ENV === "development" ? "http://localhost:3001" : "";
 
 export const apiEndpoint = `${endpoint}/api`;
-
-export const loginEndpoint = `${endpoint}/login`;

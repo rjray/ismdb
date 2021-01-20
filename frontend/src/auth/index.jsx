@@ -1,9 +1,25 @@
-import React, { createContext, useContext } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 
 import * as auth from "./provider";
 import useAsync from "../utils/use-async";
 
-const getUser = () => {};
+const bootstrap = async () => {
+  let user = null;
+
+  const token = auth.getToken();
+  if (token) {
+    const data = auth.client("bootstrap");
+    user = data.user;
+  }
+
+  return user;
+};
 
 const AuthContext = createContext();
 AuthContext.displayName = "AuthContext";
@@ -21,16 +37,30 @@ const AuthProvider = (props) => {
     status,
   } = useAsync();
 
-  React.useEffect(() => {
-    run(getUser());
+  useEffect(() => {
+    const bootstrapPromise = bootstrap();
+    run(bootstrapPromise);
   }, [run]);
 
-  const login = (form) => auth.login(form).then((u) => setData(u));
-  const register = (form) => auth.register(form).then((u) => setData(u));
-  const logout = () => {
+  const login = useCallback(
+    (form) => auth.login(form).then((u) => setData(u)),
+    [setData]
+  );
+  const register = useCallback(
+    (form) => auth.register(form).then((u) => setData(u)),
+    [setData]
+  );
+  const logout = useCallback(() => {
     auth.logout();
     setData(null);
-  };
+  }, [setData]);
+
+  const value = useMemo(() => ({ user, login, logout, register }), [
+    login,
+    logout,
+    register,
+    user,
+  ]);
 
   if (isLoading || isIdle) {
     return <h1>Loading...</h1>;
@@ -41,7 +71,6 @@ const AuthProvider = (props) => {
   }
 
   if (isSuccess) {
-    const value = { user, login, register, logout };
     return <AuthContext.Provider value={value} {...props} />;
   }
 

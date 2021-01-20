@@ -18,11 +18,6 @@ function useSafeDispatch(dispatch) {
   );
 }
 
-// Example usage:
-// const {data, error, status, run} = useAsync()
-// useEffect(() => {
-//   run(fetchPokemon(pokemonName))
-// }, [pokemonName, run])
 const defaultInitialState = { status: "idle", data: null, error: null };
 function useAsync(initialState) {
   const initialStateRef = useRef({
@@ -37,11 +32,11 @@ function useAsync(initialState) {
   const safeSetState = useSafeDispatch(setState);
 
   const setData = useCallback(
-    (dataIn) => safeSetState({ dataIn, status: "resolved" }),
+    (dataIn) => safeSetState({ data: dataIn, status: "resolved" }),
     [safeSetState]
   );
   const setError = useCallback(
-    (errorIn) => safeSetState({ errorIn, status: "rejected" }),
+    (errorIn) => safeSetState({ error: errorIn, status: "rejected" }),
     [safeSetState]
   );
   const reset = useCallback(() => safeSetState(initialStateRef.current), [
@@ -52,7 +47,7 @@ function useAsync(initialState) {
     (promise) => {
       if (!promise || !promise.then) {
         throw new Error(
-          "The argument passed to useAsync().run must be a promise. Maybe a function that's passed isn't returning anything?"
+          "The argument passed to useAsync().run must be a promise."
         );
       }
       safeSetState({ status: "pending" });

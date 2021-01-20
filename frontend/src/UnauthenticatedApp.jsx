@@ -24,9 +24,9 @@ const loginValidationSchema = Yup.object().shape({
   ),
 });
 
-const LoginForm = () => {
+const LoginForm = ({ login }) => {
   function submitHandler(values, bag) {
-    alert(JSON.stringify(values, null, 2));
+    login(values);
     bag.resetForm();
     bag.setSubmitting(false);
   }
@@ -84,6 +84,10 @@ const LoginForm = () => {
   );
 };
 
+LoginForm.propTypes = {
+  login: PropTypes.func.isRequired,
+};
+
 const signupValidationSchema = Yup.object().shape({
   name: Yup.string()
     .required(<em className="form-field-error">Name is required</em>)
@@ -117,9 +121,9 @@ const signupValidationSchema = Yup.object().shape({
   }),
 });
 
-const SignupForm = () => {
+const SignupForm = ({ register }) => {
   function submitHandler({ values, bag }) {
-    alert(JSON.stringify(values, null, 2));
+    register(values);
     bag.resetForm();
     bag.setSubmitting(false);
   }
@@ -202,6 +206,10 @@ const SignupForm = () => {
       )}
     </Formik>
   );
+};
+
+SignupForm.propTypes = {
+  register: PropTypes.func.isRequired,
 };
 
 const Login = ({ login, register }) => (

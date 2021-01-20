@@ -5,52 +5,57 @@
   https://github.com/kentcdodds/bookshelf.git
  */
 
-const localStorageKey = "__auth_provider_token__";
+import axios from "axios";
+import jwtDecode from "jwt-decode";
 
-// an auth provider wouldn't use your client, they'd have their own
-// so that's why we're not just re-using the client
-const authURL = process.env.REACT_APP_AUTH_URL;
+import { endpoint } from "../utils/endpoints";
 
-async function client(endpoint, data) {
-  const config = {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: { "Content-Type": "application/json" },
-  };
+const clientId = process.env.REACT_APP_CLIENT_ID;
+const instance = axios.create({ baseURL: endpoint });
+const userState = {};
 
-  return window
-    .fetch(`${authURL}/${endpoint}`, config)
-    .then(async (response) => {
-      const json = await response.json();
-      if (response.ok) {
-        return json;
-      }
-      return Promise.reject(json);
-    });
+async function client(url, data) {
+  return instance({
+    url,
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data,
+  }).then((response) => response.data);
 }
 
-async function getToken() {
-  // if we were a real auth provider, this is where we would make a request
-  // to retrieve the user's token. (It's a bit more complicated than that...
-  // but you're probably not an auth provider so you don't need to worry about it).
-  return window.localStorage.getItem(localStorageKey);
+function getToken() {
+  return userState.accessToken;
 }
 
-function handleUserResponse({ user }) {
-  window.localStorage.setItem(localStorageKey, user.token);
+function handleUserResponse({ success, accessToken, message }) {
+  if (!success) throw new Error(message);
+
+  const { user, exp: expires } = jwtDecode(accessToken);
+
+  userState.user = user;
+  userState.expires = new Date(expires * 1000);
+  userState.accessToken = accessToken;
+
   return user;
 }
 
-function login({ username, password }) {
-  return client("login", { username, password }).then(handleUserResponse);
+function login(form) {
+  return client("login", { ...form, client: clientId }).then(
+    handleUserResponse
+  );
 }
 
-function register({ username, password }) {
-  return client("register", { username, password }).then(handleUserResponse);
+function register(form) {
+  return client("register", { ...form, client: clientId }).then(
+    handleUserResponse
+  );
 }
 
 async function logout() {
-  window.localStorage.removeItem(localStorageKey);
+  delete userState.accessToken;
+  return client("logout");
 }
 
-export { getToken, login, register, logout, localStorageKey };
+export { getToken, login, register, logout, client };
