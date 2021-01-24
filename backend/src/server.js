@@ -11,7 +11,7 @@ const path = require("path");
 const pp = require("passport");
 
 const passport = require("./config/passport")(pp);
-const { createUserAccessToken, createUserRefreshToken } = require("./db/users");
+const authLayer = require("./config/authentication")(passport);
 
 async function createServer() {
   const options = {
@@ -32,28 +32,10 @@ async function createServer() {
   app.use(bodyParser.json());
   app.use(passport.initialize());
   app.use(compression());
-  app.use(cors());
+  app.use(cors({ origin: process.env.ALLOWED_ORIGIN, credentials: true }));
   app.use(helmet());
 
-  app.post("/login", function (req, res, next) {
-    passport.authenticate("local", function (err, user, info) {
-      if (err) return next(err); // Will take care of the 500
-
-      if (!user) {
-        return res.send({ success: false, message: info.message });
-      }
-
-      const accessToken = createUserAccessToken(user, info.client);
-      const refreshToken = createUserRefreshToken(user, info.client);
-
-      res.cookie("x-ismdb-token", refreshToken, { httpOnly: true });
-      return res.send({
-        success: true,
-        accessToken,
-        redirect: info.client.redirectUri,
-      });
-    })(req, res, next);
-  });
+  app.use(authLayer);
   app.use(exegesis);
   app.use((_, res) => {
     res.status(404).json({ message: "Not found" });

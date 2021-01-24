@@ -27,9 +27,7 @@ const createUserAccessToken = (userIn, client) => {
   const { Clients: clients, ...user } = userIn;
 
   delete user.password;
-  user.scopes = user.Scopes.map(({ name, description, id }) => {
-    return { name, description, id };
-  });
+  user.scopes = user.Scopes.map(({ name }) => name);
   delete user.Scopes;
 
   return jwt.sign({ user }, client.secret, {
