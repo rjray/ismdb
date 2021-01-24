@@ -30,7 +30,7 @@
     "yup": "^0.32.0"
   },
   "scripts": {
-    "start": "SKIP_PREFLIGHT_CHECK=true HTTPS=true SSL_CRT_FILE=cert.pem SSL_KEY_FILE=key.pem react-scripts start",
+    "start": "SKIP_PREFLIGHT_CHECK=true react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test"
   },
