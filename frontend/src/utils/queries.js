@@ -3,13 +3,9 @@
   React Query package.
  */
 
-import axios from "axios";
 import XRegExp from "xregexp";
 
-import { endpoint } from "./endpoints";
-
-axios.defaults.withCredentials = true;
-axios.defaults.endpoint = endpoint;
+import axios from "./axios-local";
 
 // Use this regexp to find/replace the tokens in the strings:
 const expandUrlTokens = XRegExp("(?:[{](?<ident>\\w+)[}])", "g");
@@ -48,7 +44,7 @@ function buildUrl(base, params = {}) {
     url = `${url}?${queryValues.join("&")}`;
   }
 
-  return url;
+  return `/api${url}`;
 }
 
 export function makeRequest(...args) {

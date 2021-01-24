@@ -5,17 +5,15 @@
   https://github.com/kentcdodds/bookshelf.git
  */
 
-import axios from "axios";
 import jwtDecode from "jwt-decode";
 
-import { endpoint } from "../utils/endpoints";
+import axios from "../utils/axios-local";
 
 const clientId = process.env.REACT_APP_CLIENT_ID;
-const instance = axios.create({ baseURL: endpoint, withCredentials: true });
 const userState = {};
 
 async function client(url, data) {
-  return instance({
+  return axios({
     url,
     method: "post",
     headers: {
