@@ -6,14 +6,17 @@
 import axios from "axios";
 import XRegExp from "xregexp";
 
-import { apiEndpoint } from "./endpoints";
+import { endpoint } from "./endpoints";
+
+axios.defaults.withCredentials = true;
+axios.defaults.endpoint = endpoint;
 
 // Use this regexp to find/replace the tokens in the strings:
 const expandUrlTokens = XRegExp("(?:[{](?<ident>\\w+)[}])", "g");
 
 /*
   Take the base URL given and do token-substitution and then append any query
-  params. Return a new string with this prepended with the apiEndpoint value.
+  params. Return a new string (that axios will concat onto the endpoint).
  */
 function buildUrl(base, params = {}) {
   const { path = {}, query } = params;
@@ -56,7 +59,6 @@ export function makeRequest(...args) {
 
   return axios({
     url: buildUrl(url, { path, query }),
-    baseURL: apiEndpoint,
     method,
     headers: {
       "Content-Type": "application/json",

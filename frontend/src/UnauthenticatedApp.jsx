@@ -52,6 +52,7 @@ const LoginForm = ({ login }) => {
               autoFocus
               name="email"
               type="email"
+              data-lpignore="true"
               onBlur={handleBlur}
               onChange={handleChange}
             />
@@ -65,6 +66,7 @@ const LoginForm = ({ login }) => {
               as={Form.Control}
               name="password"
               type="password"
+              data-lpignore="true"
               onBlur={handleBlur}
               onChange={handleChange}
             />

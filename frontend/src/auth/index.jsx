@@ -51,8 +51,7 @@ const AuthProvider = (props) => {
     [setData]
   );
   const logout = useCallback(() => {
-    auth.logout();
-    setData(null);
+    auth.logout().then(() => setData(null));
   }, [setData]);
 
   const value = useMemo(() => ({ user, login, logout, register }), [

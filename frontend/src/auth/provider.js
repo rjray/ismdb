@@ -11,7 +11,7 @@ import jwtDecode from "jwt-decode";
 import { endpoint } from "../utils/endpoints";
 
 const clientId = process.env.REACT_APP_CLIENT_ID;
-const instance = axios.create({ baseURL: endpoint });
+const instance = axios.create({ baseURL: endpoint, withCredentials: true });
 const userState = {};
 
 async function client(url, data) {
@@ -27,6 +27,10 @@ async function client(url, data) {
 
 function getToken() {
   return userState.accessToken;
+}
+
+function getUser() {
+  return { ...userState };
 }
 
 function handleUserResponse({ success, accessToken, message }) {
@@ -53,9 +57,9 @@ function register(form) {
   );
 }
 
-async function logout() {
+function logout() {
   delete userState.accessToken;
   return client("logout");
 }
 
-export { getToken, login, register, logout, client };
+export { getToken, getUser, login, register, logout, client };
