@@ -9,7 +9,6 @@ import jwtDecode from "jwt-decode";
 
 import axios from "../utils/axios-local";
 
-const clientId = process.env.REACT_APP_CLIENT_ID;
 const userState = {};
 
 async function client(url, data) {
@@ -43,16 +42,16 @@ function handleUserResponse({ success, accessToken, message }) {
   return user;
 }
 
+function bootstrap() {
+  return client("bootstrap").then(handleUserResponse);
+}
+
 function login(form) {
-  return client("login", { ...form, client: clientId }).then(
-    handleUserResponse
-  );
+  return client("login", { ...form }).then(handleUserResponse);
 }
 
 function register(form) {
-  return client("register", { ...form, client: clientId }).then(
-    handleUserResponse
-  );
+  return client("register", { ...form }).then(handleUserResponse);
 }
 
 function logout() {
@@ -60,4 +59,4 @@ function logout() {
   return client("logout");
 }
 
-export { getToken, getUser, login, register, logout, client };
+export { getToken, getUser, bootstrap, login, register, logout, client };

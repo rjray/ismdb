@@ -10,12 +10,10 @@ import * as auth from "./provider";
 import useAsync from "../utils/use-async";
 
 const bootstrap = async () => {
-  let user = null;
+  let user = auth.getUser();
 
-  const token = auth.getToken();
-  if (token) {
-    const data = auth.client("bootstrap");
-    user = data.user;
+  if (!user || !Object.keys(user).length) {
+    user = await auth.bootstrap();
   }
 
   return user;
