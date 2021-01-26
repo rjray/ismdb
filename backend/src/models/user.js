@@ -19,11 +19,6 @@ module.exports = (sequelize, DataTypes) => {
     {}
   );
   User.associate = function (models) {
-    User.belongsToMany(models.AuthClient, {
-      as: "Clients",
-      through: { model: models.UsersAuthClients },
-      foreignKey: "userId",
-    });
     User.belongsToMany(models.AuthScope, {
       as: "Scopes",
       through: { model: models.UsersAuthScopes },
