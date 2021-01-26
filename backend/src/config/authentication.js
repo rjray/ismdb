@@ -14,30 +14,46 @@ const TWO_WEEKS = 14 * 86400 * 1000;
 module.exports = function (passport) {
   const router = express.Router();
 
-  router.post("/login", function (req, res, next) {
-    passport.authenticate("local", function (err, user, info) {
+  router.post("/bootstrap", (req, res, next) => {
+    passport.authenticate("jwt-cookie", (err, user, info) => {
       if (err) return next(err); // Will take care of the 500
 
       if (!user) {
         return res.send({ success: false, message: info.message });
       }
 
-      const accessToken = createUserAccessToken(user, info.client);
-      const refreshToken = createUserRefreshToken(user, info.client);
+      const accessToken = createUserAccessToken(user);
+
+      return res.send({
+        success: true,
+        accessToken,
+      });
+    })(req, res, next);
+  });
+
+  router.post("/login", (req, res, next) => {
+    passport.authenticate("local", (err, user, info) => {
+      if (err) return next(err); // Will take care of the 500
+
+      if (!user) {
+        return res.send({ success: false, message: info.message });
+      }
+
+      const accessToken = createUserAccessToken(user);
+      const refreshToken = createUserRefreshToken(user);
 
       res.cookie("jwtToken", refreshToken, {
-        maxAge: TWO_WEEKS,
+        expires: new Date(Date.now() + TWO_WEEKS),
         httpOnly: true,
       });
       return res.send({
         success: true,
         accessToken,
-        redirect: info.client.redirectUri,
       });
     })(req, res, next);
   });
 
-  router.post("/logout", function (req, res) {
+  router.post("/logout", (req, res) => {
     req.logOut();
     res.cookie("jwtToken", "", {
       expires: new Date(Date.now() - 1000),

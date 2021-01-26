@@ -4,12 +4,14 @@
 
 const jwt = require("jsonwebtoken");
 
-const { User, AuthClient, AuthScope } = require("../models");
+const jwtSecrets = {
+  access: process.env.ACCESS_TOKEN_SECRET,
+  refresh: process.env.REFRESH_TOKEN_SECRET,
+};
 
-const userIncludes = [
-  { model: AuthClient, as: "Clients" },
-  { model: AuthScope, as: "Scopes" },
-];
+const { User, AuthScope } = require("../models");
+
+const userIncludes = [{ model: AuthScope, as: "Scopes" }];
 
 const fetchSingleUserById = async (id) => {
   const user = await User.findByPk(id, { include: userIncludes });
@@ -23,27 +25,23 @@ const fetchSingleUserByEmail = async (email) => {
   return user?.get();
 };
 
-const createUserAccessToken = (userIn, client) => {
-  const { Clients: clients, ...user } = userIn;
+const createUserJwt = (userIn, role, expiresIn) => {
+  const { ...user } = userIn;
+  const secret = jwtSecrets[role];
 
   delete user.password;
   user.scopes = user.Scopes.map(({ name }) => name);
   delete user.Scopes;
 
-  return jwt.sign({ user }, client.secret, {
-    expiresIn: "5m",
-    issuer: "ismdb",
+  return jwt.sign({ user, role }, secret, {
+    expiresIn,
+    issuer: "ismdb.net",
   });
 };
 
-const createUserRefreshToken = (user, client) => {
-  const { id, name, email } = user;
+const createUserAccessToken = (user) => createUserJwt(user, "access", "5m");
 
-  return jwt.sign({ user: { id, name, email } }, client.secret, {
-    expiresIn: "7d",
-    issuer: "ismdb",
-  });
-};
+const createUserRefreshToken = (user) => createUserJwt(user, "refresh", "7d");
 
 module.exports = {
   fetchSingleUserById,
