@@ -5,6 +5,10 @@ info:
 servers:
   - url: /api
 components:
+  securitySchemes:
+    userToken:
+      type: http
+      scheme: bearer
   parameters:
     offsetParam:
       name: offset
@@ -534,6 +538,8 @@ components:
             properties:
               error:
                 $ref: "#/components/schemas/errorObjectType"
+security:
+  - userToken: []
 paths:
   "/authors":
     x-exegesis-controller: authorsController

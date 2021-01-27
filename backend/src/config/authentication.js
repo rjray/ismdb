@@ -9,27 +9,22 @@ const {
   createUserRefreshToken,
 } = require("../db/users");
 
-const TWO_WEEKS = 14 * 86400 * 1000;
+const ONE_WEEK = 7 * 86400 * 1000;
 
 module.exports = function (passport) {
   const router = express.Router();
 
-  router.post("/bootstrap", (req, res, next) => {
-    passport.authenticate("jwt-cookie", (err, user, info) => {
-      if (err) return next(err); // Will take care of the 500
+  router.post(
+    "/token",
+    passport.authenticate("jwt-cookie", { session: false }),
+    (req, res) => {
+      if (!req.user) return res.send({ success: false });
 
-      if (!user) {
-        return res.send({ success: false, message: info.message });
-      }
+      const accessToken = createUserAccessToken(req.user);
 
-      const accessToken = createUserAccessToken(user);
-
-      return res.send({
-        success: true,
-        accessToken,
-      });
-    })(req, res, next);
-  });
+      return res.send({ success: true, accessToken });
+    }
+  );
 
   router.post("/login", (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
@@ -43,7 +38,7 @@ module.exports = function (passport) {
       const refreshToken = createUserRefreshToken(user);
 
       res.cookie("jwtToken", refreshToken, {
-        expires: new Date(Date.now() + TWO_WEEKS),
+        expires: new Date(Date.now() + ONE_WEEK),
         httpOnly: true,
       });
       return res.send({

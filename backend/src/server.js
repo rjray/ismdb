@@ -1,33 +1,29 @@
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+});
+
 const port = process.env.PORT || 3001;
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const cors = require("cors");
 const morgan = require("morgan");
 const compression = require("compression");
 const exegesisExpress = require("exegesis-express");
+const { exegesisPassport } = require("exegesis-passport");
 const http = require("http");
 const path = require("path");
-const pp = require("passport");
+const { Passport } = require("passport");
 
-const passport = require("./config/passport")(pp);
+const passport = require("./config/passport")(new Passport());
 const authLayer = require("./config/authentication")(passport);
 
 async function createServer() {
-  const options = {
-    controllers: path.resolve(__dirname, "controllers"),
-    allowMissingControllers: true,
-    treatReturnedJsonAsPure: true,
-  };
-
-  const exegesis = await exegesisExpress.middleware(
-    path.resolve(__dirname, "openapi.yaml"),
-    options
-  );
-
   const app = express();
   app.disable("x-powered-by");
   app.use(morgan(process.env.NODE_ENV === "production" ? "common" : "dev"));
+  app.use(cookieParser());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
   app.use(passport.initialize());
@@ -36,7 +32,16 @@ async function createServer() {
   app.use(helmet());
 
   app.use(authLayer);
-  app.use(exegesis);
+  app.use(
+    await exegesisExpress.middleware(path.resolve(__dirname, "openapi.yaml"), {
+      controllers: path.resolve(__dirname, "controllers"),
+      authenticators: {
+        userToken: exegesisPassport(passport, "jwt-header"),
+      },
+      allowMissingControllers: true,
+      treatReturnedJsonAsPure: true,
+    })
+  );
   app.use((_, res) => {
     res.status(404).json({ message: "Not found" });
   });

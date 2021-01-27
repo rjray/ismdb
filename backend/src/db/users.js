@@ -29,9 +29,11 @@ const createUserJwt = (userIn, role, expiresIn) => {
   const { ...user } = userIn;
   const secret = jwtSecrets[role];
 
+  if (user.Scopes) {
+    user.scopes = user.Scopes.map(({ name }) => name);
+    delete user.Scopes;
+  }
   delete user.password;
-  user.scopes = user.Scopes.map(({ name }) => name);
-  delete user.Scopes;
 
   return jwt.sign({ user, role }, secret, {
     expiresIn,

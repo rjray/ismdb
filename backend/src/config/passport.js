@@ -51,7 +51,7 @@ module.exports = function (passport) {
     "jwt-cookie",
     new JwtStrategy(
       {
-        jwtFromRequest: (req) => req?.cookies?.jwtToken,
+        jwtFromRequest: (req) => req?.cookies.jwtToken,
         secretOrKey: process.env.REFRESH_TOKEN_SECRET,
         issuer: "ismdb.net",
       },
