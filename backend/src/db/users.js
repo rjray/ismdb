@@ -30,7 +30,11 @@ const createUserJwt = (userIn, role, expiresIn) => {
   const secret = jwtSecrets[role];
 
   if (user.Scopes) {
-    user.scopes = user.Scopes.map(({ name }) => name);
+    user.scopes = user.Scopes.reduce((acc, curr) => {
+      // eslint-disable-next-line no-param-reassign
+      acc[curr.name] = true;
+      return acc;
+    }, {});
     delete user.Scopes;
   }
   delete user.password;
