@@ -9,7 +9,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import { useAuth } from "../auth";
 
 const NavHeader = () => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <Container fluid>
@@ -37,6 +37,11 @@ const NavHeader = () => {
           </Nav>
         </Navbar.Collapse>
         <Nav>
+          {user.scopes.admin && (
+            <LinkContainer to="/admin">
+              <Button variant="link">admin</Button>
+            </LinkContainer>
+          )}
           <LinkContainer to="/settings">
             <Button variant="link">settings</Button>
           </LinkContainer>
