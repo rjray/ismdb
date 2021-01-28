@@ -22,6 +22,16 @@ async function client(url, data) {
   }).then((response) => response.data);
 }
 
+function processToken(accessToken) {
+  const { user, exp: expires } = jwtDecode(accessToken);
+
+  userState.user = user;
+  userState.expires = new Date(expires * 1000);
+  userState.accessToken = accessToken;
+
+  return user;
+}
+
 function getToken() {
   return userState.accessToken;
 }
@@ -33,17 +43,19 @@ function getUser() {
 function handleUserResponse({ success, accessToken, message }) {
   if (!success) throw new Error(message);
 
-  const { user, exp: expires } = jwtDecode(accessToken);
-
-  userState.user = user;
-  userState.expires = new Date(expires * 1000);
-  userState.accessToken = accessToken;
-
-  return user;
+  return processToken(accessToken);
 }
 
 function bootstrap() {
-  return client("bootstrap").then(handleUserResponse);
+  return client("token")
+    .then(({ success, accessToken }) => {
+      if (!success) return null;
+
+      return processToken(accessToken);
+    })
+    .catch(() => {
+      return null;
+    });
 }
 
 function login(form) {
@@ -59,4 +71,13 @@ function logout() {
   return client("logout");
 }
 
-export { getToken, getUser, bootstrap, login, register, logout, client };
+export {
+  processToken,
+  getToken,
+  getUser,
+  bootstrap,
+  login,
+  register,
+  logout,
+  client,
+};

@@ -37,6 +37,9 @@ const NavHeader = () => {
           </Nav>
         </Navbar.Collapse>
         <Nav>
+          <LinkContainer to="/settings">
+            <Button variant="link">settings</Button>
+          </LinkContainer>
           <Button variant="link" onClick={() => logout()}>
             logout
           </Button>
