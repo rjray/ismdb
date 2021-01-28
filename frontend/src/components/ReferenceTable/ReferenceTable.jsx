@@ -86,9 +86,15 @@ const ReferenceTable = ({ data, currentTag, currentAuthor, ...props }) => {
 };
 
 ReferenceTable.propTypes = {
-  data: PropTypes.array.isRequired,
-  currentTag: PropTypes.number.isRequired,
-  currentAuthor: PropTypes.number.isRequired,
+  currentAuthor: PropTypes.number,
+  currentTag: PropTypes.number,
+  data: PropTypes.array,
+};
+
+ReferenceTable.defaultProps = {
+  currentAuthor: null,
+  currentTag: null,
+  data: [],
 };
 
 export default ReferenceTable;

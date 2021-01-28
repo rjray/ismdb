@@ -84,8 +84,8 @@ const AuthorTable = ({ data: authors, ...props }) => {
   );
 };
 
-AuthorTable.propTypes = {
-  data: PropTypes.object.isRequired,
-};
+AuthorTable.propTypes = { data: PropTypes.array };
+
+AuthorTable.defaultProps = { data: [] };
 
 export default AuthorTable;

@@ -62,8 +62,8 @@ const MagazineTable = ({ data: magazines, ...props }) => {
   );
 };
 
-MagazineTable.propTypes = {
-  data: PropTypes.array.isRequired,
-};
+MagazineTable.propTypes = { data: PropTypes.array };
+
+MagazineTable.defaultProps = { data: [] };
 
 export default MagazineTable;

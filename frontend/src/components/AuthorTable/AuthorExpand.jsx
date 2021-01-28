@@ -8,34 +8,40 @@ import Button from "react-bootstrap/Button";
 
 import FormatAuthorAliases from "../FormatAuthorAliases";
 
-const AuthorExpand = ({ data: author }) => (
-  <Container fluid className="mt-2 mb-3">
-    <Row>
-      <Col>
-        <LinkContainer to={`/authors/${author.id}`}>
-          <Button>View</Button>
-        </LinkContainer>
-        &nbsp;
-        <LinkContainer to={`/authors/update/${author.id}`}>
-          <Button>Edit</Button>
-        </LinkContainer>
-      </Col>
-    </Row>
-    <Row>
-      <Col>
-        <strong>{author.aliases.length === 1 ? "Alias: " : "Aliases: "}</strong>
-        {author.aliases.length ? (
-          <FormatAuthorAliases aliases={author.aliases} />
-        ) : (
-          "none"
-        )}
-      </Col>
-    </Row>
-  </Container>
-);
+const AuthorExpand = ({ data: author }) => {
+  if (!author) return null;
 
-AuthorExpand.propTypes = {
-  data: PropTypes.object.isRequired,
+  return (
+    <Container fluid className="mt-2 mb-3">
+      <Row>
+        <Col>
+          <LinkContainer to={`/authors/${author.id}`}>
+            <Button>View</Button>
+          </LinkContainer>
+          &nbsp;
+          <LinkContainer to={`/authors/update/${author.id}`}>
+            <Button>Edit</Button>
+          </LinkContainer>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <strong>
+            {author.aliases.length === 1 ? "Alias: " : "Aliases: "}
+          </strong>
+          {author.aliases.length ? (
+            <FormatAuthorAliases aliases={author.aliases} />
+          ) : (
+            "none"
+          )}
+        </Col>
+      </Row>
+    </Container>
+  );
 };
+
+AuthorExpand.propTypes = { data: PropTypes.object };
+
+AuthorExpand.defaultProps = { data: null };
 
 export default AuthorExpand;
