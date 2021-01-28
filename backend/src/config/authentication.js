@@ -39,6 +39,8 @@ module.exports = function (passport) {
 
       res.cookie("jwtToken", refreshToken, {
         expires: new Date(Date.now() + ONE_WEEK),
+        path: "/token",
+        sameSite: "strict",
         httpOnly: true,
       });
       return res.send({
@@ -51,7 +53,7 @@ module.exports = function (passport) {
   router.post("/logout", (req, res) => {
     req.logOut();
     res.cookie("jwtToken", "", {
-      expires: new Date(Date.now() - 1000),
+      expires: new Date(Date.now() + 1000),
       httpOnly: true,
     });
     res.send({ success: true });
