@@ -54,6 +54,8 @@ module.exports = function (passport) {
     req.logOut();
     res.cookie("jwtToken", "", {
       expires: new Date(Date.now() + 1000),
+      path: "/token",
+      sameSite: "strict",
       httpOnly: true,
     });
     res.send({ success: true });
