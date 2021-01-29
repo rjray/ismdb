@@ -44,7 +44,11 @@ const ReferenceType = ({ field, form, ...props }) => {
       }
       onChange={(selected) => {
         if (selected && selected[0]) {
-          form.setFieldValue(field.name, selected[0]);
+          const selection = selected[0];
+          form.setFieldValue(
+            field.name,
+            typeof selection === "object" ? selection.label : selection
+          );
         }
       }}
       inputProps={{ "data-lpignore": "true", id: `rti-${field.name}-input` }}
