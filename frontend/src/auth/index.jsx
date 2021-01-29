@@ -6,6 +6,7 @@ import React, {
   useMemo,
 } from "react";
 
+import FullPageSpinner from "../components/FullPageSpinner";
 import * as auth from "./provider";
 import useAsync from "../utils/use-async";
 
@@ -60,7 +61,7 @@ const AuthProvider = (props) => {
   ]);
 
   if (isLoading || isIdle) {
-    return <h1>Loading...</h1>;
+    return <FullPageSpinner />;
   }
 
   if (isError) {
@@ -77,7 +78,7 @@ const AuthProvider = (props) => {
 const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within a AuthProvider");
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return context;
 };
