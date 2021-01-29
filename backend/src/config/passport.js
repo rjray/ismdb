@@ -16,18 +16,14 @@ module.exports = function (passport) {
         passwordField: "password",
       },
       async (email, password, done) => {
-        if (!(email && password)) {
-          return done(null, false, { message: "Missing email or password" });
-        }
-
         const user = await fetchSingleUserByEmail(email);
 
         if (user) {
           if (!bcrypt.compareSync(password, user.password)) {
-            return done(null, false, { message: "Incorrect password " });
+            return done(null, false, { message: "Incorrect password" });
           }
         } else {
-          return done(null, false, { message: "Unknown user" });
+          return done(null, false, { message: `Unknown user (${email})` });
         }
 
         return done(null, user);
