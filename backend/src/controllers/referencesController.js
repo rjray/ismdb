@@ -145,7 +145,7 @@ function deleteReferenceById(context) {
   return References.deleteReference(id)
     .then((number) => {
       if (number) {
-        res.status(200);
+        res.status(200).set("content-type", "text/plain");
       } else {
         res.status(404).pureJson({
           error: {
