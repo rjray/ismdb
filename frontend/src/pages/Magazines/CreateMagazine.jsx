@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { useQueryCache, useMutation } from "react-query";
+import { useQueryClient, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
@@ -18,8 +18,8 @@ import { createMagazine } from "../../utils/queries";
 const CreateMagazine = () => {
   const [multientry, setMultientry] = useRecoilState(multientrySwitch);
   const [createdMagazine, setCreatedMagazine] = useState(0);
-  const queryCache = useQueryCache();
-  const [mutate] = useMutation(createMagazine);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(createMagazine);
   const { addToast } = useToasts();
   const [focusOnName, setFocusOnName] = useFocus();
 
@@ -41,8 +41,8 @@ const CreateMagazine = () => {
             setFocusOnName();
           }
 
-          queryCache.invalidateQueries(["magazines"]);
-          queryCache.setQueryData(["magazine", String(magazine.id)], {
+          queryClient.invalidateQueries(["magazines"]);
+          queryClient.setQueryData(["magazine", String(magazine.id)], {
             magazine,
           });
 

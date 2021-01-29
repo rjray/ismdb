@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { useQueryCache } from "react-query";
+import { useQueryClient } from "react-query";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
 import "react-bootstrap-typeahead/css/Typeahead.css";
@@ -18,14 +18,14 @@ const FormatMatch = (option, { text }) => (
 );
 
 const TagEditor = ({ field, form, ...props }) => {
-  const queryCache = useQueryCache();
+  const queryClient = useQueryClient();
   const [loadingTagList, setLoadingTagList] = useState(false);
   const [tagList, setTagList] = useState([]);
 
   const handleTagsSearch = (query) => {
     setLoadingTagList(true);
 
-    queryCache
+    queryClient
       .fetchQuery(
         ["tags", { queryWithRefCount: true, query: { query } }],
         getTagsQueryWithRefCount

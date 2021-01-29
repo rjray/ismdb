@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, Redirect } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { useQuery, useQueryCache, useMutation } from "react-query";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -20,14 +20,21 @@ const DeleteMagazine = () => {
   const { magazineId } = useParams();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleted, setDeleted] = useState(false);
-  const queryCache = useQueryCache();
-  const [mutate] = useMutation(deleteMagazineById);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(deleteMagazineById);
   const { addToast } = useToasts();
   const { isLoading, error, data } = useQuery(
     ["magazine", magazineId, { withIssues: true }],
     getMagazineByIdWithIssues,
     { enabled: !deleted }
   );
+
+  if (deleted) {
+    queryClient.removeQueries(["magazine", String(magazineId)]);
+    queryClient.invalidateQueries(["references"]);
+    queryClient.invalidateQueries(["magazines"]);
+    return <Redirect to={{ pathname: "/magazines" }} />;
+  }
 
   if (isLoading) {
     return (
@@ -45,10 +52,6 @@ const DeleteMagazine = () => {
     );
   }
 
-  if (deleted) {
-    return <Redirect to={{ pathname: "/magazines" }} />;
-  }
-
   const { magazine } = data;
   const issuecount = magazine.issues.length;
   const refcount = magazine.issues.reduce(
@@ -61,18 +64,14 @@ const DeleteMagazine = () => {
   const confirmDelete = () => {
     setIsDeleting(true);
     mutate(magazine.id, {
-      onSuccess: async (mutatedData) => {
+      onSuccess: (mutatedData) => {
         const { error: mutationError } = mutatedData;
         setIsDeleting(false);
 
         if (mutationError) {
           addToast(mutationError.description, { appearance: "error" });
         } else {
-          queryCache.removeQueries(["magazine", String(magazine.id)]);
-          queryCache.invalidateQueries(["references"]);
-          await queryCache.invalidateQueries(["magazines"]);
           setDeleted(true);
-
           addToast(`Magazine "${magazine.name}" deleted`, {
             appearance: "success",
           });

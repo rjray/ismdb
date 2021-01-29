@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useQueryCache } from "react-query";
+import { useQueryClient } from "react-query";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
@@ -30,7 +30,7 @@ const FormatMatch = (option, { text }) => (
 );
 
 const QuickSearch = (props) => {
-  const queryCache = useQueryCache();
+  const queryClient = useQueryClient();
   const [loadingQuery, setLoadingQuery] = useState(false);
   const [queryMatches, setQueryMatches] = useState([]);
   const history = useHistory();
@@ -38,7 +38,7 @@ const QuickSearch = (props) => {
   const handleQuickSearch = (query) => {
     setLoadingQuery(true);
 
-    queryCache
+    queryClient
       .fetchQuery(["quicksearch", { query: { query } }], quickSearchName)
       .then((data) => {
         setQueryMatches(data.matches);

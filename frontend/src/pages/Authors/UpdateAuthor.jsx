@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { useQuery, useQueryCache, useMutation } from "react-query";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -20,8 +20,8 @@ import {
 
 const UpdateAuthor = () => {
   const { authorId } = useParams();
-  const queryCache = useQueryCache();
-  const [mutate] = useMutation(updateAuthorById);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(updateAuthorById);
   const { addToast } = useToasts();
   const [focus, setFocus] = useFocus();
   const { isLoading, error, data } = useQuery(
@@ -56,15 +56,15 @@ const UpdateAuthor = () => {
   const submitHandler = (values, formikBag) => {
     mutate(values, {
       onSuccess: (mutatedData) => {
-        const { error: mutationError, mutatedAuthor } = mutatedData;
+        const { error: mutationError, author: mutatedAuthor } = mutatedData;
         formikBag.setSubmitting(false);
         setFocus();
 
         if (mutationError) {
           addToast(mutationError.description, { appearance: "error" });
         } else {
-          queryCache.invalidateQueries(["authors"]);
-          queryCache.setQueryData(["author", String(mutatedAuthor.id)], {
+          queryClient.invalidateQueries(["authors"]);
+          queryClient.setQueryData(["author", String(mutatedAuthor.id)], {
             author: mutatedAuthor,
           });
 

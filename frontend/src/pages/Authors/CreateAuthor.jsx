@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { useQueryCache, useMutation } from "react-query";
+import { useQueryClient, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
@@ -18,8 +18,8 @@ import { createAuthor } from "../../utils/queries";
 const CreateAuthor = () => {
   const [multientry, setMultientry] = useRecoilState(multientrySwitch);
   const [createdAuthor, setCreatedAuthor] = useState(0);
-  const queryCache = useQueryCache();
-  const [mutate] = useMutation(createAuthor);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(createAuthor);
   const { addToast } = useToasts();
   const [focus, setFocus] = useFocus();
 
@@ -39,8 +39,8 @@ const CreateAuthor = () => {
             setFocus();
           }
 
-          queryCache.invalidateQueries(["authors"]);
-          queryCache.setQueryData(["author", String(author.id)], { author });
+          queryClient.invalidateQueries(["authors"]);
+          queryClient.setQueryData(["author", String(author.id)], { author });
 
           addToast(`Author "${author.name}" created`, {
             appearance: "success",

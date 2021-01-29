@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, Redirect } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { useQuery, useQueryCache, useMutation } from "react-query";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -21,14 +21,20 @@ const DeleteAuthor = () => {
   const { authorId } = useParams();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleted, setDeleted] = useState(false);
-  const queryCache = useQueryCache();
-  const [mutate] = useMutation(deleteAuthorById);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(deleteAuthorById);
   const { addToast } = useToasts();
   const { isLoading, error, data } = useQuery(
     ["author", authorId, { withRefCount: true }],
     getAuthorByIdWithRefCount,
     { enabled: !deleted }
   );
+
+  if (deleted) {
+    queryClient.removeQueries(["author", String(authorId)]);
+    queryClient.invalidateQueries(["authors"]);
+    return <Redirect to={{ pathname: "/authors" }} />;
+  }
 
   if (isLoading) {
     return (
@@ -46,10 +52,6 @@ const DeleteAuthor = () => {
     );
   }
 
-  if (deleted) {
-    return <Redirect to={{ pathname: "/authors" }} />;
-  }
-
   const { author } = data;
   const { refcount } = author;
   const noun = refcount === 1 ? "reference" : "references";
@@ -57,17 +59,14 @@ const DeleteAuthor = () => {
   const confirmDelete = () => {
     setIsDeleting(true);
     mutate(author.id, {
-      onSuccess: async (mutatedData) => {
+      onSuccess: (mutatedData) => {
         const { error: mutationError } = mutatedData;
         setIsDeleting(false);
 
         if (mutationError) {
           addToast(mutationError.description, { appearance: "error" });
         } else {
-          queryCache.removeQueries(["author", String(author.id)]);
-          await queryCache.invalidateQueries(["authors"]);
           setDeleted(true);
-
           addToast(`Author "${author.name}" deleted`, {
             appearance: "success",
           });

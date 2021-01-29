@@ -2,7 +2,7 @@ import React from "react";
 import { Helmet } from "react-helmet";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { ToastProvider } from "react-toast-notifications";
-import { QueryCache, ReactQueryCacheProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { RecoilRoot } from "recoil";
 
 import Home from "./pages/Home";
@@ -12,8 +12,8 @@ import Magazines from "./pages/Magazines";
 import Issues from "./pages/Issues";
 import Tags from "./pages/Tags";
 
-const queryCache = new QueryCache({
-  defaultConfig: {
+const queryClient = new QueryClient({
+  defaultOptions: {
     queries: {
       staleTime: 24 * 60 * 60 * 1000,
       cacheTime: 10 * 60 * 1000,
@@ -22,7 +22,7 @@ const queryCache = new QueryCache({
 });
 
 const AuthenticatedApp = () => (
-  <ReactQueryCacheProvider queryCache={queryCache}>
+  <QueryClientProvider client={queryClient}>
     <ToastProvider autoDismissTimeout={4000} autoDismiss>
       <RecoilRoot>
         <Router>
@@ -40,7 +40,7 @@ const AuthenticatedApp = () => (
         </Router>
       </RecoilRoot>
     </ToastProvider>
-  </ReactQueryCacheProvider>
+  </QueryClientProvider>
 );
 
 export default AuthenticatedApp;

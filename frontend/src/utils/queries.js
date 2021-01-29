@@ -62,8 +62,7 @@ function buildUrl(base, params = {}) {
   return `/api${url}`;
 }
 
-export function makeRequest(...args) {
-  const params = args[typeof args[0] === "object" ? 0 : 1] || {};
+export function makeRequest(params) {
   const { url, path, query, data, method } = params;
   const token = getToken();
 
@@ -100,11 +99,13 @@ function deleteByIdWrapper(type) {
 
 function getByIdWrapper(type, extra) {
   const url = extra ? `/${type}/{id}/${extra}` : `/${type}/{id}`;
-  return (_, id) => makeRequest({ url, method: "get", path: { id } });
+  return ({ queryKey: [, id] }) =>
+    makeRequest({ url, method: "get", path: { id } });
 }
 
 function getWithParamsWrapper(url) {
-  return (_, params) => makeRequest({ url, method: "get", ...params });
+  return ({ queryKey: [, params] }) =>
+    makeRequest({ url, method: "get", ...params });
 }
 
 /*

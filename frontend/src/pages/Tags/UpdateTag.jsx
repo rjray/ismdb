@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { useQuery, useQueryCache, useMutation } from "react-query";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -17,8 +17,8 @@ import { getTagById, updateTagById } from "../../utils/queries";
 
 const UpdateTag = () => {
   const { tagId } = useParams();
-  const queryCache = useQueryCache();
-  const [mutate] = useMutation(updateTagById);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(updateTagById);
   const { addToast } = useToasts();
   const [focusOnName, setFocusOnName] = useFocus();
   const { isLoading, error, data } = useQuery(["tag", tagId], getTagById);
@@ -52,8 +52,8 @@ const UpdateTag = () => {
         if (mutationError) {
           addToast(mutationError.description, { appearance: "error" });
         } else {
-          queryCache.invalidateQueries(["tags"]);
-          queryCache.setQueryData(["tag", String(mutatedTag.id)], {
+          queryClient.invalidateQueries(["tags"]);
+          queryClient.setQueryData(["tag", String(mutatedTag.id)], {
             tag: mutatedTag,
           });
 

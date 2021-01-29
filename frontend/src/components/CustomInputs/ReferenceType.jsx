@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { useQueryCache } from "react-query";
+import { useQueryClient } from "react-query";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 
 import "react-bootstrap-typeahead/css/Typeahead.css";
@@ -11,14 +11,14 @@ import { getAllReferenceTypes } from "../../utils/queries";
 const limit = 20;
 
 const ReferenceType = ({ field, form, ...props }) => {
-  const queryCache = useQueryCache();
+  const queryClient = useQueryClient();
   const [loadingTypesList, setLoadingTypesList] = useState(false);
   const [typesList, setTypesList] = useState([field.value]);
 
   const handleTypesSearch = (type) => {
     setLoadingTypesList(true);
 
-    queryCache
+    queryClient
       .fetchQuery(
         ["referencetypes", { query: { limit, type } }],
         getAllReferenceTypes

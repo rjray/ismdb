@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { useQueryCache, useMutation } from "react-query";
+import { useQueryClient, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
@@ -18,8 +18,8 @@ import { createTag } from "../../utils/queries";
 const CreateTag = () => {
   const [multientry, setMultientry] = useRecoilState(multientrySwitch);
   const [createdTag, setCreatedTag] = useState(0);
-  const queryCache = useQueryCache();
-  const [mutate] = useMutation(createTag);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(createTag);
   const { addToast } = useToasts();
   const [focus, setFocus] = useFocus();
 
@@ -39,8 +39,8 @@ const CreateTag = () => {
             setFocus();
           }
 
-          queryCache.invalidateQueries(["tags"]);
-          queryCache.setQueryData(["tag", String(tag.id)], { tag });
+          queryClient.invalidateQueries(["tags"]);
+          queryClient.setQueryData(["tag", String(tag.id)], { tag });
 
           addToast(`Tag "${tag.name}" created`, { appearance: "success" });
           setCreatedTag(tag.id);

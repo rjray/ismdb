@@ -5,7 +5,6 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { useQueryCache } from "react-query";
 
 import * as auth from "./provider";
 import useAsync from "../utils/use-async";
@@ -35,7 +34,6 @@ const AuthProvider = (props) => {
     setData,
     status,
   } = useAsync();
-  const queryCache = useQueryCache();
 
   useEffect(() => {
     const bootstrapPromise = bootstrap();
@@ -51,11 +49,8 @@ const AuthProvider = (props) => {
     [setData]
   );
   const logout = useCallback(() => {
-    auth.logout().then(() => {
-      queryCache.clear();
-      setData(null);
-    });
-  }, [queryCache, setData]);
+    auth.logout().then(() => setData(null));
+  }, [setData]);
 
   const value = useMemo(() => ({ user, login, logout, register }), [
     login,

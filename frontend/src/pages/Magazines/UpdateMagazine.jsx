@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { useQuery, useQueryCache, useMutation } from "react-query";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -17,8 +17,8 @@ import { getMagazineById, updateMagazineById } from "../../utils/queries";
 
 const UpdateMagazine = () => {
   const { magazineId } = useParams();
-  const queryCache = useQueryCache();
-  const [mutate] = useMutation(updateMagazineById);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(updateMagazineById);
   const { addToast } = useToasts();
   const [focusOnName, setFocusOnName] = useFocus();
   const { isLoading, error, data } = useQuery(
@@ -59,8 +59,8 @@ const UpdateMagazine = () => {
         if (mutationError) {
           addToast(mutationError.description, { appearance: "error" });
         } else {
-          queryCache.invalidateQueries(["magazines"]);
-          queryCache.setQueryData(["magazine", String(mutatedMagazine.id)], {
+          queryClient.invalidateQueries(["magazines"]);
+          queryClient.setQueryData(["magazine", String(mutatedMagazine.id)], {
             mutatedMagazine,
           });
 

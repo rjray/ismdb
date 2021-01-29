@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { useQuery, useQueryCache, useMutation } from "react-query";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -17,8 +17,8 @@ import { getReferenceById, updateReferenceById } from "../../utils/queries";
 
 const UpdateReference = () => {
   const { referenceId } = useParams();
-  const queryCache = useQueryCache();
-  const [mutate] = useMutation(updateReferenceById);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(updateReferenceById);
   const { addToast } = useToasts();
   const [focusOnName, setFocusOnName] = useFocus();
   const { isLoading, error, data } = useQuery(
@@ -77,6 +77,7 @@ const UpdateReference = () => {
     });
     values.RecordTypeId = parseInt(values.RecordTypeId, 10);
     values.MagazineId = parseInt(values.MagazineId, 10) || 0;
+    values.MagazineIssueId = parseInt(values.MagazineIssueId, 10) || 0;
     delete values.createdAt;
     delete values.updatedAt;
     if (typeof values.type === "object") values.type = values.type.label;
@@ -98,10 +99,10 @@ const UpdateReference = () => {
         if (mutationError) {
           addToast(mutationError.description, { appearance: "error" });
         } else {
-          queryCache.invalidateQueries(["references"]);
-          if (authorsUpdated) queryCache.invalidateQueries(["authors"]);
-          if (tagsUpdated) queryCache.invalidateQueries(["tags"]);
-          queryCache.setQueryData(["reference", String(mutatedReference.id)], {
+          queryClient.invalidateQueries(["references"]);
+          if (authorsUpdated) queryClient.invalidateQueries(["authors"]);
+          if (tagsUpdated) queryClient.invalidateQueries(["tags"]);
+          queryClient.setQueryData(["reference", String(mutatedReference.id)], {
             mutatedReference,
           });
 

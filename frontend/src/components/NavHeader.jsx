@@ -5,11 +5,13 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { LinkContainer } from "react-router-bootstrap";
+import { useQueryClient } from "react-query";
 
 import { useAuth } from "../auth";
 
 const NavHeader = () => {
   const { user, logout } = useAuth();
+  const queryClient = useQueryClient();
 
   return (
     <Container fluid>
@@ -45,7 +47,13 @@ const NavHeader = () => {
           <LinkContainer to="/settings">
             <Button variant="link">settings</Button>
           </LinkContainer>
-          <Button variant="link" onClick={() => logout()}>
+          <Button
+            variant="link"
+            onClick={() => {
+              queryClient.clear();
+              logout();
+            }}
+          >
             logout
           </Button>
         </Nav>

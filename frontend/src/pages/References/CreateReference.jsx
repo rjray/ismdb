@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { useQueryCache, useMutation } from "react-query";
+import { useQueryClient, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
@@ -18,8 +18,8 @@ import { createReference } from "../../utils/queries";
 const CreateReference = () => {
   const [multientry, setMultientry] = useRecoilState(multientrySwitch);
   const [createdReference, setCreatedReference] = useState(0);
-  const queryCache = useQueryCache();
-  const [mutate] = useMutation(createReference);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(createReference);
   const { addToast } = useToasts();
   const [focusOnName, setFocusOnName] = useFocus();
 
@@ -60,10 +60,10 @@ const CreateReference = () => {
             setFocusOnName();
           }
 
-          queryCache.invalidateQueries(["references"]);
-          queryCache.invalidateQueries(["authors"]);
-          queryCache.invalidateQueries(["tags"]);
-          queryCache.setQueryData(["reference", String(reference.id)], {
+          queryClient.invalidateQueries(["references"]);
+          queryClient.invalidateQueries(["authors"]);
+          queryClient.invalidateQueries(["tags"]);
+          queryClient.setQueryData(["reference", String(reference.id)], {
             reference,
           });
 

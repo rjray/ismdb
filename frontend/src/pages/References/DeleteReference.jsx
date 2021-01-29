@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useParams, Redirect } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { useQuery, useQueryCache, useMutation } from "react-query";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -19,14 +19,20 @@ const DeleteReference = () => {
   const { referenceId } = useParams();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleted, setDeleted] = useState(false);
-  const queryCache = useQueryCache();
-  const [mutate] = useMutation(deleteReferenceById);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(deleteReferenceById);
   const { addToast } = useToasts();
   const { isLoading, error, data } = useQuery(
     ["reference", referenceId],
     getReferenceById,
     { enabled: !deleted }
   );
+
+  if (deleted) {
+    queryClient.removeQueries(["reference", String(referenceId)]);
+    queryClient.invalidateQueries(["references"]);
+    return <Redirect to={{ pathname: "/references" }} />;
+  }
 
   if (isLoading) {
     return (
@@ -42,10 +48,6 @@ const DeleteReference = () => {
         <strong>Error: {error.message}</strong>
       </div>
     );
-  }
-
-  if (deleted) {
-    return <Redirect to={{ pathname: "/references" }} />;
   }
 
   const { reference } = data;
@@ -71,17 +73,14 @@ const DeleteReference = () => {
   const confirmDelete = () => {
     setIsDeleting(true);
     mutate(reference.id, {
-      onSuccess: async (mutatedData) => {
+      onSuccess: (mutatedData) => {
         const { error: mutationError } = mutatedData;
         setIsDeleting(false);
 
         if (mutationError) {
           addToast(mutationError.description, { appearance: "error" });
         } else {
-          queryCache.removeQueries(["reference", String(reference.id)]);
-          await queryCache.invalidateQueries(["references"]);
           setDeleted(true);
-
           addToast(`Reference "${reference.name}" deleted`, {
             appearance: "success",
           });

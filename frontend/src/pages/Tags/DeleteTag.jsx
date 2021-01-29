@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, Redirect } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { useQuery, useQueryCache, useMutation } from "react-query";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 import { Helmet } from "react-helmet";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -16,14 +16,21 @@ const DeleteTag = () => {
   const { tagId } = useParams();
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleted, setDeleted] = useState(false);
-  const queryCache = useQueryCache();
-  const [mutate] = useMutation(deleteTagById);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation(deleteTagById);
   const { addToast } = useToasts();
   const { isLoading, error, data } = useQuery(
     ["tag", tagId, { withRefCount: true }],
     getTagByIdWithRefCount,
     { enabled: !deleted }
   );
+
+  if (deleted) {
+    queryClient.removeQueries(["tag", String(tagId)]);
+    queryClient.invalidateQueries(["references"]);
+    queryClient.invalidateQueries(["tags"]);
+    return <Redirect to={{ pathname: "/tags" }} />;
+  }
 
   if (isLoading) {
     return (
@@ -41,10 +48,6 @@ const DeleteTag = () => {
     );
   }
 
-  if (deleted) {
-    return <Redirect to={{ pathname: "/tags" }} />;
-  }
-
   const { tag } = data;
   const { refcount } = tag;
   const noun = refcount === 1 ? "reference" : "references";
@@ -52,18 +55,14 @@ const DeleteTag = () => {
   const confirmDelete = () => {
     setIsDeleting(true);
     mutate(tag.id, {
-      onSuccess: async (mutatedData) => {
+      onSuccess: (mutatedData) => {
         const { error: mutationError } = mutatedData;
         setIsDeleting(false);
 
         if (mutationError) {
           addToast(mutationError.description, { appearance: "error" });
         } else {
-          queryCache.removeQueries(["tag", String(tag.id)]);
-          queryCache.invalidateQueries(["references"]);
-          await queryCache.invalidateQueries(["tags"]);
           setDeleted(true);
-
           addToast(`Tag "${tag.name}" deleted`, { appearance: "success" });
         }
       },
