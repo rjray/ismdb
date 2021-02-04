@@ -15,6 +15,18 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(60),
         allowNull: false,
       },
+      resetRequired: {
+        type: DataTypes.BOOLEAN,
+        default: false,
+      },
+      verified: {
+        type: DataTypes.BOOLEAN,
+        default: false,
+      },
+      disabled: {
+        type: DataTypes.BOOLEAN,
+        default: false,
+      },
     },
     {}
   );

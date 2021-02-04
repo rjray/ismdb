@@ -7,6 +7,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      user: {
+        type: Sequelize.STRING(25),
+        allowNull: false,
+        unique: true,
+      },
       name: {
         type: Sequelize.STRING(75),
         allowNull: false,
@@ -18,6 +23,21 @@ module.exports = {
       },
       password: {
         type: Sequelize.STRING(60),
+        allowNull: false,
+      },
+      resetRequired: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+      verified: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+      disabled: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
         allowNull: false,
       },
       createdAt: {

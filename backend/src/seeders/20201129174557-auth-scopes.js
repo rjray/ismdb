@@ -3,15 +3,15 @@ module.exports = {
     return queryInterface.bulkInsert("AuthScopes", [
       {
         name: "admin",
-        description: "Administrative access",
-      },
-      {
-        name: "read",
-        description: "Permission to read database content",
+        description: "Administrative account",
       },
       {
         name: "write",
-        description: "Permission to write database content",
+        description: "Permission to write content",
+      },
+      {
+        name: "guest",
+        description: "Account is a guest-only user",
       },
     ]);
   },
