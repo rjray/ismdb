@@ -19,6 +19,15 @@ const fetchSingleUserById = async (id) => {
   return user?.get();
 };
 
+const fetchSingleUserByUsername = async (username) => {
+  const user = await User.findOne({
+    where: { user: username },
+    include: userIncludes,
+  });
+
+  return user?.get();
+};
+
 const fetchSingleUserByEmail = async (email) => {
   const user = await User.findOne({ where: { email }, include: userIncludes });
 
@@ -51,6 +60,7 @@ const createUserRefreshToken = (user) => createUserJwt(user, "refresh", "7d");
 
 module.exports = {
   fetchSingleUserById,
+  fetchSingleUserByUsername,
   fetchSingleUserByEmail,
   createUserAccessToken,
   createUserRefreshToken,
