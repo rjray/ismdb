@@ -17,22 +17,20 @@ const SignupForm = lazy(() => import("./components/SignupForm"));
 
 const UnauthenticatedApp = () => {
   const { login, register } = useAuth();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
   function submitHandler(e) {
     e.preventDefault();
 
-    if (!email) {
-      setError("Email is required");
-    } else if (!/^[^\s@]+@[^\s@]+(\.[^\s@]+)+$/.test(email)) {
-      setError(`"${email}" is not an email address`);
+    if (!username) {
+      setError("User Name is required");
     } else if (!password) {
       setError("Password is required");
     } else {
-      login({ email, password }).catch((err) => setError(err.message));
-      setEmail("");
+      login({ username, password }).catch((err) => setError(err.message));
+      setUsername("");
       setPassword("");
     }
   }
@@ -63,12 +61,12 @@ const UnauthenticatedApp = () => {
                 <Tab.Pane eventKey="login">
                   <Form>
                     <Form.Group size="lg" controlId="email">
-                      <Form.Label>Email</Form.Label>
+                      <Form.Label>User Name</Form.Label>
                       <Form.Control
                         autoFocus
-                        name="email"
-                        type="email"
-                        onChange={(e) => setEmail(e.target.value)}
+                        name="username"
+                        type="text"
+                        onChange={(e) => setUsername(e.target.value)}
                       />
                     </Form.Group>
                     <Form.Group size="lg" controlId="password">
