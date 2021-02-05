@@ -21,7 +21,7 @@ const fetchSingleUserById = async (id) => {
 
 const fetchSingleUserByUsername = async (username) => {
   const user = await User.findOne({
-    where: { user: username },
+    where: { username },
     include: userIncludes,
   });
 

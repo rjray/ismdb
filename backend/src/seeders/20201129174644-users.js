@@ -16,7 +16,7 @@ module.exports = {
     const users = [
       {
         id: adminId,
-        user: "admin",
+        username: "admin",
         name: process.env.ADMINUSER_NAME,
         email: process.env.ADMINUSER_EMAIL,
         password: bcrypt.hashSync(process.env.ADMINUSER_PASSWORD, 10),
@@ -30,7 +30,7 @@ module.exports = {
     if (createMain) {
       users.push({
         id: mainId,
-        user: process.env.MAINUSER_USER,
+        username: process.env.MAINUSER_USER,
         name: process.env.MAINUSER_NAME,
         email: process.env.MAINUSER_EMAIL,
         password: bcrypt.hashSync(process.env.MAINUSER_PASSWORD, 10),
@@ -44,7 +44,7 @@ module.exports = {
     if (createGuest) {
       users.push({
         id: guestId,
-        user: "guest",
+        username: "guest",
         name: "Guest User",
         email: process.env.GUESTUSER_EMAIL,
         password: bcrypt.hashSync(process.env.GUESTUSER_PASSWORD, 10),

@@ -6,29 +6,23 @@ const bcrypt = require("bcrypt");
 const LocalStrategy = require("passport-local").Strategy;
 const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
-const { fetchSingleUserByEmail } = require("../db/users");
+const { fetchSingleUserByUsername } = require("../db/users");
 
 module.exports = function (passport) {
   passport.use(
-    new LocalStrategy(
-      {
-        usernameField: "email",
-        passwordField: "password",
-      },
-      async (email, password, done) => {
-        const user = await fetchSingleUserByEmail(email);
+    new LocalStrategy(async (username, password, done) => {
+      const user = await fetchSingleUserByUsername(username);
 
-        if (user) {
-          if (!bcrypt.compareSync(password, user.password)) {
-            return done(null, false, { message: "Incorrect password" });
-          }
-        } else {
-          return done(null, false, { message: `Unknown user (${email})` });
+      if (user) {
+        if (!bcrypt.compareSync(password, user.password)) {
+          return done(null, false, { message: "Incorrect password" });
         }
-
-        return done(null, user);
+      } else {
+        return done(null, false, { message: `Unknown user (${username})` });
       }
-    )
+
+      return done(null, user);
+    })
   );
 
   passport.use(
