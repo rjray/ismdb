@@ -89,7 +89,7 @@ const UnauthenticatedApp = () => {
                 </Tab.Pane>
                 <Tab.Pane eventKey="signup">
                   <Suspense fallback={<ScaleLoader />}>
-                    <SignupForm register={register} />
+                    <SignupForm register={register} setError={setError} />
                   </Suspense>
                 </Tab.Pane>
               </Tab.Content>
