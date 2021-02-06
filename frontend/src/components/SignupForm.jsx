@@ -6,6 +6,22 @@ import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 const signupValidationSchema = Yup.object().shape({
+  username: Yup.string()
+    .required(<em className="form-field-error">User name is required</em>)
+    .matches(/^[A-Za-z0-9][\w-]*$/, {
+      message: (
+        <em className="form-field-error">
+          User name is limited to alphabetic characters, numbers, underscores
+          and hyphens
+        </em>
+      ),
+    })
+    .max(
+      25,
+      <em className="form-field-error">
+        User name is limited to 25 characters
+      </em>
+    ),
   name: Yup.string()
     .required(<em className="form-field-error">Name is required</em>)
     .max(
@@ -38,7 +54,7 @@ const signupValidationSchema = Yup.object().shape({
   }),
 });
 
-const SignupForm = ({ register }) => {
+const SignupForm = ({ register, setError }) => {
   function submitHandler({ values, bag }) {
     register(values);
     bag.resetForm();
@@ -48,6 +64,7 @@ const SignupForm = ({ register }) => {
   return (
     <Formik
       initialValues={{
+        username: "",
         name: "",
         email: "",
         password: "",
@@ -58,7 +75,21 @@ const SignupForm = ({ register }) => {
     >
       {({ handleChange, handleBlur, handleSubmit, isSubmitting }) => (
         <Form>
-          <Form.Group size="lg" controlId="email">
+          <Form.Group size="lg" controlId="username">
+            <Form.Label>
+              User Name
+              <ErrorMessage name="username" component="p" />
+            </Form.Label>
+            <Field
+              as={Form.Control}
+              name="username"
+              type="text"
+              data-lpignore="true"
+              onBlur={handleBlur}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group size="lg" controlId="name">
             <Form.Label>
               Name
               <ErrorMessage name="name" component="p" />
@@ -67,6 +98,7 @@ const SignupForm = ({ register }) => {
               as={Form.Control}
               name="name"
               type="text"
+              data-lpignore="true"
               onBlur={handleBlur}
               onChange={handleChange}
             />
@@ -80,6 +112,7 @@ const SignupForm = ({ register }) => {
               as={Form.Control}
               name="email"
               type="email"
+              data-lpignore="true"
               onBlur={handleBlur}
               onChange={handleChange}
             />
@@ -93,6 +126,7 @@ const SignupForm = ({ register }) => {
               as={Form.Control}
               name="password"
               type="password"
+              data-lpignore="true"
               onBlur={handleBlur}
               onChange={handleChange}
             />
@@ -106,6 +140,7 @@ const SignupForm = ({ register }) => {
               as={Form.Control}
               name="confirmPassword"
               type="password"
+              data-lpignore="true"
               onBlur={handleBlur}
               onChange={handleChange}
             />
@@ -127,6 +162,7 @@ const SignupForm = ({ register }) => {
 
 SignupForm.propTypes = {
   register: PropTypes.func.isRequired,
+  setError: PropTypes.func.isRequired,
 };
 
 export default SignupForm;
