@@ -11,8 +11,8 @@ module.exports = {
     const createMain = process.env.CREATE_MAINUSER;
     let baseId = 1;
     const adminId = baseId++;
-    const mainId = createMain ? baseId++ : 0;
     const guestId = createGuest ? baseId++ : 0;
+    const mainId = createMain ? baseId++ : 0;
     const users = [
       {
         id: adminId,
@@ -27,20 +27,6 @@ module.exports = {
         updatedAt: now,
       },
     ];
-    if (createMain) {
-      users.push({
-        id: mainId,
-        username: process.env.MAINUSER_USER,
-        name: process.env.MAINUSER_NAME,
-        email: process.env.MAINUSER_EMAIL,
-        password: bcrypt.hashSync(process.env.MAINUSER_PASSWORD, 10),
-        resetRequired: false,
-        verified: true,
-        disabled: false,
-        createdAt: now,
-        updatedAt: now,
-      });
-    }
     if (createGuest) {
       users.push({
         id: guestId,
@@ -48,6 +34,20 @@ module.exports = {
         name: "Guest User",
         email: process.env.GUESTUSER_EMAIL,
         password: bcrypt.hashSync(process.env.GUESTUSER_PASSWORD, 10),
+        resetRequired: false,
+        verified: true,
+        disabled: false,
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+    if (createMain) {
+      users.push({
+        id: mainId,
+        username: process.env.MAINUSER_USER,
+        name: process.env.MAINUSER_NAME,
+        email: process.env.MAINUSER_EMAIL,
+        password: bcrypt.hashSync(process.env.MAINUSER_PASSWORD, 10),
         resetRequired: false,
         verified: true,
         disabled: false,
@@ -86,7 +86,5 @@ module.exports = {
     return queryInterface.bulkInsert("UsersAuthScopes", linkages);
   },
 
-  down: async (queryInterface) => {
-    return queryInterface.bulkDelete("Users", null, {});
-  },
+  down: async (queryInterface) => queryInterface.bulkDelete("Users", null, {}),
 };
