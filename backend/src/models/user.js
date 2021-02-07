@@ -32,6 +32,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         default: false,
       },
+      disabledReason: DataTypes.STRING(255),
+      failedLoginAttempts: {
+        type: DataTypes.SMALLINT,
+        default: 0,
+      },
     },
     {}
   );

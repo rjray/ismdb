@@ -40,6 +40,11 @@ module.exports = {
         defaultValue: false,
         allowNull: false,
       },
+      disabledReason: Sequelize.STRING(255),
+      failedLoginAttempts: {
+        type: Sequelize.SMALLINT,
+        defaultValue: 0,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
