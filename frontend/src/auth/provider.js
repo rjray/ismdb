@@ -53,9 +53,7 @@ function bootstrap() {
 
       return processToken(accessToken);
     })
-    .catch(() => {
-      return null;
-    });
+    .catch(() => null);
 }
 
 function login(form) {
