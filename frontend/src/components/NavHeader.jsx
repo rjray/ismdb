@@ -48,13 +48,12 @@ const NavHeader = () => {
             <Button variant="link">settings</Button>
           </LinkContainer>
           <Button
-            variant="link"
             onClick={() => {
               queryClient.clear();
               logout();
             }}
           >
-            logout
+            logout {user.username}
           </Button>
         </Nav>
       </Navbar>
