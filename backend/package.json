@@ -6,7 +6,8 @@
   "main": "server.js",
   "scripts": {
     "start": "cd src && nodemon -w openapi.yaml -w . server.js",
-    "db-reset": "(cd src; sequelize db:drop; sequelize db:create && sequelize db:migrate && sequelize db:seed:all && ../util/import_refs.pl ~/work/nmrdb/models.db --env)",
+    "mysql-reset": "(cd src; sequelize db:drop; sequelize db:create && sequelize db:migrate && sequelize db:seed:all && ../util/import_refs.pl ~/work/nmrdb/models.db --env)",
+    "sqlite-reset": "(cd src; rm -f *.db; sequelize db:migrate && sequelize db:seed:all && ../util/import_refs.pl ~/work/nmrdb/models.db --env)",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Randy J. Ray <rjray@blackperl.com>",
