@@ -17,7 +17,7 @@ my %META_TAGS = (
     figures    => 'A figurine subject',
     scifi      => 'A science fiction/fantasy subject',
     ships      => 'A naval/nautical subject',
-    techniques => 'An article focusing on techniques',
+    techniques => 'An entry focusing on techniques',
     automotive => 'A civilian ground vehicle subject',
     diorama    => 'A diorama subject',
 );
