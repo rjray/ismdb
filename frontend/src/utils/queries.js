@@ -4,26 +4,12 @@
  */
 
 import XRegExp from "xregexp";
-import createAuthRefreshInterceptor from "axios-auth-refresh";
 
-import axios from "./axios-local";
-import { processToken, getToken } from "../auth/provider";
+import connector from "./connector";
+import { getToken } from "../auth/provider";
 
 // Use this regexp to find/replace the tokens in the strings:
 const expandUrlTokens = XRegExp("(?:[{](?<ident>\\w+)[}])", "g");
-
-// Set up an interceptor for responses to catch when the auth token expires
-// and automatically refresh.
-const refreshAuth = (failed) =>
-  axios.post("token").then(({ data: { success, accessToken } }) => {
-    if (!success) Promise.reject(failed);
-
-    processToken(accessToken);
-    // eslint-disable-next-line no-param-reassign
-    failed.response.config.headers.Authorization = `Bearer ${accessToken}`;
-    return Promise.resolve();
-  });
-createAuthRefreshInterceptor(axios, refreshAuth);
 
 /*
   Take the base URL given and do token-substitution and then append any query
@@ -68,7 +54,7 @@ export function makeRequest(params) {
 
   if (!url) throw new Error("Missing required parameter 'url'");
 
-  return axios({
+  return connector({
     url: buildUrl(url, { path, query }),
     method,
     headers: {
