@@ -8,7 +8,7 @@ import { create } from "axios";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
 
 import axios from "./axios-local";
-import { processToken } from "../auth/provider";
+import { getToken, processToken } from "../auth/provider";
 
 const endpoint = process.env.REACT_APP_API_ENDPOINT;
 
@@ -17,6 +17,17 @@ const connector = create({
   withCredentials: true,
   headers: { Accept: "application/json", "Content-Type": "application/json" },
 });
+
+// Set up an interceptor for requests that adds the Authorization header.
+connector.interceptors.request.use(
+  (config) => {
+    // eslint-disable-next-line no-param-reassign
+    config.headers.Authorization = `Bearer ${getToken()}`;
+    return config;
+  },
+  null,
+  { synchronous: true }
+);
 
 // Set up an interceptor for responses to catch when the auth token expires
 // and automatically refresh.

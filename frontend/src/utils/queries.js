@@ -6,7 +6,6 @@
 import XRegExp from "xregexp";
 
 import connector from "./connector";
-import { getToken } from "../auth/provider";
 
 // Use this regexp to find/replace the tokens in the strings:
 const expandUrlTokens = XRegExp("(?:[{](?<ident>\\w+)[}])", "g");
@@ -50,16 +49,12 @@ function buildUrl(base, params = {}) {
 
 export function makeRequest(params) {
   const { url, path, query, data, method } = params;
-  const token = getToken();
 
   if (!url) throw new Error("Missing required parameter 'url'");
 
   return connector({
     url: buildUrl(url, { path, query }),
     method,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
     data,
   }).then((response) => response.data);
 }
