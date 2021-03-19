@@ -22,6 +22,7 @@ const AuthenticatedApp = () => {
           queries: {
             staleTime: 24 * 60 * 60 * 1000,
             cacheTime: 10 * 60 * 1000,
+            retry: false,
             onError: (error) => {
               if (error.response.status === 401) {
                 logout();
