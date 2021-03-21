@@ -224,36 +224,66 @@ const createReference = async (dataIn) => {
   return { reference, notifications, addedAuthors };
 };
 
-// Update a single reference using the content in data. This has to include
-// author data, author linkage, tags stuff and possible magazine issue linkage.
-const updateReference = async (id, dataIn) => {
-  const data = { ...dataIn };
+// Update the "basic" reference information.
+const updateReferenceBasicInfo = async (reference, data, transaction) => {
+  const { name, type, language } = data;
 
-  const reference = await Reference.findByPk(id, {
-    include: includesForReference,
-  });
-  if (!reference) return null;
+  await reference.update({ name, type, language }, { transaction });
+};
 
-  // Check for the type of record to have changed.
-  if (data.RecordTypeId !== reference.RecordTypeId) {
-    if (data.RecordTypeId === 1) {
-      // This is now a book. For this, I need to null out the magazine
-      // fields and delete the linkage to the issue. Should delete issue
-      // if this was the only linked reference?
-      data.MagazineIssueId = null;
-    } else if (data.RecordTypeId === 2 || data.RecordTypeId === 3) {
-      // This is now a magazine feature or placeholder. But it isn't enough
-      // to just null out the ISBN-- also have to locate the issue ID of
-      // the specified magazine/issue #, possibly creating a new issue
-      // record.
-      data.isbn = null;
-    } else {
-      // This is something else entirely
-      data.MagazineIssueId = null;
-      data.isbn = null;
+// Update the type-related reference information.
+const updateReferenceTypeInfo = async (reference, data, transaction) => {
+  const { RecordTypeId } = data;
+  const changes = {};
+
+  if (RecordTypeId !== reference.RecordTypeId) {
+    // The type has completely changed.
+    changes.RecordTypeId = RecordTypeId;
+  } else {
+    // The type has not changed, but other information might have.
+    switch (RecordTypeId) {
+      case 1:
+        // For a book, check only the ISBN.
+        if (data.isbn !== reference.isbn) changes.isbn = data.isbn;
+        break;
+      case 2:
+      case 3:
+        // For either magazine type check the magazine ID and the issue ID/num.
+        if (data.MagazineId !== reference.MagazineId)
+          changes.MagazineId = data.MagazineId;
+        break;
+      default:
+        // Other types have no other data.
+        break;
     }
   }
-  return sequelize.transaction(async (txn) => {});
+};
+
+// Make any changes to the set of authors for the reference.
+const updateReferenceAuthorInfo = async (reference, data, transaction) => {
+  return;
+};
+
+// Make any changes to the set of tags for the reference.
+const updateReferenceTagInfo = async (reference, data, transaction) => {
+  return;
+};
+
+// Update a single reference using the content in data. This has to include
+// author data, author linkage, tags stuff and possible magazine issue linkage.
+const updateReference = async (id, data) => {
+  return Reference.findByPk(id, {
+    include: includesForReference,
+  }).then((reference) => {
+    return sequelize
+      .transaction(async (txn) => {
+        await updateReferenceBasicInfo(reference, data, txn);
+        await updateReferenceTypeInfo(reference, data, txn);
+        await updateReferenceAuthorInfo(reference, data, txn);
+        await updateReferenceTagInfo(reference, data, txn);
+      })
+      .then(() => fetchSingleReferenceComplete(id));
+  });
 };
 
 // Delete a single Reference from the database.
