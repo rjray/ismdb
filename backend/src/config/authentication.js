@@ -9,7 +9,7 @@ const {
   createUserRefreshToken,
 } = require("../db/users");
 
-const ONE_WEEK = 7 * 86400 * 1000;
+const FOUR_WEEKS = 4 * 7 * 86400 * 1000;
 
 module.exports = function (passport) {
   const router = express.Router();
@@ -38,7 +38,7 @@ module.exports = function (passport) {
       const refreshToken = createUserRefreshToken(user);
 
       res.cookie("jwtToken", refreshToken, {
-        expires: new Date(Date.now() + ONE_WEEK),
+        expires: new Date(Date.now() + FOUR_WEEKS),
         path: "/token",
         sameSite: "strict",
         httpOnly: true,

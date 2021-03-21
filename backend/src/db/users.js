@@ -54,9 +54,9 @@ const createUserJwt = (userIn, role, expiresIn) => {
   });
 };
 
-const createUserAccessToken = (user) => createUserJwt(user, "access", "5m");
+const createUserAccessToken = (user) => createUserJwt(user, "access", "15m");
 
-const createUserRefreshToken = (user) => createUserJwt(user, "refresh", "7d");
+const createUserRefreshToken = (user) => createUserJwt(user, "refresh", "28d");
 
 module.exports = {
   fetchSingleUserById,
