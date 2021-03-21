@@ -63,13 +63,11 @@ const UpdateReference = () => {
   const submitHandler = (valuesIn, formikBag) => {
     const values = { ...valuesIn };
 
-    values.authors = values.authors
-      .filter((a) => !a.deleted)
-      .map(({ id, name }) => {
-        // eslint-disable-next-line no-param-reassign
-        if (typeof id === "string") id = 0;
-        return { id, name };
-      });
+    values.authors = values.authors.map(({ id, name, deleted = false }) => {
+      // eslint-disable-next-line no-param-reassign
+      if (typeof id === "string") id = 0;
+      return { id, name, deleted };
+    });
     values.tags = values.tags.map(({ id, name }) => {
       // eslint-disable-next-line no-param-reassign
       if (typeof id === "string") id = 0;
