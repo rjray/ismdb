@@ -54,7 +54,7 @@ const signupValidationSchema = Yup.object().shape({
   }),
 });
 
-const SignupForm = ({ register, setError }) => {
+const SignupForm = ({ register }) => {
   function submitHandler({ values, bag }) {
     register(values);
     bag.resetForm();
@@ -162,7 +162,6 @@ const SignupForm = ({ register, setError }) => {
 
 SignupForm.propTypes = {
   register: PropTypes.func.isRequired,
-  setError: PropTypes.func.isRequired,
 };
 
 export default SignupForm;
