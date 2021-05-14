@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
@@ -10,7 +11,7 @@ const columns = [
     name: <b>Name</b>,
     selector: "name",
     wrap: true,
-    format: (row) => <Link to={`/references/${row.id}`}>{row.name}</Link>,
+    format: ({ id, name }) => <Link to={`/references/${id}`}>{name}</Link>,
   },
   {
     name: <b>Type</b>,
@@ -22,14 +23,14 @@ const columns = [
     selector: "createdAt",
     hide: "sm",
     maxWidth: "20%",
-    format: (row) => <FormatDate date={row.createdAt} />,
+    format: ({ createdAt }) => <FormatDate date={createdAt} />,
   },
   {
     name: <b>Updated</b>,
     selector: "updatedAt",
     hide: "md",
     maxWidth: "20%",
-    format: (row) => <FormatDate date={row.updatedAt} />,
+    format: ({ updatedAt }) => <FormatDate date={updatedAt} />,
   },
 ];
 

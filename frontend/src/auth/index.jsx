@@ -53,12 +53,10 @@ const AuthProvider = (props) => {
     auth.logout().then(() => setData(null));
   }, [setData]);
 
-  const value = useMemo(() => ({ user, login, logout, register }), [
-    login,
-    logout,
-    register,
-    user,
-  ]);
+  const value = useMemo(
+    () => ({ user, login, logout, register }),
+    [login, logout, register, user]
+  );
 
   if (isLoading || isIdle) {
     return <FullPageSpinner />;

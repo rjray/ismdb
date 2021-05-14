@@ -158,9 +158,8 @@ export const deleteReferenceById = deleteByIdWrapper("references");
 
 export const createTag = createWrapper("tags");
 export const getAllTags = getWithParamsWrapper("/tags");
-export const getAllTagsWithRefCount = getWithParamsWrapper(
-  "/tags/withRefCount"
-);
+export const getAllTagsWithRefCount =
+  getWithParamsWrapper("/tags/withRefCount");
 export const getTagsQueryWithRefCount = getWithParamsWrapper(
   "/tags/queryWithRefCount"
 );

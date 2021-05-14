@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-wrap-multilines */
 import React from "react";
 import PropTypes from "prop-types";
@@ -41,7 +42,7 @@ const columns = [
     sortable: true,
     maxWidth: "15%",
     hide: "sm",
-    format: (row) => <FormatDate date={row.createdAt} />,
+    format: ({ createdAt }) => <FormatDate date={createdAt} />,
   },
   {
     name: <b>Updated</b>,
@@ -49,7 +50,7 @@ const columns = [
     sortable: true,
     maxWidth: "15%",
     hide: "md",
-    format: (row) => <FormatDate date={row.updatedAt} />,
+    format: ({ updatedAt }) => <FormatDate date={updatedAt} />,
   },
 ];
 

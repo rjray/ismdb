@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useQueryClient } from "react-query";
@@ -10,10 +11,10 @@ import { sortBy } from "../../utils/no-lodash";
 
 const sortByName = sortBy("name");
 
-const FormatMatch = (option, { text }) => (
+const FormatMatch = ({ name, refcount }, { text }) => (
   <div style={{ whiteSpace: "normal" }}>
-    <Highlighter search={text}>{option.name}</Highlighter>
-    <em> ({option.refcount})</em>
+    <Highlighter search={text}>{name}</Highlighter>
+    <em> ({refcount})</em>
   </div>
 );
 
