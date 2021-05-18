@@ -19,11 +19,12 @@ function buildUrl(base, params = {}) {
   let url = base;
 
   // First do token-substitution in the given base:
-  url = XRegExp.replace(url, expandUrlTokens, (match) => {
-    if (!path[match.ident]) {
-      throw new Error(`No value given for URL token: ${match.ident}`);
+  url = XRegExp.replace(url, expandUrlTokens, (...args) => {
+    const groups = args.pop();
+    if (!path[groups.ident]) {
+      throw new Error(`No value given for URL token: ${groups.ident}`);
     }
-    return path[match.ident];
+    return path[groups.ident];
   });
 
   // Next append any query parameters:
