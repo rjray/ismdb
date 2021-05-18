@@ -24,7 +24,7 @@ const AuthenticatedApp = () => {
             cacheTime: 10 * 60 * 1000,
             retry: false,
             onError: (error) => {
-              if (error.response.status === 401) {
+              if (error.response?.status === 401) {
                 logout();
               } else {
                 throw error;
