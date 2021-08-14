@@ -541,11 +541,13 @@ sub keywords2tags {
 }
 
 __END__
+american,the USA
 australian,Australia
 austrian,Austria
 belgian,Belgium
 chinese,China
-czech,The Czech Republic
+czech,the Czech Republic
+egyptian,Egypt
 finnish,Finland
 french,France
 german,Germany
@@ -570,7 +572,7 @@ scottish,Scotland
 spanish,Spain
 swedish,Sweden
 swiss,Switzerland
-syrian,Syrian
+syrian,Syria
 turkish,Turkey
 ukrainian,Ukraine
 british,England
