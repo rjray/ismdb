@@ -72,14 +72,27 @@ my $attrs = {
 };
 
 my $dbhi = DBI->connect("dbi:SQLite:$dbin", q{}, q{}, { sqlite_unicode => 1 });
-my $dbho = DBI->connect(
-    "dbi:mysql:database=$dbout;host=$opts{host};port=$opts{port}",
-    $opts{username},
-    $opts{password},
-    $attrs
-);
-$dbho->{mysql_enable_utf8mb4} = 1;
-$dbho->do('set names "UTF8"');
+
+my $dbho;
+if ($opts{dialect} eq 'sqlite') {
+    # Setting up the output handle for SQLite is quite a bit different
+    $opts{storage} ||= 'ismdb.db';
+    $dbho = DBI->connect(
+        "dbi:SQLite:dbname=$opts{storage}",
+        q{}, q{},
+        $attrs
+    );
+    $dbho->do('PRAGMA foreign_keys = ON');
+} else {
+    $dbho = DBI->connect(
+        "dbi:mysql:database=$dbout;host=$opts{host};port=$opts{port}",
+        $opts{username},
+        $opts{password},
+        $attrs
+    );
+    $dbho->{mysql_enable_utf8mb4} = 1;
+    $dbho->do('set names "UTF8"');
+}
 
 setup_meta_tags($dbho);
 seed_record_types($dbho);
@@ -353,7 +366,7 @@ sub migrate_reference_table {
             next if ($applied{$tag}++);
             if (! $TAGS{$tag}) {
                 $sth_tag->execute($tag);
-                $TAGS{$tag} = $sth_tag->{mysql_insertid};
+                $TAGS{$tag} = $dbhout->last_insert_id();
             }
 
             $sth_tagref->execute($TAGS{$tag}, $base[0]);
