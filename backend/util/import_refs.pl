@@ -544,6 +544,10 @@ sub keywords2tags {
                 $word = 'ships';
             } elsif ($word eq 'auto') {
                 $word = 'automotive';
+            } elsif ($word eq 'american dress and detail') {
+                $word = 'figures';
+            } elsif ($word eq 'basic techniques <-> advanced results') {
+                $word = 'techniques';
             }
 
             push @tags, $word;
