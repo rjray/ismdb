@@ -548,6 +548,8 @@ sub keywords2tags {
                 $word = 'figures';
             } elsif ($word eq 'basic techniques <-> advanced results') {
                 $word = 'techniques';
+            } elsif ($word eq 'international color and camoflage') {
+                next;
             }
 
             push @tags, $word;
