@@ -48,11 +48,7 @@ if (defined $opts{env}) {
             if ($line =~ /^(\w+)=(.*)$/) {
                 my $val = $2 || q{};
                 (my $key = lc $1) =~ s/^db_//;
-                if ($key eq 'database') {
-                    $dbout ||= $val;
-                } else {
-                    $opts{$key} ||= $val;
-                }
+                $opts{$key} ||= $val;
             } else {
                 warn "Bad line ($line) in $envfile. Skipping\n";
             }
@@ -61,10 +57,6 @@ if (defined $opts{env}) {
         croak "Error opening $envfile for reading: $!";
     }
 }
-# port defaults to 3306:
-$opts{port} ||= 3306;
-# host defaults to localhost:
-$opts{host} ||= 'localhost';
 
 my $attrs = {
     AutoCommit => 0,
@@ -73,26 +65,9 @@ my $attrs = {
 
 my $dbhi = DBI->connect("dbi:SQLite:$dbin", q{}, q{}, { sqlite_unicode => 1 });
 
-my $dbho;
-if ($opts{dialect} eq 'sqlite') {
-    # Setting up the output handle for SQLite is quite a bit different
-    $opts{storage} ||= 'ismdb.db';
-    $dbho = DBI->connect(
-        "dbi:SQLite:dbname=$opts{storage}",
-        q{}, q{},
-        $attrs
-    );
-    $dbho->do('PRAGMA foreign_keys = ON');
-} else {
-    $dbho = DBI->connect(
-        "dbi:mysql:database=$dbout;host=$opts{host};port=$opts{port}",
-        $opts{username},
-        $opts{password},
-        $attrs
-    );
-    $dbho->{mysql_enable_utf8mb4} = 1;
-    $dbho->do('set names "UTF8"');
-}
+my $storage = $opts{storage} || 'ismdb.db';
+my $dbho = DBI->connect("dbi:SQLite:dbname=$storage", q{}, q{}, $attrs);
+$dbho->do('PRAGMA foreign_keys = ON');
 
 setup_meta_tags($dbho);
 seed_record_types($dbho);
