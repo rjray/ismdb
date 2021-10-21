@@ -5,7 +5,6 @@ require("dotenv").config({
 const port = process.env.PORT || 3001;
 const express = require("express");
 const cookieParser = require("cookie-parser");
-const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -24,8 +23,8 @@ async function createServer() {
   app.disable("x-powered-by");
   app.use(morgan(process.env.NODE_ENV === "production" ? "common" : "dev"));
   app.use(cookieParser());
-  app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(bodyParser.json());
+  app.use(express.urlencoded({ extended: false }));
+  app.use(express.json());
   app.use(passport.initialize());
   app.use(compression());
   app.use(cors({ origin: process.env.ALLOWED_ORIGIN, credentials: true }));
