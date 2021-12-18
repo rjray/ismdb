@@ -63,6 +63,7 @@
                 ]
             }
         ],
+        "react/jsx-no-bind": "off",
         "jsx-a11y/control-has-associated-label": "off"
     },
     "settings": {
