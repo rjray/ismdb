@@ -25,13 +25,6 @@ const compareVersion = (a, b) => {
   return a.length === b.length ? 0 : a.length < b.length ? -1 : 1;
 };
 
-const objectifyError = (error) => {
-  return {
-    name: error.name,
-    message: error.message,
-  };
-};
-
 // Taken from https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore
 // to replace usage of lodash.
 const sortBy = (key) => {
@@ -98,7 +91,6 @@ const fixupWhereField = (where, canBeNull = new Set()) => {
 
 module.exports = {
   compareVersion,
-  objectifyError,
   sortBy,
   fixAggregateOrderFields,
   fixupOrderField,
