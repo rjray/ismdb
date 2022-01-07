@@ -6,8 +6,7 @@
   "main": "server.js",
   "scripts": {
     "start": "cd src && nodemon -w openapi.yaml -w . server.js",
-    "mysql-reset": "(cd src; sequelize db:drop; sequelize db:create && sequelize db:migrate && sequelize db:seed:all && ../util/import_refs.pl ~/work/nmrdb/models.db --env)",
-    "sqlite-reset": "(cd src; rm -f *.db; sequelize db:migrate && sequelize db:seed:all && ../util/import_refs.pl ~/work/nmrdb/models.db --env)",
+    "reset": "(cd src; rm -f *.db; sequelize db:migrate && sequelize db:seed:all && ../util/import_refs.pl ~/work/nmrdb/models.db --env)",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Randy J. Ray <rjray@blackperl.com>",
@@ -30,7 +29,6 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "sequelize": "^6.12.4",
-    "sequelize-cli": "^6.3.0",
     "sqlite3": "^5.0.2"
   },
   "devDependencies": {
@@ -42,6 +40,7 @@
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-prettier": "^4.0.0",
     "nodemon": "^2.0.15",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "sequelize-cli": "^6.3.0"
   }
 }
