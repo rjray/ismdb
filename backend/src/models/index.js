@@ -1,3 +1,11 @@
+/*
+  This is the entry point for the "models" sub-module. This dynamically loads
+  all the model classes (in this directory) and builds an object containing
+  the models (along with pointers to the instantiated Sequelize instance and
+  the Sequelize pointer itself). This was originally created by the
+  sequelize-cli application, but is pretty heavily-modified at this point.
+ */
+
 /* eslint-disable import/no-dynamic-require */
 const fs = require("fs");
 const path = require("path");
