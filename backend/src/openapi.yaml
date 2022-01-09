@@ -114,8 +114,6 @@ components:
       type: string
     referenceNameType:
       type: string
-    referenceTypeType:
-      type: string
     referenceIsbnType:
       type: string
     tagNameType:
@@ -320,7 +318,7 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/referenceType"
-    recordTypeType:
+    referenceTypeType:
       type: object
       required:
         - id
@@ -336,18 +334,16 @@ components:
       type: object
       required:
         - name
-        - RecordTypeId
+        - ReferenceTypeId
         - tags
       properties:
         name:
           $ref: "#/components/schemas/referenceNameType"
-        type:
-          $ref: "#/components/schemas/referenceTypeType"
         isbn:
           $ref: "#/components/schemas/referenceIsbnType"
         language:
           $ref: "#/components/schemas/languageType"
-        RecordTypeId:
+        ReferenceTypeId:
           $ref: "#/components/schemas/idType"
         MagazineIssueId:
           $ref: "#/components/schemas/idType"
@@ -377,7 +373,7 @@ components:
       required:
         - id
         - name
-        - RecordType
+        - ReferenceType
         - createdAt
         - updatedAt
         - tags
@@ -386,14 +382,12 @@ components:
           $ref: "#/components/schemas/idType"
         name:
           $ref: "#/components/schemas/referenceNameType"
-        type:
-          $ref: "#/components/schemas/referenceTypeType"
         isbn:
           $ref: "#/components/schemas/referenceIsbnType"
         language:
           $ref: "#/components/schemas/languageType"
-        RecordType:
-          $ref: "#/components/schemas/recordTypeType"
+        ReferenceType:
+          $ref: "#/components/schemas/referenceTypeType"
         MagazineIssue:
           $ref: "#/components/schemas/magazineIssueType"
         Magazine:
@@ -1482,12 +1476,12 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Tags
-  "/misc/recordtypes":
+  "/misc/referencetypes":
     x-exegesis-controller: miscController
     get:
-      summary: Fetch all record types as an array
-      description: Retrieve all record types as an array of objects.
-      operationId: getAllRecordTypes
+      summary: Fetch all reference types as an array
+      description: Retrieve all reference types as an array of objects.
+      operationId: getAllReferenceTypes
       responses:
         "200":
           description: All reference types
@@ -1496,12 +1490,12 @@ paths:
               schema:
                 type: object
                 required:
-                  - recordTypes
+                  - referenceTypes
                 properties:
-                  recordTypes:
+                  referenceTypes:
                     type: array
                     items:
-                      $ref: "#/components/schemas/recordTypeType"
+                      $ref: "#/components/schemas/referenceTypeType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
@@ -1554,34 +1548,6 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/tagTypeType"
-        default:
-          $ref: "#/components/responses/generalErrorResponse"
-      tags:
-        - Miscellaneous
-  "/misc/referencetypes":
-    x-exegesis-controller: miscController
-    get:
-      summary: Fetch all reference type strings as an array
-      description: Fetch all reference type strings currently in use from the
-        database as an array of strings.
-      operationId: getAllReferenceTypes
-      parameters:
-        - $ref: "#/components/parameters/typeParam"
-        - $ref: "#/components/parameters/limitParam"
-      responses:
-        "200":
-          description: All matching reference types
-          content:
-            "application/json":
-              schema:
-                type: object
-                required:
-                  - types
-                properties:
-                  types:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/referenceTypeType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:

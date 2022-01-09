@@ -4,27 +4,25 @@
  */
 
 const {
-  fetchAllRecordTypes,
+  fetchAllReferenceTypes,
   fetchAllLanguages,
   fetchAllTagTypes,
-  fetchAllReferenceTypes,
 } = require("../db/misc");
 const { quickSearchByName } = require("../db/raw-sql");
-const { fixupWhereField } = require("../lib/utils");
 
 /*
-  GET /misc/recordtypes
+  GET /misc/referencetypes
 
-  Get all RecordType entities, sorted by ID. The return value is an object with
-  one key, "recordTypes", that is an array of the types. Each array entry is an
-  object with "id", "name", "description" and "notes" keys.
+  Get all ReferenceType entities, sorted by ID. The return value is an object
+  with one key, "referenceTypes", that is an array of the types. Each array
+  entry is an object with "id", "name", "description" and "notes" keys.
  */
-function getAllRecordTypes(context) {
+function getAllReferenceTypes(context) {
   const { res } = context;
 
-  return fetchAllRecordTypes({ order: ["id"] })
-    .then((recordTypes) => {
-      res.status(200).pureJson({ recordTypes });
+  return fetchAllReferenceTypes({ order: ["id"] })
+    .then((referenceTypes) => {
+      res.status(200).pureJson({ referenceTypes });
     })
     .catch((error) => {
       res.status(500).pureJson({
@@ -88,37 +86,6 @@ function getAllTagTypes(context) {
 }
 
 /*
-  GET /misc/referencetypes
-
-  Get all distinct "type" values from the references table. The return value is
-  an object with one key, "types", that is an array of the types in alphabetic
-  order. The query parameter "type" limits the matching returned, and the
-  parameter "limit" limits the number of values returned. Both are optional.
- */
-function getAllReferenceTypes(context) {
-  const { query } = context.params;
-  const { res } = context;
-
-  if (query.type) {
-    query.where = fixupWhereField([`type,substring,${query.type}`]);
-    delete query.type;
-  }
-
-  return fetchAllReferenceTypes(query)
-    .then((types) => {
-      res.status(200).pureJson({ types });
-    })
-    .catch((error) => {
-      res.status(500).pureJson({
-        error: {
-          summary: error.name,
-          description: error.message,
-        },
-      });
-    });
-}
-
-/*
   GET /misc/quicksearch
 
   Get the records that match the "query" parameter in a substring context on
@@ -147,9 +114,8 @@ function quickSearchName(context) {
 }
 
 module.exports = {
-  getAllRecordTypes,
+  getAllReferenceTypes,
   getAllLanguages,
   getAllTagTypes,
-  getAllReferenceTypes,
   quickSearchName,
 };

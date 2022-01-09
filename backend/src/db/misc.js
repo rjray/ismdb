@@ -4,14 +4,14 @@
 
 const { Op } = require("sequelize");
 
-const { RecordType, Reference, Tag, Sequelize } = require("../models");
+const { ReferenceType, Reference, Tag, Sequelize } = require("../models");
 
-// Fetch all RecordType entities.
-const fetchAllRecordTypes = async (opts = {}) => {
-  const results = await RecordType.findAll({ ...opts });
-  const recordTypes = results.map((rt) => rt.get());
+// Fetch all ReferenceType entities.
+const fetchAllReferenceTypes = async (opts = {}) => {
+  const results = await ReferenceType.findAll({ ...opts });
+  const referenceTypes = results.map((rt) => rt.get());
 
-  return recordTypes;
+  return referenceTypes;
 };
 
 // Fetch all distinct languages referred to in references.
@@ -75,34 +75,8 @@ const fetchAllTagTypes = async () => {
   return types;
 };
 
-// Fetch all distinct "types" referred to in the tags.
-const fetchAllReferenceTypes = async (opts = {}) => {
-  const types = await Reference.findAll({
-    attributes: [[Sequelize.fn("DISTINCT", Sequelize.col("type")), "type"]],
-    where: {
-      [Op.and]: [
-        {
-          type: {
-            [Op.ne]: null,
-          },
-        },
-        {
-          type: {
-            [Op.ne]: "",
-          },
-        },
-      ],
-    },
-    order: ["type"],
-    ...opts,
-  });
-
-  return types.map((i) => i.type);
-};
-
 module.exports = {
-  fetchAllRecordTypes,
+  fetchAllReferenceTypes,
   fetchAllLanguages,
   fetchAllTagTypes,
-  fetchAllReferenceTypes,
 };
