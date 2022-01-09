@@ -1,47 +1,39 @@
-const {
-  createStringGetter,
-  createStringSetter,
-} = require("../lib/getter-setter");
+/*
+  Reference model definition.
+ */
 
-module.exports = (sequelize, DataTypes) => {
-  const Reference = sequelize.define(
-    "Reference",
+const { Model } = require("sequelize");
+
+module.exports = (sequelize, DataTypes, { Reference: fields }) => {
+  class Reference extends Model {
+    static associate(models) {
+      Reference.belongsTo(models.RecordType);
+      Reference.belongsToMany(models.Author, {
+        as: "Authors",
+        through: { model: models.AuthorsReferences },
+        foreignKey: "referenceId",
+      });
+      Reference.belongsToMany(models.Tag, {
+        as: "Tags",
+        through: { model: models.TagsReferences },
+        foreignKey: "referenceId",
+      });
+    }
+  }
+
+  Reference.init(
     {
       name: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.STRING(fields.name),
         allowNull: false,
       },
-      type: {
-        type: DataTypes.STRING(75),
-        allowNull: false,
-      },
-      isbn: {
-        type: DataTypes.STRING(15),
-        get: createStringGetter("isbn"),
-        set: createStringSetter("isbn"),
-      },
-      language: {
-        type: DataTypes.STRING(50),
-        get: createStringGetter("language"),
-        set: createStringSetter("language"),
-      },
+      language: DataTypes.STRING(fields.language),
     },
-    {}
+    {
+      sequelize,
+      modelName: "Reference",
+    }
   );
-  Reference.associate = function (models) {
-    Reference.belongsTo(models.RecordType);
-    Reference.belongsTo(models.MagazineIssue, { onDelete: "CASCADE" });
-    Reference.belongsToMany(models.Author, {
-      as: "Authors",
-      through: { model: models.AuthorsReferences },
-      foreignKey: "referenceId",
-    });
-    Reference.belongsToMany(models.Tag, {
-      as: "Tags",
-      through: { model: models.TagsReferences },
-      foreignKey: "referenceId",
-    });
-  };
 
   return Reference;
 };
