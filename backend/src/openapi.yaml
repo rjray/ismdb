@@ -102,46 +102,32 @@ components:
       format: date-time
     languageType:
       type: string
-      maxLength: 50
     authorNameOrAliasType:
       type: string
-      maxLength: 60
     magazineNameType:
       type: string
-      maxLength: 50
     magazineAliasesType:
       type: string
-      maxLength: 100
     magazineNotesType:
       type: string
-      maxLength: 1000
     magazineIssueNumberType:
       type: string
-      maxLength: 50
     referenceNameType:
       type: string
-      maxLength: 255
     referenceTypeType:
       type: string
-      maxLength: 75
     referenceIsbnType:
       type: string
-      maxLength: 15
     tagNameType:
       type: string
-      maxLength: 75
     tagDescriptionType:
       type: string
-      maxLength: 255
     tagTypeType:
       type: string
-      maxLength: 25
     matchNameType:
       type: string
-      maxLength: 255
     matchTypeType:
       type: string
-      maxLength: 10
     newAuthorAliasType:
       type: object
       required:
@@ -344,10 +330,8 @@ components:
           $ref: "#/components/schemas/idType"
         description:
           type: string
-          maxLength: 50
         notes:
           type: string
-          maxLength: 255
     newReferenceType:
       type: object
       required:
@@ -476,7 +460,6 @@ components:
           $ref: "#/components/schemas/idType"
         summary:
           type: string
-          maxLength: 75
         description:
           type: string
         reference:
@@ -492,7 +475,6 @@ components:
           type: string
         summary:
           type: string
-          maxLength: 75
         message:
           type: string
     notificationsType:
@@ -1644,4 +1626,4 @@ tags:
   - name: Tags
     description: Operations that are primarily centered around tags
   - name: Miscellaneous
-    description: Operations that are not associated with any previous group
+    description: Operations that are not associated with any other group
