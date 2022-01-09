@@ -1,0 +1,48 @@
+# This file defines the sizes of the string-based fields in the tables. Each
+# top-level key is the name of the model in Sequelize, and the keys of each
+# are the string fields for that table. Each key value is the size to use for
+# that field.
+AuthScope:
+  description: 100
+  name: 50
+Author:
+  name: 60
+AuthorAlias:
+  name: 60
+Book:
+  isbn: 15
+FeatureTag:
+  description: 255
+  name: 25
+Magazine:
+  aliases: 100
+  language: 50
+  name: 50
+  notes: 500
+MagazineIssue:
+  issue: 50
+PhotoCollection:
+  location: 255
+  media: 50
+Publisher:
+  name: 50
+  notes: 500
+Reference:
+  language: 50
+  name: 255
+ReferenceType:
+  description: 50
+  name: 25
+  notes: 255
+Series:
+  name: 50
+  notes: 500
+Tag:
+  description: 255
+  name: 75
+  type: 25
+User:
+  email: 50
+  name: 75
+  password: 60
+  username: 25
