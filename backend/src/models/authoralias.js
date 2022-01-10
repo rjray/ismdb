@@ -1,16 +1,27 @@
-module.exports = (sequelize, DataTypes) => {
-  const AuthorAlias = sequelize.define(
-    "AuthorAlias",
+/*
+  AuthorAlias model definition.
+ */
+
+const { Model } = require("sequelize");
+
+module.exports = (sequelize, DataTypes, { AuthorAlias: fields }) => {
+  class AuthorAlias extends Model {
+    static associate(models) {
+      AuthorAlias.belongsTo(models.Author, { onDelete: "CASCADE" });
+    }
+  }
+
+  AuthorAlias.init(
     {
-      name: {
-        type: DataTypes.STRING(60),
-        allowNull: false,
-      },
+      name: DataTypes.STRING(fields.name),
+      allowNull: false,
     },
-    { timestamps: false }
+    {
+      sequelize,
+      modelName: "AuthorAlias",
+      timestamps: false,
+    }
   );
-  AuthorAlias.associate = function (models) {
-    AuthorAlias.belongsTo(models.Author, { onDelete: "CASCADE" });
-  };
+
   return AuthorAlias;
 };
