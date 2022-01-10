@@ -1,6 +1,10 @@
+/*
+  Database set-up/tear-down for AuthorsReferences table.
+ */
+
 module.exports = {
-  up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("AuthorsReferences", {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable("AuthorsReferences", {
       authorId: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -21,7 +25,8 @@ module.exports = {
       },
     });
   },
-  down: (queryInterface) => {
-    return queryInterface.dropTable("AuthorsReferences");
+
+  down: async (queryInterface) => {
+    await queryInterface.dropTable("AuthorsReferences");
   },
 };
