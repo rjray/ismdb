@@ -1,37 +1,35 @@
-const {
-  createStringGetter,
-  createStringSetter,
-} = require("../lib/getter-setter");
+/*
+  Tag model definition.
+ */
 
-module.exports = (sequelize, DataTypes) => {
-  const Tag = sequelize.define(
-    "Tag",
+const { Model } = require("sequelize");
+
+module.exports = (sequelize, DataTypes, { Tag: fields }) => {
+  class Tag extends Model {
+    static associate(models) {
+      Tag.belongsToMany(models.Reference, {
+        as: "References",
+        through: { model: models.TagsReferences },
+        foreignKey: "tagId",
+      });
+    }
+  }
+
+  Tag.init(
     {
       name: {
-        type: DataTypes.STRING(75),
+        type: DataTypes.STRING(fields.name),
         allowNull: false,
-        unique: true,
       },
-      description: {
-        type: DataTypes.STRING(255),
-        get: createStringGetter("description"),
-        set: createStringSetter("description"),
-      },
-      type: {
-        type: DataTypes.STRING(25),
-        get: createStringGetter("type"),
-        set: createStringSetter("type"),
-      },
+      type: DataTypes.STRING(fields.type),
+      description: DataTypes.STRING(fields.description),
     },
-    { timestamps: false }
+    {
+      sequelize,
+      modelName: "Tag",
+      timestamps: false,
+    }
   );
-  Tag.associate = function (models) {
-    Tag.belongsToMany(models.Reference, {
-      as: "References",
-      through: { model: models.TagsReferences },
-      foreignKey: "tagId",
-    });
-  };
 
   return Tag;
 };
