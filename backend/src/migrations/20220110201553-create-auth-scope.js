@@ -1,3 +1,10 @@
+/*
+  Database set-up/tear-down for AuthScopes table.
+ */
+
+/* eslint-disable import/no-dynamic-require */
+const { AuthScope } = require(`${__dirname}/../config/string_fields`);
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("AuthScopes", {
@@ -8,15 +15,16 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       name: {
-        type: Sequelize.STRING(50),
+        type: Sequelize.STRING(AuthScope.name),
         allowNull: false,
         unique: true,
       },
       description: {
-        type: Sequelize.STRING(256),
+        type: Sequelize.STRING(AuthScope.description),
       },
     });
   },
+
   down: async (queryInterface) => {
     await queryInterface.dropTable("AuthScopes");
   },
