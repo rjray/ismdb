@@ -1,6 +1,10 @@
+/*
+  Database set-up/tear-down for TagsReferences table.
+ */
+
 module.exports = {
-  up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("TagsReferences", {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable("TagsReferences", {
       tagId: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -21,7 +25,8 @@ module.exports = {
       },
     });
   },
-  down: (queryInterface) => {
-    return queryInterface.dropTable("TagsReferences");
+
+  down: async (queryInterface) => {
+    await queryInterface.dropTable("TagsReferences");
   },
 };
