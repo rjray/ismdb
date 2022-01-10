@@ -1,5 +1,5 @@
 /*
-  Database set-up/tear-down for References table.
+  Database set-up/tear-down for Books table.
  */
 
 /* eslint-disable import/no-dynamic-require */
