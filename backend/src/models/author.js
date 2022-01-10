@@ -18,8 +18,10 @@ module.exports = (sequelize, DataTypes, { Author: fields }) => {
 
   Author.init(
     {
-      name: DataTypes.STRING(fields.name),
-      allowNull: false,
+      name: {
+        type: DataTypes.STRING(fields.name),
+        allowNull: false,
+      },
     },
     {
       sequelize,

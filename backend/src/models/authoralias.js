@@ -13,8 +13,10 @@ module.exports = (sequelize, DataTypes, { AuthorAlias: fields }) => {
 
   AuthorAlias.init(
     {
-      name: DataTypes.STRING(fields.name),
-      allowNull: false,
+      name: {
+        type: DataTypes.STRING(fields.name),
+        allowNull: false,
+      },
     },
     {
       sequelize,
