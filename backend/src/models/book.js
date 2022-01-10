@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes, { Book: fields }) => {
 
   Book.init(
     {
+      referenceId: {
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
       isbn: DataTypes.STRING(fields.isbn),
     },
     {
