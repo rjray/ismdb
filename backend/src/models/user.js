@@ -1,52 +1,46 @@
-module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define(
-    "User",
+/*
+  User model definition.
+ */
+
+const { Model } = require("sequelize");
+
+module.exports = (sequelize, DataTypes, { User: fields }) => {
+  class User extends Model {
+    static associate(models) {
+      User.belongsToMany(models.AuthScope, {
+        as: "Scopes",
+        through: { model: models.UsersAuthScopes },
+        foreignKey: "userId",
+      });
+    }
+  }
+
+  User.init(
     {
-      username: {
-        type: DataTypes.STRING(25),
-        allowNull: false,
-        unique: true,
-      },
       name: {
-        type: DataTypes.STRING(75),
+        type: DataTypes.STRING(fields.name),
         allowNull: false,
       },
       email: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(fields.email),
+        allowNull: false,
+        unique: true,
+      },
+      username: {
+        type: DataTypes.STRING(fields.username),
         allowNull: false,
         unique: true,
       },
       password: {
-        type: DataTypes.STRING(60),
+        type: DataTypes.STRING(fields.password),
         allowNull: false,
       },
-      resetRequired: {
-        type: DataTypes.BOOLEAN,
-        default: false,
-      },
-      verified: {
-        type: DataTypes.BOOLEAN,
-        default: false,
-      },
-      disabled: {
-        type: DataTypes.BOOLEAN,
-        default: false,
-      },
-      disabledReason: DataTypes.STRING(255),
-      failedLoginAttempts: {
-        type: DataTypes.SMALLINT,
-        default: 0,
-      },
     },
-    {}
+    {
+      sequelize,
+      modelName: "User",
+    }
   );
-  User.associate = function (models) {
-    User.belongsToMany(models.AuthScope, {
-      as: "Scopes",
-      through: { model: models.UsersAuthScopes },
-      foreignKey: "userId",
-    });
-  };
 
   return User;
 };

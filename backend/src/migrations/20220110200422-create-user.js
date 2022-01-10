@@ -1,3 +1,10 @@
+/*
+  Database set-up/tear-down for Users table.
+ */
+
+/* eslint-disable import/no-dynamic-require */
+const { User } = require(`${__dirname}/../config/string_fields`);
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("Users", {
@@ -7,43 +14,23 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      username: {
-        type: Sequelize.STRING(25),
-        allowNull: false,
-        unique: true,
-      },
       name: {
-        type: Sequelize.STRING(75),
+        type: Sequelize.STRING(User.name),
         allowNull: false,
       },
       email: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.STRING(User.email),
+        allowNull: false,
+        unique: true,
+      },
+      username: {
+        type: Sequelize.STRING(User.username),
         allowNull: false,
         unique: true,
       },
       password: {
-        type: Sequelize.STRING(60),
+        type: Sequelize.STRING(User.password),
         allowNull: false,
-      },
-      resetRequired: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
-      verified: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
-      disabled: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
-      disabledReason: Sequelize.STRING(255),
-      failedLoginAttempts: {
-        type: Sequelize.SMALLINT,
-        defaultValue: 0,
       },
       createdAt: {
         allowNull: false,
@@ -55,6 +42,7 @@ module.exports = {
       },
     });
   },
+
   down: async (queryInterface) => {
     await queryInterface.dropTable("Users");
   },
