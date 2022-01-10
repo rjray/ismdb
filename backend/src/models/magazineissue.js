@@ -1,18 +1,29 @@
-module.exports = (sequelize, DataTypes) => {
-  const MagazineIssue = sequelize.define(
-    "MagazineIssue",
+/*
+  MagazineIssue model definition.
+ */
+
+const { Model } = require("sequelize");
+
+module.exports = (sequelize, DataTypes, { MagazineIssue: fields }) => {
+  class MagazineIssue extends Model {
+    static associate(models) {
+      MagazineIssue.belongsTo(models.Magazine);
+      MagazineIssue.hasMany(models.MagazineFeature);
+    }
+  }
+
+  MagazineIssue.init(
     {
-      number: {
-        type: DataTypes.STRING(50),
+      issue: {
+        type: DataTypes.STRING(fields.issue),
         allowNull: false,
       },
     },
-    {}
+    {
+      sequelize,
+      modelName: "MagazineIssue",
+    }
   );
-  MagazineIssue.associate = function (models) {
-    MagazineIssue.belongsTo(models.Magazine, { onDelete: "CASCADE" });
-    MagazineIssue.hasMany(models.Reference);
-  };
 
   return MagazineIssue;
 };
