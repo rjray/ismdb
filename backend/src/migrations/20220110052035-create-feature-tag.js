@@ -17,6 +17,7 @@ module.exports = {
       name: {
         type: Sequelize.STRING(FeatureTag.name),
         allowNull: false,
+        unique: true,
       },
       description: {
         type: Sequelize.STRING(FeatureTag.description),
