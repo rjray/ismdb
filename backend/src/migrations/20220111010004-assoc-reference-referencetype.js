@@ -15,7 +15,7 @@ module.exports = {
     });
   },
 
-  down: (queryInterface) => {
-    return queryInterface.removeColumn("References", "referenceTypeId");
+  down: async (queryInterface) => {
+    await queryInterface.removeColumn("References", "referenceTypeId");
   },
 };
