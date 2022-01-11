@@ -1,3 +1,7 @@
+/*
+  Database set-up/tear-down for UsersAuthScopes table.
+ */
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("UsersAuthScopes", {
