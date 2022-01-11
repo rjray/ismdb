@@ -1,6 +1,10 @@
+/*
+  Seed the AuthScopes table with the set of values that will be used.
+ */
+
 module.exports = {
   up: async (queryInterface) => {
-    return queryInterface.bulkInsert("AuthScopes", [
+    await queryInterface.bulkInsert("AuthScopes", [
       {
         name: "admin",
         description: "Administrative account",
@@ -17,6 +21,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    return queryInterface.bulkDelete("AuthScopes", null, {});
+    await queryInterface.bulkDelete("AuthScopes", null, {});
   },
 };

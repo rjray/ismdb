@@ -1,3 +1,7 @@
+/*
+  Seed the Users and UsersAuthScopes tables.
+ */
+
 const bcrypt = require("bcrypt");
 require("dotenv").config({
   path: `.env.extra.${process.env.NODE_ENV}`,
@@ -13,6 +17,7 @@ module.exports = {
     const adminId = baseId++;
     const guestId = createGuest ? baseId++ : 0;
     const mainId = createMain ? baseId++ : 0;
+    // Always have an admin user:
     const users = [
       {
         id: adminId,
@@ -27,6 +32,7 @@ module.exports = {
         updatedAt: now,
       },
     ];
+    // Add a guest user if requested:
     if (createGuest) {
       users.push({
         id: guestId,
@@ -41,6 +47,7 @@ module.exports = {
         updatedAt: now,
       });
     }
+    // Add a "main" user if requested:
     if (createMain) {
       users.push({
         id: mainId,
@@ -83,8 +90,12 @@ module.exports = {
       }
     });
 
-    return queryInterface.bulkInsert("UsersAuthScopes", linkages);
+    await queryInterface.bulkInsert("UsersAuthScopes", linkages);
   },
 
-  down: async (queryInterface) => queryInterface.bulkDelete("Users", null, {}),
+  down: async (queryInterface) => {
+    // Clear the tables in the opposite order as above:
+    await queryInterface.bulkDelete("UsersAuthScopes", null, {});
+    await queryInterface.bulkDelete("Users", null, {});
+  },
 };
