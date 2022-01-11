@@ -15,7 +15,7 @@ module.exports = {
       name: "featuretags_magazinefeatures_featuretag",
     });
     await queryInterface.addIndex("FeatureTagsMagazineFeatures", {
-      fields: ["referenceId"],
+      fields: ["magazineFeatureId"],
       name: "featuretags_magazinefeatures_magazinefeature",
     });
   },

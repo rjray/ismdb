@@ -19,7 +19,7 @@ module.exports = {
         allowNull: false,
         references: {
           model: "MagazineFeatures",
-          key: "id",
+          key: "referenceId",
         },
         onDelete: "CASCADE",
       },
