@@ -10,28 +10,13 @@ use Getopt::Long 'GetOptions';
 
 use DBI;
 
-# Used by the keyword-to-tags conversion:
-my %META_TAGS = (
-    aircraft   => 'An aircraft subject',
-    armor      => 'A ground vehicle subject',
-    figures    => 'A figurine subject',
-    scifi      => 'A science fiction/fantasy subject',
-    ships      => 'A naval/nautical subject',
-    techniques => 'An entry focusing on techniques',
-    automotive => 'A civilian ground vehicle subject',
-    diorama    => 'A diorama subject',
-);
-my @SCALE_TAGS = (
-    6, 8, 9, 12, 16, 20, 24, 25, 30, 32, 35, 43, 48, 72, 76, 96, 100, 144, 150,
-    200, 288, 350, 700,
-);
-
 # This will be the global table of tags, mapping names to IDs:
 my %TAGS = ();
+# This table is used in keywords2tags to identify the meta tags:
+my %META_TAGS = ();
 
 my %opts;
-GetOptions(\%opts, qw(host=s port=i username=s password=s env:s)) or
-    die "Error in command line\n";
+GetOptions(\%opts, qw(env:s)) or die "Error in command line\n";
 my ($dbin, $dbout) = @ARGV;
 
 if (defined $opts{env}) {
@@ -69,123 +54,40 @@ my $storage = $opts{storage} || 'ismdb.db';
 my $dbho = DBI->connect("dbi:SQLite:dbname=$storage", q{}, q{}, $attrs);
 $dbho->do('PRAGMA foreign_keys = ON');
 
-setup_meta_tags($dbho);
-seed_record_types($dbho);
+read_existing_tags($dbho);
 migrate_authors($dbhi, $dbho);
 migrate_periodicals($dbhi, $dbho);
-migrate_reference_table($dbhi, $dbho);
-fix_placeholders($dbho);
-fix_author_dates($dbho);
-fix_magazine_issue_dates($dbho);
+#migrate_reference_table($dbhi, $dbho);
+#fix_author_dates($dbho);
+#fix_magazine_issue_dates($dbho);
 
 $dbhi->disconnect;
 $dbho->disconnect;
 
 exit;
 
-sub setup_meta_tags {
+sub read_existing_tags {
     my $dbhout = shift;
+    my %type_count = ();
 
-    my $sth = $dbhout->prepare(
-        'INSERT INTO `Tags` (`id`, `name`, `description`, `type`) VALUES ' .
-        '(?, ?, ?, ?)'
-    );
+    my $sth = $dbhout->prepare('SELECT id, name, type FROM `Tags` ORDER BY id');
+    $sth->execute;
+    my $data = $sth->fetchall_arrayref;
+    $sth->finish;
 
-    my $result = eval {
-        my $id = 0;
-        for my $tag (sort keys %META_TAGS) {
-            $sth->execute(++$id, $tag, $META_TAGS{$tag}, 'meta');
-            $TAGS{$tag} = $id;
+    for my $row (@{$data}) {
+        my ($id, $name, $type) = @{$row};
+        $TAGS{$name} = $id;
+        $type_count{$type || 'unknown'}++;
+        if ($type eq 'meta') {
+            $META_TAGS{$name}++;
         }
-
-        $dbhout->commit;
-        return $id;
-    };
-    if (! $result) {
-        my $err = $@;
-        $dbhout->rollback;
-        die "failure in setup_meta_tags: $err\n";
     }
 
-    print scalar(keys %META_TAGS) . " meta tags seeded to Tags\n";
-
-    my @nationalities = <DATA>;
-    chomp @nationalities;
-    my $result2 = eval {
-        my $id = $result;
-        for my $pair (@nationalities) {
-            my ($tag, $country) = split /,/ => $pair;
-            my $desc = "Manufactured or operated by $country";
-            $sth->execute(++$id, $tag, $desc, 'nationality');
-            $TAGS{$tag} = $id;
-        }
-
-        $dbhout->commit;
-        return $id;
-    };
-    if (! $result2) {
-        my $err = $@;
-        $dbhout->rollback;
-        die "failure in setup_meta_tags: $err\n";
+    print scalar(keys %TAGS) . " existing tags read:\n";
+    for my $type (sort keys %type_count) {
+        printf "\t%d of type %s\n", $type_count{$type}, $type;
     }
-
-    print scalar(@nationalities) . " nationality tags seeded to Tags\n";
-
-    my $result3 = eval {
-        my $id = $result2;
-        for my $scale (@SCALE_TAGS) {
-            my $tag = "1/$scale";
-            my $desc = "$tag scale subject";
-            $sth->execute(++$id, $tag, $desc, 'scale');
-            $TAGS{$tag} = $id;
-        }
-        $sth->execute(++$id, 'box-scale', 'Box-scale subject', 'scale');
-
-        $dbhout->commit;
-        return $id;
-    };
-    if (! $result3) {
-        my $err = $@;
-        $dbhout->rollback;
-        die "failure in setup_meta_tags: $err\n";
-    }
-
-    printf "%d scale tags seeded to Tags\n", scalar(@SCALE_TAGS) + 1;
-
-    return;
-}
-
-sub seed_record_types {
-    my $dbhout = shift;
-
-    # For this one, nothing is read from the input DB. Just stuff the following
-    # data in:
-    my @data = (
-        [ 1, 'book', 'Book' ],
-        [ 2, 'article', 'Magazine Feature' ],
-        [ 3, 'placeholder', 'Magazine Placeholder' ],
-        [ 4, 'photos', 'Photo Collection' ],
-        [ 5, 'dvdcd', 'DVD-ROM or CD-ROM' ],
-    );
-
-    my $sth = $dbhout->prepare(
-        'INSERT INTO `RecordTypes` (`id`, `name`, `description`) VALUES ' .
-        '(?, ?, ?)'
-    );
-    my $result = eval {
-        for my $row (@data) {
-            $sth->execute(@{$row});
-        }
-
-        $dbhout->commit;
-    };
-    if (! $result) {
-        my $err = $@;
-        $dbhout->rollback;
-        die "failure in migrate_record_types: $err\n";
-    }
-
-    print scalar(@data) . " rows seeded to RecordTypes\n";
 
     return;
 }
@@ -366,18 +268,6 @@ sub migrate_reference_table {
     return;
 }
 
-sub fix_placeholders {
-    my $dbh = shift;
-
-    $dbh->do(
-        'UPDATE `References` SET `recordTypeId` = 3 WHERE ' .
-        '`type` = "placeholder"'
-    );
-    $dbh->commit;
-
-    return;
-}
-
 sub fix_author_dates {
     my $dbh = shift;
     my ($fixed, $skipped) = (0, 0);
@@ -535,38 +425,3 @@ sub keywords2tags {
 }
 
 __END__
-american,the USA
-australian,Australia
-austrian,Austria
-belgian,Belgium
-chinese,China
-czech,the Czech Republic
-egyptian,Egypt
-finnish,Finland
-french,France
-german,Germany
-greek,Greece
-indian,India
-iranian,Iran
-iraqi,Iraq
-irish,Ireland
-israeli,Israel
-italian,Italy
-japanese,Japan
-lebanese,Lebanon
-libyan,Libya
-mexican,Mexico
-dutch,The Netherlands
-pakistani,Pakistan
-palestinian,Palestine
-polish,Poland
-russian,Russia
-saudi,Saudi Arabia
-scottish,Scotland
-spanish,Spain
-swedish,Sweden
-swiss,Switzerland
-syrian,Syria
-turkish,Turkey
-ukrainian,Ukraine
-british,England
