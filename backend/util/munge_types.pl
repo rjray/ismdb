@@ -89,11 +89,13 @@ for my $entry (@{$data}) {
     }
 }
 
-my @publishers = sort keys %publishers;
+for my $pub (sort keys %publishers) {
+    $publishers{$pub} = { name => $pub };
+}
 
 if ($opts{publishers}) {
-    DumpFile($opts{publishers}, \@publishers);
-    print scalar(@publishers) . " publishers written.\n";
+    DumpFile($opts{publishers}, \%publishers);
+    print scalar(keys %publishers) . " publishers written.\n";
 }
 
 if ($opts{series}) {
