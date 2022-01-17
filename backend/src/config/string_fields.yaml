@@ -11,6 +11,7 @@ AuthorAlias:
   name: 60
 Book:
   isbn: 15
+  seriesNumber: 10
 FeatureTag:
   description: 255
   name: 25

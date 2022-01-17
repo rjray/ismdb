@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes, { Book: fields }) => {
         type: DataTypes.INTEGER,
       },
       isbn: DataTypes.STRING(fields.isbn),
+      seriesNumber: DataTypes.STRING(fields.seriesNumber),
     },
     {
       sequelize,

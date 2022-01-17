@@ -21,6 +21,9 @@ module.exports = {
       isbn: {
         type: Sequelize.STRING(Book.isbn),
       },
+      seriesNumber: {
+        type: Sequelize.STRING(Book.seriesNumber),
+      },
     });
   },
   down: async (queryInterface) => {
