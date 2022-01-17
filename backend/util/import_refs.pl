@@ -6,18 +6,53 @@ use warnings;
 use utf8;
 
 use Carp qw(croak);
+use File::Basename 'dirname';
 use Getopt::Long 'GetOptions';
 
 use DBI;
+use YAML 'LoadFile';
 
 # This will be the global table of tags, mapping names to IDs:
 my %TAGS = ();
 # This table is used in keywords2tags to identify the meta tags:
 my %META_TAGS = ();
+# For mapping publishers to IDs:
+my %PUBLISHERS = ();
+# For mapping series to publisher and ID:
+my %SERIES = ();
+
+# Regex rules for matching books that are in a series:
+my @RULESET = (
+    qr{
+        ^
+        (.*)
+        \s+
+        (?:(?:vol[.]?|no[.]?|\#)\s*([-\/\d]+))
+        (?:\s+(.*))?
+        $
+    }smxi,
+    qr{
+        ^
+        (.*)
+        \s+
+        ([-\/\d]+)
+        (?:\s+(.*))?
+        $
+    }smxi,
+    qr{
+        ^
+        (.*)
+        \s+
+        ([[:alpha:]]+[-.]?\d+)
+        (?:\s+(.*))?
+        $
+    }smxi,
+    qr{^(.*)\s+[(](\d+)[)](?:\s+(.*))?$}smi,
+);
 
 my %opts;
 GetOptions(\%opts, qw(env:s)) or die "Error in command line\n";
-my ($dbin, $dbout) = @ARGV;
+my ($dbin) = @ARGV;
 
 if (defined $opts{env}) {
     my $envfile = $opts{env} || $ENV{NODE_ENV} ? ".env.$ENV{NODE_ENV}" : '.env';
@@ -57,6 +92,7 @@ $dbho->do('PRAGMA foreign_keys = ON');
 read_existing_tags($dbho);
 migrate_authors($dbhi, $dbho);
 migrate_periodicals($dbhi, $dbho);
+setup_pubs_and_series($dbho);
 #migrate_reference_table($dbhi, $dbho);
 #fix_author_dates($dbho);
 #fix_magazine_issue_dates($dbho);
@@ -168,6 +204,82 @@ sub migrate_periodicals {
     }
 
     print scalar(@{$data}) . " rows added to Magazines\n";
+
+    return;
+}
+
+sub setup_pubs_and_series {
+    my ($dbhout) = @_;
+
+    my $dir = dirname __FILE__;
+    my $publishers = LoadFile("$dir/publishers.yaml");
+    my $series = LoadFile("$dir/series.yaml");
+
+    # Determine all the publishers that need to be created.
+    my %publishers = map { $_->{name}, 1 } (values %{$publishers});
+    for my $sname (keys %{$series}) {
+        next unless ($series->{$sname}->{publisher});
+        $publishers{$series->{$sname}->{publisher}} = 1;
+    }
+
+    my $sth = $dbhout->prepare(
+        'INSERT INTO `Publishers` (`id`, `name`, `notes`) VALUES (?, ?, ?)'
+    );
+    my $pub_id = 0;
+    my $result = eval {
+        for my $pubname (sort keys %publishers) {
+            $pub_id++;
+            $sth->execute($pub_id, $pubname, 'Imported from original source.');
+            $PUBLISHERS{$pubname} = $pub_id;
+        }
+
+        $dbhout->commit;
+    };
+    if (! $result) {
+        my $err = $@;
+        $dbhout->rollback;
+        die "failure in setup_pubs_and_series: $err\n";
+    }
+    $sth->finish;
+    print "$pub_id rows added to Publishers\n";
+
+    my $sth = $dbhout->prepare(
+        'INSERT INTO `Series` (`id`, `name`, `notes`, `publisherId`) ' .
+        'VALUES (?, ?, ?, ?)'
+    );
+    my $series_id = 0;
+    my %skeys = ();
+    $result = eval {
+        for my $sname (keys %{$series}) {
+            my $name = $series->{$sname}->{name};
+            my $publisher = $series->{$sname}->{publisher};
+            my $key = "$name|" . ($publisher || q{});
+            if ($skeys{$key}) {
+                # This name/publisher pair has already been inserted.
+                $SERIES{$sname} = $skeys{$key};
+                next;
+            } else {
+                $series_id++;
+                my $publisher_id = $publisher ? $PUBLISHERS{$publisher} : undef;
+                $sth->execute(
+                    $series_id,
+                    $name,
+                    'Imported from original source.',
+                    $publisher_id
+                );
+                $skeys{$key} = $SERIES{$sname} = [ $series_id, $publisher_id ];
+            }
+        }
+
+        $dbhout->commit;
+    };
+    if (! $result) {
+        my $err = $@;
+        $dbhout->rollback;
+        die "failure in setup_pubs_and_series: $err\n";
+    }
+    $sth->finish;
+    print "$series_id rows added to Series\n";
 
     return;
 }
