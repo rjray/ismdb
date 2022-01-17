@@ -7,7 +7,7 @@ module.exports = {
     await queryInterface.addColumn("Books", "seriesId", {
       type: Sequelize.INTEGER,
       references: {
-        model: "Publishers",
+        model: "Series",
         key: "id",
       },
     });
