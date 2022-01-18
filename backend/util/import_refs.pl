@@ -16,6 +16,10 @@ use YAML 'LoadFile';
 my %TAGS = ();
 # This table is used in keywords2tags to identify the meta tags:
 my %META_TAGS = ();
+# Feature tags are used for magazine articles/features:
+my %FEATURE_TAGS = ();
+# Tracking author IDs for validity checks:
+my %AUTHORS = ();
 # For mapping publishers to IDs:
 my %PUBLISHERS = ();
 # For mapping series to publisher and ID:
@@ -79,7 +83,7 @@ if (defined $opts{env}) {
 }
 
 my $attrs = {
-    AutoCommit => 0,
+    AutoCommit => 1,
     RaiseError => 1,
 };
 
@@ -89,12 +93,16 @@ my $storage = $opts{storage} || 'ismdb.db';
 my $dbho = DBI->connect("dbi:SQLite:dbname=$storage", q{}, q{}, $attrs);
 $dbho->do('PRAGMA foreign_keys = ON');
 
+my $dir = dirname __FILE__;
+my $publishers_data = LoadFile("$dir/publishers.yaml");
+my $series_data = LoadFile("$dir/series.yaml");
+
 read_existing_tags($dbho);
 migrate_authors($dbhi, $dbho);
 migrate_periodicals($dbhi, $dbho);
 setup_pubs_and_series($dbho);
-#migrate_reference_table($dbhi, $dbho);
-#fix_author_dates($dbho);
+migrate_reference_table($dbhi, $dbho);
+fix_author_dates($dbho);
 #fix_magazine_issue_dates($dbho);
 
 $dbhi->disconnect;
@@ -122,8 +130,20 @@ sub read_existing_tags {
 
     print scalar(keys %TAGS) . " existing tags read:\n";
     for my $type (sort keys %type_count) {
-        printf "\t%d of type %s\n", $type_count{$type}, $type;
+        printf "  %d of type %s\n", $type_count{$type}, $type;
     }
+
+    $sth = $dbhout->prepare('SELECT id, name FROM `FeatureTags` ORDER BY id');
+    $sth->execute;
+    $data = $sth->fetchall_arrayref;
+    $sth->finish;
+
+    for my $row (@{$data}) {
+        my ($id, $name) = @{$row};
+        $FEATURE_TAGS{$name} = $id;
+    }
+
+    print scalar(keys %FEATURE_TAGS) . " existing feature tags read\n";
 
     return;
 }
@@ -149,6 +169,7 @@ sub migrate_authors {
         for my $row (@{$data}) {
             my ($id, $name, $aliases) = @{$row};
             $sth->execute($id, $name, $now, $now);
+            $AUTHORS{$id} = $name;
             $authors_count++;
 
             if ($aliases) {
@@ -160,16 +181,14 @@ sub migrate_authors {
             }
         }
 
-        $dbhout->commit;
+        1;
     };
     if (! $result) {
-        my $err = $@;
-        $dbhout->rollback;
-        die "failure in migrate_authors: $err\n";
+        die "failure in migrate_authors: $@\n";
     }
 
     print "$authors_count rows added to Authors\n";
-    print "$aliases_count author aliases added\n";
+    print "  $aliases_count author aliases added to AuthorAliases\n";
 
     return;
 }
@@ -195,12 +214,10 @@ sub migrate_periodicals {
             $sth->execute(@{$row});
         }
 
-        $dbhout->commit;
+        1;
     };
     if (! $result) {
-        my $err = $@;
-        $dbhout->rollback;
-        die "failure in migrate_periodicals: $err\n";
+        die "failure in migrate_periodicals: $@\n";
     }
 
     print scalar(@{$data}) . " rows added to Magazines\n";
@@ -211,15 +228,11 @@ sub migrate_periodicals {
 sub setup_pubs_and_series {
     my ($dbhout) = @_;
 
-    my $dir = dirname __FILE__;
-    my $publishers = LoadFile("$dir/publishers.yaml");
-    my $series = LoadFile("$dir/series.yaml");
-
     # Determine all the publishers that need to be created.
-    my %publishers = map { $_->{name}, 1 } (values %{$publishers});
-    for my $sname (keys %{$series}) {
-        next unless ($series->{$sname}->{publisher});
-        $publishers{$series->{$sname}->{publisher}} = 1;
+    my %publishers = map { $_->{name}, 1 } (values %{$publishers_data});
+    for my $sname (keys %{$series_data}) {
+        next unless ($series_data->{$sname}->{publisher});
+        $publishers{$series_data->{$sname}->{publisher}} = 1;
     }
 
     my $sth = $dbhout->prepare(
@@ -233,26 +246,24 @@ sub setup_pubs_and_series {
             $PUBLISHERS{$pubname} = $pub_id;
         }
 
-        $dbhout->commit;
+        1;
     };
     if (! $result) {
-        my $err = $@;
-        $dbhout->rollback;
-        die "failure in setup_pubs_and_series: $err\n";
+        die "failure in setup_pubs_and_series: $@\n";
     }
     $sth->finish;
     print "$pub_id rows added to Publishers\n";
 
-    my $sth = $dbhout->prepare(
+    $sth = $dbhout->prepare(
         'INSERT INTO `Series` (`id`, `name`, `notes`, `publisherId`) ' .
         'VALUES (?, ?, ?, ?)'
     );
     my $series_id = 0;
     my %skeys = ();
     $result = eval {
-        for my $sname (keys %{$series}) {
-            my $name = $series->{$sname}->{name};
-            my $publisher = $series->{$sname}->{publisher};
+        for my $sname (keys %{$series_data}) {
+            my $name = $series_data->{$sname}->{name};
+            my $publisher = $series_data->{$sname}->{publisher};
             my $key = "$name|" . ($publisher || q{});
             if ($skeys{$key}) {
                 # This name/publisher pair has already been inserted.
@@ -271,12 +282,10 @@ sub setup_pubs_and_series {
             }
         }
 
-        $dbhout->commit;
+        1;
     };
     if (! $result) {
-        my $err = $@;
-        $dbhout->rollback;
-        die "failure in setup_pubs_and_series: $err\n";
+        die "failure in setup_pubs_and_series: $@\n";
     }
     $sth->finish;
     print "$series_id rows added to Series\n";
@@ -293,13 +302,11 @@ sub migrate_reference_table {
         'FROM reference_table'
     );
     $sth->execute;
-    my $data = $sth->fetchall_arrayref;
+    my $data = $sth->fetchall_arrayref({});
     $sth->finish;
 
-    my $authors = $dbhout->selectall_hashref('SELECT * FROM Authors', 'id');
-
     my $sth_ish = $dbhout->prepare(
-        'INSERT INTO `MagazineIssues` (`id`, `magazineId`, `number`, ' .
+        'INSERT INTO `MagazineIssues` (`id`, `magazineId`, `issue`, ' .
         '`createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?)'
     );
     my $sth_auth = $dbhout->prepare(
@@ -310,40 +317,62 @@ sub migrate_reference_table {
     my $sth_tagref = $dbhout->prepare(
         'INSERT INTO `TagsReferences` (`tagId`, `referenceId`) VALUES (?, ?)'
     );
-    $sth = $dbhout->prepare(
-        'INSERT INTO `References` (`id`, `name`, `type`, `recordTypeId`, ' .
-        '`isbn`, `language`, `createdAt`, `updatedAt`, ' .
-        '`magazineIssueId`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    my $sth_ref = $dbhout->prepare(
+        'INSERT INTO `References` (`id`, `name`, `language`, ' .
+        '`referenceTypeId`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?)'
     );
 
     my $ish_id = 0;
     my %ish_map = ();
+    my $total_books = 0;
+    my $total_features = 0;
     for my $row (@{$data}) {
-        my @base = @{$row}[0..8];
-        $base[7] = time2str($base[7]);
-        $base[8] = time2str($base[8]);
-        if ($row->[13]) {
-            my $key = "$row->[13],$row->[14]";
+        my (
+            $id, $name, $type, $record_type, $isbn, $lang, $keywords, $created,
+            $updated, $magazine, $m_number
+        ) = @{$row}{
+            qw(
+                id name type record_type isbn lang keywords created updated
+                magazine m_number
+            )
+        };
+        my @authors = @{$row}{qw(author author2 author3 author4)};
+
+        $created = time2str($created);
+        $updated = time2str($updated);
+
+        # Create the basic Reference entry:
+        $sth_ref->execute($id, $name, $lang, $record_type, $created, $updated);
+
+        if ($record_type == 2) {
+            # This is a magazine article/feature
+
+            my $key = "$magazine,$m_number";
+            my $issueId;
             if ($ish_map{$key}) {
-                $base[9] = $ish_map{$key};
+                $issueId = $ish_map{$key};
             } else {
                 $ish_id++;
-                $sth_ish->execute($ish_id, $row->[13], $row->[14],
-                                  $base[7], $base[8]);
-                $base[9] = $ish_map{$key} = $ish_id;
+                $sth_ish->execute(
+                    $ish_id, $magazine, $m_number, $created, $updated
+                );
+                $issueId = $ish_map{$key} = $ish_id;
             }
+
+            finish_article($dbhout, $id, $type, $issueId);
+            $total_features++;
         } else {
-            $base[9] = undef;
+            # This is a book
+
+            finish_book($dbhout, $id, $isbn, $type);
+            $total_books++;
         }
 
-        my $keywords = splice @base, 6, 1;
-        $sth->execute(@base);
-
-        # 'keywords' is field 6:
+        # Handle tags
         my @tags = keywords2tags($keywords);
         my %applied = ();
-        # Check for a reference to scale in the name ($base[1] is name):
-        if ($base[1] =~ m{(?:in)? 1/(\d+) (?:scale)?}) {
+        # Check for a reference to scale in the name:
+        if ($name =~ m{(?:in)? 1/(\d+) (?:scale)?}) {
             my $scale = "1/$1";
             if ($TAGS{$scale}) {
                 push @tags, $scale;
@@ -358,24 +387,84 @@ sub migrate_reference_table {
                 $TAGS{$tag} = $dbhout->last_insert_id();
             }
 
-            $sth_tagref->execute($TAGS{$tag}, $base[0]);
+            $sth_tagref->execute($TAGS{$tag}, $id);
         }
 
-        for my $author (@{$row}[9..12]) {
+        # Handle authors
+        for my $author (@authors) {
             last if ! $author;
-            if (! $authors->{$author}) {
-                print "  Invalid author ($author) for reference $base[0]\n";
+            if (! $AUTHORS{$author}) {
+                print "  Invalid author ($author) for reference $id\n";
                 next;
             }
-            $sth_auth->execute($author, $base[0]);
+            $sth_auth->execute($author, $id);
         }
     }
 
-    $dbhout->commit;
-
     print scalar(@{$data}) . " rows added to References\n";
+    print "  $total_books Books\n";
+    print "  $total_features MagazineFeatures\n";
     print "$ish_id rows added to MagazineIssues\n";
     print scalar(keys %TAGS) . " total tags now in Tags\n";
+
+    return;
+}
+
+sub finish_book {
+    my ($dbhout, $referenceId, $isbn, $type) = @_;
+
+    my $publisherId = undef;
+    my $seriesId = undef;
+    my $seriesNumber = undef;
+
+    if ($publishers_data->{$type}) {
+        # This matches a known publisher-string exactly
+        $publisherId = $PUBLISHERS{$publishers_data->{$type}->{name}};
+    } else {
+        # It doesn't exactly match a known publisher-string
+        my $matched = 0;
+        for my $rule (@RULESET) {
+            if ($type =~ $rule) {
+                $matched++;
+                my $name = $1;
+                my $number = $2;
+
+                if ($SERIES{$name}) {
+                    $seriesNumber = $number;
+                    ($seriesId, $publisherId) = @{$SERIES{$name}};
+                }
+
+                last;
+            }
+        }
+    }
+
+    my $sth = $dbhout->prepare(
+        'INSERT INTO `Books` (`referenceId`, `isbn`, `publisherId`, ' .
+        '`seriesId`, `seriesNumber`) VALUES (?, ?, ?, ?, ?)'
+    );
+    $sth->execute($referenceId, $isbn, $publisherId, $seriesId, $seriesNumber);
+
+    return;
+}
+
+sub finish_article {
+    my ($dbhout, $referenceId, $type, $issueId) = @_;
+
+    my $sth_mf = $dbhout->prepare(
+        'INSERT INTO MagazineFeatures (`referenceId`, `magazineIssueId`) ' .
+        'VALUES (?, ?)'
+    );
+    my $sth_ftmf = $dbhout->prepare(
+        'INSERT INTO FeatureTagsMagazineFeatures (`featureTagId`, ' .
+        '`magazineFeatureId`) VALUES (?, ?)'
+    );
+
+    $sth_mf->execute($referenceId, $issueId);
+    for my $ftag (split m{/}, $type) {
+        next if ($ftag eq 'article');
+        $sth_ftmf->execute($FEATURE_TAGS{$ftag}, $referenceId);
+    }
 
     return;
 }
@@ -414,7 +503,6 @@ sub fix_author_dates {
         $fixed++;
     }
 
-    $dbh->commit;
     print "$fixed author records dates corrected, $skipped skipped.\n";
 
     return;
@@ -425,7 +513,7 @@ sub fix_magazine_issue_dates {
     my ($fixed, $skipped) = (0, 0);
 
     my $refs = $dbh->selectall_arrayref(
-        'SELECT * FROM `References` WHERE `magazineIssueId` IS NOT NULL',
+        'SELECT * FROM `References` WHERE `referenceTypeId` = 2',
         { Slice => {} }
     );
     my $sth = $dbh->prepare(
@@ -456,7 +544,6 @@ sub fix_magazine_issue_dates {
         $fixed++;
     }
 
-    $dbh->commit;
     print "$fixed magazine issues' dates adjusted ($skipped had only one " .
         "reference)\n";
 
