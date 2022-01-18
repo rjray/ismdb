@@ -103,7 +103,7 @@ migrate_periodicals($dbhi, $dbho);
 setup_pubs_and_series($dbho);
 migrate_reference_table($dbhi, $dbho);
 fix_author_dates($dbho);
-#fix_magazine_issue_dates($dbho);
+fix_magazine_issue_dates($dbho);
 
 $dbhi->disconnect;
 $dbho->disconnect;
@@ -522,8 +522,14 @@ sub fix_magazine_issue_dates {
     my $dbh = shift;
     my ($fixed, $skipped) = (0, 0);
 
-    my $refs = $dbh->selectall_arrayref(
-        'SELECT * FROM `References` WHERE `referenceTypeId` = 2',
+    my $refs = $dbh->selectall_arrayref(<<'QUERY',
+SELECT
+    r.`createdAt`, r.`updatedAt`, mf.`magazineIssueId`
+FROM
+    `References` r LEFT JOIN `MagazineFeatures` mf ON r.`id` = mf.`referenceId`
+WHERE
+    r.`referenceTypeId` = 2
+QUERY
         { Slice => {} }
     );
     my $sth = $dbh->prepare(
