@@ -83,7 +83,7 @@ if (defined $opts{env}) {
 }
 
 my $attrs = {
-    AutoCommit => 1,
+    AutoCommit => 0,
     RaiseError => 1,
 };
 
@@ -187,6 +187,8 @@ sub migrate_authors {
         die "failure in migrate_authors: $@\n";
     }
 
+    $dbhout->commit;
+
     print "$authors_count rows added to Authors\n";
     print "  $aliases_count author aliases added to AuthorAliases\n";
 
@@ -219,6 +221,8 @@ sub migrate_periodicals {
     if (! $result) {
         die "failure in migrate_periodicals: $@\n";
     }
+
+    $dbhout->commit;
 
     print scalar(@{$data}) . " rows added to Magazines\n";
 
@@ -289,6 +293,8 @@ sub setup_pubs_and_series {
     }
     $sth->finish;
     print "$series_id rows added to Series\n";
+
+    $dbhout->commit;
 
     return;
 }
@@ -401,6 +407,8 @@ sub migrate_reference_table {
         }
     }
 
+    $dbhout->commit;
+
     print scalar(@{$data}) . " rows added to References\n";
     print "  $total_books Books\n";
     print "  $total_features MagazineFeatures\n";
@@ -503,6 +511,8 @@ sub fix_author_dates {
         $fixed++;
     }
 
+    $dbh->commit;
+
     print "$fixed author records dates corrected, $skipped skipped.\n";
 
     return;
@@ -543,6 +553,8 @@ sub fix_magazine_issue_dates {
         $sth->execute($lo_created, $hi_updated, $mid);
         $fixed++;
     }
+
+    $dbh->commit;
 
     print "$fixed magazine issues' dates adjusted ($skipped had only one " .
         "reference)\n";
