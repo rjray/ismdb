@@ -7,7 +7,7 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes, { Reference: fields }) => {
   class Reference extends Model {
     static associate(models) {
-      Reference.belongsTo(models.RecordType);
+      Reference.belongsTo(models.ReferenceType);
       Reference.belongsToMany(models.Author, {
         as: "Authors",
         through: { model: models.AuthorsReferences },

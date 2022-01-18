@@ -4,7 +4,7 @@
 
 const {
   Reference,
-  RecordType,
+  ReferenceType,
   Tag,
   MagazineIssue,
   Magazine,
@@ -15,7 +15,7 @@ const {
 } = require("../models");
 
 const includesForReference = [
-  RecordType,
+  ReferenceType,
   { model: MagazineIssue, include: [Magazine] },
   { model: Author, as: "Authors" },
   { model: Tag, as: "Tags" },
@@ -55,7 +55,7 @@ function cleanReference(referenceIn) {
     delete reference.MagazineIssue.Magazine;
   }
 
-  reference.RecordType = reference.RecordType.get();
+  reference.ReferenceType = reference.ReferenceType.get();
 
   return reference;
 }
@@ -69,7 +69,7 @@ const fetchSingleReferenceComplete = async (id) => {
   return reference ? cleanReference(reference) : reference;
 };
 
-// Get all the references (based on opts), with RecordType, Magazine and
+// Get all the references (based on opts), with ReferenceType, Magazine and
 // Author information. Returns the count, as well.
 const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
   const count = await Reference.count(opts);
@@ -103,7 +103,7 @@ const createReference = async (dataIn) => {
   delete data.tags;
 
   // Convert this one.
-  data.RecordTypeId = parseInt(data.RecordTypeId, 10);
+  data.ReferenceTypeId = parseInt(data.ReferenceTypeId, 10);
 
   // These are not used directly in the creation of a Reference instance, but
   // will be needed if the record type is a magazine.
@@ -114,10 +114,10 @@ const createReference = async (dataIn) => {
 
   const newId = await sequelize.transaction(async (txn) => {
     // Start by leveling things out a bit based on the record type.
-    if (data.RecordTypeId === 1) {
+    if (data.ReferenceTypeId === 1) {
       // A book. Clear magazine-related values.
       data.MagazineIssueId = null;
-    } else if (data.RecordTypeId === 2 || data.RecordTypeId === 3) {
+    } else if (data.ReferenceTypeId === 2 || data.ReferenceTypeId === 3) {
       // A magazine entry. Make sure ISBN is cleared, and convert the magazine
       // ID and issue number to the ID of a MagazineIssue instance.
       data.isbn = null;
@@ -233,15 +233,15 @@ const updateReferenceBasicInfo = async (reference, data, transaction) => {
 
 // Update the type-related reference information.
 const updateReferenceTypeInfo = async (reference, data, transaction) => {
-  const { RecordTypeId } = data;
+  const { ReferenceTypeId } = data;
   const changes = {};
 
-  if (RecordTypeId !== reference.RecordTypeId) {
+  if (ReferenceTypeId !== reference.ReferenceTypeId) {
     // The type has completely changed.
-    changes.RecordTypeId = RecordTypeId;
+    changes.ReferenceTypeId = ReferenceTypeId;
   } else {
     // The type has not changed, but other information might have.
-    switch (RecordTypeId) {
+    switch (ReferenceTypeId) {
       case 1:
         // For a book, check only the ISBN.
         if (data.isbn !== reference.isbn) changes.isbn = data.isbn;
