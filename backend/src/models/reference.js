@@ -8,6 +8,9 @@ module.exports = (sequelize, DataTypes, { Reference: fields }) => {
   class Reference extends Model {
     static associate(models) {
       Reference.belongsTo(models.ReferenceType);
+      Reference.hasOne(models.Book);
+      Reference.hasOne(models.MagazineFeature);
+      Reference.hasOne(models.PhotoCollection);
       Reference.belongsToMany(models.Author, {
         as: "Authors",
         through: { model: models.AuthorsReferences },
