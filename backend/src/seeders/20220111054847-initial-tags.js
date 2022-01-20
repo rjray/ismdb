@@ -29,6 +29,7 @@ diorama,A diorama subject`
 australian,Australia
 austrian,Austria
 belgian,Belgium
+canadian,Canada
 chinese,China
 czech,the Czech Republic
 egyptian,Egypt
