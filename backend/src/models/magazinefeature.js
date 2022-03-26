@@ -7,6 +7,7 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class MagazineFeature extends Model {
     static associate(models) {
+      MagazineFeature.belongsTo(models.Reference);
       MagazineFeature.belongsTo(models.MagazineIssue);
       MagazineFeature.belongsToMany(models.FeatureTag, {
         as: "FeatureTags",

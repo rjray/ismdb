@@ -6,8 +6,12 @@ const {
   Reference,
   ReferenceType,
   Tag,
-  MagazineIssue,
+  Book,
+  MagazineFeature,
+  FeatureTag,
+  PhotoCollection,
   Magazine,
+  MagazineIssue,
   Author,
   AuthorsReferences,
   TagsReferences,
@@ -16,7 +20,15 @@ const {
 
 const includesForReference = [
   ReferenceType,
-  { model: MagazineIssue, include: [Magazine] },
+  Book,
+  {
+    model: MagazineFeature,
+    include: [
+      { model: FeatureTag, as: "FeatureTags" },
+      { model: MagazineIssue, include: [Magazine] },
+    ],
+  },
+  PhotoCollection,
   { model: Author, as: "Authors" },
   { model: Tag, as: "Tags" },
 ];

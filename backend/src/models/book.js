@@ -7,6 +7,7 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes, { Book: fields }) => {
   class Book extends Model {
     static associate(models) {
+      Book.belongsTo(models.Reference);
       Book.belongsTo(models.Publisher);
       Book.belongsTo(models.Series);
     }

@@ -5,7 +5,11 @@
 const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes, { PhotoCollection: fields }) => {
-  class PhotoCollection extends Model {}
+  class PhotoCollection extends Model {
+    static associate(models) {
+      PhotoCollection.belongsTo(models.Reference);
+    }
+  }
 
   PhotoCollection.init(
     {
