@@ -39,22 +39,22 @@ const ShowReference = () => {
 
   const { reference } = data;
   let source;
-  if (reference.RecordType.name === "book") {
+  if (reference.ReferenceType.name === "book") {
     source = reference.isbn ? `ISBN ${reference.isbn}` : "Book";
-  } else if (reference.RecordType.name === "article") {
+  } else if (reference.ReferenceType.name === "article") {
     source = (
       <Link to={`/issues/${reference.MagazineIssue.id}`}>
         {`${reference.Magazine.name} ${reference.MagazineIssue.number}`}
       </Link>
     );
-  } else if (reference.RecordType.name === "placeholder") {
+  } else if (reference.ReferenceType.name === "placeholder") {
     source = (
       <Link to={`/issues/${reference.MagazineIssue.id}`}>
         {`${reference.Magazine.name} ${reference.MagazineIssue.number} (placeholder)`}
       </Link>
     );
   } else {
-    source = reference.RecordType.description;
+    source = reference.ReferenceType.description;
   }
 
   return (

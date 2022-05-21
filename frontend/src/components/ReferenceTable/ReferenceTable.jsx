@@ -20,14 +20,14 @@ const columns = [
     selector: (row) => {
       let str;
 
-      if (row.RecordType.name === "book") {
+      if (row.ReferenceType.name === "book") {
         str = row.isbn ? `ISBN ${row.isbn}` : "Book";
-      } else if (row.RecordType.name === "article") {
+      } else if (row.ReferenceType.name === "article") {
         str = `${row.Magazine.name} ${row.MagazineIssue.number}`;
-      } else if (row.RecordType.name === "placeholder") {
+      } else if (row.ReferenceType.name === "placeholder") {
         str = `${row.Magazine.name} ${row.MagazineIssue.number} (placeholder)`;
       } else {
-        str = row.RecordType.notes;
+        str = row.ReferenceType.notes;
       }
 
       return str;
