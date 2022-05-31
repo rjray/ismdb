@@ -9,6 +9,14 @@ module.exports = (sequelize, DataTypes, { PhotoCollection: fields }) => {
     static associate(models) {
       PhotoCollection.belongsTo(models.Reference);
     }
+
+    clean() {
+      const result = this.get();
+
+      delete result.ReferenceId;
+
+      return result;
+    }
   }
 
   PhotoCollection.init(

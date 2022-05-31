@@ -14,6 +14,22 @@ module.exports = (sequelize, DataTypes, { Author: fields }) => {
         foreignKey: "authorId",
       });
     }
+
+    clean() {
+      const result = this.get();
+
+      if (result.AuthorAliases) {
+        result.aliases = result.AuthorAliases.map((a) => a.clean());
+        delete result.AuthorAliases;
+      }
+      if (result.References) {
+        result.references = result.References.map((r) => r.clean());
+        delete result.References;
+      }
+      if (result.AuthorsReferences) delete result.AuthorsReferences;
+
+      return result;
+    }
   }
 
   Author.init(

@@ -15,6 +15,18 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "magazineFeatureId",
       });
     }
+
+    clean() {
+      const result = this.get();
+
+      delete result.ReferenceId;
+      if (result.FeatureTags) {
+        result.featureTags = result.FeatureTags.map((t) => t.clean());
+        delete result.FeatureTags;
+      }
+
+      return result;
+    }
   }
 
   MagazineFeature.init(

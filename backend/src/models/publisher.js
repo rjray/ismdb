@@ -10,6 +10,21 @@ module.exports = (sequelize, DataTypes, { Publisher: fields }) => {
       Publisher.hasMany(models.Book);
       Publisher.hasMany(models.Series);
     }
+
+    clean() {
+      const result = this.get();
+
+      if (result.Books) {
+        result.books = result.Books.map((b) => b.clean());
+        delete result.Books;
+      }
+      if (result.Series) {
+        result.series = result.Series.map((s) => s.clean());
+        delete result.Series;
+      }
+
+      return result;
+    }
   }
 
   Publisher.init(

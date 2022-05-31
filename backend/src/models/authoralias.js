@@ -9,6 +9,14 @@ module.exports = (sequelize, DataTypes, { AuthorAlias: fields }) => {
     static associate(models) {
       AuthorAlias.belongsTo(models.Author, { onDelete: "CASCADE" });
     }
+
+    clean() {
+      const result = this.get();
+
+      delete result.AuthorId;
+
+      return result;
+    }
   }
 
   AuthorAlias.init(

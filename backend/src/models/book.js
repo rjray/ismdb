@@ -11,6 +11,31 @@ module.exports = (sequelize, DataTypes, { Book: fields }) => {
       Book.belongsTo(models.Publisher);
       Book.belongsTo(models.Series);
     }
+
+    clean() {
+      const result = this.get();
+
+      delete result.ReferenceId;
+
+      if (result.SeriesId) {
+        result.seriesId = result.SeriesId;
+        delete result.SeriesId;
+      }
+      if (result.Series) {
+        result.series = result.Series.clean();
+        delete result.Series;
+      }
+      if (result.PublisherId) {
+        result.publisherId = result.PublisherId;
+        delete result.PublisherId;
+      }
+      if (result.Publisher) {
+        result.publisher = result.Publisher.clean();
+        delete result.Publisher;
+      }
+
+      return result;
+    }
   }
 
   Book.init(

@@ -13,6 +13,18 @@ module.exports = (sequelize, DataTypes, { Tag: fields }) => {
         foreignKey: "tagId",
       });
     }
+
+    clean() {
+      const result = this.get();
+
+      if (result.TagsReferences) delete result.TagsReferences;
+      if (result.References) {
+        result.references = result.References.map((r) => r.clean());
+        delete result.References;
+      }
+
+      return result;
+    }
   }
 
   Tag.init(

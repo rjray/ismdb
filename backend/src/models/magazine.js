@@ -9,6 +9,17 @@ module.exports = (sequelize, DataTypes, { Magazine: fields }) => {
     static associate(models) {
       Magazine.hasMany(models.MagazineIssue);
     }
+
+    clean() {
+      const result = this.get();
+
+      if (result.MagazineIssues) {
+        result.magazineIssues = result.MagazineIssues.map((i) => i.clean());
+        delete result.MagazineIssues;
+      }
+
+      return result;
+    }
   }
 
   Magazine.init(

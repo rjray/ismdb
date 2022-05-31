@@ -9,6 +9,17 @@ module.exports = (sequelize, DataTypes, { ReferenceType: fields }) => {
     static associate(models) {
       ReferenceType.hasMany(models.Reference);
     }
+
+    clean() {
+      const result = this.get();
+
+      if (result.References) {
+        result.references = result.References.map((r) => r.clean());
+        delete result.References;
+      }
+
+      return result;
+    }
   }
 
   ReferenceType.init(

@@ -10,6 +10,21 @@ module.exports = (sequelize, DataTypes, { MagazineIssue: fields }) => {
       MagazineIssue.belongsTo(models.Magazine);
       MagazineIssue.hasMany(models.MagazineFeature);
     }
+
+    clean() {
+      const result = this.get();
+
+      if (result.Magazine) {
+        result.magazine = result.Magazine.clean();
+        delete result.Magazine;
+      }
+      if (result.MagazineFeatures) {
+        result.magazineFeatures = result.MagazineFeatures.map((m) => m.clean());
+        delete result.MagazineFeatures;
+      }
+
+      return result;
+    }
   }
 
   MagazineIssue.init(
