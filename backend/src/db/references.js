@@ -7,6 +7,8 @@ const {
   ReferenceType,
   Tag,
   Book,
+  Series,
+  Publisher,
   MagazineFeature,
   FeatureTag,
   PhotoCollection,
@@ -20,7 +22,10 @@ const {
 
 const includesForReference = [
   ReferenceType,
-  Book,
+  {
+    model: Book,
+    include: [Series, Publisher],
+  },
   {
     model: MagazineFeature,
     include: [
@@ -38,47 +43,13 @@ const INCLUDE_REFERENCES = {
   include: includesForReference,
 };
 
-// "Clean" a reference record by stripping it down to a plain JS object.
-function cleanReference(referenceIn) {
-  const reference = referenceIn.get();
-
-  if (reference.Authors) {
-    reference.authors = reference.Authors.map((authIn) => {
-      const author = authIn.get();
-      delete author.AuthorsReferences;
-      return author;
-    });
-    delete reference.Authors;
-  }
-
-  if (reference.Tags) {
-    reference.tags = reference.Tags.map((tagIn) => {
-      const tag = tagIn.get();
-      delete tag.TagsReferences;
-      return tag;
-    });
-    delete reference.Tags;
-    delete reference.TagsReferences;
-  }
-
-  if (reference.MagazineIssue) {
-    reference.Magazine = reference.MagazineIssue.Magazine.get();
-    reference.MagazineIssue = reference.MagazineIssue.get();
-    delete reference.MagazineIssue.Magazine;
-  }
-
-  reference.ReferenceType = reference.ReferenceType.get();
-
-  return reference;
-}
-
 // Get a single reference with all ancillary data (type, magazine, authors).
 const fetchSingleReferenceComplete = async (id) => {
   const reference = await Reference.findByPk(id, {
     include: includesForReference,
   });
 
-  return reference ? cleanReference(reference) : reference;
+  return reference ? reference.clean() : reference;
 };
 
 // Get all the references (based on opts), with ReferenceType, Magazine and
@@ -90,7 +61,7 @@ const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
     ...opts,
   });
 
-  const references = results.map((reference) => cleanReference(reference));
+  const references = results.map((reference) => reference.clean());
 
   return { count, references };
 };
@@ -303,7 +274,6 @@ const deleteReference = async (id) => Reference.destroy({ where: { id } });
 
 module.exports = {
   INCLUDE_REFERENCES,
-  cleanReference,
   fetchSingleReferenceComplete,
   fetchAllReferencesCompleteWithCount,
   createReference,

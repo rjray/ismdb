@@ -5,7 +5,7 @@
 const { Tag, sequelize } = require("../models");
 const { fixAggregateOrderFields } = require("../lib/utils");
 
-const { INCLUDE_REFERENCES, cleanReference } = require("./references");
+const { INCLUDE_REFERENCES } = require("./references");
 
 // Basic tag request: just the requested tag.
 const fetchSingleTagSimple = async (id) => {
@@ -57,9 +57,7 @@ const fetchSingleTagWithReferences = async (id) => {
   let tag = null;
   if (result) {
     tag = result.get();
-    tag.references = tag.References.map((reference) =>
-      cleanReference(reference)
-    );
+    tag.references = tag.References.map((ref) => ref.clean());
     delete tag.References;
 
     return tag;

@@ -3,7 +3,7 @@
  */
 
 const { Magazine, MagazineIssue, sequelize } = require("../models");
-const { INCLUDE_REFERENCES, cleanReference } = require("./references");
+const { INCLUDE_REFERENCES } = require("./references");
 const { fixAggregateOrderFields } = require("../lib/utils");
 
 // Most-basic magazine request. Single magazine without issues or anything.
@@ -30,9 +30,7 @@ const fetchSingleMagazineComplete = async (id) => {
     magazine.issues = magazine.MagazineIssues.map((issueIn) => {
       const issue = issueIn.get();
       delete issue.MagazineId;
-      issue.references = issue.References.map((reference) =>
-        cleanReference(reference)
-      );
+      issue.references = issue.References.map((ref) => ref.clean());
       delete issue.References;
 
       return issue;
@@ -165,9 +163,7 @@ const fetchSingleMagazineIssueComplete = async (id) => {
 
   magazineissue.Magazine = magazineissue.Magazine.get();
   delete magazineissue.MagazineId;
-  magazineissue.references = magazineissue.References.map((reference) =>
-    cleanReference(reference)
-  );
+  magazineissue.references = magazineissue.References.map((ref) => ref.clean());
   delete magazineissue.References;
 
   return magazineissue;

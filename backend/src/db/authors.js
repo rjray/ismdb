@@ -4,7 +4,7 @@
 
 const { Author, AuthorAlias, sequelize } = require("../models");
 const { sortBy, fixAggregateOrderFields } = require("../lib/utils");
-const { INCLUDE_REFERENCES, cleanReference } = require("./references");
+const { INCLUDE_REFERENCES } = require("./references");
 
 const sortByName = sortBy("name");
 
@@ -76,9 +76,7 @@ const fetchSingleAuthorComplex = async (id) => {
     author.aliases = convertAliases(author.AuthorAliases);
     delete author.AuthorAliases;
 
-    author.references = author.References.map((reference) =>
-      cleanReference(reference)
-    );
+    author.references = author.References.map((ref) => ref.clean());
     delete author.References;
   }
 
