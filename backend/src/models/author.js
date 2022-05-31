@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes, { Author: fields }) => {
     clean() {
       const result = this.get();
 
+      // The two dates are Date objects, convert them to strings.
+      for (const date of ["createdAt", "updatedAt"]) {
+        result[date] = result[date].toISOString();
+      }
+
       if (result.AuthorAliases) {
         result.aliases = result.AuthorAliases.map((a) => a.clean());
         delete result.AuthorAliases;

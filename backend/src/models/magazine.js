@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes, { Magazine: fields }) => {
     clean() {
       const result = this.get();
 
+      // The two dates are Date objects, convert them to strings.
+      for (const date of ["createdAt", "updatedAt"]) {
+        result[date] = result[date].toISOString();
+      }
+
       if (result.MagazineIssues) {
         result.magazineIssues = result.MagazineIssues.map((i) => i.clean());
         delete result.MagazineIssues;

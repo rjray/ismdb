@@ -31,6 +31,11 @@ module.exports = (sequelize, DataTypes, { Reference: fields }) => {
       delete result.ReferenceType;
       delete result.ReferenceTypeId;
 
+      // The two dates are Date objects, convert them to strings.
+      for (const date of ["createdAt", "updatedAt"]) {
+        result[date] = result[date].toISOString();
+      }
+
       for (const type of ["Book", "MagazineFeature", "PhotoCollection"]) {
         if (result[type]) {
           const lc = type.substring(0, 1).toLowerCase() + type.substring(1);
