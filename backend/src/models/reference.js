@@ -32,10 +32,10 @@ module.exports = (sequelize, DataTypes, { Reference: fields }) => {
 
       for (const type of ["Book", "MagazineFeature", "PhotoCollection"]) {
         if (result[type]) {
-          const lc = type.substring(0, 0).toLowerCase() + type.substring(1);
+          const lc = type.substring(0, 1).toLowerCase() + type.substring(1);
           result[lc] = result[type].clean();
-          delete result[type];
         }
+        delete result[type];
       }
       if (result.Authors) {
         result.authors = result.Authors.map((a) => a.clean());
