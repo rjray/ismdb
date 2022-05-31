@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes, { Reference: fields }) => {
       // There's always a reference-type.
       result.referenceType = result.ReferenceType.clean();
       delete result.ReferenceType;
+      delete result.ReferenceTypeId;
 
       for (const type of ["Book", "MagazineFeature", "PhotoCollection"]) {
         if (result[type]) {
@@ -45,6 +46,7 @@ module.exports = (sequelize, DataTypes, { Reference: fields }) => {
         result.tags = result.Tags.map((t) => t.clean());
         delete result.Tags;
       }
+      if (result.AuthorsReferences) delete result.AuthorsReferences;
 
       return result;
     }

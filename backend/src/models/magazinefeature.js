@@ -24,6 +24,11 @@ module.exports = (sequelize, DataTypes) => {
         result.featureTags = result.FeatureTags.map((t) => t.clean());
         delete result.FeatureTags;
       }
+      if (result.MagazineIssueId) delete result.MagazineIssueId;
+      if (result.MagazineIssue) {
+        result.magazineIssue = result.MagazineIssue.clean();
+        delete result.MagazineIssue;
+      }
 
       return result;
     }

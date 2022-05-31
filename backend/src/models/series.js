@@ -22,10 +22,7 @@ module.exports = (sequelize, DataTypes, { Series: fields }) => {
         result.publisher = result.Publisher.clean();
         delete result.Publisher;
       }
-      if (result.PublisherId) {
-        result.publisherId = result.PublisherId;
-        delete result.PublisherId;
-      }
+      if (result.PublisherId) delete result.PublisherId;
 
       return result;
     }

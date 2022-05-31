@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes, { MagazineIssue: fields }) => {
     clean() {
       const result = this.get();
 
+      if (result.MagazineId) delete result.MagazineId;
       if (result.Magazine) {
         result.magazine = result.Magazine.clean();
         delete result.Magazine;
