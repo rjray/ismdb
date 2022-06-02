@@ -9,20 +9,16 @@ const { INCLUDE_REFERENCES } = require("./references");
 
 // Basic tag request: just the requested tag.
 const fetchSingleTagSimple = async (id) => {
-  let tag = await Tag.findByPk(id).catch((error) => {
+  const tag = await Tag.findByPk(id).catch((error) => {
     throw new Error(error);
   });
 
-  if (tag) {
-    tag = tag.get();
-  }
-
-  return tag;
+  return tag?.clean();
 };
 
 // Fetch a specific tag with the count of associated references as "refcount".
 const fetchSingleTagWithRefCount = async (id) => {
-  let tag = await Tag.findByPk(id, {
+  const tag = await Tag.findByPk(id, {
     attributes: {
       include: [
         [
@@ -39,31 +35,18 @@ const fetchSingleTagWithRefCount = async (id) => {
     throw new Error(error);
   });
 
-  if (tag) {
-    tag = tag.get();
-  }
-
-  return tag;
+  return tag?.clean();
 };
 
 // Fetch a specific tag with all the tagged references.
 const fetchSingleTagWithReferences = async (id) => {
-  const result = await Tag.findByPk(id, {
+  const tag = await Tag.findByPk(id, {
     include: [INCLUDE_REFERENCES],
   }).catch((error) => {
     throw new Error(error);
   });
 
-  let tag = null;
-  if (result) {
-    tag = result.get();
-    tag.references = tag.References.map((ref) => ref.clean());
-    delete tag.References;
-
-    return tag;
-  }
-
-  return tag;
+  return tag?.clean();
 };
 
 // Fetch all tags as an array, returning an object with the results and the
@@ -76,7 +59,7 @@ const fetchAllTagsWithCount = async (opts = {}) => {
     throw new Error(error);
   });
 
-  const tags = results.map((tag) => tag.get());
+  const tags = results.map((tag) => tag.clean());
 
   return { count, tags };
 };
@@ -111,7 +94,7 @@ const fetchAllTagsWithRefCountAndCount = async (optsIn = {}) => {
     throw new Error(error);
   });
 
-  const tags = results.map((tag) => tag.get());
+  const tags = results.map((tag) => tag.clean());
 
   return { count, tags };
 };
@@ -127,7 +110,7 @@ const createTag = async (data) => {
     }
   });
 
-  return tag.get();
+  return tag.clean();
 };
 
 // Update a single tag using the content in data.
@@ -135,7 +118,7 @@ const updateTag = async (id, data) => {
   return Tag.findByPk(id).then((tag) => {
     return sequelize.transaction(async (txn) => {
       const updatedTag = await tag.update(data, { transaction: txn });
-      return updatedTag.get();
+      return updatedTag.clean();
     });
   });
 };
