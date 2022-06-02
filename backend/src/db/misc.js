@@ -9,7 +9,7 @@ const { ReferenceType, Reference, Tag, Sequelize } = require("../models");
 // Fetch all ReferenceType entities.
 const fetchAllReferenceTypes = async (opts = {}) => {
   const results = await ReferenceType.findAll({ ...opts });
-  const referenceTypes = results.map((rt) => rt.get());
+  const referenceTypes = results.map((rt) => rt.clean());
 
   return referenceTypes;
 };
