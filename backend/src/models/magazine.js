@@ -18,10 +18,9 @@ module.exports = (sequelize, DataTypes, { Magazine: fields }) => {
         result[date] = result[date].toISOString();
       }
 
-      if (result.MagazineIssues) {
+      if (result.MagazineIssues)
         result.magazineIssues = result.MagazineIssues.map((i) => i.clean());
-        delete result.MagazineIssues;
-      }
+      delete result.MagazineIssues;
 
       return result;
     }

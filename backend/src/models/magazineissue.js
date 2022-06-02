@@ -20,14 +20,11 @@ module.exports = (sequelize, DataTypes, { MagazineIssue: fields }) => {
       }
 
       if (result.MagazineId) delete result.MagazineId;
-      if (result.Magazine) {
-        result.magazine = result.Magazine.clean();
-        delete result.Magazine;
-      }
-      if (result.MagazineFeatures) {
+      if (result.Magazine) result.magazine = result.Magazine.clean();
+      delete result.Magazine;
+      if (result.MagazineFeatures)
         result.magazineFeatures = result.MagazineFeatures.map((m) => m.clean());
-        delete result.MagazineFeatures;
-      }
+      delete result.MagazineFeatures;
 
       return result;
     }

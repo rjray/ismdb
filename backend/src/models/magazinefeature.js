@@ -20,15 +20,15 @@ module.exports = (sequelize, DataTypes) => {
       const result = this.get();
 
       delete result.ReferenceId;
-      if (result.FeatureTags) {
+      if (result.FeatureTags)
         result.featureTags = result.FeatureTags.map((t) => t.clean());
-        delete result.FeatureTags;
-      }
+      delete result.FeatureTags;
       if (result.MagazineIssueId) delete result.MagazineIssueId;
-      if (result.MagazineIssue) {
+      if (result.MagazineIssue)
         result.magazineIssue = result.MagazineIssue.clean();
-        delete result.MagazineIssue;
-      }
+      delete result.MagazineIssue;
+      if (result.Reference) result.reference = result.Reference.clean();
+      delete result.Reference;
 
       return result;
     }
