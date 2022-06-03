@@ -248,6 +248,9 @@ Kagero Famous Airplanes:
 Kagero In Miniature:
   name: In Miniature
   publisher: Kagero Publishing
+Kagero Kit Build:
+  name: Kit Build
+  publisher: Kagero Publishing
 Kagero Legends of Aviation:
   name: Legends of Aviation
   publisher: Kagero Publishing
@@ -376,10 +379,10 @@ Mushroom Model Publications Red Series:
   publisher: Mushroom Model Publications
 Mushroom Model Publications White Series:
   name: White Series
-  publisher: Mushroom Model Publications 
+  publisher: Mushroom Model Publications
 Mushroom Model Publications Yellow Series:
   name: Yellow Series
-  publisher: Mushroom Model Publications 
+  publisher: Mushroom Model Publications
 Nava Fighters:
   name: Nava Fighters
   publisher: ~
@@ -469,7 +472,7 @@ Periscopio Publications Famous Aircraft of the World:
   publisher: Periscopio Publications
 Periscopio Publications Photo Gallery & Profiles:
   name: Photo Gallery & Profiles
-  publisher: Periscopio Publications 
+  publisher: Periscopio Publications
 Planes and Pilots:
   name: Planes and Pilots
   publisher: ~
@@ -637,13 +640,13 @@ VLS Armor in Detail:
   publisher: Verlinden Publications
 Valiant Wings Publishing Airframe & Miniature:
   name: Airframe & Miniature
-  publisher: Valiant Wings Publishing 
+  publisher: Valiant Wings Publishing
 Valiant Wings Publishing Airframe Album:
   name: Airframe Album
-  publisher: Valiant Wings Publishing 
+  publisher: Valiant Wings Publishing
 Valiant Wings Publishing Airframe Detail:
   name: Airframe Detail
-  publisher: Valiant Wings Publishing 
+  publisher: Valiant Wings Publishing
 Vehicles in Russia:
   name: Vehicles in Russia
   publisher: ~
