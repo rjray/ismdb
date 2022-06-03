@@ -5,10 +5,11 @@ info:
 servers:
   - url: /api
 components:
-  securitySchemes:
-    userToken:
-      type: http
-      scheme: bearer
+  # TODO: Uncomment
+  # securitySchemes:
+  #   userToken:
+  #     type: http
+  #     scheme: bearer
   parameters:
     offsetParam:
       name: offset
@@ -102,14 +103,17 @@ components:
       format: date-time
     languageType:
       type: string
+      nullable: true
     authorNameOrAliasType:
       type: string
     magazineNameType:
       type: string
     magazineAliasesType:
       type: string
+      nullable: true
     magazineNotesType:
       type: string
+      nullable: true
     magazineIssueNumberType:
       type: string
     referenceNameType:
@@ -120,8 +124,10 @@ components:
       type: string
     tagDescriptionType:
       type: string
+      nullable: true
     tagTypeType:
       type: string
+      nullable: true
     matchNameType:
       type: string
     matchTypeType:
@@ -226,9 +232,15 @@ components:
         - type: object
           required:
             - id
+            - createdAt
+            - updatedAt
           properties:
             id:
               $ref: "#/components/schemas/idType"
+            createdAt:
+              $ref: "#/components/schemas/dateTimeType"
+            updatedAt:
+              $ref: "#/components/schemas/dateTimeType"
         - $ref: "#/components/schemas/newMagazineType"
     magazineWithIssuesType:
       allOf:
@@ -259,19 +271,19 @@ components:
       type: object
       required:
         - id
-        - number
+        - issue
       properties:
         id:
           $ref: "#/components/schemas/idType"
-        number:
+        issue:
           $ref: "#/components/schemas/magazineIssueNumberType"
     newMagazineIssueType:
       type: object
       required:
-        - number
+        - issue
         - magazineId
       properties:
-        number:
+        issue:
           $ref: "#/components/schemas/magazineIssueNumberType"
         magazineId:
           $ref: "#/components/schemas/idType"
@@ -279,29 +291,29 @@ components:
       type: object
       required:
         - id
-        - number
-        - MagazineId
+        - issue
+        - magazineId
       properties:
         id:
           $ref: "#/components/schemas/idType"
-        number:
+        issue:
           $ref: "#/components/schemas/magazineIssueNumberType"
-        MagazineId:
+        magazineId:
           $ref: "#/components/schemas/idType"
     magazineIssueType:
       type: object
       required:
         - id
-        - number
-        - Magazine
+        - issue
+        - magazine
         - createdAt
         - updatedAt
       properties:
         id:
           $ref: "#/components/schemas/idType"
-        number:
+        issue:
           $ref: "#/components/schemas/magazineIssueNumberType"
-        Magazine:
+        magazine:
           $ref: "#/components/schemas/magazineType"
         createdAt:
           $ref: "#/components/schemas/dateTimeType"
@@ -312,24 +324,113 @@ components:
         - $ref: "#/components/schemas/magazineIssueType"
         - type: object
           required:
-            - references
+            - magazineFeatures
           properties:
-            references:
+            magazineFeatures:
               type: array
               items:
-                $ref: "#/components/schemas/referenceType"
+                $ref: "#/components/schemas/referenceMagazineFeatureType"
+    bookPublisherType:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          $ref: "#/components/schemas/idType"
+        name:
+          type: string
+        notes:
+          type: string
+          nullable: true
+        books:
+          type: array
+          items:
+            $ref: "#/components/schemas/referenceType"
+        series:
+          type: array
+          items:
+            $ref: "#/components/schemas/bookSeriesType"
+    bookSeriesType:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          $ref: "#/components/schemas/idType"
+        name:
+          type: string
+        notes:
+          type: string
+          nullable: true
+        books:
+          type: array
+          items:
+            $ref: "#/components/schemas/referenceType"
+        publisher:
+          $ref: "#/components/schemas/bookPublisherType"
+    referenceBookType:
+      type: object
+      required:
+        - referenceId
+      properties:
+        referenceId:
+          $ref: "#/components/schemas/idType"
+        isbn:
+          type: string
+        seriesNumber:
+          type: string
+        series:
+          $ref: "#/components/schemas/bookSeriesType"
+        publisher:
+          $ref: "#/components/schemas/bookPublisherType"
+    referenceMagazineFeatureType:
+      type: object
+      required:
+        - referenceId
+        - featureTags
+      properties:
+        referenceId:
+          $ref: "#/components/schemas/idType"
+        featureTags:
+          type: array
+          items:
+            $ref: "#/components/schemas/featureTagType"
+        magazineIssue:
+          $ref: "#/components/schemas/magazineIssueType"
+        reference:
+          $ref: "#/components/schemas/referenceType"
+    referencePhotoCollectionType:
+      type: object
+      required:
+        - referenceId
+        - location
+        - media
+      properties:
+        referenceId:
+          $ref: "#/components/schemas/idType"
+        location:
+          type: string
+        media:
+          type: string
     referenceTypeType:
       type: object
       required:
         - id
+        - name
         - description
+        - notes
       properties:
         id:
           $ref: "#/components/schemas/idType"
+        name:
+          type: string
         description:
           type: string
         notes:
           type: string
+          nullable: true
     newReferenceType:
       type: object
       required:
@@ -373,7 +474,7 @@ components:
       required:
         - id
         - name
-        - ReferenceType
+        - referenceType
         - createdAt
         - updatedAt
         - tags
@@ -382,28 +483,28 @@ components:
           $ref: "#/components/schemas/idType"
         name:
           $ref: "#/components/schemas/referenceNameType"
-        isbn:
-          $ref: "#/components/schemas/referenceIsbnType"
         language:
           $ref: "#/components/schemas/languageType"
-        ReferenceType:
-          $ref: "#/components/schemas/referenceTypeType"
-        MagazineIssue:
-          $ref: "#/components/schemas/magazineIssueType"
-        Magazine:
-          $ref: "#/components/schemas/magazineType"
-        authors:
-          type: array
-          items:
-            $ref: "#/components/schemas/authorType"
         createdAt:
           $ref: "#/components/schemas/dateTimeType"
         updatedAt:
           $ref: "#/components/schemas/dateTimeType"
+        referenceType:
+          $ref: "#/components/schemas/referenceTypeType"
+        authors:
+          type: array
+          items:
+            $ref: "#/components/schemas/authorType"
         tags:
           type: array
           items:
             $ref: "#/components/schemas/tagType"
+        book:
+          $ref: "#/components/schemas/referenceBookType"
+        magazineFeature:
+          $ref: "#/components/schemas/referenceMagazineFeatureType"
+        photoCollection:
+          $ref: "#/components/schemas/referencePhotoCollectionType"
     newTagType:
       type: object
       required:
@@ -444,6 +545,24 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/referenceType"
+    newFeatureTagType:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          $ref: "#/components/schemas/tagNameType"
+        description:
+          $ref: "#/components/schemas/tagDescriptionType"
+    featureTagType:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              $ref: "#/components/schemas/idType"
+        - $ref: "#/components/schemas/newFeatureTagType"
     errorObjectType:
       type: object
       required:
@@ -514,8 +633,9 @@ components:
             properties:
               error:
                 $ref: "#/components/schemas/errorObjectType"
-security:
-  - userToken: []
+# TODO: Uncomment
+# security:
+#   - userToken: []
 paths:
   "/authors":
     x-exegesis-controller: authorsController
