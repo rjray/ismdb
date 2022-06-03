@@ -18,10 +18,9 @@ module.exports = (sequelize, DataTypes, { Tag: fields }) => {
       const result = this.get();
 
       if (result.TagsReferences) delete result.TagsReferences;
-      if (result.References) {
+      if (result.References)
         result.references = result.References.map((r) => r.clean());
-        delete result.References;
-      }
+      delete result.References;
 
       return result;
     }

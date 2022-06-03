@@ -17,12 +17,10 @@ module.exports = (sequelize, DataTypes, { FeatureTag: fields }) => {
     clean() {
       const result = this.get();
 
-      if (result.FeatureTagsMagazineFeatures)
-        delete result.FeatureTagsMagazineFeatures;
-      if (result.MagazineFeatures) {
+      delete result.FeatureTagsMagazineFeatures;
+      if (result.MagazineFeatures)
         result.magazineFeatures = result.MagazineFeatures.map((f) => f.clean());
-        delete result.MagazineFeatures;
-      }
+      delete result.MagazineFeatures;
 
       return result;
     }

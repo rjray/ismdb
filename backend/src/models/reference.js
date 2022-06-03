@@ -43,14 +43,10 @@ module.exports = (sequelize, DataTypes, { Reference: fields }) => {
         }
         delete result[type];
       }
-      if (result.Authors) {
-        result.authors = result.Authors.map((a) => a.clean());
-        delete result.Authors;
-      }
-      if (result.Tags) {
-        result.tags = result.Tags.map((t) => t.clean());
-        delete result.Tags;
-      }
+      if (result.Authors) result.authors = result.Authors.map((a) => a.clean());
+      delete result.Authors;
+      if (result.Tags) result.tags = result.Tags.map((t) => t.clean());
+      delete result.Tags;
       if (result.AuthorsReferences) delete result.AuthorsReferences;
 
       return result;

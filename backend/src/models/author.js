@@ -23,14 +23,12 @@ module.exports = (sequelize, DataTypes, { Author: fields }) => {
         result[date] = result[date].toISOString();
       }
 
-      if (result.AuthorAliases) {
+      if (result.AuthorAliases)
         result.aliases = result.AuthorAliases.map((a) => a.clean());
-        delete result.AuthorAliases;
-      }
-      if (result.References) {
+      delete result.AuthorAliases;
+      if (result.References)
         result.references = result.References.map((r) => r.clean());
-        delete result.References;
-      }
+      delete result.References;
       if (result.AuthorsReferences) delete result.AuthorsReferences;
 
       return result;
