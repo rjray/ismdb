@@ -23,6 +23,8 @@ module.exports = (sequelize, DataTypes, { Book: fields }) => {
       if (result.Publisher) result.publisher = result.Publisher.clean();
       delete result.Publisher;
       delete result.PublisherId;
+      if (result.Reference) result.reference = result.Reference.clean();
+      delete result.Reference;
 
       return result;
     }

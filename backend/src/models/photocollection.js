@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes, { PhotoCollection: fields }) => {
       const result = this.get();
 
       delete result.ReferenceId;
+      if (result.Reference) result.reference = result.Reference.clean();
+      delete result.Reference;
 
       return result;
     }
