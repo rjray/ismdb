@@ -233,9 +233,9 @@ sub setup_pubs_and_series {
     my ($dbhout) = @_;
 
     # Determine all the publishers that need to be created.
-    my %publishers = map { $_->{name}, 1 } (values %{$publishers_data});
+    my %publishers = map { $_->{name} => 1 } (values %{$publishers_data});
     for my $sname (keys %{$series_data}) {
-        next unless ($series_data->{$sname}->{publisher});
+        next if (! $series_data->{$sname}->{publisher});
         $publishers{$series_data->{$sname}->{publisher}} = 1;
     }
 
@@ -265,7 +265,7 @@ sub setup_pubs_and_series {
     my $series_id = 0;
     my %skeys = ();
     $result = eval {
-        for my $sname (keys %{$series_data}) {
+        for my $sname (sort keys %{$series_data}) {
             my $name = $series_data->{$sname}->{name};
             my $publisher = $series_data->{$sname}->{publisher};
             my $key = "$name|" . ($publisher || q{});
