@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes, { Series: fields }) => {
       delete result.Books;
       if (result.Publisher) result.publisher = result.Publisher.clean();
       delete result.Publisher;
-      if (result.PublisherId) delete result.PublisherId;
+      delete result.PublisherId;
 
       return result;
     }
