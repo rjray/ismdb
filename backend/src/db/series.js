@@ -10,6 +10,7 @@ const {
   ReferenceType,
   Series,
   Tag,
+  sequelize,
 } = require("../models");
 
 const includesForReference = [
@@ -109,9 +110,41 @@ const fetchAllSeriesCompleteWithCount = async (opts = {}) => {
   return { count, series };
 };
 
+// Create a new series using the content in data.
+const createSeries = async (data) => {
+  const series = await Series.create(data).catch((error) => {
+    if (error.hasOwnProperty("errors")) {
+      const specific = error.errors[0];
+      throw new Error(specific.message);
+    } else {
+      throw new Error(error.message);
+    }
+  });
+
+  return series.clean();
+};
+
+// Update a single series using the content in data.
+const updateSeries = async (id, data) => {
+  return Series.findByPk(id).then((series) => {
+    return sequelize.transaction(async (txn) => {
+      const updatedSeries = await series.update(data, { transaction: txn });
+      return updatedSeries.clean();
+    });
+  });
+};
+
+// Delete a single Series record.
+const deleteSeries = async (id) => {
+  return Series.destroy({ where: { id } });
+};
+
 module.exports = {
   fetchSingleSeriesSimple,
   fetchSingleSeriesComplete,
   fetchAllSeriesSimpleWithCount,
   fetchAllSeriesCompleteWithCount,
+  createSeries,
+  updateSeries,
+  deleteSeries,
 };

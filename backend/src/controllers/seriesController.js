@@ -12,6 +12,22 @@ const { fixupOrderField, fixupWhereField } = require("../lib/utils");
   Create a new series record from the JSON content in the request body. The
   return value is an object with the key "series" (new series object).
  */
+function createSeries(context) {
+  const { res, requestBody } = context;
+
+  return Series.createSeries(requestBody)
+    .then((series) => {
+      res.status(201).pureJson({ series });
+    })
+    .catch((error) => {
+      res.status(500).pureJson({
+        error: {
+          summary: error.name,
+          description: error.message,
+        },
+      });
+    });
+}
 
 /*
   GET /series
@@ -112,9 +128,76 @@ function getSeriesById(context) {
 }
 
 /*
-  GET /series/{id}
+  PUT /series/{id}
 
-  Get the specified series by the ID.
+  Update the series specified by the ID parameter, using the JSON content in
+  the request body. The return value is an object with the key "series" (the
+  updated series object).
+ */
+function updateSeriesById(context) {
+  const { id } = context.params.path;
+  const { res, requestBody } = context;
+
+  return Series.updateSeries(id, requestBody)
+    .then((series) => {
+      if (series) {
+        res.status(200).pureJson({ series });
+      } else {
+        res.status(404).pureJson({
+          error: {
+            summary: "Not found",
+            description: `No series with this ID (${id}) found`,
+          },
+        });
+      }
+    })
+    .catch((error) => {
+      res.status(500).pureJson({
+        error: {
+          summary: error.name,
+          description: error.message,
+        },
+      });
+    });
+}
+
+/*
+  DELETE /series/{id}
+
+  Delete the series specified by the ID parameter. No return value.
+ */
+function deleteSeriesById(context) {
+  const { id } = context.params.path;
+  const { res } = context;
+
+  return Series.deleteSeries(id)
+    .then((number) => {
+      if (number) {
+        res.status(200).set("content-type", "text/plain");
+      } else {
+        res.status(404).pureJson({
+          error: {
+            summary: "Not found",
+            description: `No series with this ID (${id}) found`,
+          },
+        });
+      }
+    })
+    .catch((error) => {
+      res.status(500).pureJson({
+        error: {
+          summary: error.name,
+          description: error.message,
+        },
+      });
+    });
+}
+
+/*
+  GET /series/{id}/withReferences
+
+  Get the specified series by the ID with all references that are a part of
+  that series.
  */
 function getSeriesByIdWithReferences(context) {
   const { id } = context.params.path;
@@ -144,6 +227,9 @@ function getSeriesByIdWithReferences(context) {
 }
 
 module.exports = {
+  createSeries,
+  updateSeriesById,
+  deleteSeriesById,
   getAllSeries,
   getAllSeriesWithReferences,
   getSeriesById,
