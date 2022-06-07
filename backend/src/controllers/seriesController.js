@@ -35,7 +35,7 @@ function createSeries(context) {
   Return all series (with publisher information), possibly limited by params
   passed in. Also returns a count of all series that match the query, even
   if the query itself is governed by skip and/or limit. The returned object
-  has keys "count" (integer) and "series" (list of author objects).
+  has keys "count" (integer) and "series" (list of series objects).
  */
 function getAllSeries(context) {
   const { query } = context.params;
@@ -68,7 +68,7 @@ function getAllSeries(context) {
   Return all series (with full information), possibly limited by params
   passed in. Also returns a count of all series that match the query, even
   if the query itself is governed by skip and/or limit. The returned object
-  has keys "count" (integer) and "series" (list of author objects).
+  has keys "count" (integer) and "series" (list of series objects).
  */
 function getAllSeriesWithReferences(context) {
   const { query } = context.params;
