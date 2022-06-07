@@ -20,8 +20,13 @@ const {
   sequelize,
 } = require("../models");
 
-const includesForReference = [
+const shallowIncludesForReference = [
   ReferenceType,
+  { model: Author, as: "Authors" },
+  { model: Tag, as: "Tags" },
+];
+const includesForReference = [
+  ...shallowIncludesForReference,
   {
     model: Book,
     include: [Series, Publisher],
@@ -34,8 +39,6 @@ const includesForReference = [
     ],
   },
   PhotoCollection,
-  { model: Author, as: "Authors" },
-  { model: Tag, as: "Tags" },
 ];
 const INCLUDE_REFERENCES = {
   model: Reference,
@@ -273,6 +276,8 @@ const updateReference = async (id, data) => {
 const deleteReference = async (id) => Reference.destroy({ where: { id } });
 
 module.exports = {
+  shallowIncludesForReference,
+  includesForReference,
   INCLUDE_REFERENCES,
   fetchSingleReferenceComplete,
   fetchAllReferencesCompleteWithCount,

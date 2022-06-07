@@ -3,23 +3,15 @@
  */
 
 const {
-  Author,
   FeatureTag,
   Magazine,
   MagazineIssue,
   MagazineFeature,
   Reference,
-  ReferenceType,
-  Tag,
   sequelize,
 } = require("../models");
 const { fixAggregateOrderFields } = require("../lib/utils");
-
-const includesForReference = [
-  ReferenceType,
-  { model: Author, as: "Authors" },
-  { model: Tag, as: "Tags" },
-];
+const { shallowIncludesForReference } = require("./references");
 
 // Most-basic magazine request. Single magazine without issues or anything.
 const fetchSingleMagazineSimple = async (id) => {
@@ -39,7 +31,9 @@ const fetchSingleMagazineComplete = async (id) => {
         include: [
           {
             model: MagazineFeature,
-            include: [{ model: Reference, include: includesForReference }],
+            include: [
+              { model: Reference, include: shallowIncludesForReference },
+            ],
           },
         ],
       },
@@ -164,7 +158,7 @@ const fetchSingleMagazineIssueComplete = async (id) => {
         model: MagazineFeature,
         include: [
           { model: FeatureTag, as: "FeatureTags" },
-          { model: Reference, include: includesForReference },
+          { model: Reference, include: shallowIncludesForReference },
         ],
       },
     ],

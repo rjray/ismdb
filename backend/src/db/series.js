@@ -2,22 +2,8 @@
   All database operations that focus on series.
  */
 
-const {
-  Author,
-  Book,
-  Publisher,
-  Reference,
-  ReferenceType,
-  Series,
-  Tag,
-  sequelize,
-} = require("../models");
-
-const includesForReference = [
-  ReferenceType,
-  { model: Author, as: "Authors" },
-  { model: Tag, as: "Tags" },
-];
+const { Book, Publisher, Reference, Series, sequelize } = require("../models");
+const { shallowIncludesForReference } = require("./references");
 
 // "Clean" a Series object that has references data.
 function cleanSeriesWithReferences(seriesIn) {
@@ -65,7 +51,7 @@ const fetchSingleSeriesComplete = async (id) => {
       {
         model: Book,
         as: "Books",
-        include: [{ model: Reference, include: includesForReference }],
+        include: [{ model: Reference, include: shallowIncludesForReference }],
       },
     ],
   });
@@ -99,7 +85,7 @@ const fetchAllSeriesCompleteWithCount = async (opts = {}) => {
       {
         model: Book,
         as: "Books",
-        include: [{ model: Reference, include: includesForReference }],
+        include: [{ model: Reference, include: shallowIncludesForReference }],
       },
     ],
     ...opts,
