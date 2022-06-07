@@ -330,6 +330,15 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/referenceMagazineFeatureType"
+    newBookPublisherType:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        notes:
+          type: string
     bookPublisherType:
       type: object
       required:
@@ -343,7 +352,7 @@ components:
         notes:
           type: string
           nullable: true
-        books:
+        references:
           type: array
           items:
             $ref: "#/components/schemas/referenceType"
@@ -392,6 +401,7 @@ components:
           type: string
         seriesNumber:
           type: string
+          nullable: true
         series:
           $ref: "#/components/schemas/bookSeriesType"
         publisher:
@@ -1356,6 +1366,200 @@ paths:
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
+        - References
+  "/publishers":
+    x-exegesis-controller: publishersController
+    post:
+      summary: Create a new publisher
+      description: Create a new publisher using the data in the request body.
+      operationId: createPublisher
+      requestBody:
+        description: New publisher
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/newBookPublisherType"
+      responses:
+        "201":
+          description: New publisher created
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - publisher
+                properties:
+                  publisher:
+                    $ref: "#/components/schemas/bookPublisherType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Publishers
+        - References
+    get:
+      summary: Fetch all publishers
+      description: Fetch all publishers as an array. Includes publishers' data
+        with series information filled in.
+      operationId: getAllPublishers
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/whereParam"
+      responses:
+        "200":
+          description: All publishers
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - publishers
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  publishers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/bookPublisherType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Publishers
+        - References
+  "/publishers/withReferences":
+    x-exegesis-controller: publishersController
+    get:
+      summary: Fetch all publishers with references included
+      description: Fetch all publishers as an array. Includes publishers' data
+        with series information and all references of the publishers filled in.
+      operationId: getAllPublishersWithReferences
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/whereParam"
+      responses:
+        "200":
+          description: All publishers
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - publishers
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  publishers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/bookPublisherType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Publishers
+        - References
+  "/publishers/{id}":
+    x-exegesis-controller: publishersController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single publisher by ID
+      description: Retrieve a single publisher by the ID. Includes full
+        publisher information.
+      operationId: getPublisherById
+      responses:
+        "200":
+          description: Publisher data
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - publisher
+                properties:
+                  publisher:
+                    $ref: "#/components/schemas/bookPublisherType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Publishers
+        - References
+    put:
+      summary: Update a publisher by ID
+      description: Update a specific publisher by ID.
+      operationId: updatePublisherById
+      requestBody:
+        description: Publisher to update
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/magazineType"
+      responses:
+        "200":
+          description: Updated publisher
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - publisher
+                properties:
+                  publisher:
+                    $ref: "#/components/schemas/bookPublisherType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Publishers
+        - References
+    delete:
+      summary: Delete a publisher by ID
+      description: Delete a specific publisher by ID.
+      operationId: deletePublisherById
+      responses:
+        "200":
+          description: Publisher deleted
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Publishers
+        - References
+  "/publishers/{id}/withReferences":
+    x-exegesis-controller: publishersController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single publisher by ID
+      description: Retrieve a single publisher by the ID. Includes full
+        publisher information.
+      operationId: getPublisherByIdWithReferences
+      responses:
+        "200":
+          description: Publisher data
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - publisher
+                properties:
+                  publisher:
+                    $ref: "#/components/schemas/bookPublisherType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Publishers
         - References
   "/series":
     x-exegesis-controller: seriesController
