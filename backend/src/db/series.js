@@ -126,6 +126,7 @@ const deleteSeries = async (id) => {
 };
 
 module.exports = {
+  cleanSeriesWithReferences,
   fetchSingleSeriesSimple,
   fetchSingleSeriesComplete,
   fetchAllSeriesSimpleWithCount,
