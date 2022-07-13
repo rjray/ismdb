@@ -91,8 +91,8 @@ const ShowMagazine = () => {
       <Row>
         <Col>
           <IssueTable
-            title={`Issues (${magazine.issues.length})`}
-            data={magazine.issues}
+            title={`Issues (${magazine.magazineIssues.length})`}
+            data={magazine.magazineIssues}
           />
         </Col>
       </Row>
