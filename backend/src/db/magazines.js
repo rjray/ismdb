@@ -80,7 +80,7 @@ const fetchAllMagazinesWithIssueCountAndCount = async (optsIn = {}) => {
 const fetchAllMagazinesWithIssueNumbersAndCount = async (opts = {}) => {
   const count = await Magazine.count(opts);
   const results = await Magazine.findAll({
-    include: [{ model: MagazineIssue, attributes: ["id", "number"] }],
+    include: [{ model: MagazineIssue, attributes: ["id", "issue"] }],
     ...opts,
   });
 
