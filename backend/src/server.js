@@ -37,6 +37,11 @@ async function createServer() {
       authenticators: {
         userToken: exegesisPassport(passport, "jwt-header"),
       },
+      onResponseValidationError: (result) => {
+        console.warn(JSON.stringify(result.errors, null, 2));
+      },
+      allErrors: true,
+      strictValidation: true,
       allowMissingControllers: true,
       treatReturnedJsonAsPure: true,
     })
