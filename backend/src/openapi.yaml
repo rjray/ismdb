@@ -1,14 +1,15 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   title: ISMDB API
   version: "0.2.0"
 servers:
   - url: /api
 components:
-  securitySchemes:
-    userToken:
-      type: http
-      scheme: bearer
+  # TODO: Uncomment
+  # securitySchemes:
+  #   userToken:
+  #     type: http
+  #     scheme: bearer
   parameters:
     offsetParam:
       name: offset
@@ -102,46 +103,35 @@ components:
       format: date-time
     languageType:
       type: string
-      maxLength: 50
+      nullable: true
     authorNameOrAliasType:
       type: string
-      maxLength: 60
     magazineNameType:
       type: string
-      maxLength: 50
     magazineAliasesType:
       type: string
-      maxLength: 100
+      nullable: true
     magazineNotesType:
       type: string
-      maxLength: 1000
+      nullable: true
     magazineIssueNumberType:
       type: string
-      maxLength: 50
     referenceNameType:
       type: string
-      maxLength: 255
-    referenceTypeType:
-      type: string
-      maxLength: 75
     referenceIsbnType:
       type: string
-      maxLength: 15
     tagNameType:
       type: string
-      maxLength: 75
     tagDescriptionType:
       type: string
-      maxLength: 255
+      nullable: true
     tagTypeType:
       type: string
-      maxLength: 25
+      nullable: true
     matchNameType:
       type: string
-      maxLength: 255
     matchTypeType:
       type: string
-      maxLength: 10
     newAuthorAliasType:
       type: object
       required:
@@ -242,9 +232,15 @@ components:
         - type: object
           required:
             - id
+            - createdAt
+            - updatedAt
           properties:
             id:
               $ref: "#/components/schemas/idType"
+            createdAt:
+              $ref: "#/components/schemas/dateTimeType"
+            updatedAt:
+              $ref: "#/components/schemas/dateTimeType"
         - $ref: "#/components/schemas/newMagazineType"
     magazineWithIssuesType:
       allOf:
@@ -275,19 +271,19 @@ components:
       type: object
       required:
         - id
-        - number
+        - issue
       properties:
         id:
           $ref: "#/components/schemas/idType"
-        number:
+        issue:
           $ref: "#/components/schemas/magazineIssueNumberType"
     newMagazineIssueType:
       type: object
       required:
-        - number
+        - issue
         - magazineId
       properties:
-        number:
+        issue:
           $ref: "#/components/schemas/magazineIssueNumberType"
         magazineId:
           $ref: "#/components/schemas/idType"
@@ -295,29 +291,29 @@ components:
       type: object
       required:
         - id
-        - number
-        - MagazineId
+        - issue
+        - magazineId
       properties:
         id:
           $ref: "#/components/schemas/idType"
-        number:
+        issue:
           $ref: "#/components/schemas/magazineIssueNumberType"
-        MagazineId:
+        magazineId:
           $ref: "#/components/schemas/idType"
     magazineIssueType:
       type: object
       required:
         - id
-        - number
-        - Magazine
+        - issue
+        - magazine
         - createdAt
         - updatedAt
       properties:
         id:
           $ref: "#/components/schemas/idType"
-        number:
+        issue:
           $ref: "#/components/schemas/magazineIssueNumberType"
-        Magazine:
+        magazine:
           $ref: "#/components/schemas/magazineType"
         createdAt:
           $ref: "#/components/schemas/dateTimeType"
@@ -328,42 +324,148 @@ components:
         - $ref: "#/components/schemas/magazineIssueType"
         - type: object
           required:
-            - references
+            - magazineFeatures
           properties:
-            references:
+            magazineFeatures:
               type: array
               items:
-                $ref: "#/components/schemas/referenceType"
-    recordTypeType:
+                $ref: "#/components/schemas/referenceMagazineFeatureType"
+    newBookPublisherType:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        notes:
+          type: string
+    bookPublisherType:
       type: object
       required:
         - id
-        - description
+        - name
       properties:
         id:
           $ref: "#/components/schemas/idType"
-        description:
+        name:
           type: string
-          maxLength: 50
         notes:
           type: string
-          maxLength: 255
+          nullable: true
+        references:
+          type: array
+          items:
+            $ref: "#/components/schemas/referenceType"
+        series:
+          type: array
+          items:
+            $ref: "#/components/schemas/bookSeriesType"
+    newBookSeriesType:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        notes:
+          type: string
+        publisherId:
+          $ref: "#/components/schemas/idType"
+    bookSeriesType:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          $ref: "#/components/schemas/idType"
+        name:
+          type: string
+        notes:
+          type: string
+          nullable: true
+        references:
+          type: array
+          items:
+            $ref: "#/components/schemas/referenceType"
+        publisher:
+          $ref: "#/components/schemas/bookPublisherType"
+    referenceBookType:
+      type: object
+      required:
+        - referenceId
+      properties:
+        referenceId:
+          $ref: "#/components/schemas/idType"
+        isbn:
+          type: string
+        seriesNumber:
+          type: string
+          nullable: true
+        series:
+          $ref: "#/components/schemas/bookSeriesType"
+        publisher:
+          $ref: "#/components/schemas/bookPublisherType"
+    referenceMagazineFeatureType:
+      type: object
+      required:
+        - referenceId
+        - featureTags
+      properties:
+        referenceId:
+          $ref: "#/components/schemas/idType"
+        featureTags:
+          type: array
+          items:
+            $ref: "#/components/schemas/featureTagType"
+        magazineIssue:
+          $ref: "#/components/schemas/magazineIssueType"
+        reference:
+          $ref: "#/components/schemas/referenceType"
+    referencePhotoCollectionType:
+      type: object
+      required:
+        - referenceId
+        - location
+        - media
+      properties:
+        referenceId:
+          $ref: "#/components/schemas/idType"
+        location:
+          type: string
+        media:
+          type: string
+    referenceTypeType:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - notes
+      properties:
+        id:
+          $ref: "#/components/schemas/idType"
+        name:
+          type: string
+        description:
+          type: string
+        notes:
+          type: string
+          nullable: true
     newReferenceType:
       type: object
       required:
         - name
-        - RecordTypeId
+        - ReferenceTypeId
         - tags
       properties:
         name:
           $ref: "#/components/schemas/referenceNameType"
-        type:
-          $ref: "#/components/schemas/referenceTypeType"
         isbn:
           $ref: "#/components/schemas/referenceIsbnType"
         language:
           $ref: "#/components/schemas/languageType"
-        RecordTypeId:
+        ReferenceTypeId:
           $ref: "#/components/schemas/idType"
         MagazineIssueId:
           $ref: "#/components/schemas/idType"
@@ -393,7 +495,7 @@ components:
       required:
         - id
         - name
-        - RecordType
+        - referenceType
         - createdAt
         - updatedAt
         - tags
@@ -402,30 +504,28 @@ components:
           $ref: "#/components/schemas/idType"
         name:
           $ref: "#/components/schemas/referenceNameType"
-        type:
-          $ref: "#/components/schemas/referenceTypeType"
-        isbn:
-          $ref: "#/components/schemas/referenceIsbnType"
         language:
           $ref: "#/components/schemas/languageType"
-        RecordType:
-          $ref: "#/components/schemas/recordTypeType"
-        MagazineIssue:
-          $ref: "#/components/schemas/magazineIssueType"
-        Magazine:
-          $ref: "#/components/schemas/magazineType"
-        authors:
-          type: array
-          items:
-            $ref: "#/components/schemas/authorType"
         createdAt:
           $ref: "#/components/schemas/dateTimeType"
         updatedAt:
           $ref: "#/components/schemas/dateTimeType"
+        referenceType:
+          $ref: "#/components/schemas/referenceTypeType"
+        authors:
+          type: array
+          items:
+            $ref: "#/components/schemas/authorType"
         tags:
           type: array
           items:
             $ref: "#/components/schemas/tagType"
+        book:
+          $ref: "#/components/schemas/referenceBookType"
+        magazineFeature:
+          $ref: "#/components/schemas/referenceMagazineFeatureType"
+        photoCollection:
+          $ref: "#/components/schemas/referencePhotoCollectionType"
     newTagType:
       type: object
       required:
@@ -466,6 +566,24 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/referenceType"
+    newFeatureTagType:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          $ref: "#/components/schemas/tagNameType"
+        description:
+          $ref: "#/components/schemas/tagDescriptionType"
+    featureTagType:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              $ref: "#/components/schemas/idType"
+        - $ref: "#/components/schemas/newFeatureTagType"
     errorObjectType:
       type: object
       required:
@@ -476,7 +594,6 @@ components:
           $ref: "#/components/schemas/idType"
         summary:
           type: string
-          maxLength: 75
         description:
           type: string
         reference:
@@ -492,7 +609,6 @@ components:
           type: string
         summary:
           type: string
-          maxLength: 75
         message:
           type: string
     notificationsType:
@@ -538,8 +654,9 @@ components:
             properties:
               error:
                 $ref: "#/components/schemas/errorObjectType"
-security:
-  - userToken: []
+# TODO: Uncomment
+# security:
+#   - userToken: []
 paths:
   "/authors":
     x-exegesis-controller: authorsController
@@ -1250,6 +1367,394 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - References
+  "/publishers":
+    x-exegesis-controller: publishersController
+    post:
+      summary: Create a new publisher
+      description: Create a new publisher using the data in the request body.
+      operationId: createPublisher
+      requestBody:
+        description: New publisher
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/newBookPublisherType"
+      responses:
+        "201":
+          description: New publisher created
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - publisher
+                properties:
+                  publisher:
+                    $ref: "#/components/schemas/bookPublisherType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Publishers
+        - References
+    get:
+      summary: Fetch all publishers
+      description: Fetch all publishers as an array. Includes publishers' data
+        with series information filled in.
+      operationId: getAllPublishers
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/whereParam"
+      responses:
+        "200":
+          description: All publishers
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - publishers
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  publishers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/bookPublisherType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Publishers
+        - References
+  "/publishers/withReferences":
+    x-exegesis-controller: publishersController
+    get:
+      summary: Fetch all publishers with references included
+      description: Fetch all publishers as an array. Includes publishers' data
+        with series information and all references of the publishers filled in.
+      operationId: getAllPublishersWithReferences
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/whereParam"
+      responses:
+        "200":
+          description: All publishers
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - publishers
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  publishers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/bookPublisherType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Publishers
+        - References
+  "/publishers/{id}":
+    x-exegesis-controller: publishersController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single publisher by ID
+      description: Retrieve a single publisher by the ID. Includes full
+        publisher information.
+      operationId: getPublisherById
+      responses:
+        "200":
+          description: Publisher data
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - publisher
+                properties:
+                  publisher:
+                    $ref: "#/components/schemas/bookPublisherType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Publishers
+        - References
+    put:
+      summary: Update a publisher by ID
+      description: Update a specific publisher by ID.
+      operationId: updatePublisherById
+      requestBody:
+        description: Publisher to update
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/magazineType"
+      responses:
+        "200":
+          description: Updated publisher
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - publisher
+                properties:
+                  publisher:
+                    $ref: "#/components/schemas/bookPublisherType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Publishers
+        - References
+    delete:
+      summary: Delete a publisher by ID
+      description: Delete a specific publisher by ID.
+      operationId: deletePublisherById
+      responses:
+        "200":
+          description: Publisher deleted
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Publishers
+        - References
+  "/publishers/{id}/withReferences":
+    x-exegesis-controller: publishersController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single publisher by ID
+      description: Retrieve a single publisher by the ID. Includes full
+        publisher information.
+      operationId: getPublisherByIdWithReferences
+      responses:
+        "200":
+          description: Publisher data
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - publisher
+                properties:
+                  publisher:
+                    $ref: "#/components/schemas/bookPublisherType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Publishers
+        - References
+  "/series":
+    x-exegesis-controller: seriesController
+    post:
+      summary: Create a new series
+      description: Create a new series using the data in the request body.
+      operationId: createSeries
+      requestBody:
+        description: New series
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/newBookSeriesType"
+      responses:
+        "201":
+          description: New series created
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - series
+                properties:
+                  series:
+                    $ref: "#/components/schemas/bookSeriesType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Series
+        - References
+    get:
+      summary: Fetch all series
+      description: Fetch all series as an array. Includes series data with
+        publisher information filled in.
+      operationId: getAllSeries
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/whereParam"
+      responses:
+        "200":
+          description: All series
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - series
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  series:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/bookSeriesType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Series
+        - References
+  "/series/withReferences":
+    x-exegesis-controller: seriesController
+    get:
+      summary: Fetch all series with references included
+      description: Fetch all series as an array. Includes series data with
+        publisher information and all references in the series filled in.
+      operationId: getAllSeriesWithReferences
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/whereParam"
+      responses:
+        "200":
+          description: All series
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - series
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  series:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/bookSeriesType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Series
+        - References
+  "/series/{id}":
+    x-exegesis-controller: seriesController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single series by ID
+      description: Retrieve a single series by the ID. Includes full series
+        information.
+      operationId: getSeriesById
+      responses:
+        "200":
+          description: Series data
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - series
+                properties:
+                  series:
+                    $ref: "#/components/schemas/bookSeriesType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Series
+        - References
+    put:
+      summary: Update a series by ID
+      description: Update a specific series by ID.
+      operationId: updateSeriesById
+      requestBody:
+        description: Series to update
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/magazineType"
+      responses:
+        "200":
+          description: Updated series
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - series
+                properties:
+                  series:
+                    $ref: "#/components/schemas/bookSeriesType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Series
+        - References
+    delete:
+      summary: Delete a series by ID
+      description: Delete a specific series by ID.
+      operationId: deleteSeriesById
+      responses:
+        "200":
+          description: Series deleted
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Series
+        - References
+  "/series/{id}/withReferences":
+    x-exegesis-controller: seriesController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single series by ID
+      description: Retrieve a single series by the ID. Includes full series
+        information.
+      operationId: getSeriesByIdWithReferences
+      responses:
+        "200":
+          description: Series data
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - series
+                properties:
+                  series:
+                    $ref: "#/components/schemas/bookSeriesType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Series
+        - References
   "/tags":
     x-exegesis-controller: tagsController
     post:
@@ -1500,12 +2005,12 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Tags
-  "/misc/recordtypes":
+  "/misc/referencetypes":
     x-exegesis-controller: miscController
     get:
-      summary: Fetch all record types as an array
-      description: Retrieve all record types as an array of objects.
-      operationId: getAllRecordTypes
+      summary: Fetch all reference types as an array
+      description: Retrieve all reference types as an array of objects.
+      operationId: getAllReferenceTypes
       responses:
         "200":
           description: All reference types
@@ -1514,12 +2019,12 @@ paths:
               schema:
                 type: object
                 required:
-                  - recordTypes
+                  - referenceTypes
                 properties:
-                  recordTypes:
+                  referenceTypes:
                     type: array
                     items:
-                      $ref: "#/components/schemas/recordTypeType"
+                      $ref: "#/components/schemas/referenceTypeType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
@@ -1576,34 +2081,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Miscellaneous
-  "/misc/referencetypes":
-    x-exegesis-controller: miscController
-    get:
-      summary: Fetch all reference type strings as an array
-      description: Fetch all reference type strings currently in use from the
-        database as an array of strings.
-      operationId: getAllReferenceTypes
-      parameters:
-        - $ref: "#/components/parameters/typeParam"
-        - $ref: "#/components/parameters/limitParam"
-      responses:
-        "200":
-          description: All matching reference types
-          content:
-            "application/json":
-              schema:
-                type: object
-                required:
-                  - types
-                properties:
-                  types:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/referenceTypeType"
-        default:
-          $ref: "#/components/responses/generalErrorResponse"
-      tags:
-        - Miscellaneous
   "/misc/quicksearch":
     x-exegesis-controller: miscController
     get:
@@ -1634,14 +2111,18 @@ paths:
         - Miscellaneous
 tags:
   - name: Authors
-    description: Operations that are primarily centered around authors
+    description: Operations that pertain to authors
   - name: Magazines
-    description: Operations that are primarily centered around magazines
+    description: Operations that pertain to magazines
   - name: Issues
-    description: Operations that are primarily centered around magazine issues
+    description: Operations that pertain to magazine issues
+  - name: Publishers
+    description: Operations that pertain to book publishers
   - name: References
-    description: Operations that are primarily centered around references
+    description: Operations that pertain to references
+  - name: Series
+    description: Operations that pertain to book series
   - name: Tags
-    description: Operations that are primarily centered around tags
+    description: Operations that pertain to tags
   - name: Miscellaneous
-    description: Operations that are not associated with any previous group
+    description: Operations that are not associated with any other group

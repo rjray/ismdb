@@ -1,8 +1,17 @@
+/*
+  AuthorsReferences relational model definition.
+ */
+
+const { Model } = require("sequelize");
+
 module.exports = (sequelize) => {
-  const AuthorsReferences = sequelize.define(
-    "AuthorsReferences",
+  class AuthorsReferences extends Model {}
+
+  AuthorsReferences.init(
     {},
     {
+      sequelize,
+      modelName: "AuthorsReferences",
       timestamps: false,
     }
   );

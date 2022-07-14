@@ -57,7 +57,7 @@ function getAllTags(context) {
     .catch((error) => {
       res.status(500).pureJson({
         error: {
-          sumary: error.name,
+          summary: error.name,
           description: error.message,
         },
       });
@@ -91,7 +91,7 @@ function getAllTagsWithRefCount(context) {
     .catch((error) => {
       res.status(500).pureJson({
         error: {
-          sumary: error.name,
+          summary: error.name,
           description: error.message,
         },
       });
@@ -128,7 +128,7 @@ function getTagsQueryWithRefCount(context) {
     .catch((error) => {
       res.status(500).pureJson({
         error: {
-          sumary: error.name,
+          summary: error.name,
           description: error.message,
         },
       });

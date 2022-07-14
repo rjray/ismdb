@@ -44,7 +44,7 @@ const MagazineIssues = ({ issues }) => {
   return (
     <Container fluid>
       {rows.map((row) => (
-        <IssuesRow key={row[0].number} row={row} />
+        <IssuesRow key={row[0].issue} row={row} />
       ))}
     </Container>
   );

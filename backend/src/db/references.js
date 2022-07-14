@@ -4,21 +4,41 @@
 
 const {
   Reference,
-  RecordType,
+  ReferenceType,
   Tag,
-  MagazineIssue,
+  Book,
+  Series,
+  Publisher,
+  MagazineFeature,
+  FeatureTag,
+  PhotoCollection,
   Magazine,
+  MagazineIssue,
   Author,
   AuthorsReferences,
   TagsReferences,
   sequelize,
 } = require("../models");
 
-const includesForReference = [
-  RecordType,
-  { model: MagazineIssue, include: [Magazine] },
+const shallowIncludesForReference = [
+  ReferenceType,
   { model: Author, as: "Authors" },
   { model: Tag, as: "Tags" },
+];
+const includesForReference = [
+  ...shallowIncludesForReference,
+  {
+    model: Book,
+    include: [Series, Publisher],
+  },
+  {
+    model: MagazineFeature,
+    include: [
+      { model: FeatureTag, as: "FeatureTags" },
+      { model: MagazineIssue, include: [Magazine] },
+    ],
+  },
+  PhotoCollection,
 ];
 const INCLUDE_REFERENCES = {
   model: Reference,
@@ -26,50 +46,16 @@ const INCLUDE_REFERENCES = {
   include: includesForReference,
 };
 
-// "Clean" a reference record by stripping it down to a plain JS object.
-function cleanReference(referenceIn) {
-  const reference = referenceIn.get();
-
-  if (reference.Authors) {
-    reference.authors = reference.Authors.map((authIn) => {
-      const author = authIn.get();
-      delete author.AuthorsReferences;
-      return author;
-    });
-    delete reference.Authors;
-  }
-
-  if (reference.Tags) {
-    reference.tags = reference.Tags.map((tagIn) => {
-      const tag = tagIn.get();
-      delete tag.TagsReferences;
-      return tag;
-    });
-    delete reference.Tags;
-    delete reference.TagsReferences;
-  }
-
-  if (reference.MagazineIssue) {
-    reference.Magazine = reference.MagazineIssue.Magazine.get();
-    reference.MagazineIssue = reference.MagazineIssue.get();
-    delete reference.MagazineIssue.Magazine;
-  }
-
-  reference.RecordType = reference.RecordType.get();
-
-  return reference;
-}
-
 // Get a single reference with all ancillary data (type, magazine, authors).
 const fetchSingleReferenceComplete = async (id) => {
   const reference = await Reference.findByPk(id, {
     include: includesForReference,
   });
 
-  return reference ? cleanReference(reference) : reference;
+  return reference ? reference.clean() : reference;
 };
 
-// Get all the references (based on opts), with RecordType, Magazine and
+// Get all the references (based on opts), with ReferenceType, Magazine and
 // Author information. Returns the count, as well.
 const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
   const count = await Reference.count(opts);
@@ -78,7 +64,7 @@ const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
     ...opts,
   });
 
-  const references = results.map((reference) => cleanReference(reference));
+  const references = results.map((reference) => reference.clean());
 
   return { count, references };
 };
@@ -103,7 +89,7 @@ const createReference = async (dataIn) => {
   delete data.tags;
 
   // Convert this one.
-  data.RecordTypeId = parseInt(data.RecordTypeId, 10);
+  data.ReferenceTypeId = parseInt(data.ReferenceTypeId, 10);
 
   // These are not used directly in the creation of a Reference instance, but
   // will be needed if the record type is a magazine.
@@ -114,10 +100,10 @@ const createReference = async (dataIn) => {
 
   const newId = await sequelize.transaction(async (txn) => {
     // Start by leveling things out a bit based on the record type.
-    if (data.RecordTypeId === 1) {
+    if (data.ReferenceTypeId === 1) {
       // A book. Clear magazine-related values.
       data.MagazineIssueId = null;
-    } else if (data.RecordTypeId === 2 || data.RecordTypeId === 3) {
+    } else if (data.ReferenceTypeId === 2 || data.ReferenceTypeId === 3) {
       // A magazine entry. Make sure ISBN is cleared, and convert the magazine
       // ID and issue number to the ID of a MagazineIssue instance.
       data.isbn = null;
@@ -233,15 +219,15 @@ const updateReferenceBasicInfo = async (reference, data, transaction) => {
 
 // Update the type-related reference information.
 const updateReferenceTypeInfo = async (reference, data, transaction) => {
-  const { RecordTypeId } = data;
+  const { ReferenceTypeId } = data;
   const changes = {};
 
-  if (RecordTypeId !== reference.RecordTypeId) {
+  if (ReferenceTypeId !== reference.ReferenceTypeId) {
     // The type has completely changed.
-    changes.RecordTypeId = RecordTypeId;
+    changes.ReferenceTypeId = ReferenceTypeId;
   } else {
     // The type has not changed, but other information might have.
-    switch (RecordTypeId) {
+    switch (ReferenceTypeId) {
       case 1:
         // For a book, check only the ISBN.
         if (data.isbn !== reference.isbn) changes.isbn = data.isbn;
@@ -290,8 +276,9 @@ const updateReference = async (id, data) => {
 const deleteReference = async (id) => Reference.destroy({ where: { id } });
 
 module.exports = {
+  shallowIncludesForReference,
+  includesForReference,
   INCLUDE_REFERENCES,
-  cleanReference,
   fetchSingleReferenceComplete,
   fetchAllReferencesCompleteWithCount,
   createReference,

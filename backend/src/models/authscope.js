@@ -1,34 +1,35 @@
-const {
-  createStringGetter,
-  createStringSetter,
-} = require("../lib/getter-setter");
+/*
+  AuthScope model definition.
+ */
 
-module.exports = (sequelize, DataTypes) => {
-  const AuthScope = sequelize.define(
-    "AuthScope",
+const { Model } = require("sequelize");
+
+module.exports = (sequelize, DataTypes, { AuthScope: fields }) => {
+  class AuthScope extends Model {
+    static associate(models) {
+      AuthScope.belongsToMany(models.User, {
+        as: "Users",
+        through: { model: models.UsersAuthScopes },
+        foreignKey: "authScopeId",
+      });
+    }
+  }
+
+  AuthScope.init(
     {
       name: {
-        type: DataTypes.STRING(50),
+        type: DataTypes.STRING(fields.name),
         allowNull: false,
         unique: true,
       },
-      description: {
-        type: DataTypes.STRING(256),
-        get: createStringGetter("description"),
-        set: createStringSetter("description"),
-      },
+      description: DataTypes.STRING(fields.description),
     },
     {
+      sequelize,
+      modelName: "AuthScope",
       timestamps: false,
     }
   );
-  AuthScope.associate = function (models) {
-    AuthScope.belongsToMany(models.User, {
-      as: "Users",
-      through: { model: models.UsersAuthScopes },
-      foreignKey: "authScopeId",
-    });
-  };
 
   return AuthScope;
 };

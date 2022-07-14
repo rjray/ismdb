@@ -16,7 +16,7 @@ const columns = [
     name: <b>Issues</b>,
     selector: "issues",
     sortable: true,
-    format: (row) => row.issues.length,
+    format: (row) => row.magazineIssues.length,
   },
   {
     name: <b>Added</b>,

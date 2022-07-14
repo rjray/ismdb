@@ -4,41 +4,24 @@
 
 const { Author, AuthorAlias, sequelize } = require("../models");
 const { sortBy, fixAggregateOrderFields } = require("../lib/utils");
-const { INCLUDE_REFERENCES, cleanReference } = require("./references");
+const { INCLUDE_REFERENCES } = require("./references");
 
 const sortByName = sortBy("name");
 
-function convertAliases(aliasList) {
-  const aliases = aliasList.map((item) => {
-    const alias = item.get();
-    delete alias.AuthorId;
-    return alias;
-  });
-  aliases.sort(sortByName);
-
-  return aliases;
-}
-
 // Most-basic author request. Single author with any aliases.
 const fetchSingleAuthorSimple = async (id) => {
-  let author = await Author.findByPk(id, { include: [AuthorAlias] }).catch(
+  const author = await Author.findByPk(id, { include: [AuthorAlias] }).catch(
     (error) => {
       throw new Error(error);
     }
   );
 
-  if (author) {
-    author = author.get();
-    author.aliases = convertAliases(author.AuthorAliases);
-    delete author.AuthorAliases;
-  }
-
-  return author;
+  return author?.clean();
 };
 
 // Single author with any aliases and a count of their references.
 const fetchSingleAuthorWithRefCount = async (id) => {
-  let author = await Author.findByPk(id, {
+  const author = await Author.findByPk(id, {
     attributes: {
       include: [
         [
@@ -56,33 +39,28 @@ const fetchSingleAuthorWithRefCount = async (id) => {
     throw new Error(error);
   });
 
-  if (author) {
-    author = author.get();
-    author.aliases = convertAliases(author.AuthorAliases);
-    delete author.AuthorAliases;
-  }
-
-  return author;
+  return author?.clean();
 };
 
 // Fetch a single author with aliases and all references they're listed on.
 const fetchSingleAuthorComplex = async (id) => {
-  let author = await Author.findByPk(id, {
+  const author = await Author.findByPk(id, {
+    attributes: {
+      include: [
+        [
+          sequelize.literal(`(
+            SELECT COUNT(*)
+            FROM \`AuthorsReferences\`
+            WHERE \`authorId\` = Author.\`id\`
+          )`),
+          "refcount",
+        ],
+      ],
+    },
     include: [AuthorAlias, INCLUDE_REFERENCES],
   });
 
-  if (author) {
-    author = author.get();
-    author.aliases = convertAliases(author.AuthorAliases);
-    delete author.AuthorAliases;
-
-    author.references = author.References.map((reference) =>
-      cleanReference(reference)
-    );
-    delete author.References;
-  }
-
-  return author;
+  return author?.clean();
 };
 
 // Fetch all authors along with aliases. Returns an object with the count in a
@@ -94,13 +72,7 @@ const fetchAllAuthorsWithAliasesAndCount = async (opts = {}) => {
     ...opts,
   });
 
-  const authors = results.map((item) => {
-    const author = item.get();
-    author.aliases = convertAliases(author.AuthorAliases);
-    delete author.AuthorAliases;
-
-    return author;
-  });
+  const authors = results.map((author) => author.clean());
 
   return { count, authors };
 };
@@ -133,13 +105,7 @@ const fetchAllAuthorsWithRefCountAndCount = async (optsIn = {}) => {
     ...opts,
   });
 
-  const authors = results.map((item) => {
-    const author = item.get();
-    author.aliases = convertAliases(author.AuthorAliases);
-    delete author.AuthorAliases;
-
-    return author;
-  });
+  const authors = results.map((author) => author.clean());
 
   return { count, authors };
 };

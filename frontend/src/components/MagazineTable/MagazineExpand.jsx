@@ -47,7 +47,7 @@ const MagazineExpand = ({ data: magazine }) => {
           <strong>Issues:</strong>
         </Col>
         <Col>
-          <MagazineIssues issues={magazine.issues} />
+          <MagazineIssues issues={magazine.magazineIssues} />
         </Col>
       </Row>
     </Container>

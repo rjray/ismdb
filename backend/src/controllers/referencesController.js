@@ -70,7 +70,8 @@ function getAllReferences(context) {
 
   Fetch a single reference by ID. Return value is an object with keys
   "reference" (the reference object) and "notifications". The reference
-  object will have RecordType, Magazine (when apropos) and Author information.
+  object will have ReferenceType, Magazine (when apropos) and Author
+  information.
  */
 function getReferenceById(context) {
   const { id } = context.params.path;

@@ -1,8 +1,19 @@
+/*
+  TagsReferences relational model definition.
+ */
+
+const { Model } = require("sequelize");
+
 module.exports = (sequelize) => {
-  const TagsReferences = sequelize.define(
-    "TagsReferences",
+  class TagsReferences extends Model {}
+
+  TagsReferences.init(
     {},
-    { timestamps: false }
+    {
+      sequelize,
+      modelName: "TagsReferences",
+      timestamps: false,
+    }
   );
 
   return TagsReferences;

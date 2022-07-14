@@ -2,45 +2,45 @@
  * All database operations that focus on magazines and issues.
  */
 
-const { Magazine, MagazineIssue, sequelize } = require("../models");
-const { INCLUDE_REFERENCES, cleanReference } = require("./references");
+const {
+  FeatureTag,
+  Magazine,
+  MagazineIssue,
+  MagazineFeature,
+  Reference,
+  sequelize,
+} = require("../models");
 const { fixAggregateOrderFields } = require("../lib/utils");
+const { shallowIncludesForReference } = require("./references");
 
 // Most-basic magazine request. Single magazine without issues or anything.
 const fetchSingleMagazineSimple = async (id) => {
-  let magazine = await Magazine.findByPk(id).catch((error) => {
+  const magazine = await Magazine.findByPk(id).catch((error) => {
     throw new Error(error);
   });
 
-  if (magazine) {
-    magazine = magazine.get();
-  }
-
-  return magazine;
+  return magazine?.clean();
 };
 
 // Get a single magazine with issues and references.
 const fetchSingleMagazineComplete = async (id) => {
-  let magazine = await Magazine.findByPk(id, {
-    include: [{ model: MagazineIssue, include: [INCLUDE_REFERENCES] }],
+  const magazine = await Magazine.findByPk(id, {
+    include: [
+      {
+        model: MagazineIssue,
+        include: [
+          {
+            model: MagazineFeature,
+            include: [
+              { model: Reference, include: shallowIncludesForReference },
+            ],
+          },
+        ],
+      },
+    ],
   });
 
-  if (magazine) {
-    magazine = magazine.get();
-    magazine.issues = magazine.MagazineIssues.map((issueIn) => {
-      const issue = issueIn.get();
-      delete issue.MagazineId;
-      issue.references = issue.References.map((reference) =>
-        cleanReference(reference)
-      );
-      delete issue.References;
-
-      return issue;
-    });
-    delete magazine.MagazineIssues;
-  }
-
-  return magazine;
+  return magazine?.clean();
 };
 
 // Get all magazines, with a count of their issues and a count of the total
@@ -70,7 +70,7 @@ const fetchAllMagazinesWithIssueCountAndCount = async (optsIn = {}) => {
     ...opts,
   });
 
-  const magazines = results.map((magazine) => magazine.get());
+  const magazines = results.map((magazine) => magazine.clean());
 
   return { count, magazines };
 };
@@ -80,17 +80,11 @@ const fetchAllMagazinesWithIssueCountAndCount = async (optsIn = {}) => {
 const fetchAllMagazinesWithIssueNumbersAndCount = async (opts = {}) => {
   const count = await Magazine.count(opts);
   const results = await Magazine.findAll({
-    include: [{ model: MagazineIssue, attributes: ["id", "number"] }],
+    include: [{ model: MagazineIssue, attributes: ["id", "issue"] }],
     ...opts,
   });
 
-  const magazines = results.map((magazineIn) => {
-    const magazine = magazineIn.get();
-    magazine.issues = magazine.MagazineIssues;
-    delete magazine.MagazineIssues;
-
-    return magazine;
-  });
+  const magazines = results.map((magazine) => magazine.clean());
 
   return { count, magazines };
 };
@@ -106,7 +100,7 @@ const createMagazine = async (data) => {
     }
   });
 
-  return magazine.get();
+  return magazine.clean();
 };
 
 // Update a single magazine using the content in data.
@@ -114,7 +108,7 @@ const updateMagazine = async (id, data) => {
   return Magazine.findByPk(id).then((magazine) => {
     return sequelize.transaction(async (txn) => {
       const updatedMagazine = await magazine.update(data, { transaction: txn });
-      return updatedMagazine.get();
+      return updatedMagazine.clean();
     });
   });
 };
@@ -135,7 +129,7 @@ const createMagazineIssue = async (data) => {
     }
   });
 
-  return magazineissue.get();
+  return magazineissue.clean();
 };
 
 // Update a MagazineIssue record.
@@ -145,7 +139,7 @@ const updateMagazineIssue = async (id, data) => {
       const updatedMagazineissue = await magazineissue.update(data, {
         transaction: txn,
       });
-      return updatedMagazineissue.get();
+      return updatedMagazineissue.clean();
     });
   });
 };
@@ -157,20 +151,20 @@ const deleteMagazineIssue = async (id) => {
 
 // Fetch a single magazine issue with all the ancillary data.
 const fetchSingleMagazineIssueComplete = async (id) => {
-  let magazineissue = await MagazineIssue.findByPk(id, {
-    include: [Magazine, INCLUDE_REFERENCES],
+  const magazineissue = await MagazineIssue.findByPk(id, {
+    include: [
+      Magazine,
+      {
+        model: MagazineFeature,
+        include: [
+          { model: FeatureTag, as: "FeatureTags" },
+          { model: Reference, include: shallowIncludesForReference },
+        ],
+      },
+    ],
   });
 
-  magazineissue = magazineissue.get();
-
-  magazineissue.Magazine = magazineissue.Magazine.get();
-  delete magazineissue.MagazineId;
-  magazineissue.references = magazineissue.References.map((reference) =>
-    cleanReference(reference)
-  );
-  delete magazineissue.References;
-
-  return magazineissue;
+  return magazineissue?.clean();
 };
 
 module.exports = {

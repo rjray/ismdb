@@ -1,37 +1,47 @@
-const {
-  createStringGetter,
-  createStringSetter,
-} = require("../lib/getter-setter");
+/*
+  Magazine model definition.
+ */
 
-module.exports = (sequelize, DataTypes) => {
-  const Magazine = sequelize.define(
-    "Magazine",
+const { Model } = require("sequelize");
+
+module.exports = (sequelize, DataTypes, { Magazine: fields }) => {
+  class Magazine extends Model {
+    static associate(models) {
+      Magazine.hasMany(models.MagazineIssue);
+    }
+
+    clean() {
+      const result = this.get();
+
+      // The two dates are Date objects, convert them to strings.
+      for (const date of ["createdAt", "updatedAt"]) {
+        if (result.hasOwnProperty(date))
+          result[date] = result[date].toISOString();
+      }
+
+      if (result.MagazineIssues)
+        result.magazineIssues = result.MagazineIssues.map((i) => i.clean());
+      delete result.MagazineIssues;
+
+      return result;
+    }
+  }
+
+  Magazine.init(
     {
       name: {
-        type: DataTypes.STRING(50),
+        type: DataTypes.STRING(fields.name),
         allowNull: false,
       },
-      language: {
-        type: DataTypes.STRING(50),
-        get: createStringGetter("language"),
-        set: createStringSetter("language"),
-      },
-      aliases: {
-        type: DataTypes.STRING(100),
-        get: createStringGetter("aliases"),
-        set: createStringSetter("aliases"),
-      },
-      notes: {
-        type: DataTypes.STRING(1000),
-        get: createStringGetter("notes"),
-        set: createStringSetter("notes"),
-      },
+      language: DataTypes.STRING(fields.language),
+      aliases: DataTypes.STRING(fields.aliases),
+      notes: DataTypes.STRING(fields.notes),
     },
-    {}
+    {
+      sequelize,
+      modelName: "Magazine",
+    }
   );
-  Magazine.associate = function (models) {
-    Magazine.hasMany(models.MagazineIssue);
-  };
 
   return Magazine;
 };
