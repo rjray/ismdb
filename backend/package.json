@@ -30,19 +30,19 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "sequelize": "^6.20.1",
-    "sqlite3": "^5.0.3"
+    "sequelize": "^6.21.3",
+    "sqlite3": "^5.0.8"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.5",
+    "@babel/core": "^7.18.6",
     "babel-preset-airbnb": "^5.0.0",
-    "eslint": "^8.5.0",
+    "eslint": "^8.19.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "nodemon": "^2.0.16",
-    "prettier": "^2.6.2",
+    "eslint-plugin-prettier": "^4.2.1",
+    "nodemon": "^2.0.19",
+    "prettier": "^2.7.1",
     "sequelize-cli": "^6.4.1"
   }
 }
