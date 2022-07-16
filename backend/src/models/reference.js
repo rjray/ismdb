@@ -33,7 +33,8 @@ module.exports = (sequelize, DataTypes, { Reference: fields }) => {
 
       // The two dates are Date objects, convert them to strings.
       for (const date of ["createdAt", "updatedAt"]) {
-        result[date] = result[date].toISOString();
+        if (result.hasOwnProperty(date))
+          result[date] = result[date].toISOString();
       }
 
       for (const type of ["Book", "MagazineFeature", "PhotoCollection"]) {
