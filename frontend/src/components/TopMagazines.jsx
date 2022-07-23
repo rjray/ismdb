@@ -8,7 +8,7 @@ import { getMostRecentUpdatedMagazines } from "../utils/queries";
 
 const count = 10;
 
-const TopTags = () => {
+const TopMagazines = () => {
   const { isLoading, error, data } = useQuery(
     ["magazines", { getMostRecentlyUpdated: true, query: { count } }],
     getMostRecentUpdatedMagazines
@@ -52,4 +52,4 @@ const TopTags = () => {
   );
 };
 
-export default TopTags;
+export default TopMagazines;
