@@ -8,7 +8,7 @@ import { getAllAuthorsWithRefCount } from "../utils/queries";
 
 const count = 10;
 
-const TopTags = () => {
+const TopAuthors = () => {
   const { isLoading, error, data } = useQuery(
     [
       "authors",
@@ -57,4 +57,4 @@ const TopTags = () => {
   );
 };
 
-export default TopTags;
+export default TopAuthors;
