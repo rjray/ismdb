@@ -34,7 +34,8 @@ impl MigrationTrait for Migration {
                                 PhotoCollection::Table,
                                 PhotoCollection::ReferenceId,
                             )
-                            .to(References::Table, References::Id),
+                            .to(References::Table, References::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
                     )
                     .to_owned(),
             )
