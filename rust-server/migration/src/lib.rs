@@ -9,8 +9,8 @@ mod m20230102_102426_create_book;
 mod m20230102_102430_create_magazine;
 mod m20230102_102442_create_magazine_issue;
 mod m20230102_102470_create_magazine_feature;
-// mod m20230102_102504_create_author;
-// mod m20230102_102512_create_author_alias;
+mod m20230102_102504_create_author;
+mod m20230102_102512_create_author_alias;
 // mod m20230102_102523_create_tag;
 // mod m20230102_102533_create_feature_tag;
 // mod m20230102_102547_create_user;
@@ -22,9 +22,6 @@ mod m20230102_102470_create_magazine_feature;
 // mod m20230102_103129_create_feature_tags_magazine_features;
 // mod m20230102_103228_index_feature_tags_magazine_features;
 // mod m20230102_103302_create_users_auth_scopes;
-// mod m20230102_103433_assoc_magazinefeature_magazineissue;
-// mod m20230102_103446_assoc_magazineissue_magazine;
-// mod m20230102_103529_assoc_authoralias_author;
 
 pub struct Migrator;
 
@@ -41,8 +38,8 @@ impl MigratorTrait for Migrator {
             Box::new(m20230102_102430_create_magazine::Migration),
             Box::new(m20230102_102442_create_magazine_issue::Migration),
             Box::new(m20230102_102470_create_magazine_feature::Migration),
-            // Box::new(m20230102_102504_create_author::Migration),
-            // Box::new(m20230102_102512_create_author_alias::Migration),
+            Box::new(m20230102_102504_create_author::Migration),
+            Box::new(m20230102_102512_create_author_alias::Migration),
             // Box::new(m20230102_102523_create_tag::Migration),
             // Box::new(m20230102_102533_create_feature_tag::Migration),
             // Box::new(m20230102_102547_create_user::Migration),
@@ -54,9 +51,6 @@ impl MigratorTrait for Migrator {
             // Box::new(m20230102_103129_create_feature_tags_magazine_features::Migration),
             // Box::new(m20230102_103228_index_feature_tags_magazine_features::Migration),
             // Box::new(m20230102_103302_create_users_auth_scopes::Migration),
-            // Box::new(m20230102_103433_assoc_magazinefeature_magazineissue::Migration),
-            // Box::new(m20230102_103446_assoc_magazineissue_magazine::Migration),
-            // Box::new(m20230102_103529_assoc_authoralias_author::Migration),
         ]
     }
 }
