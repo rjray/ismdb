@@ -9,21 +9,21 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(PhotoCollection::Table)
+                    .table(PhotoCollections::Table)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(PhotoCollection::ReferenceId)
+                        ColumnDef::new(PhotoCollections::ReferenceId)
                             .integer()
                             .not_null()
                             .primary_key(),
                     )
                     .col(
-                        ColumnDef::new(PhotoCollection::Location)
+                        ColumnDef::new(PhotoCollections::Location)
                             .string()
                             .not_null(),
                     )
                     .col(
-                        ColumnDef::new(PhotoCollection::Media)
+                        ColumnDef::new(PhotoCollections::Media)
                             .string()
                             .not_null(),
                     )
@@ -31,8 +31,8 @@ impl MigrationTrait for Migration {
                         ForeignKey::create()
                             .name("FK_photocollection_reference")
                             .from(
-                                PhotoCollection::Table,
-                                PhotoCollection::ReferenceId,
+                                PhotoCollections::Table,
+                                PhotoCollections::ReferenceId,
                             )
                             .to(References::Table, References::Id)
                             .on_delete(ForeignKeyAction::Cascade),
@@ -44,17 +44,15 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(PhotoCollection::Table).to_owned())
+            .drop_table(Table::drop().table(PhotoCollections::Table).to_owned())
             .await
     }
 }
 
 /// Learn more at https://docs.rs/sea-query#iden
 #[derive(Iden)]
-enum PhotoCollection {
-    #[iden = "PhotoCollections"]
+enum PhotoCollections {
     Table,
-    #[iden = "referenceId"]
     ReferenceId,
     Location,
     Media,
@@ -62,7 +60,6 @@ enum PhotoCollection {
 
 #[derive(Iden)]
 enum References {
-    #[iden = "References"]
     Table,
     Id,
 }
