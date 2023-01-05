@@ -6,9 +6,9 @@ mod m20230102_102407_create_photo_collection;
 mod m20230102_102414_create_publisher;
 mod m20230102_102422_create_series;
 mod m20230102_102426_create_book;
-// mod m20230102_102430_create_magazine;
-// mod m20230102_102442_create_magazine_issue;
-// mod m20230102_102470_create_magazine_feature;
+mod m20230102_102430_create_magazine;
+mod m20230102_102442_create_magazine_issue;
+mod m20230102_102470_create_magazine_feature;
 // mod m20230102_102504_create_author;
 // mod m20230102_102512_create_author_alias;
 // mod m20230102_102523_create_tag;
@@ -38,9 +38,9 @@ impl MigratorTrait for Migrator {
             Box::new(m20230102_102414_create_publisher::Migration),
             Box::new(m20230102_102422_create_series::Migration),
             Box::new(m20230102_102426_create_book::Migration),
-            // Box::new(m20230102_102430_create_magazine::Migration),
-            // Box::new(m20230102_102442_create_magazine_issue::Migration),
-            // Box::new(m20230102_102470_create_magazine_feature::Migration),
+            Box::new(m20230102_102430_create_magazine::Migration),
+            Box::new(m20230102_102442_create_magazine_issue::Migration),
+            Box::new(m20230102_102470_create_magazine_feature::Migration),
             // Box::new(m20230102_102504_create_author::Migration),
             // Box::new(m20230102_102512_create_author_alias::Migration),
             // Box::new(m20230102_102523_create_tag::Migration),
