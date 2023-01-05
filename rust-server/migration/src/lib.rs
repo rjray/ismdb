@@ -3,9 +3,9 @@ pub use sea_orm_migration::prelude::*;
 mod m20230102_102224_create_reference_type;
 mod m20230102_102241_create_reference;
 mod m20230102_102407_create_photo_collection;
-// mod m20230102_102414_create_publisher;
-// mod m20230102_102422_create_series;
-// mod m20230102_102426_create_book;
+mod m20230102_102414_create_publisher;
+mod m20230102_102422_create_series;
+mod m20230102_102426_create_book;
 // mod m20230102_102430_create_magazine;
 // mod m20230102_102442_create_magazine_issue;
 // mod m20230102_102470_create_magazine_feature;
@@ -22,11 +22,8 @@ mod m20230102_102407_create_photo_collection;
 // mod m20230102_103129_create_feature_tags_magazine_features;
 // mod m20230102_103228_index_feature_tags_magazine_features;
 // mod m20230102_103302_create_users_auth_scopes;
-// mod m20230102_103353_assoc_book_publisher;
-// mod m20230102_103359_assoc_book_series;
 // mod m20230102_103433_assoc_magazinefeature_magazineissue;
 // mod m20230102_103446_assoc_magazineissue_magazine;
-// mod m20230102_103501_assoc_series_publisher;
 // mod m20230102_103529_assoc_authoralias_author;
 
 pub struct Migrator;
@@ -38,9 +35,9 @@ impl MigratorTrait for Migrator {
             Box::new(m20230102_102224_create_reference_type::Migration),
             Box::new(m20230102_102241_create_reference::Migration),
             Box::new(m20230102_102407_create_photo_collection::Migration),
-            // Box::new(m20230102_102414_create_publisher::Migration),
-            // Box::new(m20230102_102422_create_series::Migration),
-            // Box::new(m20230102_102426_create_book::Migration),
+            Box::new(m20230102_102414_create_publisher::Migration),
+            Box::new(m20230102_102422_create_series::Migration),
+            Box::new(m20230102_102426_create_book::Migration),
             // Box::new(m20230102_102430_create_magazine::Migration),
             // Box::new(m20230102_102442_create_magazine_issue::Migration),
             // Box::new(m20230102_102470_create_magazine_feature::Migration),
@@ -57,11 +54,8 @@ impl MigratorTrait for Migrator {
             // Box::new(m20230102_103129_create_feature_tags_magazine_features::Migration),
             // Box::new(m20230102_103228_index_feature_tags_magazine_features::Migration),
             // Box::new(m20230102_103302_create_users_auth_scopes::Migration),
-            // Box::new(m20230102_103353_assoc_book_publisher::Migration),
-            // Box::new(m20230102_103359_assoc_book_series::Migration),
             // Box::new(m20230102_103433_assoc_magazinefeature_magazineissue::Migration),
             // Box::new(m20230102_103446_assoc_magazineissue_magazine::Migration),
-            // Box::new(m20230102_103501_assoc_series_publisher::Migration),
             // Box::new(m20230102_103529_assoc_authoralias_author::Migration),
         ]
     }

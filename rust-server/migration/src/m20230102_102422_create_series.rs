@@ -6,43 +6,51 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        // Replace the sample below with your own migration scripts
-        todo!();
-
         manager
             .create_table(
                 Table::create()
-                    .table(Post::Table)
+                    .table(Series::Table)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(Post::Id)
+                        ColumnDef::new(Series::Id)
                             .integer()
                             .not_null()
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Post::Title).string().not_null())
-                    .col(ColumnDef::new(Post::Text).string().not_null())
+                    .col(ColumnDef::new(Series::Name).string().not_null())
+                    .col(ColumnDef::new(Series::Notes).string())
+                    .col(ColumnDef::new(Series::PublisherId).integer())
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("FK_series_publisher")
+                            .from(Series::Table, Series::PublisherId)
+                            .to(Publishers::Table, Publishers::Id),
+                    )
                     .to_owned(),
             )
             .await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        // Replace the sample below with your own migration scripts
-        todo!();
-
         manager
-            .drop_table(Table::drop().table(Post::Table).to_owned())
+            .drop_table(Table::drop().table(Series::Table).to_owned())
             .await
     }
 }
 
 /// Learn more at https://docs.rs/sea-query#iden
 #[derive(Iden)]
-enum Post {
+enum Series {
     Table,
     Id,
-    Title,
-    Text,
+    Name,
+    Notes,
+    PublisherId,
+}
+
+#[derive(Iden)]
+enum Publishers {
+    Table,
+    Id,
 }
