@@ -1,3 +1,4 @@
+use common::enums::Users;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -43,17 +44,4 @@ impl MigrationTrait for Migration {
             .drop_table(Table::drop().table(Users::Table).to_owned())
             .await
     }
-}
-
-/// Learn more at https://docs.rs/sea-query#iden
-#[derive(Iden)]
-enum Users {
-    Table,
-    Id,
-    Name,
-    Email,
-    Username,
-    Password,
-    CreatedAt,
-    UpdatedAt,
 }

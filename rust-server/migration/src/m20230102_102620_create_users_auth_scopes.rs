@@ -1,3 +1,4 @@
+use common::enums::{AuthScopes, Users, UsersAuthScopes};
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -56,24 +57,4 @@ impl MigrationTrait for Migration {
             .drop_table(Table::drop().table(UsersAuthScopes::Table).to_owned())
             .await
     }
-}
-
-/// Learn more at https://docs.rs/sea-query#iden
-#[derive(Iden)]
-enum UsersAuthScopes {
-    Table,
-    UserId,
-    AuthScopeId,
-}
-
-#[derive(Iden)]
-enum Users {
-    Table,
-    Id,
-}
-
-#[derive(Iden)]
-enum AuthScopes {
-    Table,
-    Id,
 }

@@ -1,3 +1,4 @@
+use common::enums::{Authors, AuthorsReferences, References};
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -58,24 +59,4 @@ impl MigrationTrait for Migration {
             )
             .await
     }
-}
-
-/// Learn more at https://docs.rs/sea-query#iden
-#[derive(Iden)]
-enum AuthorsReferences {
-    Table,
-    AuthorId,
-    ReferenceId,
-}
-
-#[derive(Iden)]
-enum Authors {
-    Table,
-    Id,
-}
-
-#[derive(Iden)]
-enum References {
-    Table,
-    Id,
 }

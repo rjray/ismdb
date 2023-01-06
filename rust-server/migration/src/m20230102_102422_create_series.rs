@@ -1,3 +1,4 @@
+use common::enums::{Publishers, Series};
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -37,20 +38,4 @@ impl MigrationTrait for Migration {
             .drop_table(Table::drop().table(Series::Table).to_owned())
             .await
     }
-}
-
-/// Learn more at https://docs.rs/sea-query#iden
-#[derive(Iden)]
-enum Series {
-    Table,
-    Id,
-    Name,
-    Notes,
-    PublisherId,
-}
-
-#[derive(Iden)]
-enum Publishers {
-    Table,
-    Id,
 }

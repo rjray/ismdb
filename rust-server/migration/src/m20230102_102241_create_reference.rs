@@ -1,5 +1,5 @@
+use common::enums::{ReferenceTypes, References};
 use sea_orm_migration::prelude::*;
-// use common::enums::{ReferenceTypes, References};
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -55,22 +55,4 @@ impl MigrationTrait for Migration {
             .drop_table(Table::drop().table(References::Table).to_owned())
             .await
     }
-}
-
-/// Learn more at https://docs.rs/sea-query#iden
-#[derive(Iden)]
-enum References {
-    Table,
-    Id,
-    Name,
-    Language,
-    ReferenceTypeId,
-    CreatedAt,
-    UpdatedAt,
-}
-
-#[derive(Iden)]
-enum ReferenceTypes {
-    Table,
-    Id,
 }

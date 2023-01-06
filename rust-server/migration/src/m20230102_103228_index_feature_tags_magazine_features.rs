@@ -1,3 +1,4 @@
+use common::enums::FeatureTagsMagazineFeatures;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -46,12 +47,4 @@ impl MigrationTrait for Migration {
             )
             .await
     }
-}
-
-/// Learn more at https://docs.rs/sea-query#iden
-#[derive(Iden)]
-enum FeatureTagsMagazineFeatures {
-    Table,
-    FeatureTagId,
-    MagazineFeatureId,
 }

@@ -1,3 +1,4 @@
+use common::enums::{MagazineIssues, Magazines};
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -51,21 +52,4 @@ impl MigrationTrait for Migration {
             .drop_table(Table::drop().table(MagazineIssues::Table).to_owned())
             .await
     }
-}
-
-/// Learn more at https://docs.rs/sea-query#iden
-#[derive(Iden)]
-enum MagazineIssues {
-    Table,
-    Id,
-    MagazineId,
-    Issue,
-    CreatedAt,
-    UpdatedAt,
-}
-
-#[derive(Iden)]
-enum Magazines {
-    Table,
-    Id,
 }

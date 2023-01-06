@@ -1,3 +1,4 @@
+use common::enums::{References, Tags, TagsReferences};
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -53,24 +54,4 @@ impl MigrationTrait for Migration {
             .drop_table(Table::drop().table(TagsReferences::Table).to_owned())
             .await
     }
-}
-
-/// Learn more at https://docs.rs/sea-query#iden
-#[derive(Iden)]
-enum TagsReferences {
-    Table,
-    TagId,
-    ReferenceId,
-}
-
-#[derive(Iden)]
-enum Tags {
-    Table,
-    Id,
-}
-
-#[derive(Iden)]
-enum References {
-    Table,
-    Id,
 }

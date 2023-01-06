@@ -1,3 +1,4 @@
+use common::enums::{PhotoCollections, References};
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -47,19 +48,4 @@ impl MigrationTrait for Migration {
             .drop_table(Table::drop().table(PhotoCollections::Table).to_owned())
             .await
     }
-}
-
-/// Learn more at https://docs.rs/sea-query#iden
-#[derive(Iden)]
-enum PhotoCollections {
-    Table,
-    ReferenceId,
-    Location,
-    Media,
-}
-
-#[derive(Iden)]
-enum References {
-    Table,
-    Id,
 }
