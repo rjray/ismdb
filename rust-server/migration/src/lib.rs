@@ -15,8 +15,8 @@ mod m20230102_102523_create_tag;
 mod m20230102_102533_create_feature_tag;
 // mod m20230102_102547_create_user;
 // mod m20230102_102607_create_auth_scope;
-// mod m20230102_102641_create_authors_references;
-// mod m20230102_102719_index_authors_references;
+mod m20230102_102641_create_authors_references;
+mod m20230102_102719_index_authors_references;
 mod m20230102_102738_create_tags_references;
 mod m20230102_102749_index_tags_references;
 mod m20230102_103129_create_feature_tags_magazine_features;
@@ -44,8 +44,8 @@ impl MigratorTrait for Migrator {
             Box::new(m20230102_102533_create_feature_tag::Migration),
             // Box::new(m20230102_102547_create_user::Migration),
             // Box::new(m20230102_102607_create_auth_scope::Migration),
-            // Box::new(m20230102_102641_create_authors_references::Migration),
-            // Box::new(m20230102_102719_index_authors_references::Migration),
+            Box::new(m20230102_102641_create_authors_references::Migration),
+            Box::new(m20230102_102719_index_authors_references::Migration),
             Box::new(m20230102_102738_create_tags_references::Migration),
             Box::new(m20230102_102749_index_tags_references::Migration),
             Box::new(m20230102_103129_create_feature_tags_magazine_features::Migration),
