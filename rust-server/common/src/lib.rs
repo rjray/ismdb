@@ -3,3 +3,4 @@
 */
 
 pub mod enums;
+pub mod string_fields;
