@@ -6,43 +6,52 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        // Replace the sample below with your own migration scripts
-        todo!();
-
         manager
-            .create_table(
-                Table::create()
-                    .table(Post::Table)
+            .create_index(
+                Index::create()
+                    .name("IDX_featuretags_magazinefeatures_featuretag")
+                    .table(FeatureTagsMagazineFeatures::Table)
                     .if_not_exists()
-                    .col(
-                        ColumnDef::new(Post::Id)
-                            .integer()
-                            .not_null()
-                            .auto_increment()
-                            .primary_key(),
-                    )
-                    .col(ColumnDef::new(Post::Title).string().not_null())
-                    .col(ColumnDef::new(Post::Text).string().not_null())
+                    .col(FeatureTagsMagazineFeatures::FeatureTagId)
+                    .to_owned(),
+            )
+            .await?;
+        manager
+            .create_index(
+                Index::create()
+                    .name("IDX_featuretags_magazinefeatures_magazinefeature")
+                    .table(FeatureTagsMagazineFeatures::Table)
+                    .if_not_exists()
+                    .col(FeatureTagsMagazineFeatures::MagazineFeatureId)
                     .to_owned(),
             )
             .await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        // Replace the sample below with your own migration scripts
-        todo!();
-
         manager
-            .drop_table(Table::drop().table(Post::Table).to_owned())
+            .drop_index(
+                Index::drop()
+                    .name("IDX_featuretags_magazinefeatures_featuretag")
+                    .table(FeatureTagsMagazineFeatures::Table)
+                    .to_owned(),
+            )
+            .await?;
+        manager
+            .drop_index(
+                Index::drop()
+                    .name("IDX_featuretags_magazinefeatures_magazinefeature")
+                    .table(FeatureTagsMagazineFeatures::Table)
+                    .to_owned(),
+            )
             .await
     }
 }
 
 /// Learn more at https://docs.rs/sea-query#iden
 #[derive(Iden)]
-enum Post {
+enum FeatureTagsMagazineFeatures {
     Table,
-    Id,
-    Title,
-    Text,
+    FeatureTagId,
+    MagazineFeatureId,
 }

@@ -6,43 +6,71 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        // Replace the sample below with your own migration scripts
-        todo!();
-
         manager
             .create_table(
                 Table::create()
-                    .table(Post::Table)
+                    .table(TagsReferences::Table)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(Post::Id)
+                        ColumnDef::new(TagsReferences::TagId)
                             .integer()
-                            .not_null()
-                            .auto_increment()
-                            .primary_key(),
+                            .not_null(),
                     )
-                    .col(ColumnDef::new(Post::Title).string().not_null())
-                    .col(ColumnDef::new(Post::Text).string().not_null())
+                    .col(
+                        ColumnDef::new(TagsReferences::ReferenceId)
+                            .integer()
+                            .not_null(),
+                    )
+                    .primary_key(
+                        Index::create()
+                            .col(TagsReferences::TagId)
+                            .col(TagsReferences::ReferenceId),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("FK_tagsreferences_tag")
+                            .from(TagsReferences::Table, TagsReferences::TagId)
+                            .to(Tags::Table, Tags::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("FK_tagsreferences_reference")
+                            .from(
+                                TagsReferences::Table,
+                                TagsReferences::ReferenceId,
+                            )
+                            .to(References::Table, References::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
                     .to_owned(),
             )
             .await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        // Replace the sample below with your own migration scripts
-        todo!();
-
         manager
-            .drop_table(Table::drop().table(Post::Table).to_owned())
+            .drop_table(Table::drop().table(TagsReferences::Table).to_owned())
             .await
     }
 }
 
 /// Learn more at https://docs.rs/sea-query#iden
 #[derive(Iden)]
-enum Post {
+enum TagsReferences {
+    Table,
+    TagId,
+    ReferenceId,
+}
+
+#[derive(Iden)]
+enum Tags {
     Table,
     Id,
-    Title,
-    Text,
+}
+
+#[derive(Iden)]
+enum References {
+    Table,
+    Id,
 }

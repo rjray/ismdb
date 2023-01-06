@@ -6,43 +6,87 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        // Replace the sample below with your own migration scripts
-        todo!();
-
         manager
             .create_table(
                 Table::create()
-                    .table(Post::Table)
+                    .table(FeatureTagsMagazineFeatures::Table)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(Post::Id)
+                        ColumnDef::new(
+                            FeatureTagsMagazineFeatures::FeatureTagId
+                        )
                             .integer()
                             .not_null()
-                            .auto_increment()
-                            .primary_key(),
                     )
-                    .col(ColumnDef::new(Post::Title).string().not_null())
-                    .col(ColumnDef::new(Post::Text).string().not_null())
+                    .col(
+                        ColumnDef::new(
+                            FeatureTagsMagazineFeatures::MagazineFeatureId
+                        )
+                            .integer()
+                            .not_null()
+                    )
+                    .primary_key(
+                        Index::create()
+                            .col(FeatureTagsMagazineFeatures::FeatureTagId)
+                            .col(FeatureTagsMagazineFeatures::MagazineFeatureId)
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("FK_featuretagsmagazinefeatures_featuretag")
+                            .from(
+                                FeatureTagsMagazineFeatures::Table,
+                                FeatureTagsMagazineFeatures::FeatureTagId
+                            )
+                            .to(FeatureTags::Table, FeatureTags::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name(
+                                "FK_featuretagsmagazinefeatures_magazinefeature"
+                            )
+                            .from(
+                                FeatureTagsMagazineFeatures::Table,
+                                FeatureTagsMagazineFeatures::MagazineFeatureId,
+                            )
+                            .to(
+                                MagazineFeatures::Table,
+                                MagazineFeatures::ReferenceId
+                            )
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
                     .to_owned(),
             )
             .await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        // Replace the sample below with your own migration scripts
-        todo!();
-
         manager
-            .drop_table(Table::drop().table(Post::Table).to_owned())
+            .drop_table(
+                Table::drop()
+                    .table(FeatureTagsMagazineFeatures::Table)
+                    .to_owned(),
+            )
             .await
     }
 }
 
 /// Learn more at https://docs.rs/sea-query#iden
 #[derive(Iden)]
-enum Post {
+enum FeatureTagsMagazineFeatures {
+    Table,
+    FeatureTagId,
+    MagazineFeatureId,
+}
+
+#[derive(Iden)]
+enum FeatureTags {
     Table,
     Id,
-    Title,
-    Text,
+}
+
+#[derive(Iden)]
+enum MagazineFeatures {
+    Table,
+    ReferenceId,
 }
