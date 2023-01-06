@@ -1,4 +1,5 @@
 use common::enums::{Publishers, Series};
+use common::string_fields::SERIES_FIELDS;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -19,8 +20,15 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Series::Name).string().not_null())
-                    .col(ColumnDef::new(Series::Notes).string())
+                    .col(
+                        ColumnDef::new(Series::Name)
+                            .string_len(*SERIES_FIELDS.get("name").unwrap())
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(Series::Notes)
+                            .string_len(*SERIES_FIELDS.get("notes").unwrap()),
+                    )
                     .col(ColumnDef::new(Series::PublisherId).unsigned())
                     .foreign_key(
                         ForeignKey::create()

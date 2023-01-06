@@ -1,4 +1,5 @@
 use common::enums::FeatureTags;
+use common::string_fields::FEATURE_TAG_FIELDS;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -19,8 +20,16 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(FeatureTags::Name).string().not_null())
-                    .col(ColumnDef::new(FeatureTags::Description).string())
+                    .col(
+                        ColumnDef::new(FeatureTags::Name)
+                            .string_len(
+                                *FEATURE_TAG_FIELDS.get("name").unwrap(),
+                            )
+                            .not_null(),
+                    )
+                    .col(ColumnDef::new(FeatureTags::Description).string_len(
+                        *FEATURE_TAG_FIELDS.get("description").unwrap(),
+                    ))
                     .to_owned(),
             )
             .await

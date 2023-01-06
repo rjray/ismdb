@@ -1,4 +1,5 @@
 use common::enums::{MagazineIssues, Magazines};
+use common::string_fields::MAGAZINE_ISSUE_FIELDS;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -22,7 +23,9 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(MagazineIssues::MagazineId).unsigned())
                     .col(
                         ColumnDef::new(MagazineIssues::Issue)
-                            .string()
+                            .string_len(
+                                *MAGAZINE_ISSUE_FIELDS.get("issue").unwrap(),
+                            )
                             .not_null(),
                     )
                     .col(

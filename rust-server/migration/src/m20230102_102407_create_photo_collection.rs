@@ -1,4 +1,5 @@
 use common::enums::{PhotoCollections, References};
+use common::string_fields::PHOTO_COLLECTION_FIELDS;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -20,12 +21,18 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(PhotoCollections::Location)
-                            .string()
+                            .string_len(
+                                *PHOTO_COLLECTION_FIELDS
+                                    .get("location")
+                                    .unwrap(),
+                            )
                             .not_null(),
                     )
                     .col(
                         ColumnDef::new(PhotoCollections::Media)
-                            .string()
+                            .string_len(
+                                *PHOTO_COLLECTION_FIELDS.get("media").unwrap(),
+                            )
                             .not_null(),
                     )
                     .foreign_key(

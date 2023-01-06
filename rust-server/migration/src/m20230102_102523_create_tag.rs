@@ -1,4 +1,5 @@
 use common::enums::Tags;
+use common::string_fields::TAG_FIELDS;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -19,9 +20,20 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Tags::Name).string().not_null())
-                    .col(ColumnDef::new(Tags::Type).string())
-                    .col(ColumnDef::new(Tags::Description).string())
+                    .col(
+                        ColumnDef::new(Tags::Name)
+                            .string_len(*TAG_FIELDS.get("name").unwrap())
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(Tags::Type)
+                            .string_len(*TAG_FIELDS.get("type").unwrap()),
+                    )
+                    .col(
+                        ColumnDef::new(Tags::Description).string_len(
+                            *TAG_FIELDS.get("description").unwrap(),
+                        ),
+                    )
                     .to_owned(),
             )
             .await

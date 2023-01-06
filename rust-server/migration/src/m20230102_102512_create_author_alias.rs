@@ -1,4 +1,5 @@
 use common::enums::{AuthorAliases, Authors};
+use common::string_fields::AUTHOR_ALIAS_FIELDS;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -20,7 +21,11 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(
-                        ColumnDef::new(AuthorAliases::Name).string().not_null(),
+                        ColumnDef::new(AuthorAliases::Name)
+                            .string_len(
+                                *AUTHOR_ALIAS_FIELDS.get("name").unwrap(),
+                            )
+                            .not_null(),
                     )
                     .col(ColumnDef::new(AuthorAliases::AuthorId).unsigned())
                     .foreign_key(

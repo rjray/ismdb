@@ -1,4 +1,5 @@
 use common::enums::Users;
+use common::string_fields::USER_FIELDS;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -19,15 +20,27 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Users::Name).string().not_null())
-                    .col(ColumnDef::new(Users::Email).string().not_null())
+                    .col(
+                        ColumnDef::new(Users::Name)
+                            .string_len(*USER_FIELDS.get("name").unwrap())
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(Users::Email)
+                            .string_len(*USER_FIELDS.get("email").unwrap())
+                            .not_null(),
+                    )
                     .col(
                         ColumnDef::new(Users::Username)
-                            .string()
+                            .string_len(*USER_FIELDS.get("username").unwrap())
                             .not_null()
                             .unique_key(),
                     )
-                    .col(ColumnDef::new(Users::Password).string().not_null())
+                    .col(
+                        ColumnDef::new(Users::Password)
+                            .string_len(*USER_FIELDS.get("password").unwrap())
+                            .not_null(),
+                    )
                     .col(
                         ColumnDef::new(Users::CreatedAt).date_time().not_null(),
                     )

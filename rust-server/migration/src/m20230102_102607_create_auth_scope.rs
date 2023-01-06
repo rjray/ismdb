@@ -1,4 +1,5 @@
 use common::enums::AuthScopes;
+use common::string_fields::AUTH_SCOPE_FIELDS;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -21,11 +22,13 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(AuthScopes::Name)
-                            .string()
+                            .string_len(*AUTH_SCOPE_FIELDS.get("name").unwrap())
                             .not_null()
                             .unique_key(),
                     )
-                    .col(ColumnDef::new(AuthScopes::Description).string())
+                    .col(ColumnDef::new(AuthScopes::Description).string_len(
+                        *AUTH_SCOPE_FIELDS.get("description").unwrap(),
+                    ))
                     .to_owned(),
             )
             .await

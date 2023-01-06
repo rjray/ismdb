@@ -1,4 +1,5 @@
 use common::enums::Publishers;
+use common::string_fields::PUBLISHER_FIELDS;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -19,8 +20,16 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Publishers::Name).string().not_null())
-                    .col(ColumnDef::new(Publishers::Notes).string())
+                    .col(
+                        ColumnDef::new(Publishers::Name)
+                            .string_len(*PUBLISHER_FIELDS.get("name").unwrap())
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(Publishers::Notes).string_len(
+                            *PUBLISHER_FIELDS.get("notes").unwrap(),
+                        ),
+                    )
                     .to_owned(),
             )
             .await

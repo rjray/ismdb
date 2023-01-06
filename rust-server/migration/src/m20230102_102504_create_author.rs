@@ -1,4 +1,5 @@
 use common::enums::Authors;
+use common::string_fields::AUTHOR_FIELDS;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -19,7 +20,11 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Authors::Name).string().not_null())
+                    .col(
+                        ColumnDef::new(Authors::Name)
+                            .string_len(*AUTHOR_FIELDS.get("name").unwrap())
+                            .not_null(),
+                    )
                     .col(
                         ColumnDef::new(Authors::CreatedAt)
                             .date_time()

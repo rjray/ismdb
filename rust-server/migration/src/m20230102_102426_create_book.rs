@@ -1,4 +1,5 @@
 use common::enums::{Books, Publishers, References, Series};
+use common::string_fields::BOOK_FIELDS;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -20,8 +21,15 @@ impl MigrationTrait for Migration {
                     )
                     .col(ColumnDef::new(Books::PublisherId).unsigned())
                     .col(ColumnDef::new(Books::SeriesId).unsigned())
-                    .col(ColumnDef::new(Books::SeriesNumber).string())
-                    .col(ColumnDef::new(Books::ISBN).string())
+                    .col(
+                        ColumnDef::new(Books::SeriesNumber).string_len(
+                            *BOOK_FIELDS.get("series_number").unwrap(),
+                        ),
+                    )
+                    .col(
+                        ColumnDef::new(Books::ISBN)
+                            .string_len(*BOOK_FIELDS.get("isbn").unwrap()),
+                    )
                     .foreign_key(
                         ForeignKey::create()
                             .name("FK_book_reference")

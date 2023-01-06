@@ -1,4 +1,5 @@
 use common::enums::{ReferenceTypes, References};
+use common::string_fields::REFERENCE_FIELDS;
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]
@@ -19,8 +20,16 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(References::Name).string().not_null())
-                    .col(ColumnDef::new(References::Language).string())
+                    .col(
+                        ColumnDef::new(References::Name)
+                            .string_len(*REFERENCE_FIELDS.get("name").unwrap())
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(References::Language).string_len(
+                            *REFERENCE_FIELDS.get("language").unwrap(),
+                        ),
+                    )
                     .col(
                         ColumnDef::new(References::ReferenceTypeId)
                             .unsigned()
