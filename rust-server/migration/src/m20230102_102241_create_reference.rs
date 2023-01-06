@@ -14,7 +14,7 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(References::Id)
-                            .integer()
+                            .unsigned()
                             .not_null()
                             .auto_increment()
                             .primary_key(),
@@ -23,7 +23,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(References::Language).string())
                     .col(
                         ColumnDef::new(References::ReferenceTypeId)
-                            .integer()
+                            .unsigned()
                             .default(Value::Int(None)),
                     )
                     .col(

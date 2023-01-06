@@ -13,12 +13,12 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(Books::ReferenceId)
-                            .integer()
+                            .unsigned()
                             .not_null()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Books::PublisherId).integer())
-                    .col(ColumnDef::new(Books::SeriesId).integer())
+                    .col(ColumnDef::new(Books::PublisherId).unsigned())
+                    .col(ColumnDef::new(Books::SeriesId).unsigned())
                     .col(ColumnDef::new(Books::SeriesNumber).string())
                     .col(ColumnDef::new(Books::ISBN).string())
                     .foreign_key(

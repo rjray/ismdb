@@ -13,12 +13,12 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(AuthorsReferences::AuthorId)
-                            .integer()
+                            .unsigned()
                             .not_null(),
                     )
                     .col(
                         ColumnDef::new(AuthorsReferences::ReferenceId)
-                            .integer()
+                            .unsigned()
                             .not_null(),
                     )
                     .primary_key(

@@ -13,12 +13,12 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(MagazineIssues::Id)
-                            .integer()
+                            .unsigned()
                             .not_null()
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(MagazineIssues::MagazineId).integer())
+                    .col(ColumnDef::new(MagazineIssues::MagazineId).unsigned())
                     .col(
                         ColumnDef::new(MagazineIssues::Issue)
                             .string()

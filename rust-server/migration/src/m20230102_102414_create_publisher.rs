@@ -13,7 +13,7 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(Publishers::Id)
-                            .integer()
+                            .unsigned()
                             .not_null()
                             .auto_increment()
                             .primary_key(),

@@ -13,14 +13,14 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(Series::Id)
-                            .integer()
+                            .unsigned()
                             .not_null()
                             .auto_increment()
                             .primary_key(),
                     )
                     .col(ColumnDef::new(Series::Name).string().not_null())
                     .col(ColumnDef::new(Series::Notes).string())
-                    .col(ColumnDef::new(Series::PublisherId).integer())
+                    .col(ColumnDef::new(Series::PublisherId).unsigned())
                     .foreign_key(
                         ForeignKey::create()
                             .name("FK_series_publisher")
