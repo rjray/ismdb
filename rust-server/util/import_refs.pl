@@ -114,7 +114,7 @@ sub read_existing_tags {
     my $dbhout = shift;
     my %type_count = ();
 
-    my $sth = $dbhout->prepare('SELECT id, name, type FROM `Tags` ORDER BY id');
+    my $sth = $dbhout->prepare('SELECT id, name, type FROM `tags` ORDER BY id');
     $sth->execute;
     my $data = $sth->fetchall_arrayref;
     $sth->finish;
@@ -133,7 +133,7 @@ sub read_existing_tags {
         printf "  %d of type %s\n", $type_count{$type}, $type;
     }
 
-    $sth = $dbhout->prepare('SELECT id, name FROM `FeatureTags` ORDER BY id');
+    $sth = $dbhout->prepare('SELECT id, name FROM `feature_tags` ORDER BY id');
     $sth->execute;
     $data = $sth->fetchall_arrayref;
     $sth->finish;
@@ -159,11 +159,11 @@ sub migrate_authors {
     $sth->finish;
 
     $sth = $dbhout->prepare(
-        'INSERT INTO `Authors` (`id`, `name`, `createdAt`, `updatedAt`) ' .
+        'INSERT INTO `authors` (`id`, `name`, `created_at`, `updated_at`) ' .
         'VALUES (?, ?, ?, ?)'
     );
     my $stha = $dbhout->prepare(
-        'INSERT INTO `AuthorAliases` (`authorId`, `name`) VALUES (?, ?)'
+        'INSERT INTO `author_aliases` (`author_id`, `name`) VALUES (?, ?)'
     );
     my $result = eval {
         for my $row (@{$data}) {
@@ -189,8 +189,8 @@ sub migrate_authors {
 
     $dbhout->commit;
 
-    print "$authors_count rows added to Authors\n";
-    print "  $aliases_count author aliases added to AuthorAliases\n";
+    print "$authors_count rows added to 'authors'\n";
+    print "  $aliases_count author aliases added to 'author_aliases'\n";
 
     return;
 }
@@ -206,8 +206,8 @@ sub migrate_periodicals {
     $sth->finish;
 
     $sth = $dbhout->prepare(
-        'INSERT INTO `Magazines` (`id`, `name`, `aliases`, `notes`, ' .
-        '`createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?)'
+        'INSERT INTO `magazines` (`id`, `name`, `aliases`, `notes`, ' .
+        '`created_at`, `updated_at`) VALUES (?, ?, ?, ?, ?, ?)'
     );
     my $result = eval {
         for my $row (@{$data}) {
@@ -224,7 +224,7 @@ sub migrate_periodicals {
 
     $dbhout->commit;
 
-    print scalar(@{$data}) . " rows added to Magazines\n";
+    print scalar(@{$data}) . " rows added to 'magazines'\n";
 
     return;
 }
@@ -240,7 +240,7 @@ sub setup_pubs_and_series {
     }
 
     my $sth = $dbhout->prepare(
-        'INSERT INTO `Publishers` (`id`, `name`, `notes`) VALUES (?, ?, ?)'
+        'INSERT INTO `publishers` (`id`, `name`, `notes`) VALUES (?, ?, ?)'
     );
     my $pub_id = 0;
     my $result = eval {
@@ -256,10 +256,10 @@ sub setup_pubs_and_series {
         die "failure in setup_pubs_and_series: $@\n";
     }
     $sth->finish;
-    print "$pub_id rows added to Publishers\n";
+    print "$pub_id rows added to 'publishers'\n";
 
     $sth = $dbhout->prepare(
-        'INSERT INTO `Series` (`id`, `name`, `notes`, `publisherId`) ' .
+        'INSERT INTO `series` (`id`, `name`, `notes`, `publisher_id`) ' .
         'VALUES (?, ?, ?, ?)'
     );
     my $series_id = 0;
@@ -292,7 +292,7 @@ sub setup_pubs_and_series {
         die "failure in setup_pubs_and_series: $@\n";
     }
     $sth->finish;
-    print "$series_id rows added to Series\n";
+    print "$series_id rows added to 'series'\n";
 
     $dbhout->commit;
 
@@ -312,20 +312,22 @@ sub migrate_reference_table {
     $sth->finish;
 
     my $sth_ish = $dbhout->prepare(
-        'INSERT INTO `MagazineIssues` (`id`, `magazineId`, `issue`, ' .
-        '`createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?)'
+        'INSERT INTO `magazine_issues` (`id`, `magazine_id`, `issue`, ' .
+        '`created_at`, `updated_at`) VALUES (?, ?, ?, ?, ?)'
     );
     my $sth_auth = $dbhout->prepare(
-        'INSERT INTO `AuthorsReferences` (`authorId`, `referenceId`) ' .
+        'INSERT INTO `authors_references` (`author_id`, `reference_id`) ' .
         'VALUES (?, ?)'
     );
-    my $sth_tag = $dbhout->prepare('INSERT INTO `Tags` (`name`) VALUES (?)');
+    my $sth_tag = $dbhout->prepare('INSERT INTO `tags` (`name`) VALUES (?)');
     my $sth_tagref = $dbhout->prepare(
-        'INSERT INTO `TagsReferences` (`tagId`, `referenceId`) VALUES (?, ?)'
+        'INSERT INTO `tags_references` (`tag_id`, `reference_id`) ' .
+        'VALUES (?, ?)'
     );
     my $sth_ref = $dbhout->prepare(
-        'INSERT INTO `References` (`id`, `name`, `language`, ' .
-        '`referenceTypeId`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?)'
+        'INSERT INTO `references` (`id`, `name`, `language`, ' .
+        '`reference_type_id`, `created_at`, `updated_at`) ' .
+        'VALUES (?, ?, ?, ?, ?, ?)'
     );
 
     my $ish_id = 0;
@@ -354,18 +356,18 @@ sub migrate_reference_table {
             # This is a magazine article/feature
 
             my $key = "$magazine,$m_number";
-            my $issueId;
+            my $issue_id;
             if ($ish_map{$key}) {
-                $issueId = $ish_map{$key};
+                $issue_id = $ish_map{$key};
             } else {
                 $ish_id++;
                 $sth_ish->execute(
                     $ish_id, $magazine, $m_number, $created, $updated
                 );
-                $issueId = $ish_map{$key} = $ish_id;
+                $issue_id = $ish_map{$key} = $ish_id;
             }
 
-            finish_article($dbhout, $id, $type, $issueId);
+            finish_article($dbhout, $id, $type, $issue_id);
             $total_features++;
         } else {
             # This is a book
@@ -409,25 +411,25 @@ sub migrate_reference_table {
 
     $dbhout->commit;
 
-    print scalar(@{$data}) . " rows added to References\n";
-    print "  $total_books Books\n";
-    print "  $total_features MagazineFeatures\n";
-    print "$ish_id rows added to MagazineIssues\n";
-    print scalar(keys %TAGS) . " total tags now in Tags\n";
+    print scalar(@{$data}) . " rows added to 'references'\n";
+    print "  $total_books 'books'\n";
+    print "  $total_features 'magazine_features'\n";
+    print "$ish_id rows added to 'magazine_issues'\n";
+    print scalar(keys %TAGS) . " total tags now in 'tags'\n";
 
     return;
 }
 
 sub finish_book {
-    my ($dbhout, $referenceId, $isbn, $type) = @_;
+    my ($dbhout, $reference_id, $isbn, $type) = @_;
 
-    my $publisherId = undef;
-    my $seriesId = undef;
-    my $seriesNumber = undef;
+    my $publisher_id = undef;
+    my $series_id = undef;
+    my $series_number = undef;
 
     if ($publishers_data->{$type}) {
         # This matches a known publisher-string exactly
-        $publisherId = $PUBLISHERS{$publishers_data->{$type}->{name}};
+        $publisher_id = $PUBLISHERS{$publishers_data->{$type}->{name}};
     } else {
         # It doesn't exactly match a known publisher-string
         my $matched = 0;
@@ -438,8 +440,8 @@ sub finish_book {
                 my $number = $2;
 
                 if ($SERIES{$name}) {
-                    $seriesNumber = $number;
-                    ($seriesId, $publisherId) = @{$SERIES{$name}};
+                    $series_number = $number;
+                    ($series_id, $publisher_id) = @{$SERIES{$name}};
                 }
 
                 last;
@@ -448,30 +450,32 @@ sub finish_book {
     }
 
     my $sth = $dbhout->prepare(
-        'INSERT INTO `Books` (`referenceId`, `isbn`, `publisherId`, ' .
-        '`seriesId`, `seriesNumber`) VALUES (?, ?, ?, ?, ?)'
+        'INSERT INTO `books` (`reference_id`, `isbn`, `publisher_id`, ' .
+        '`series_id`, `series_number`) VALUES (?, ?, ?, ?, ?)'
     );
-    $sth->execute($referenceId, $isbn, $publisherId, $seriesId, $seriesNumber);
+    $sth->execute(
+        $reference_id, $isbn, $publisher_id, $series_id, $series_number
+    );
 
     return;
 }
 
 sub finish_article {
-    my ($dbhout, $referenceId, $type, $issueId) = @_;
+    my ($dbhout, $reference_id, $type, $issue_id) = @_;
 
     my $sth_mf = $dbhout->prepare(
-        'INSERT INTO MagazineFeatures (`referenceId`, `magazineIssueId`) ' .
-        'VALUES (?, ?)'
+        'INSERT INTO `magazine_features` (`reference_id`, ' .
+        '`magazine_issue_id`) VALUES (?, ?)'
     );
     my $sth_ftmf = $dbhout->prepare(
-        'INSERT INTO FeatureTagsMagazineFeatures (`featureTagId`, ' .
-        '`magazineFeatureId`) VALUES (?, ?)'
+        'INSERT INTO `feature_tags_magazine_features` (`feature_tag_id`, ' .
+        '`magazine_feature_id`) VALUES (?, ?)'
     );
 
-    $sth_mf->execute($referenceId, $issueId);
+    $sth_mf->execute($reference_id, $issue_id);
     for my $ftag (split m{/}, $type) {
         next if ($ftag eq 'article');
-        $sth_ftmf->execute($FEATURE_TAGS{$ftag}, $referenceId);
+        $sth_ftmf->execute($FEATURE_TAGS{$ftag}, $reference_id);
     }
 
     return;
@@ -482,18 +486,18 @@ sub fix_author_dates {
     my ($fixed, $skipped) = (0, 0);
 
     my $authors = $dbh->selectall_arrayref(
-        'SELECT * FROM `Authors`', { Slice => {} }
+        'SELECT * FROM `authors`', { Slice => {} }
     );
     my $sth = $dbh->prepare(
-        'UPDATE `Authors` SET `createdAt` = ?, `updatedAt` = ? ' .
+        'UPDATE `authors` SET `created_at` = ?, `updated_at` = ? ' .
         'WHERE `id` = ?'
     );
 
     for my $author (@{$authors}) {
         my $refs = $dbh->selectall_arrayref(
-            'SELECT r.`createdAt`, r.`updatedAt` FROM `References` r ' .
-            'LEFT JOIN `AuthorsReferences` ar ON r.`id` = ar.`referenceId` ' .
-            "WHERE ar.`authorId` = $author->{id}",
+            'SELECT r.`created_at`, r.`updated_at` FROM `references` r ' .
+            'LEFT JOIN `authors_references` ar ON r.`id` = ar.`reference_id` ' .
+            "WHERE ar.`author_id` = $author->{id}",
             { Slice => {} }
         );
 
@@ -504,9 +508,9 @@ sub fix_author_dates {
         }
 
         my $created =
-            (sort { $a->{createdAt} cmp $b->{createdAt} } @{$refs})[0];
+            (sort { $a->{created_at} cmp $b->{created_at} } @{$refs})[0];
         $sth->execute(
-            $created->{createdAt}, $created->{createdAt}, $author->{id}
+            $created->{created_at}, $created->{created_at}, $author->{id}
         );
         $fixed++;
     }
@@ -524,22 +528,23 @@ sub fix_magazine_issue_dates {
 
     my $refs = $dbh->selectall_arrayref(<<'QUERY',
 SELECT
-    r.`createdAt`, r.`updatedAt`, mf.`magazineIssueId`
+    r.`created_at`, r.`updated_at`, mf.`magazine_issue_id`
 FROM
-    `References` r LEFT JOIN `MagazineFeatures` mf ON r.`id` = mf.`referenceId`
+    `references` r LEFT JOIN `magazine_features` mf
+                   ON r.`id` = mf.`reference_id`
 WHERE
-    r.`referenceTypeId` = 2
+    r.`reference_type_id` = 2
 QUERY
         { Slice => {} }
     );
     my $sth = $dbh->prepare(
-        'UPDATE `MagazineIssues` SET `createdAt` = ?, `updatedAt` = ? ' .
+        'UPDATE `magazine_issues` SET `created_at` = ?, `updated_at` = ? ' .
         'WHERE `id` = ?'
     );
 
     my %issues = ();
     for my $ref (@{$refs}) {
-        my $mid = $ref->{magazineIssueId};
+        my $mid = $ref->{magazine_issue_id};
         push @{$issues{$mid}}, $ref
     }
 
@@ -551,11 +556,11 @@ QUERY
         }
 
         my @lo_created =
-            sort { $a->{createdAt} cmp $b->{createdAt} }  @{$irefs};
-        my $lo_created = $lo_created[0]->{createdAt};
+            sort { $a->{created_at} cmp $b->{created_at} }  @{$irefs};
+        my $lo_created = $lo_created[0]->{created_at};
         my @hi_updated =
-            reverse sort { $a->{updatedAt} cmp $b->{updatedAt} }  @{$irefs};
-        my $hi_updated = $hi_updated[0]->{updatedAt};
+            reverse sort { $a->{updated_at} cmp $b->{updated_at} }  @{$irefs};
+        my $hi_updated = $hi_updated[0]->{updated_at};
         $sth->execute($lo_created, $hi_updated, $mid);
         $fixed++;
     }
