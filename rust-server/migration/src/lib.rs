@@ -22,6 +22,9 @@ mod m20230102_102738_create_tags_references;
 mod m20230102_102749_index_tags_references;
 mod m20230102_103129_create_feature_tags_magazine_features;
 mod m20230102_103228_index_feature_tags_magazine_features;
+mod m20230106_200124_seed_reference_types;
+mod m20230106_212422_seed_feature_tags;
+mod m20230106_213118_seed_initial_tags;
 
 pub struct Migrator;
 
@@ -51,6 +54,9 @@ impl MigratorTrait for Migrator {
             Box::new(m20230102_102749_index_tags_references::Migration),
             Box::new(m20230102_103129_create_feature_tags_magazine_features::Migration),
             Box::new(m20230102_103228_index_feature_tags_magazine_features::Migration),
+            Box::new(m20230106_200124_seed_reference_types::Migration),
+            Box::new(m20230106_212422_seed_feature_tags::Migration),
+            Box::new(m20230106_213118_seed_initial_tags::Migration),
         ]
     }
 }
