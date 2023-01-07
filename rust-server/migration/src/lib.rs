@@ -25,6 +25,7 @@ mod m20230102_103228_index_feature_tags_magazine_features;
 mod m20230106_200124_seed_reference_types;
 mod m20230106_212422_seed_feature_tags;
 mod m20230106_213118_seed_initial_tags;
+mod m20230107_115414_seed_auth_scopes;
 
 pub struct Migrator;
 
@@ -57,6 +58,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20230106_200124_seed_reference_types::Migration),
             Box::new(m20230106_212422_seed_feature_tags::Migration),
             Box::new(m20230106_213118_seed_initial_tags::Migration),
+            Box::new(m20230107_115414_seed_auth_scopes::Migration),
         ]
     }
 }
