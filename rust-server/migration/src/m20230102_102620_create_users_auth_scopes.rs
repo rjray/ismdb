@@ -14,12 +14,12 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(UsersAuthScopes::UserId)
-                            .unsigned()
+                            .integer()
                             .not_null(),
                     )
                     .col(
                         ColumnDef::new(UsersAuthScopes::AuthScopeId)
-                            .unsigned()
+                            .integer()
                             .not_null(),
                     )
                     .primary_key(

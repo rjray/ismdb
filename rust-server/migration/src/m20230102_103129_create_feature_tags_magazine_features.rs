@@ -18,14 +18,14 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(
                             FeatureTagsMagazineFeatures::FeatureTagId
                         )
-                            .unsigned()
+                            .integer()
                             .not_null()
                     )
                     .col(
                         ColumnDef::new(
                             FeatureTagsMagazineFeatures::MagazineFeatureId
                         )
-                            .unsigned()
+                            .integer()
                             .not_null()
                     )
                     .primary_key(

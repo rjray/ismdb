@@ -15,7 +15,7 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(Series::Id)
-                            .unsigned()
+                            .integer()
                             .not_null()
                             .auto_increment()
                             .primary_key(),
@@ -31,7 +31,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(Series::PublisherId)
-                            .unsigned()
+                            .integer()
                             .not_null(),
                     )
                     .foreign_key(

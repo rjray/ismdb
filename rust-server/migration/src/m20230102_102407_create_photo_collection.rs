@@ -15,7 +15,7 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(PhotoCollections::ReferenceId)
-                            .unsigned()
+                            .integer()
                             .not_null()
                             .primary_key(),
                     )

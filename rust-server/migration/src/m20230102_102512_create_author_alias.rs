@@ -15,7 +15,7 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(AuthorAliases::Id)
-                            .unsigned()
+                            .integer()
                             .not_null()
                             .auto_increment()
                             .primary_key(),
@@ -27,7 +27,7 @@ impl MigrationTrait for Migration {
                             )
                             .not_null(),
                     )
-                    .col(ColumnDef::new(AuthorAliases::AuthorId).unsigned())
+                    .col(ColumnDef::new(AuthorAliases::AuthorId).integer())
                     .foreign_key(
                         ForeignKey::create()
                             .name("FK_authoralias_author")

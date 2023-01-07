@@ -15,12 +15,12 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(Books::ReferenceId)
-                            .unsigned()
+                            .integer()
                             .not_null()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Books::PublisherId).unsigned())
-                    .col(ColumnDef::new(Books::SeriesId).unsigned())
+                    .col(ColumnDef::new(Books::PublisherId).integer())
+                    .col(ColumnDef::new(Books::SeriesId).integer())
                     .col(
                         ColumnDef::new(Books::SeriesNumber).string_len(
                             *BOOK_FIELDS.get("series_number").unwrap(),
