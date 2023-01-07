@@ -33,7 +33,7 @@ impl MigrationTrait for Migration {
                     .col(
                         ColumnDef::new(References::ReferenceTypeId)
                             .unsigned()
-                            .default(Value::Int(None)),
+                            .not_null(),
                     )
                     .col(
                         ColumnDef::new(References::CreatedAt)

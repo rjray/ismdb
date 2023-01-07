@@ -20,7 +20,8 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(MagazineFeatures::MagazineIssueId)
-                            .unsigned(),
+                            .unsigned()
+                            .not_null(),
                     )
                     .foreign_key(
                         ForeignKey::create()

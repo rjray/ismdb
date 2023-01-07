@@ -20,7 +20,11 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(MagazineIssues::MagazineId).unsigned())
+                    .col(
+                        ColumnDef::new(MagazineIssues::MagazineId)
+                            .unsigned()
+                            .not_null(),
+                    )
                     .col(
                         ColumnDef::new(MagazineIssues::Issue)
                             .string_len(
