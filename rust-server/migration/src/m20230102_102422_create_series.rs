@@ -29,11 +29,7 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(Series::Notes)
                             .string_len(*SERIES_FIELDS.get("notes").unwrap()),
                     )
-                    .col(
-                        ColumnDef::new(Series::PublisherId)
-                            .integer()
-                            .not_null(),
-                    )
+                    .col(ColumnDef::new(Series::PublisherId).integer())
                     .foreign_key(
                         ForeignKey::create()
                             .name("FK_series_publisher")
