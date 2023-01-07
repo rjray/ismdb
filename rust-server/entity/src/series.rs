@@ -12,7 +12,7 @@ pub struct Model {
     pub id: i32,
     pub name: String,
     pub notes: Option<String>,
-    pub publisher_id: i32,
+    pub publisher_id: Option<i32>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
