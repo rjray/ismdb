@@ -11,8 +11,7 @@ members = [".", "common", "entity", "migration"]
 [dependencies]
 entity = { path = "entity" }
 migration = { path = "migration" }
-
-axum = "0.6.1"
+axum = { version = "0.6.1", features = ["http2", "macros"] }
 sea-orm = { version = "0.10.6", features = ["runtime-tokio-rustls", "sqlx-sqlite", "macros"] }
 sea-orm-migration = { version = "0.10.6", features = ["runtime-tokio-rustls", "sqlx-sqlite"] }
 tokio = { version = "1.23.1", features = ["full"] }
