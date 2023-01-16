@@ -16,42 +16,42 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::magazine_issues::Entity",
+        belongs_to = "super::magazine_issue::Entity",
         from = "Column::MagazineIssueId",
-        to = "super::magazine_issues::Column::Id",
+        to = "super::magazine_issue::Column::Id",
         on_update = "NoAction",
         on_delete = "Cascade"
     )]
-    MagazineIssues,
+    MagazineIssue,
     #[sea_orm(
-        belongs_to = "super::references::Entity",
+        belongs_to = "super::reference::Entity",
         from = "Column::ReferenceId",
-        to = "super::references::Column::Id",
+        to = "super::reference::Column::Id",
         on_update = "NoAction",
         on_delete = "Cascade"
     )]
-    References,
+    Reference,
 }
 
-impl Related<super::magazine_issues::Entity> for Entity {
+impl Related<super::magazine_issue::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::MagazineIssues.def()
+        Relation::MagazineIssue.def()
     }
 }
 
-impl Related<super::references::Entity> for Entity {
+impl Related<super::reference::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::References.def()
+        Relation::Reference.def()
     }
 }
 
-impl Related<super::feature_tags::Entity> for Entity {
+impl Related<super::feature_tag::Entity> for Entity {
     fn to() -> RelationDef {
-        super::feature_tags_magazine_features::Relation::FeatureTags.def()
+        super::feature_tags_magazine_features::Relation::FeatureTag.def()
     }
     fn via() -> Option<RelationDef> {
         Some(
-            super::feature_tags_magazine_features::Relation::MagazineFeatures
+            super::feature_tags_magazine_features::Relation::MagazineFeature
                 .def()
                 .rev(),
         )

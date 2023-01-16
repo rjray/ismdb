@@ -14,32 +14,32 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::feature_tags::Entity",
+        belongs_to = "super::feature_tag::Entity",
         from = "Column::FeatureTagId",
-        to = "super::feature_tags::Column::Id",
+        to = "super::feature_tag::Column::Id",
         on_update = "NoAction",
         on_delete = "Cascade"
     )]
-    FeatureTags,
+    FeatureTag,
     #[sea_orm(
-        belongs_to = "super::magazine_features::Entity",
+        belongs_to = "super::magazine_feature::Entity",
         from = "Column::MagazineFeatureId",
-        to = "super::magazine_features::Column::ReferenceId",
+        to = "super::magazine_feature::Column::ReferenceId",
         on_update = "NoAction",
         on_delete = "Cascade"
     )]
-    MagazineFeatures,
+    MagazineFeature,
 }
 
-impl Related<super::feature_tags::Entity> for Entity {
+impl Related<super::feature_tag::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::FeatureTags.def()
+        Relation::FeatureTag.def()
     }
 }
 
-impl Related<super::magazine_features::Entity> for Entity {
+impl Related<super::magazine_feature::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::MagazineFeatures.def()
+        Relation::MagazineFeature.def()
     }
 }
 

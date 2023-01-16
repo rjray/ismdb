@@ -2,22 +2,22 @@
 
 pub mod prelude;
 
-pub mod auth_scopes;
-pub mod author_aliases;
-pub mod authors;
+pub mod auth_scope;
+pub mod author;
+pub mod author_alias;
 pub mod authors_references;
-pub mod books;
-pub mod feature_tags;
+pub mod book;
+pub mod feature_tag;
 pub mod feature_tags_magazine_features;
-pub mod magazine_features;
-pub mod magazine_issues;
-pub mod magazines;
-pub mod photo_collections;
-pub mod publishers;
-pub mod reference_types;
-pub mod references;
+pub mod magazine;
+pub mod magazine_feature;
+pub mod magazine_issue;
+pub mod photo_collection;
+pub mod publisher;
+pub mod reference;
+pub mod reference_type;
 pub mod series;
-pub mod tags;
+pub mod tag;
 pub mod tags_references;
-pub mod users;
+pub mod user;
 pub mod users_auth_scopes;

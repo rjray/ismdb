@@ -6,27 +6,31 @@ use serde::{Deserialize, Serialize};
 #[derive(
     Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize,
 )]
-#[sea_orm(table_name = "feature_tags")]
+#[sea_orm(table_name = "publishers")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
     pub name: String,
-    pub description: Option<String>,
+    pub notes: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
+pub enum Relation {
+    #[sea_orm(has_many = "super::book::Entity")]
+    Books,
+    #[sea_orm(has_many = "super::series::Entity")]
+    Series,
+}
 
-impl Related<super::magazine_features::Entity> for Entity {
+impl Related<super::book::Entity> for Entity {
     fn to() -> RelationDef {
-        super::feature_tags_magazine_features::Relation::MagazineFeatures.def()
+        Relation::Books.def()
     }
-    fn via() -> Option<RelationDef> {
-        Some(
-            super::feature_tags_magazine_features::Relation::FeatureTags
-                .def()
-                .rev(),
-        )
+}
+
+impl Related<super::series::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Series.def()
     }
 }
 

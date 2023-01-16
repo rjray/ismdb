@@ -6,24 +6,27 @@ use serde::{Deserialize, Serialize};
 #[derive(
     Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize,
 )]
-#[sea_orm(table_name = "reference_types")]
+#[sea_orm(table_name = "users")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
     pub name: String,
-    pub description: Option<String>,
-    pub notes: Option<String>,
+    pub email: String,
+    pub username: String,
+    pub password: String,
+    pub created_at: DateTime,
+    pub updated_at: DateTime,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {
-    #[sea_orm(has_many = "super::references::Entity")]
-    References,
-}
+pub enum Relation {}
 
-impl Related<super::references::Entity> for Entity {
+impl Related<super::auth_scope::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::References.def()
+        super::users_auth_scopes::Relation::AuthScope.def()
+    }
+    fn via() -> Option<RelationDef> {
+        Some(super::users_auth_scopes::Relation::User.def().rev())
     }
 }
 

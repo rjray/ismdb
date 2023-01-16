@@ -17,27 +17,27 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::books::Entity")]
+    #[sea_orm(has_many = "super::book::Entity")]
     Books,
     #[sea_orm(
-        belongs_to = "super::publishers::Entity",
+        belongs_to = "super::publisher::Entity",
         from = "Column::PublisherId",
-        to = "super::publishers::Column::Id",
+        to = "super::publisher::Column::Id",
         on_update = "NoAction",
         on_delete = "NoAction"
     )]
-    Publishers,
+    Publisher,
 }
 
-impl Related<super::books::Entity> for Entity {
+impl Related<super::book::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Books.def()
     }
 }
 
-impl Related<super::publishers::Entity> for Entity {
+impl Related<super::publisher::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Publishers.def()
+        Relation::Publisher.def()
     }
 }
 

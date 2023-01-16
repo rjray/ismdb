@@ -17,22 +17,22 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::author_aliases::Entity")]
+    #[sea_orm(has_many = "super::author_alias::Entity")]
     AuthorAliases,
 }
 
-impl Related<super::author_aliases::Entity> for Entity {
+impl Related<super::author_alias::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::AuthorAliases.def()
     }
 }
 
-impl Related<super::references::Entity> for Entity {
+impl Related<super::reference::Entity> for Entity {
     fn to() -> RelationDef {
-        super::authors_references::Relation::References.def()
+        super::authors_references::Relation::Reference.def()
     }
     fn via() -> Option<RelationDef> {
-        Some(super::authors_references::Relation::Authors.def().rev())
+        Some(super::authors_references::Relation::Author.def().rev())
     }
 }
 
