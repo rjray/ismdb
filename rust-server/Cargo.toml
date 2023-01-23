@@ -1,16 +1,9 @@
 [package]
-name = "rust-server"
+name = "ismdb"
 version = "0.1.0"
 edition = "2021"
 
-[workspace]
-members = [".", "common", "entity", "migration"]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-entity = { path = "entity" }
-migration = { path = "migration" }
 axum = { version = "0.6.1", features = ["http2", "macros"] }
 sea-orm = { version = "0.10.6", features = ["runtime-tokio-rustls", "sqlx-sqlite", "macros"] }
 sea-orm-migration = { version = "0.10.6", features = ["runtime-tokio-rustls", "sqlx-sqlite"] }
@@ -18,3 +11,4 @@ tokio = { version = "1.23.1", features = ["full"] }
 dotenvy = "0.15.6"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+clap = { version = "4.1.1", features = ["derive", "env"] }
