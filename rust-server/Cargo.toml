@@ -1,7 +1,9 @@
 [package]
 name = "ismdb"
 version = "0.1.0"
+authors = ["Randy J. Ray <rjray@blackperl.com>"]
 edition = "2021"
+license = "MIT"
 
 [dependencies]
 axum = { version = "0.6.1", features = ["http2", "macros"] }
@@ -11,4 +13,4 @@ tokio = { version = "1.23.1", features = ["full"] }
 dotenvy = "0.15.6"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-clap = { version = "4.1.1", features = ["derive", "env"] }
+clap = { version = "4.1.1", features = ["env", "cargo"] }
