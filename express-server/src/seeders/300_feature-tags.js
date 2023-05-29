@@ -2,8 +2,9 @@
   Seed the currently-known feature tags.
  */
 
-export async function up(queryInterface) {
-  const tags = `color illustrations
+module.exports = {
+  up: async (queryInterface) => {
+    const tags = `color illustrations
 color plates
 color profiles
 coloring guides
@@ -32,12 +33,13 @@ single topic issue
 techniques
 unknown
 walk-around`
-    .split("\n")
-    .map((name) => ({ name }));
+      .split("\n")
+      .map((name) => ({ name }));
 
-  await queryInterface.bulkInsert("FeatureTags", tags);
-}
+    await queryInterface.bulkInsert("FeatureTags", tags);
+  },
 
-export async function down(queryInterface) {
-  await queryInterface.bulkDelete("FeatureTags", null, {});
-}
+  down: async (queryInterface) => {
+    await queryInterface.bulkDelete("FeatureTags", null, {});
+  },
+};
