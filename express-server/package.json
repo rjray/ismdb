@@ -4,7 +4,7 @@
   "description": "HTTPS Node.js Express.js Server",
   "private": true,
   "main": "server.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "debug": "cd src && nodemon --exec 'node --inspect' -w openapi.yaml -w . server.js",
     "start": "cd src && nodemon -w openapi.yaml -w . server.js",
