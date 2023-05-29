@@ -1,0 +1,829 @@
+openapi: 3.0.3
+info:
+  title: ISMDB Server API
+  version: "0.3.0"
+servers:
+  - url: /api
+components:
+  # TODO: Uncomment
+  # securitySchemes:
+  #   userToken:
+  #     type: http
+  #     scheme: bearer
+  parameters:
+    offsetParam:
+      name: offset
+      in: query
+      description: Number of query items to skip over
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
+    limitParam:
+      name: limit
+      in: query
+      description: Maximum query records to return
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
+    queryParam:
+      name: query
+      in: query
+      description: Shorthand option for substring matching of name fields
+      required: true
+      schema:
+        type: string
+    orderParam:
+      name: order
+      in: query
+      description: Fields to sort on
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+      style: form
+      explode: true
+    idParam:
+      name: id
+      in: path
+      description: Entity ID
+      required: true
+      schema:
+        $ref: "#/components/schemas/idType"
+    preferredParam:
+      name: preferred
+      in: query
+      description: Preferred language, will be moved to the head of the
+        returned list of languages
+      required: false
+      schema:
+        type: string
+    countParam:
+      name: count
+      in: query
+      description: A count parameter for operations that limit by count
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
+  schemas:
+    idType:
+      type: integer
+      format: int64
+      minimum: 0
+    countType:
+      type: integer
+      format: int64
+      minimum: 0
+    dateTimeType:
+      type: string
+      format: date-time
+    languageType:
+      type: string
+      nullable: true
+    authorNameOrAliasType:
+      type: string
+    magazineNameType:
+      type: string
+    magazineAliasesType:
+      type: string
+      nullable: true
+    magazineNotesType:
+      type: string
+      nullable: true
+    magazineIssueNumberType:
+      type: string
+    referenceNameType:
+      type: string
+    referenceIsbnType:
+      type: string
+    tagNameType:
+      type: string
+    tagDescriptionType:
+      type: string
+      nullable: true
+    tagTypeType:
+      type: string
+      nullable: true
+    matchNameType:
+      type: string
+    matchTypeType:
+      type: string
+    newAuthorAliasType:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          $ref: "#/components/schemas/authorNameOrAliasType"
+    authorAliasType:
+      allOf:
+        - $ref: "#/components/schemas/newAuthorAliasType"
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              $ref: "#/components/schemas/idType"
+    newAuthorType:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          $ref: "#/components/schemas/authorNameOrAliasType"
+        aliases:
+          type: array
+          items:
+            $ref: "#/components/schemas/newAuthorAliasType"
+    selectedAuthorType:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          $ref: "#/components/schemas/idType"
+        name:
+          $ref: "#/components/schemas/authorNameOrAliasType"
+    authorType:
+      type: object
+      required:
+        - id
+        - name
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          $ref: "#/components/schemas/idType"
+        name:
+          $ref: "#/components/schemas/authorNameOrAliasType"
+        createdAt:
+          $ref: "#/components/schemas/dateTimeType"
+        updatedAt:
+          $ref: "#/components/schemas/dateTimeType"
+        aliases:
+          type: array
+          items:
+            $ref: "#/components/schemas/authorAliasType"
+    authorWithRefCountType:
+      allOf:
+        - $ref: "#/components/schemas/authorType"
+        - type: object
+          required:
+            - refcount
+          properties:
+            refcount:
+              $ref: "#/components/schemas/countType"
+    newTagType:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          $ref: "#/components/schemas/tagNameType"
+        description:
+          $ref: "#/components/schemas/tagDescriptionType"
+        type:
+          $ref: "#/components/schemas/tagTypeType"
+    tagType:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              $ref: "#/components/schemas/idType"
+        - $ref: "#/components/schemas/newTagType"
+    tagWithRefCountType:
+      allOf:
+        - $ref: "#/components/schemas/tagType"
+        - type: object
+          required:
+            - refcount
+          properties:
+            refcount:
+              $ref: "#/components/schemas/countType"
+    newFeatureTagType:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          $ref: "#/components/schemas/tagNameType"
+        description:
+          $ref: "#/components/schemas/tagDescriptionType"
+    featureTagType:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              $ref: "#/components/schemas/idType"
+        - $ref: "#/components/schemas/newFeatureTagType"
+    errorObjectType:
+      type: object
+      required:
+        - summary
+        - description
+      properties:
+        code:
+          $ref: "#/components/schemas/idType"
+        summary:
+          type: string
+        description:
+          type: string
+        reference:
+          type: string
+    queryMatchType:
+      type: object
+      required:
+        - id
+        - name
+        - type
+        - length
+      properties:
+        id:
+          $ref: "#/components/schemas/idType"
+        name:
+          $ref: "#/components/schemas/matchNameType"
+        type:
+          $ref: "#/components/schemas/matchTypeType"
+        length:
+          $ref: "#/components/schemas/countType"
+  responses:
+    generalErrorResponse:
+      description: An error has occurred
+      content:
+        "application/json":
+          schema:
+            type: object
+            required:
+              - error
+            properties:
+              error:
+                $ref: "#/components/schemas/errorObjectType"
+    generalError404Response:
+      description: Not found
+      content:
+        "application/json":
+          schema:
+            type: object
+            required:
+              - error
+            properties:
+              error:
+                $ref: "#/components/schemas/errorObjectType"
+# TODO: Uncomment
+# security:
+#   - userToken: []
+paths:
+  "/authors":
+    x-exegesis-controller: authorsController
+    post:
+      summary: Create a new author
+      description: Create a new author using the data in the request body.
+      operationId: createAuthor
+      requestBody:
+        description: Author to add
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/newAuthorType"
+        required: true
+      responses:
+        "201":
+          description: New author created
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - author
+                properties:
+                  author:
+                    $ref: "#/components/schemas/authorType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Authors
+    get:
+      summary: Fetch all authors
+      description: Fetch authors as an array. Includes a count of all authors.
+      operationId: getAllAuthors
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All authors
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - authors
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  authors:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/authorType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Authors
+  "/authors/withRefCount":
+    x-exegesis-controller: authorsController
+    get:
+      summary: Fetch all authors with reference counts
+      description: Fetch all authors as an array, with each author record
+        including the reference count.
+      operationId: getAllAuthorsWithRefCount
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All authors with reference counts
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - authors
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  authors:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/authorWithRefCountType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Authors
+  "/authors/namesAndAliases":
+    x-exegesis-controller: authorsController
+    get:
+      summary: Fetch a list of author names, including aliases
+      description: Fetch all author names as an array, including aliases with a
+        pointer to the master name.
+      operationId: getAuthorNamesAndAliases
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All author names and aliases
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - authors
+                properties:
+                  authors:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - id
+                        - name
+                      properties:
+                        id:
+                          $ref: "#/components/schemas/idType"
+                        name:
+                          $ref: "#/components/schemas/authorNameOrAliasType"
+                        aliasOf:
+                          $ref: "#/components/schemas/authorNameOrAliasType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Authors
+  "/authors/{id}":
+    x-exegesis-controller: authorsController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single author by ID
+      description: Retrieve a single author by ID. Returns author and alias
+        information.
+      operationId: getAuthorById
+      responses:
+        "200":
+          description: Author data
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - author
+                properties:
+                  author:
+                    $ref: "#/components/schemas/authorType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Authors
+    put:
+      summary: Update an author
+      description: Update the author record specified by the given ID.
+      operationId: updateAuthorById
+      requestBody:
+        description: Author to update
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/authorType"
+        required: true
+      responses:
+        "200":
+          description: Updated author data
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - author
+                properties:
+                  author:
+                    $ref: "#/components/schemas/authorType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Authors
+    delete:
+      summary: Delete an author by ID
+      description: Delete the specified author. Removes the author from
+        associated reference records. Does not delete any reference records.
+      operationId: deleteAuthorById
+      responses:
+        "200":
+          description: Author deleted
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Authors
+  "/authors/{id}/withRefCount":
+    x-exegesis-controller: authorsController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single author with reference count by ID
+      description: Retrieve a single author by ID, including the reference
+        count. Returns author and alias information.
+      operationId: getAuthorByIdWithRefCount
+      responses:
+        "200":
+          description: Author data with reference count
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - author
+                properties:
+                  author:
+                    $ref: "#/components/schemas/authorWithRefCountType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Authors
+  "/tags":
+    x-exegesis-controller: tagsController
+    post:
+      summary: Create a new tag
+      description: Create a new tag using the data in the request body.
+      operationId: createTag
+      requestBody:
+        description: Tag to add
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/newTagType"
+        required: true
+      responses:
+        "201":
+          description: New tag created
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - tag
+                properties:
+                  tag:
+                    $ref: "#/components/schemas/tagType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+    get:
+      summary: Fetch all tags
+      description: Fetch tags as an array. Includes a count of all tags.
+      operationId: getAllTags
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All tags
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - tags
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  tags:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/tagType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+  "/tags/withRefCount":
+    x-exegesis-controller: tagsController
+    get:
+      summary: Fetch all tags with count of tagged references
+      description: Fetch tags as an array. Each tag structure includes an extra
+        field that counts the number of references tagged by the tag.
+      operationId: getAllTagsWithRefCount
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All tags with reference counts
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - tags
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  tags:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/tagWithRefCountType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+  "/tags/queryWithRefCount":
+    x-exegesis-controller: tagsController
+    get:
+      summary: Fetch all matching tags with count of tagged references
+      description: Fetch tags whose name matches the query value, as an array.
+        Each tag structure includes an extra field that counts the number of
+        references tagged by the tag.
+      operationId: getTagsQueryWithRefCount
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/queryParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All matched tags with reference counts
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - tags
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  tags:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/tagWithRefCountType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+  "/tags/{id}":
+    x-exegesis-controller: tagsController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single tag by ID
+      description: Retrieve a single tag by the ID. Includes full tag
+        information.
+      operationId: getTagById
+      responses:
+        "200":
+          description: Tag data
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - tag
+                properties:
+                  tag:
+                    $ref: "#/components/schemas/tagType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+    put:
+      summary: Update a tag
+      description: Update a tag with the information in the request body.
+      operationId: updateTagById
+      requestBody:
+        description: Tag to update
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/tagType"
+        required: true
+      responses:
+        "200":
+          description: Updated tag data
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - tag
+                properties:
+                  tag:
+                    $ref: "#/components/schemas/tagType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+    delete:
+      summary: Delete a tag by ID
+      description: Delete the specified tag. Removes all relational links
+        between the tag and any references.
+      operationId: deleteTagById
+      responses:
+        "200":
+          description: Tag deleted
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+  "/tags/{id}/withRefCount":
+    x-exegesis-controller: tagsController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single tag by ID with a count of tagged references
+      description: Retrieve a single tag by ID, including the count of the
+        references tagged with the given tag.
+      operationId: getTagByIdWithRefCount
+      responses:
+        "200":
+          description: Tag data with reference count
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - tag
+                properties:
+                  tag:
+                    $ref: "#/components/schemas/tagWithRefCountType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+  "/misc/languages":
+    x-exegesis-controller: miscController
+    get:
+      summary: Fetch all language strings as an array
+      description: Fetch all language strings currently in use from the
+        database as an array of strings.
+      operationId: getAllLanguages
+      parameters:
+        - $ref: "#/components/parameters/preferredParam"
+      responses:
+        "200":
+          description: All languages
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - languages
+                properties:
+                  languages:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/languageType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Miscellaneous
+  "/misc/tagtypes":
+    x-exegesis-controller: miscController
+    get:
+      summary: Fetch all tag type strings as an array
+      description: Fetch all tag type strings currently in use from the
+        database as an array of strings.
+      operationId: getAllTagTypes
+      responses:
+        "200":
+          description: All tag types
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - types
+                properties:
+                  types:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/tagTypeType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Miscellaneous
+  "/misc/quicksearch":
+    x-exegesis-controller: miscController
+    get:
+      summary: Quick search by name across the major tables
+      description: Fetch all records from tags, references, magazines and
+        authors where the "name" field matches the query.
+      operationId: quickSearchName
+      parameters:
+        - $ref: "#/components/parameters/queryParam"
+        - $ref: "#/components/parameters/countParam"
+      responses:
+        "200":
+          description: Matching names
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - matches
+                properties:
+                  matches:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/queryMatchType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Miscellaneous
+tags:
+  - name: Authors
+    description: Operations that pertain to authors
+  - name: Magazines
+    description: Operations that pertain to magazines
+  - name: Issues
+    description: Operations that pertain to magazine issues
+  - name: Publishers
+    description: Operations that pertain to book publishers
+  - name: References
+    description: Operations that pertain to references
+  - name: Series
+    description: Operations that pertain to book series
+  - name: Tags
+    description: Operations that pertain to tags
+  - name: Miscellaneous
+    description: Operations that are not associated with any other group
