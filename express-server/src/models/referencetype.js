@@ -2,9 +2,9 @@
   ReferenceType model definition.
  */
 
-import { Model } from "sequelize";
+const { Model } = require("sequelize");
 
-export default (sequelize, DataTypes, { ReferenceType: fields }) => {
+module.exports = (sequelize, DataTypes, { ReferenceType: fields }) => {
   class ReferenceType extends Model {
     static associate(models) {
       ReferenceType.hasMany(models.Reference);

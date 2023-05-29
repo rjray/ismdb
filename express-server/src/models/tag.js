@@ -2,9 +2,9 @@
   Tag model definition.
  */
 
-import { Model } from "sequelize";
+const { Model } = require("sequelize");
 
-export default (sequelize, DataTypes, { Tag: fields }) => {
+module.exports = (sequelize, DataTypes, { Tag: fields }) => {
   class Tag extends Model {
     static associate(models) {
       Tag.belongsToMany(models.Reference, {

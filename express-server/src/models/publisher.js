@@ -2,9 +2,9 @@
   Publisher model definition.
  */
 
-import { Model } from "sequelize";
+const { Model } = require("sequelize");
 
-export default (sequelize, DataTypes, { Publisher: fields }) => {
+module.exports = (sequelize, DataTypes, { Publisher: fields }) => {
   class Publisher extends Model {
     static associate(models) {
       Publisher.hasMany(models.Book);

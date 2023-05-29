@@ -2,9 +2,9 @@
   Book model definition.
  */
 
-import { Model } from "sequelize";
+const { Model } = require("sequelize");
 
-export default (sequelize, DataTypes, { Book: fields }) => {
+module.exports = (sequelize, DataTypes, { Book: fields }) => {
   class Book extends Model {
     static associate(models) {
       Book.belongsTo(models.Reference);

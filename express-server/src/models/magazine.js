@@ -2,9 +2,9 @@
   Magazine model definition.
  */
 
-import { Model } from "sequelize";
+const { Model } = require("sequelize");
 
-export default (sequelize, DataTypes, { Magazine: fields }) => {
+module.exports = (sequelize, DataTypes, { Magazine: fields }) => {
   class Magazine extends Model {
     static associate(models) {
       Magazine.hasMany(models.MagazineIssue);

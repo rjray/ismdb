@@ -2,9 +2,9 @@
   AuthorsReferences relational model definition.
  */
 
-import { Model } from "sequelize";
+const { Model } = require("sequelize");
 
-export default (sequelize) => {
+module.exports = (sequelize) => {
   class AuthorsReferences extends Model {}
 
   AuthorsReferences.init(

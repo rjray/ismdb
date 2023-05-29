@@ -2,9 +2,9 @@
   AuthorAlias model definition.
  */
 
-import { Model } from "sequelize";
+const { Model } = require("sequelize");
 
-export default (sequelize, DataTypes, { AuthorAlias: fields }) => {
+module.exports = (sequelize, DataTypes, { AuthorAlias: fields }) => {
   class AuthorAlias extends Model {
     static associate(models) {
       AuthorAlias.belongsTo(models.Author, { onDelete: "CASCADE" });

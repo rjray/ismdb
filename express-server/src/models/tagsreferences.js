@@ -2,9 +2,9 @@
   TagsReferences relational model definition.
  */
 
-import { Model } from "sequelize";
+const { Model } = require("sequelize");
 
-export default (sequelize) => {
+module.exports = (sequelize) => {
   class TagsReferences extends Model {}
 
   TagsReferences.init(

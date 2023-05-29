@@ -2,9 +2,9 @@
   User model definition.
  */
 
-import { Model } from "sequelize";
+const { Model } = require("sequelize");
 
-export default (sequelize, DataTypes, { User: fields }) => {
+module.exports = (sequelize, DataTypes, { User: fields }) => {
   class User extends Model {
     static associate(models) {
       User.belongsToMany(models.AuthScope, {

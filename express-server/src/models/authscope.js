@@ -2,9 +2,9 @@
   AuthScope model definition.
  */
 
-import { Model } from "sequelize";
+const { Model } = require("sequelize");
 
-export default (sequelize, DataTypes, { AuthScope: fields }) => {
+module.exports = (sequelize, DataTypes, { AuthScope: fields }) => {
   class AuthScope extends Model {
     static associate(models) {
       AuthScope.belongsToMany(models.User, {

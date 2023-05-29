@@ -2,9 +2,9 @@
   FeatureTagsMagazineFeatures relational model definition.
  */
 
-import { Model } from "sequelize";
+const { Model } = require("sequelize");
 
-export default (sequelize) => {
+module.exports = (sequelize) => {
   class FeatureTagsMagazineFeatures extends Model {}
 
   FeatureTagsMagazineFeatures.init(

@@ -2,7 +2,7 @@
   UsersAuthScopes relational model definition.
  */
 
-export default (sequelize) => {
+module.exports = (sequelize) => {
   const UsersAuthScopes = sequelize.define(
     "UsersAuthScopes",
     {},

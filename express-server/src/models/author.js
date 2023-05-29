@@ -2,9 +2,9 @@
   Author model definition.
  */
 
-import { Model } from "sequelize";
+const { Model } = require("sequelize");
 
-export default (sequelize, DataTypes, { Author: fields }) => {
+module.exports = (sequelize, DataTypes, { Author: fields }) => {
   class Author extends Model {
     static associate(models) {
       Author.hasMany(models.AuthorAlias);

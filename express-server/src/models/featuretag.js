@@ -2,9 +2,9 @@
   FeatureTag model definition.
  */
 
-import { Model } from "sequelize";
+const { Model } = require("sequelize");
 
-export default (sequelize, DataTypes, { FeatureTag: fields }) => {
+module.exports = (sequelize, DataTypes, { FeatureTag: fields }) => {
   class FeatureTag extends Model {
     static associate(models) {
       FeatureTag.belongsToMany(models.MagazineFeature, {
