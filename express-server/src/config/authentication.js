@@ -2,14 +2,17 @@
   Configuration of paths for user authentication.
  */
 
-import { Router } from "express";
+const express = require("express");
 
-import { createUserAccessToken, createUserRefreshToken } from "../db/users";
+const {
+  createUserAccessToken,
+  createUserRefreshToken,
+} = require("../db/users");
 
 const FOUR_WEEKS = 4 * 7 * 86400 * 1000;
 
-export default function (passport) {
-  const router = Router();
+module.exports = function (passport) {
+  const router = express.Router();
 
   router.post(
     "/token",
@@ -59,4 +62,4 @@ export default function (passport) {
   });
 
   return router;
-}
+};

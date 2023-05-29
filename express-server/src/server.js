@@ -1,31 +1,30 @@
-import express, { urlencoded, json } from "express";
-import cookieParser from "cookie-parser";
-import helmet from "helmet";
-import cors from "cors";
-// const morgan = require("morgan");
-import compression from "compression";
-import { middleware } from "exegesis-express";
-import { exegesisPassport } from "exegesis-passport";
-import { createServer as _createServer } from "http";
-import { resolve } from "path";
-import { Passport } from "passport";
-
 require("dotenv").config({
   path: `.env.${process.env.NODE_ENV}`,
 });
 
 const port = process.env.PORT || 3001;
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
+const cors = require("cors");
+// const morgan = require("morgan");
+const compression = require("compression");
+const exegesisExpress = require("exegesis-express");
+const { exegesisPassport } = require("exegesis-passport");
+const http = require("http");
+const path = require("path");
+const { Passport } = require("passport");
 
-const passport = require("./config/passport").default(new Passport());
-const authLayer = require("./config/authentication").default(passport);
+const passport = require("./config/passport")(new Passport());
+const authLayer = require("./config/authentication")(passport);
 
 async function createServer() {
   const app = express();
   app.disable("x-powered-by");
   // app.use(morgan(process.env.NODE_ENV === "production" ? "common" : "dev"));
   app.use(cookieParser());
-  app.use(urlencoded({ extended: false }));
-  app.use(json());
+  app.use(express.urlencoded({ extended: false }));
+  app.use(express.json());
   app.use(passport.initialize());
   app.use(compression());
   app.use(cors({ origin: process.env.ALLOWED_ORIGIN, credentials: true }));
@@ -33,8 +32,8 @@ async function createServer() {
 
   app.use(authLayer);
   app.use(
-    await middleware(resolve(__dirname, "openapi.yaml"), {
-      controllers: resolve(__dirname, "controllers"),
+    await exegesisExpress.middleware(path.resolve(__dirname, "openapi.yaml"), {
+      controllers: path.resolve(__dirname, "controllers"),
       authenticators: {
         userToken: exegesisPassport(passport, "jwt-header"),
       },
@@ -54,7 +53,7 @@ async function createServer() {
     res.status(500).json({ message: `Internal error: ${err.message}` });
   });
 
-  const server = _createServer(app);
+  const server = http.createServer(app);
 
   return server;
 }

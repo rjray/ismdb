@@ -2,19 +2,19 @@
   Configuration/setup of passport for authentication.
  */
 
-import { compareSync } from "bcrypt";
-import { Strategy as LocalStrategy } from "passport-local";
-import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
+const bcrypt = require("bcrypt");
+const LocalStrategy = require("passport-local").Strategy;
+const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
-import { fetchSingleUserByUsername } from "../db/users";
+const { fetchSingleUserByUsername } = require("../db/users");
 
-export default function (passport) {
+module.exports = function (passport) {
   passport.use(
     new LocalStrategy(async (username, password, done) => {
       const user = await fetchSingleUserByUsername(username);
 
       if (user) {
-        if (!compareSync(password, user.password)) {
+        if (!bcrypt.compareSync(password, user.password)) {
           return done(null, false, { message: "Incorrect password" });
         }
       } else {
@@ -50,4 +50,4 @@ export default function (passport) {
   );
 
   return passport;
-}
+};

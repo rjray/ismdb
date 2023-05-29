@@ -2,7 +2,9 @@
   Read the YAML file of the string-field sizes and export the resulting object.
  */
 
-import { load } from "js-yaml";
-import { readFileSync } from "fs";
+const yaml = require("js-yaml");
+const fs = require("fs");
 
-export default load(readFileSync(`${__dirname}/string_fields.yaml`, "utf8"));
+module.exports = yaml.load(
+  fs.readFileSync(`${__dirname}/string_fields.yaml`, "utf8")
+);
