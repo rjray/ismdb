@@ -8,7 +8,7 @@
   "scripts": {
     "debug": "cd src && nodemon --exec 'node --inspect' -w openapi.yaml -w . server.js",
     "start": "cd src && nodemon -w openapi.yaml -w . server.js",
-    "reset": "(cd src; rm -f *.db; sequelize db:migrate && sequelize db:seed:all && ../util/import_refs.pl ~/work/nmrdb/models.db --env)",
+    "reset": "(cd src; rm -f *.db; sequelize db:migrate && sequelize db:seed:all && ../../importer/import_refs.pl ~/work/nmrdb/models.db --env)",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Randy J. Ray <rjray@blackperl.com>",
