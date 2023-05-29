@@ -226,6 +226,23 @@ components:
             id:
               $ref: "#/components/schemas/idType"
         - $ref: "#/components/schemas/newFeatureTagType"
+    referenceTypeType:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - notes
+      properties:
+        id:
+          $ref: "#/components/schemas/idType"
+        name:
+          type: string
+        description:
+          type: string
+        notes:
+          type: string
+          nullable: true
     errorObjectType:
       type: object
       required:
@@ -730,6 +747,30 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Tags
+  "/misc/referencetypes":
+    x-exegesis-controller: miscController
+    get:
+      summary: Fetch all reference types as an array
+      description: Retrieve all reference types as an array of objects.
+      operationId: getAllReferenceTypes
+      responses:
+        "200":
+          description: All reference types
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - referenceTypes
+                properties:
+                  referenceTypes:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/referenceTypeType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Miscellaneous
   "/misc/languages":
     x-exegesis-controller: miscController
     get:
