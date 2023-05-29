@@ -3,17 +3,19 @@
   ReferenceTypes.
  */
 
-export async function up(queryInterface, Sequelize) {
-  await queryInterface.addColumn("References", "referenceTypeId", {
-    type: Sequelize.INTEGER,
-    references: {
-      model: "ReferenceTypes",
-      key: "id",
-    },
-    allowNull: false,
-  });
-}
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.addColumn("References", "referenceTypeId", {
+      type: Sequelize.INTEGER,
+      references: {
+        model: "ReferenceTypes",
+        key: "id",
+      },
+      allowNull: false,
+    });
+  },
 
-export async function down(queryInterface) {
-  await queryInterface.removeColumn("References", "referenceTypeId");
-}
+  down: async (queryInterface) => {
+    await queryInterface.removeColumn("References", "referenceTypeId");
+  },
+};

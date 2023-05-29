@@ -2,29 +2,31 @@
   Database set-up/tear-down for FeatureTagsMagazineFeatures table.
  */
 
-export async function up(queryInterface, Sequelize) {
-  await queryInterface.createTable("FeatureTagsMagazineFeatures", {
-    featureTagId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      references: {
-        model: "FeatureTags",
-        key: "id",
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable("FeatureTagsMagazineFeatures", {
+      featureTagId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "FeatureTags",
+          key: "id",
+        },
+        onDelete: "CASCADE",
       },
-      onDelete: "CASCADE",
-    },
-    magazineFeatureId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      references: {
-        model: "MagazineFeatures",
-        key: "referenceId",
+      magazineFeatureId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "MagazineFeatures",
+          key: "referenceId",
+        },
+        onDelete: "CASCADE",
       },
-      onDelete: "CASCADE",
-    },
-  });
-}
+    });
+  },
 
-export async function down(queryInterface) {
-  await queryInterface.dropTable("FeatureTagsMagazineFeatures");
-}
+  down: async (queryInterface) => {
+    await queryInterface.dropTable("FeatureTagsMagazineFeatures");
+  },
+};

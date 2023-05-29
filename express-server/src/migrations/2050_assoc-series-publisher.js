@@ -3,16 +3,18 @@
   Publishers.
  */
 
-export async function up(queryInterface, Sequelize) {
-  await queryInterface.addColumn("Series", "publisherId", {
-    type: Sequelize.INTEGER,
-    references: {
-      model: "Publishers",
-      key: "id",
-    },
-  });
-}
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.addColumn("Series", "publisherId", {
+      type: Sequelize.INTEGER,
+      references: {
+        model: "Publishers",
+        key: "id",
+      },
+    });
+  },
 
-export async function down(queryInterface) {
-  await queryInterface.removeColumn("Series", "publisherId");
-}
+  down: async (queryInterface) => {
+    await queryInterface.removeColumn("Series", "publisherId");
+  },
+};

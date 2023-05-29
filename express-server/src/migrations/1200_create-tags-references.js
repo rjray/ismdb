@@ -2,29 +2,31 @@
   Database set-up/tear-down for TagsReferences table.
  */
 
-export async function up(queryInterface, Sequelize) {
-  await queryInterface.createTable("TagsReferences", {
-    tagId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Tags",
-        key: "id",
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable("TagsReferences", {
+      tagId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Tags",
+          key: "id",
+        },
+        onDelete: "CASCADE",
       },
-      onDelete: "CASCADE",
-    },
-    referenceId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      references: {
-        model: "References",
-        key: "id",
+      referenceId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "References",
+          key: "id",
+        },
+        onDelete: "CASCADE",
       },
-      onDelete: "CASCADE",
-    },
-  });
-}
+    });
+  },
 
-export async function down(queryInterface) {
-  await queryInterface.dropTable("TagsReferences");
-}
+  down: async (queryInterface) => {
+    await queryInterface.dropTable("TagsReferences");
+  },
+};

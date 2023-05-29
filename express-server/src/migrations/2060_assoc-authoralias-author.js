@@ -3,18 +3,20 @@
   Authors.
  */
 
-export async function up(queryInterface, Sequelize) {
-  await queryInterface.addColumn("AuthorAliases", "authorId", {
-    type: Sequelize.INTEGER,
-    references: {
-      model: "Authors",
-      key: "id",
-    },
-    onDelete: "CASCADE",
-    allowNull: false,
-  });
-}
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.addColumn("AuthorAliases", "authorId", {
+      type: Sequelize.INTEGER,
+      references: {
+        model: "Authors",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+      allowNull: false,
+    });
+  },
 
-export async function down(queryInterface) {
-  await queryInterface.removeColumn("AuthorAliases", "authorId");
-}
+  down: async (queryInterface) => {
+    await queryInterface.removeColumn("AuthorAliases", "authorId");
+  },
+};

@@ -2,21 +2,22 @@
   Database set-up/tear-down for MagazineFeatures table.
  */
 
-export async function up(queryInterface, Sequelize) {
-  await queryInterface.createTable("MagazineFeatures", {
-    referenceId: {
-      allowNull: false,
-      primaryKey: true,
-      references: {
-        model: "References",
-        key: "id",
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable("MagazineFeatures", {
+      referenceId: {
+        allowNull: false,
+        primaryKey: true,
+        references: {
+          model: "References",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        type: Sequelize.INTEGER,
       },
-      onDelete: "CASCADE",
-      type: Sequelize.INTEGER,
-    },
-  });
-}
-
-export async function down(queryInterface) {
-  await queryInterface.dropTable("MagazineFeatures");
-}
+    });
+  },
+  down: async (queryInterface) => {
+    await queryInterface.dropTable("MagazineFeatures");
+  },
+};

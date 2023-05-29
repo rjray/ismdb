@@ -3,18 +3,20 @@
   Magazines.
  */
 
-export async function up(queryInterface, Sequelize) {
-  await queryInterface.addColumn("MagazineIssues", "magazineId", {
-    type: Sequelize.INTEGER,
-    references: {
-      model: "Magazines",
-      key: "id",
-    },
-    onDelete: "CASCADE",
-    allowNull: false,
-  });
-}
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.addColumn("MagazineIssues", "magazineId", {
+      type: Sequelize.INTEGER,
+      references: {
+        model: "Magazines",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+      allowNull: false,
+    });
+  },
 
-export async function down(queryInterface) {
-  await queryInterface.removeColumn("MagazineIssues", "magazineId");
-}
+  down: async (queryInterface) => {
+    await queryInterface.removeColumn("MagazineIssues", "magazineId");
+  },
+};
