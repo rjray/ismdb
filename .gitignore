@@ -108,3 +108,7 @@ dist
 backend/.vscode/
 frontend/.vscode/
 rust-server/.vscode/
+
+# Local crypto certs
+*cert.pem
+*key.pem
