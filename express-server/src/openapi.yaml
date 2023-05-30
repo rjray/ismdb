@@ -179,6 +179,102 @@ components:
           properties:
             refcount:
               $ref: "#/components/schemas/countType"
+    newMagazineType:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          $ref: "#/components/schemas/magazineNameType"
+        language:
+          $ref: "#/components/schemas/languageType"
+        aliases:
+          $ref: "#/components/schemas/magazineAliasesType"
+        notes:
+          $ref: "#/components/schemas/magazineNotesType"
+    magazineType:
+      allOf:
+        - type: object
+          required:
+            - id
+            - createdAt
+            - updatedAt
+          properties:
+            id:
+              $ref: "#/components/schemas/idType"
+            createdAt:
+              $ref: "#/components/schemas/dateTimeType"
+            updatedAt:
+              $ref: "#/components/schemas/dateTimeType"
+        - $ref: "#/components/schemas/newMagazineType"
+    magazineWithIssuesType:
+      allOf:
+        - $ref: "#/components/schemas/magazineType"
+        - type: object
+          properties:
+            issues:
+              type: array
+              items:
+                $ref: "#/components/schemas/abbreviatedMagazineIssueType"
+    magazineWithIssueCountType:
+      allOf:
+        - $ref: "#/components/schemas/magazineType"
+        - type: object
+          properties:
+            issuecount:
+              $ref: "#/components/schemas/countType"
+    abbreviatedMagazineIssueType:
+      type: object
+      required:
+        - id
+        - issue
+      properties:
+        id:
+          $ref: "#/components/schemas/idType"
+        issue:
+          $ref: "#/components/schemas/magazineIssueNumberType"
+    newMagazineIssueType:
+      type: object
+      required:
+        - issue
+        - magazineId
+      properties:
+        issue:
+          $ref: "#/components/schemas/magazineIssueNumberType"
+        magazineId:
+          $ref: "#/components/schemas/idType"
+    updateMagazineIssueType:
+      type: object
+      required:
+        - id
+        - issue
+        - magazineId
+      properties:
+        id:
+          $ref: "#/components/schemas/idType"
+        issue:
+          $ref: "#/components/schemas/magazineIssueNumberType"
+        magazineId:
+          $ref: "#/components/schemas/idType"
+    magazineIssueType:
+      type: object
+      required:
+        - id
+        - issue
+        - magazine
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          $ref: "#/components/schemas/idType"
+        issue:
+          $ref: "#/components/schemas/magazineIssueNumberType"
+        magazine:
+          $ref: "#/components/schemas/magazineType"
+        createdAt:
+          $ref: "#/components/schemas/dateTimeType"
+        updatedAt:
+          $ref: "#/components/schemas/dateTimeType"
     newTagType:
       type: object
       required:
@@ -526,6 +622,267 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
+  "/magazines":
+    x-exegesis-controller: magazinesController
+    post:
+      summary: Create a new magazine
+      description: Create a new magazine using the data in the request body.
+      operationId: createMagazine
+      requestBody:
+        description: New magazine
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/newMagazineType"
+      responses:
+        "201":
+          description: New magazine created
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - magazine
+                properties:
+                  magazine:
+                    $ref: "#/components/schemas/newMagazineType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Magazines
+    get:
+      summary: Fetch all magazines
+      description: Fetch all magazines as an array. Does not include issue
+        information.
+      operationId: getAllMagazines
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All magazines
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - magazines
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  magazines:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/magazineWithIssueCountType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Magazines
+  "/magazines/withIssues":
+    x-exegesis-controller: magazinesController
+    get:
+      summary: Fetch all magazines with issues
+      description: Fetch all magazines as an array. Includes issues information
+        as nested arrays.
+      operationId: getAllMagazinesWithIssues
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All magazines with issues
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - count
+                  - magazines
+                properties:
+                  count:
+                    $ref: "#/components/schemas/countType"
+                  magazines:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/magazineWithIssuesType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Magazines
+  "/magazines/getMostRecentlyUpdated":
+    x-exegesis-controller: magazinesController
+    get:
+      summary: Fetch the most-recently-added-to magazines
+      description: Fetch a number of magazines that have been most-recently
+        added to.
+      operationId: getMostRecentUpdatedMagazines
+      parameters:
+        - $ref: "#/components/parameters/countParam"
+      responses:
+        "200":
+          description: Most-recently-added-to magazines in descending order
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - magazines
+                properties:
+                  magazines:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/magazineType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Magazines
+  "/magazines/{id}":
+    x-exegesis-controller: magazinesController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single magazine by ID
+      description: Retrieve a single magazine by the ID. Does not include issue
+        information.
+      operationId: getMagazineById
+      responses:
+        "200":
+          description: Magazine data
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - magazine
+                properties:
+                  magazine:
+                    $ref: "#/components/schemas/magazineType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Magazines
+    put:
+      summary: Update a magazine by ID
+      description: Update a specific magazine by ID.
+      operationId: updateMagazineById
+      requestBody:
+        description: Magazine to update
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/magazineType"
+      responses:
+        "200":
+          description: Updated magazine
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - magazine
+                properties:
+                  magazine:
+                    $ref: "#/components/schemas/magazineType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Magazines
+    delete:
+      summary: Delete a magazine by ID
+      description: Delete a specific magazine by ID. Deletes all issues of the
+        magazine and their references.
+      operationId: deleteMagazineById
+      responses:
+        "200":
+          description: Magazine deleted
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Magazines
+  "/issues":
+    x-exegesis-controller: issuesController
+    post:
+      summary: Create a new magazine issue
+      description: Create a new issue for the specified magazine.
+      operationId: createMagazineIssue
+      requestBody:
+        description: New issue
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/newMagazineIssueType"
+      responses:
+        "201":
+          description: New issue created
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - magazineissue
+                properties:
+                  magazineissue:
+                    $ref: "#/components/schemas/magazineIssueType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Issues
+  "/issues/{id}":
+    x-exegesis-controller: issuesController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    put:
+      summary: Update a magazine issue
+      description: Update a magazine issue. Does not affect any associated
+        references.
+      operationId: updateMagazineIssueById
+      requestBody:
+        description: Magazine issue to update
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/updateMagazineIssueType"
+      responses:
+        "200":
+          description: Updated magazine issue
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - issue
+                properties:
+                  issue:
+                    $ref: "#/components/schemas/magazineIssueType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Issues
+    delete:
+      summary: Delete a magazine issue
+      description: Delete a magazine issues. Deletes all references associated
+        with it.
+      operationId: deleteMagazineIssueById
+      responses:
+        "200":
+          description: Magazine issue deleted
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Issues
   "/tags":
     x-exegesis-controller: tagsController
     post:
