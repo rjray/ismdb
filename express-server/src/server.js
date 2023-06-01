@@ -2,7 +2,11 @@ require("dotenv").config({
   path: `.env.${process.env.NODE_ENV}`,
 });
 
-const port = process.env.PORT || 3001;
+const httpsPort = process.env.HTTPS_PORT || 443;
+const httpsCertFile = process.env.HTTPS_CERT_FILE || "cert.pem";
+const httpsKeyFile = process.env.HTTPS_KEY_FILE || "key.pem";
+const httpsKeyPass = process.env.HTTPS_KEY_PASS || null;
+
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
@@ -11,7 +15,8 @@ const cors = require("cors");
 const compression = require("compression");
 const exegesisExpress = require("exegesis-express");
 const { exegesisPassport } = require("exegesis-passport");
-const http = require("http");
+const https = require("https");
+const fs = require("fs");
 const path = require("path");
 const { Passport } = require("passport");
 
@@ -53,15 +58,22 @@ async function createServer() {
     res.status(500).json({ message: `Internal error: ${err.message}` });
   });
 
-  const server = http.createServer(app);
+  const server = https.createServer(
+    {
+      cert: fs.readFileSync(httpsCertFile),
+      key: fs.readFileSync(httpsKeyFile),
+      passphrase: httpsKeyPass,
+    },
+    app
+  );
 
   return server;
 }
 
 createServer()
   .then((server) => {
-    server.listen(port);
-    console.log(`Listening on port ${port}`);
+    server.listen(httpsPort);
+    console.log(`Listening on port ${httpsPort}`);
   })
   .catch((err) => {
     console.error(err.stack);
