@@ -112,3 +112,4 @@ rust-server/.vscode/
 # Local crypto certs
 *cert.pem
 *key.pem
+*csr.pem
