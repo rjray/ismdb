@@ -7,20 +7,18 @@ const Magazines = require("../db/magazines");
 const { getMostRecentMagazines } = require("../db/raw-sql");
 const { fixupOrderField } = require("../lib/utils");
 
-// const canBeNull = new Set(["language", "aliases", "notes"]);
-
 /*
   POST /magazines
 
   Create a new magazine record from the content in the request body. The
-  return value is an object with the key "magazine" (new magazine).
+  return value is the new magazine.
  */
 function createMagazine(context) {
   const { res, requestBody } = context;
 
   return Magazines.createMagazine(requestBody)
     .then((magazine) => {
-      res.status(201).pureJson({ magazine });
+      res.status(201).pureJson(magazine);
     })
     .catch((error) => {
       res.status(500).pureJson({
@@ -36,10 +34,8 @@ function createMagazine(context) {
   GET /magazines
 
   Returns all magazine titles, with count of total issues per magazine. Return
-  value is an object with keys "count" (the count of all magazine titles) and
-  "magazines", an array of the magazines themselves. The returned list may be
-  governed by parameters in the query. If so, the count will reflect all
-  records that match the query, regardless of "limit" or "skip".
+  value an array of the magazines themselves. The returned list may be governed
+  by parameters in the query.
  */
 function getAllMagazines(context) {
   const { query } = context.params;
@@ -49,9 +45,9 @@ function getAllMagazines(context) {
     query.order = fixupOrderField(query.order);
   }
 
-  return Magazines.fetchAllMagazinesWithIssueCountAndCount(query)
-    .then((results) => {
-      res.status(200).pureJson(results);
+  return Magazines.fetchAllMagazinesWithIssueCount(query)
+    .then((magazines) => {
+      res.status(200).pureJson(magazines);
     })
     .catch((error) => {
       res.status(500).pureJson({
@@ -67,10 +63,8 @@ function getAllMagazines(context) {
   GET /magazines/withIssues
 
   Returns all magazine records with nested issue information. Return value is an
-  object with keys "count" (the count of all magazine titles) and "magazines",
   an array of the magazines themselves. The returned list may be governed by
-  parameters in the query. If so, the count will reflect all records that match
-  the query, regardless of "limit" or "skip".
+  parameters in the query.
  */
 function getAllMagazinesWithIssues(context) {
   const { query } = context.params;
@@ -80,9 +74,9 @@ function getAllMagazinesWithIssues(context) {
     query.order = fixupOrderField(query.order);
   }
 
-  return Magazines.fetchAllMagazinesWithIssueNumbersAndCount(query)
-    .then((results) => {
-      res.status(200).pureJson(results);
+  return Magazines.fetchAllMagazinesWithIssueNumbers(query)
+    .then((magazines) => {
+      res.status(200).pureJson(magazines);
     })
     .catch((error) => {
       res.status(500).pureJson({
@@ -111,7 +105,7 @@ function getMostRecentUpdatedMagazines(context) {
 
   return getMostRecentMagazines(query.count)
     .then((magazines) => {
-      res.status(200).pureJson({ magazines });
+      res.status(200).pureJson(magazines);
     })
     .catch((error) => {
       res.status(500).pureJson({
@@ -126,8 +120,7 @@ function getMostRecentUpdatedMagazines(context) {
 /*
   GET /magazines/{id}
 
-  Fetch a single magazine title by ID. Return value is an object with the key
-  "magazine" (the magazine record).
+  Fetch a single magazine title by ID. Return value is the magazine record.
  */
 function getMagazineById(context) {
   const { id } = context.params.path;
@@ -136,7 +129,7 @@ function getMagazineById(context) {
   return Magazines.fetchSingleMagazineSimple(id)
     .then((magazine) => {
       if (magazine) {
-        res.status(200).pureJson({ magazine });
+        res.status(200).pureJson(magazine);
       } else {
         res.status(404).pureJson({
           error: {
@@ -160,8 +153,7 @@ function getMagazineById(context) {
   PUT /magazines/{id}
 
   Update a single magazine title record by the ID, using the JSON content in
-  the request body. Return value is an object with the key "magazine" (the
-  updated magazine record).
+  the request body. Return value is the updated magazine record.
  */
 function updateMagazineById(context) {
   const { id } = context.params.path;
@@ -170,7 +162,7 @@ function updateMagazineById(context) {
   return Magazines.updateMagazine(id, requestBody)
     .then((magazine) => {
       if (magazine) {
-        res.status(200).pureJson({ magazine });
+        res.status(200).pureJson(magazine);
       } else {
         res.status(404).pureJson({
           error: {
@@ -226,7 +218,7 @@ function deleteMagazineById(context) {
   GET /magazines/{id}/withIssues
 
   Fetch a single magazine title by ID, with issues and per-issue references.
-  Return value is an object with the key "magazine".
+  Return value is the magazine object.
  */
 function getMagazineByIdWithIssues(context) {
   const { id } = context.params.path;
@@ -235,7 +227,7 @@ function getMagazineByIdWithIssues(context) {
   return Magazines.fetchSingleMagazineComplete(id)
     .then((magazine) => {
       if (magazine) {
-        res.status(200).pureJson({ magazine });
+        res.status(200).pureJson(magazine);
       } else {
         res.status(404).pureJson({
           error: {

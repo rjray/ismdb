@@ -9,14 +9,14 @@ const Magazines = require("../db/magazines");
   POST /issues
 
   Create a new magazine issue record from the content in the request body. The
-  return value is an object with the keys "magazineissue" (new magazine issue).
+  return value is the new magazine issue.
  */
 function createMagazineIssue(context) {
   const { res, requestBody } = context;
 
   return Magazines.createMagazineIssue(requestBody)
     .then((magazineissue) => {
-      res.status(201).pureJson({ magazineissue });
+      res.status(201).pureJson(magazineissue);
     })
     .catch((error) => {
       res.status(500).pureJson({
@@ -32,9 +32,8 @@ function createMagazineIssue(context) {
   GET /issues/{id}
 
   Retrieve a single magazine issue record by ID from the database, with all the
-  associated references. Returns an object with a single key, "issue", that is
-  the magazine issue data with an extra field ("references") containing an array
-  of reference objects.
+  associated references. Returns the magazine issue data with an extra field
+  ("references") containing an array of reference objects.
  */
 function getMagazineIssueById(context) {
   const { id } = context.params.path;
@@ -43,7 +42,7 @@ function getMagazineIssueById(context) {
   return Magazines.fetchSingleMagazineIssueComplete(id)
     .then((issue) => {
       if (issue) {
-        res.status(200).pureJson({ issue });
+        res.status(200).pureJson(issue);
       } else {
         res.status(404).pureJson({
           error: {
@@ -67,8 +66,7 @@ function getMagazineIssueById(context) {
   PUT /issues/{id}
 
   Update the magazine issue record indicated by the ID parameter, using the
-  content of the request body. Return value is an object with the key
-  "issue" (the updated issue record).
+  content of the request body. Return value is the updated issue record.
  */
 function updateMagazineIssueById(context) {
   const { id } = context.params.path;
@@ -77,7 +75,7 @@ function updateMagazineIssueById(context) {
   return Magazines.updateMagazineIssue(id, requestBody)
     .then((issue) => {
       if (issue) {
-        res.status(200).pureJson({ issue });
+        res.status(200).pureJson(issue);
       } else {
         res.status(404).pureJson({
           error: {

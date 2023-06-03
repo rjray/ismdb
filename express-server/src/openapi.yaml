@@ -238,6 +238,15 @@ components:
           properties:
             issuecount:
               $ref: "#/components/schemas/countType"
+    magazineWithIssuesAndReferencesType:
+      allOf:
+        - $ref: "#/components/schemas/magazineType"
+        - type: object
+          properties:
+            issues:
+              type: array
+              items:
+                $ref: "#/components/schemas/magazineIssueWithReferencesType"
     abbreviatedMagazineIssueType:
       type: object
       required:
@@ -290,6 +299,17 @@ components:
           $ref: "#/components/schemas/dateTimeType"
         updatedAt:
           $ref: "#/components/schemas/dateTimeType"
+    magazineIssueWithReferencesType:
+      allOf:
+        - $ref: "#/components/schemas/magazineIssueType"
+        - type: object
+          required:
+            - magazineFeatures
+          properties:
+            magazineFeatures:
+              type: array
+              items:
+                $ref: "#/components/schemas/referenceMagazineFeatureType"
     newBookPublisherType:
       type: object
       required:
@@ -822,11 +842,7 @@ paths:
             "application/json":
               schema:
                 type: object
-                required:
-                  - magazine
-                properties:
-                  magazine:
-                    $ref: "#/components/schemas/newMagazineType"
+                $ref: "#/components/schemas/newMagazineType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
@@ -846,17 +862,9 @@ paths:
           content:
             "application/json":
               schema:
-                type: object
-                required:
-                  - count
-                  - magazines
-                properties:
-                  count:
-                    $ref: "#/components/schemas/countType"
-                  magazines:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/magazineWithIssueCountType"
+                type: array
+                items:
+                  $ref: "#/components/schemas/magazineWithIssueCountType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
@@ -878,21 +886,14 @@ paths:
           content:
             "application/json":
               schema:
-                type: object
-                required:
-                  - count
-                  - magazines
-                properties:
-                  count:
-                    $ref: "#/components/schemas/countType"
-                  magazines:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/magazineWithIssuesType"
+                type: array
+                items:
+                  $ref: "#/components/schemas/magazineWithIssuesType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Magazines
+        - Issues
   "/magazines/getMostRecentlyUpdated":
     x-exegesis-controller: magazinesController
     get:
@@ -908,14 +909,9 @@ paths:
           content:
             "application/json":
               schema:
-                type: object
-                required:
-                  - magazines
-                properties:
-                  magazines:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/magazineType"
+                type: array
+                items:
+                  $ref: "#/components/schemas/magazineType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
@@ -936,11 +932,7 @@ paths:
             "application/json":
               schema:
                 type: object
-                required:
-                  - magazine
-                properties:
-                  magazine:
-                    $ref: "#/components/schemas/magazineType"
+                $ref: "#/components/schemas/magazineType"
         "404":
           $ref: "#/components/responses/generalError404Response"
         default:
@@ -964,11 +956,7 @@ paths:
             "application/json":
               schema:
                 type: object
-                required:
-                  - magazine
-                properties:
-                  magazine:
-                    $ref: "#/components/schemas/magazineType"
+                $ref: "#/components/schemas/magazineType"
         "404":
           $ref: "#/components/responses/generalError404Response"
         default:
@@ -989,6 +977,31 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Magazines
+  "/magazines/{id}/withIssues":
+    x-exegesis-controller: magazinesController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single magazine by ID with issue information
+      description: Retrieve a single magazine by the ID. Includes issue
+        information as a nested array. Issues include all reference information
+        as well.
+      operationId: getMagazineByIdWithIssues
+      responses:
+        "200":
+          description: Magazine data
+          content:
+            "application/json":
+              schema:
+                type: object
+                $ref: "#/components/schemas/magazineWithIssuesAndReferencesType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Magazines
+        - Issues
   "/issues":
     x-exegesis-controller: issuesController
     post:
@@ -1008,11 +1021,7 @@ paths:
             "application/json":
               schema:
                 type: object
-                required:
-                  - magazineissue
-                properties:
-                  magazineissue:
-                    $ref: "#/components/schemas/magazineIssueType"
+                $ref: "#/components/schemas/magazineIssueType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
@@ -1021,6 +1030,25 @@ paths:
     x-exegesis-controller: issuesController
     parameters:
       - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Get a full magazine issue
+      description: Get a full magazine issue with magazine and reference
+        information.
+      operationId: getMagazineIssueById
+      responses:
+        "200":
+          description: Issue data
+          content:
+            "application/json":
+              schema:
+                type: object
+                $ref: "#/components/schemas/magazineIssueWithReferencesType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Issues
     put:
       summary: Update a magazine issue
       description: Update a magazine issue. Does not affect any associated
@@ -1039,11 +1067,7 @@ paths:
             "application/json":
               schema:
                 type: object
-                required:
-                  - issue
-                properties:
-                  issue:
-                    $ref: "#/components/schemas/magazineIssueType"
+                $ref: "#/components/schemas/magazineIssueType"
         "404":
           $ref: "#/components/responses/generalError404Response"
         default:

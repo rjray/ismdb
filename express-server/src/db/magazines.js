@@ -14,16 +14,16 @@ const { fixAggregateOrderFields } = require("../lib/utils");
 const { includesForReference } = require("./references");
 
 // Most-basic magazine request. Single magazine without issues or anything.
-const fetchSingleMagazineSimple = async (id) => {
+async function fetchSingleMagazineSimple(id) {
   const magazine = await Magazine.findByPk(id).catch((error) => {
     throw new Error(error);
   });
 
   return magazine?.clean();
-};
+}
 
 // Get a single magazine with issues and references.
-const fetchSingleMagazineComplete = async (id) => {
+async function fetchSingleMagazineComplete(id) {
   const magazine = await Magazine.findByPk(id, {
     include: [
       {
@@ -39,19 +39,15 @@ const fetchSingleMagazineComplete = async (id) => {
   });
 
   return magazine?.clean();
-};
+}
 
-// Get all magazines, with a count of their issues and a count of the total
-// matching magazine records.
-const fetchAllMagazinesWithIssueCountAndCount = async (optsIn = {}) => {
-  const opts = { ...optsIn };
-  const optsNoOrder = { ...optsIn };
+// Get all magazines, with a count of their issues.
+async function fetchAllMagazinesWithIssueCount(opts = {}) {
   if (opts.order) {
-    delete optsNoOrder.order;
+    // eslint-disable-next-line no-param-reassign
     opts.order = fixAggregateOrderFields(sequelize, opts.order, ["issuecount"]);
   }
 
-  const count = await Magazine.count(optsNoOrder);
   const results = await Magazine.findAll({
     attributes: {
       include: [
@@ -70,13 +66,11 @@ const fetchAllMagazinesWithIssueCountAndCount = async (optsIn = {}) => {
 
   const magazines = results.map((magazine) => magazine.clean());
 
-  return { count, magazines };
-};
+  return magazines;
+}
 
-// Get all the magazines, along with all their issue numbers and a count of all
-// (matching) magazines.
-const fetchAllMagazinesWithIssueNumbersAndCount = async (opts = {}) => {
-  const count = await Magazine.count(opts);
+// Get all the magazines, along with all their issue numbers.
+async function fetchAllMagazinesWithIssueNumbers(opts = {}) {
   const results = await Magazine.findAll({
     include: [{ model: MagazineIssue, attributes: ["id", "issue"] }],
     ...opts,
@@ -84,11 +78,11 @@ const fetchAllMagazinesWithIssueNumbersAndCount = async (opts = {}) => {
 
   const magazines = results.map((magazine) => magazine.clean());
 
-  return { count, magazines };
-};
+  return magazines;
+}
 
-// Create a new magazine using the content in data.
-const createMagazine = async (data) => {
+// Create a new magazine using the content in `data`.
+async function createMagazine(data) {
   const magazine = await Magazine.create(data).catch((error) => {
     if (error.hasOwnProperty("errors")) {
       const specific = error.errors[0];
@@ -99,25 +93,25 @@ const createMagazine = async (data) => {
   });
 
   return magazine.clean();
-};
+}
 
-// Update a single magazine using the content in data.
-const updateMagazine = async (id, data) => {
+// Update a single magazine using the content in `data`.
+async function updateMagazine(id, data) {
   return Magazine.findByPk(id).then((magazine) => {
     return sequelize.transaction(async (txn) => {
       const updatedMagazine = await magazine.update(data, { transaction: txn });
       return updatedMagazine.clean();
     });
   });
-};
+}
 
 // Delete a single Magazine record.
-const deleteMagazine = async (id) => {
+async function deleteMagazine(id) {
   return Magazine.destroy({ where: { id } });
-};
+}
 
 // Create a MagazineIssue record.
-const createMagazineIssue = async (data) => {
+async function createMagazineIssue(data) {
   const magazineissue = await MagazineIssue.create(data).catch((error) => {
     if (error.hasOwnProperty("errors")) {
       const specific = error.errors[0];
@@ -128,10 +122,10 @@ const createMagazineIssue = async (data) => {
   });
 
   return magazineissue.clean();
-};
+}
 
 // Update a MagazineIssue record.
-const updateMagazineIssue = async (id, data) => {
+async function updateMagazineIssue(id, data) {
   return MagazineIssue.findByPk(id).then((magazineissue) => {
     return sequelize.transaction(async (txn) => {
       const updatedMagazineissue = await magazineissue.update(data, {
@@ -140,15 +134,15 @@ const updateMagazineIssue = async (id, data) => {
       return updatedMagazineissue.clean();
     });
   });
-};
+}
 
 // Delete a single MagazineIssue record.
-const deleteMagazineIssue = async (id) => {
+async function deleteMagazineIssue(id) {
   return MagazineIssue.destroy({ where: { id } });
-};
+}
 
 // Fetch a single magazine issue with all the ancillary data.
-const fetchSingleMagazineIssueComplete = async (id) => {
+async function fetchSingleMagazineIssueComplete(id) {
   const magazineissue = await MagazineIssue.findByPk(id, {
     include: [
       Magazine,
@@ -163,13 +157,13 @@ const fetchSingleMagazineIssueComplete = async (id) => {
   });
 
   return magazineissue?.clean();
-};
+}
 
 module.exports = {
   fetchSingleMagazineSimple,
   fetchSingleMagazineComplete,
-  fetchAllMagazinesWithIssueCountAndCount,
-  fetchAllMagazinesWithIssueNumbersAndCount,
+  fetchAllMagazinesWithIssueCount,
+  fetchAllMagazinesWithIssueNumbers,
   createMagazine,
   updateMagazine,
   deleteMagazine,
