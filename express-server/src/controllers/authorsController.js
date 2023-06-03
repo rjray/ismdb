@@ -10,7 +10,7 @@ const { fixupOrderField } = require("../lib/utils");
   POST /authors
 
   Create a new author record from the JSON content in the request body. The
-  return value is an object with the key "author" (new author object).
+  return value is the new author object.
  */
 function createAuthor(context) {
   const { res, requestBody } = context;
@@ -33,9 +33,7 @@ function createAuthor(context) {
   GET /authors
 
   Return all authors (with alias information), possibly limited by params
-  passed in. Also returns a count of all authors that match the query, even
-  if the query itself is governed by skip and/or limit. The returned object
-  has keys "count" (integer) and "authors" (list of author objects).
+  passed in. The returned value is the list of author objects.
  */
 function getAllAuthors(context) {
   const { query } = context.params;
@@ -94,10 +92,9 @@ function getAllAuthorsWithRefCount(context) {
 
   Return a list of just author names and their IDs, with aliases also in the
   list (pointing to the name they alias). May be limited by the parameters
-  passed in, as well. The returned object has a single key, "authors", that is
-  an array of objects. Each object has "id" (integer) and "name" (string)
-  fields, and may have an "aliasOf" (string) field. The list will be sorted on
-  "name".
+  passed in, as well. The returned value is an array of objects. Each object
+  has "id" (integer) and "name" (string) fields, and may have an "aliasOf"
+  (string) field. The list will be sorted on "name".
  */
 function getAuthorNamesAndAliases(context) {
   const { query } = context.params;
@@ -124,8 +121,8 @@ function getAuthorNamesAndAliases(context) {
 /*
   GET /authors/{id}
 
-  Fetch a single author by the ID. Returns an object with a single field,
-  "author", whose value is the author object. Alias information is included.
+  Fetch a single author by the ID. Returns the author object. Alias information
+  is included.
  */
 function getAuthorById(context) {
   const { id } = context.params.path;
@@ -158,8 +155,7 @@ function getAuthorById(context) {
   PUT /authors/{id}
 
   Update the author specified by the ID parameter, using the JSON content in
-  the request body. The return value is an object with the key "author" (the
-  updated author object).
+  the request body. The return value is the updated author object.
  */
 function updateAuthorById(context) {
   const { id } = context.params.path;
@@ -168,7 +164,7 @@ function updateAuthorById(context) {
   return Authors.updateAuthor(id, requestBody)
     .then((author) => {
       if (author) {
-        res.status(200).pureJson({ author });
+        res.status(200).pureJson(author);
       } else {
         res.status(404).pureJson({
           error: {
@@ -223,10 +219,9 @@ function deleteAuthorById(context) {
 /*
   GET /authors/{id}/withRefCount
 
-  Fetch a single author by the ID. Returns an object with a single field,
-  "author", whose value is the author object. Alias information is included.
-  The author object has an additional field, "refcount" (integer), that has
-  the number of references they are credited with.
+  Fetch a single author by the ID. Returns the author object. Alias information
+  is included. The author object has an additional field, "refcount" (integer),
+  that has the number of references they are credited with.
  */
 function getAuthorByIdWithRefCount(context) {
   const { id } = context.params.path;
