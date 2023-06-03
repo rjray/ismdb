@@ -3,34 +3,7 @@
  */
 
 const { Reference, Book, Publisher, Series, sequelize } = require("../models");
-const { shallowIncludesForReference } = require("./references");
-
-// "Clean" a Series object that has references data.
-function cleanSeriesWithReferences(seriesIn) {
-  const series = seriesIn.clean();
-
-  // const publisherCopy = series.publisher ? { ...series.publisher } : null;
-  // const seriesCopy = {
-  //   id: series.id,
-  //   name: series.name,
-  //   notes: series.notes,
-  //   publisher: publisherCopy,
-  // };
-
-  // series.references = series.books.map((book) => {
-  //   const bookCopy = { ...book };
-  //   const { reference } = bookCopy;
-  //   delete bookCopy.reference;
-  //   bookCopy.series = seriesCopy;
-  //   if (publisherCopy) bookCopy.publisher = publisherCopy;
-  //   reference.book = bookCopy;
-
-  //   return reference;
-  // });
-  // delete series.books;
-
-  return series;
-}
+const { includesForReference } = require("./references");
 
 // Get a single series with Publisher but no references
 const fetchSingleSeriesSimple = async (id) => {
@@ -51,14 +24,12 @@ const fetchSingleSeriesComplete = async (id) => {
       {
         model: Book,
         as: "Books",
-        include: [{ model: Reference, include: shallowIncludesForReference }],
+        include: [{ model: Reference, include: includesForReference }],
       },
     ],
   });
 
-  if (!series) return null;
-
-  return cleanSeriesWithReferences(series);
+  return series?.clean();
 };
 
 // Fetch all Series records with the Publisher information included. Return
@@ -85,13 +56,13 @@ const fetchAllSeriesCompleteWithCount = async (opts = {}) => {
       {
         model: Book,
         as: "Books",
-        include: [{ model: Reference, include: shallowIncludesForReference }],
+        include: [{ model: Reference, include: includesForReference }],
       },
     ],
     ...opts,
   });
 
-  const series = results.map((result) => cleanSeriesWithReferences(result));
+  const series = results.map((result) => result.clean());
 
   return { count, series };
 };
@@ -126,7 +97,6 @@ const deleteSeries = async (id) => {
 };
 
 module.exports = {
-  cleanSeriesWithReferences,
   fetchSingleSeriesSimple,
   fetchSingleSeriesComplete,
   fetchAllSeriesSimpleWithCount,

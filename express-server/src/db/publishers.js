@@ -5,23 +5,6 @@
 const { Reference, Book, Publisher, Series, sequelize } = require("../models");
 const { includesForReference } = require("./references");
 
-// "Clean" a Publisher object that has references data.
-function cleanPublisherWithReferences(publisherIn) {
-  const publisher = publisherIn.clean();
-
-  // publisher.references = publisher.books.map((book) => {
-  //   const bookCopy = { ...book };
-  //   const { reference } = bookCopy;
-  //   delete bookCopy.reference;
-  //   reference.book = bookCopy;
-
-  //   return reference;
-  // });
-  // delete publisher.books;
-
-  return publisher;
-}
-
 // Get a single publisher with all series but no references
 const fetchSinglePublisherSimple = async (id) => {
   const publisher = await Publisher.findByPk(id, {
@@ -46,9 +29,7 @@ const fetchSinglePublisherComplete = async (id) => {
     ],
   });
 
-  if (!publisher) return null;
-
-  return cleanPublisherWithReferences(publisher);
+  return publisher?.clean();
 };
 
 // Fetch all Publisher records with the Publisher information included. Return
@@ -81,9 +62,7 @@ const fetchAllPublishersCompleteWithCount = async (opts = {}) => {
     ...opts,
   });
 
-  const publishers = results.map((result) =>
-    cleanPublisherWithReferences(result)
-  );
+  const publishers = results.map((result) => result.clean());
 
   return { count, publishers };
 };
@@ -120,7 +99,6 @@ const deletePublisher = async (id) => {
 };
 
 module.exports = {
-  cleanPublisherWithReferences,
   fetchSinglePublisherSimple,
   fetchSinglePublisherComplete,
   fetchAllPublishersSimpleWithCount,
