@@ -17,7 +17,7 @@ function createAuthor(context) {
 
   return Authors.createAuthor(requestBody)
     .then((author) => {
-      res.status(201).pureJson({ author });
+      res.status(201).pureJson(author);
     })
     .catch((error) => {
       res.status(500).pureJson({
@@ -45,7 +45,7 @@ function getAllAuthors(context) {
     query.order = fixupOrderField(query.order);
   }
 
-  return Authors.fetchAllAuthorsWithAliasesAndCount(query)
+  return Authors.fetchAllAuthorsWithAliases(query)
     .then((results) => {
       res.status(200).pureJson(results);
     })
@@ -75,9 +75,9 @@ function getAllAuthorsWithRefCount(context) {
     query.order = fixupOrderField(query.order);
   }
 
-  return Authors.fetchAllAuthorsWithRefCountAndCount(query)
-    .then((results) => {
-      res.status(200).pureJson(results);
+  return Authors.fetchAllAuthorsWithRefCount(query)
+    .then((authors) => {
+      res.status(200).pureJson(authors);
     })
     .catch((error) => {
       res.status(500).pureJson({
@@ -109,7 +109,7 @@ function getAuthorNamesAndAliases(context) {
 
   return Authors.fetchAuthorsNamesAliasesList(query)
     .then((authors) => {
-      res.status(200).pureJson({ authors });
+      res.status(200).pureJson(authors);
     })
     .catch((error) => {
       res.status(500).pureJson({
@@ -134,7 +134,7 @@ function getAuthorById(context) {
   return Authors.fetchSingleAuthorSimple(id)
     .then((author) => {
       if (author) {
-        res.status(200).pureJson({ author });
+        res.status(200).pureJson(author);
       } else {
         res.status(404).pureJson({
           error: {
@@ -235,7 +235,7 @@ function getAuthorByIdWithRefCount(context) {
   return Authors.fetchSingleAuthorWithRefCount(id)
     .then((author) => {
       if (author) {
-        res.status(200).pureJson({ author });
+        res.status(200).pureJson(author);
       } else {
         res.status(404).pureJson({
           error: {
@@ -263,32 +263,32 @@ function getAuthorByIdWithRefCount(context) {
   objects. The references list will be all references the author is credited
   on. The list is not ordered.
  */
-// function getAuthorByIdWithReferences(context) {
-//   const { id } = context.params.path;
-//   const { res } = context;
+function getAuthorByIdWithReferences(context) {
+  const { id } = context.params.path;
+  const { res } = context;
 
-//   return Authors.fetchSingleAuthorComplex(id)
-//     .then((author) => {
-//       if (author) {
-//         res.status(200).pureJson({ author });
-//       } else {
-//         res.status(404).pureJson({
-//           error: {
-//             summary: "Not found",
-//             description: `No author with this ID (${id}) found`,
-//           },
-//         });
-//       }
-//     })
-//     .catch((error) => {
-//       res.status(500).pureJson({
-//         error: {
-//           summary: error.name,
-//           description: error.message,
-//         },
-//       });
-//     });
-// }
+  return Authors.fetchSingleAuthorComplex(id)
+    .then((author) => {
+      if (author) {
+        res.status(200).pureJson(author);
+      } else {
+        res.status(404).pureJson({
+          error: {
+            summary: "Not found",
+            description: `No author with this ID (${id}) found`,
+          },
+        });
+      }
+    })
+    .catch((error) => {
+      res.status(500).pureJson({
+        error: {
+          summary: error.name,
+          description: error.message,
+        },
+      });
+    });
+}
 
 module.exports = {
   createAuthor,
@@ -299,5 +299,5 @@ module.exports = {
   updateAuthorById,
   deleteAuthorById,
   getAuthorByIdWithRefCount,
-  // getAuthorByIdWithReferences,
+  getAuthorByIdWithReferences,
 };

@@ -179,6 +179,21 @@ components:
           properties:
             refcount:
               $ref: "#/components/schemas/countType"
+    authorWithRefsAndAliasesType:
+      allOf:
+        - $ref: "#/components/schemas/authorWithRefCountType"
+        - type: object
+          required:
+            - references
+          properties:
+            references:
+              type: array
+              items:
+                $ref: "#/components/schemas/referenceType"
+            aliases:
+              type: array
+              items:
+                $ref: "#/components/schemas/authorAliasType"
     newMagazineType:
       type: object
       required:
@@ -595,11 +610,7 @@ paths:
             "application/json":
               schema:
                 type: object
-                required:
-                  - author
-                properties:
-                  author:
-                    $ref: "#/components/schemas/authorType"
+                $ref: "#/components/schemas/authorType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
@@ -618,17 +629,9 @@ paths:
           content:
             "application/json":
               schema:
-                type: object
-                required:
-                  - count
-                  - authors
-                properties:
-                  count:
-                    $ref: "#/components/schemas/countType"
-                  authors:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/authorType"
+                type: array
+                items:
+                  $ref: "#/components/schemas/authorType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
@@ -650,17 +653,9 @@ paths:
           content:
             "application/json":
               schema:
-                type: object
-                required:
-                  - count
-                  - authors
-                properties:
-                  count:
-                    $ref: "#/components/schemas/countType"
-                  authors:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/authorWithRefCountType"
+                type: array
+                items:
+                  $ref: "#/components/schemas/authorWithRefCountType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
@@ -682,24 +677,19 @@ paths:
           content:
             "application/json":
               schema:
-                type: object
-                required:
-                  - authors
-                properties:
-                  authors:
-                    type: array
-                    items:
-                      type: object
-                      required:
-                        - id
-                        - name
-                      properties:
-                        id:
-                          $ref: "#/components/schemas/idType"
-                        name:
-                          $ref: "#/components/schemas/authorNameOrAliasType"
-                        aliasOf:
-                          $ref: "#/components/schemas/authorNameOrAliasType"
+                type: array
+                items:
+                  type: object
+                  required:
+                    - id
+                    - name
+                  properties:
+                    id:
+                      $ref: "#/components/schemas/idType"
+                    name:
+                      $ref: "#/components/schemas/authorNameOrAliasType"
+                    aliasOf:
+                      $ref: "#/components/schemas/authorNameOrAliasType"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
@@ -720,11 +710,7 @@ paths:
             "application/json":
               schema:
                 type: object
-                required:
-                  - author
-                properties:
-                  author:
-                    $ref: "#/components/schemas/authorType"
+                $ref: "#/components/schemas/authorType"
         "404":
           $ref: "#/components/responses/generalError404Response"
         default:
@@ -749,11 +735,7 @@ paths:
             "application/json":
               schema:
                 type: object
-                required:
-                  - author
-                properties:
-                  author:
-                    $ref: "#/components/schemas/authorType"
+                $ref: "#/components/schemas/authorType"
         "404":
           $ref: "#/components/responses/generalError404Response"
         default:
@@ -790,17 +772,37 @@ paths:
             "application/json":
               schema:
                 type: object
-                required:
-                  - author
-                properties:
-                  author:
-                    $ref: "#/components/schemas/authorWithRefCountType"
+                $ref: "#/components/schemas/authorWithRefCountType"
         "404":
           $ref: "#/components/responses/generalError404Response"
         default:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Authors
+  "/authors/{id}/withRefsAndAliases":
+    x-exegesis-controller: authorsController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single author by ID with all references and aliases
+      description: Retrieve a single author by ID, including all the reference
+        structures and any author aliases.
+      operationId: getAuthorByIdWithReferences
+      responses:
+        "200":
+          description: Author data with references and aliases
+          content:
+            "application/json":
+              schema:
+                type: object
+                $ref: "#/components/schemas/authorWithRefsAndAliasesType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Authors
+        - References
   "/magazines":
     x-exegesis-controller: magazinesController
     post:

@@ -4,12 +4,12 @@
 
 const { Author, AuthorAlias, sequelize } = require("../models");
 const { sortBy, fixAggregateOrderFields } = require("../lib/utils");
-// const { INCLUDE_REFERENCES } = require("./references");
+const { INCLUDE_REFERENCES } = require("./references");
 
 const sortByName = sortBy("name");
 
 // Most-basic author request. Single author with any aliases.
-const fetchSingleAuthorSimple = async (id) => {
+async function fetchSingleAuthorSimple(id) {
   const author = await Author.findByPk(id, { include: [AuthorAlias] }).catch(
     (error) => {
       throw new Error(error);
@@ -17,10 +17,10 @@ const fetchSingleAuthorSimple = async (id) => {
   );
 
   return author?.clean();
-};
+}
 
 // Single author with any aliases and a count of their references.
-const fetchSingleAuthorWithRefCount = async (id) => {
+async function fetchSingleAuthorWithRefCount(id) {
   const author = await Author.findByPk(id, {
     attributes: {
       include: [
@@ -40,10 +40,10 @@ const fetchSingleAuthorWithRefCount = async (id) => {
   });
 
   return author?.clean();
-};
+}
 
 // Fetch a single author with aliases and all references they're listed on.
-const fetchSingleAuthorComplex = async (id) => {
+async function fetchSingleAuthorComplex(id) {
   const author = await Author.findByPk(id, {
     attributes: {
       include: [
@@ -57,16 +57,15 @@ const fetchSingleAuthorComplex = async (id) => {
         ],
       ],
     },
-    include: [AuthorAlias],
+    include: [AuthorAlias, INCLUDE_REFERENCES],
   });
 
   return author?.clean();
-};
+}
 
 // Fetch all authors along with aliases. Returns an object with the count in a
 // property called "count" and all the authors in a property called "authors".
-const fetchAllAuthorsWithAliasesAndCount = async (opts = {}) => {
-  const count = await Author.count(opts);
+async function fetchAllAuthorsWithAliases(opts = {}) {
   const results = await Author.findAll({
     include: [AuthorAlias],
     ...opts,
@@ -74,20 +73,17 @@ const fetchAllAuthorsWithAliasesAndCount = async (opts = {}) => {
 
   const authors = results.map((author) => author.clean());
 
-  return { count, authors };
-};
+  return authors;
+}
 
 // Fetch all authors along with a count of how many references they're credited
 // on. Returns the same shape of object as above.
-const fetchAllAuthorsWithRefCountAndCount = async (optsIn = {}) => {
-  const opts = { ...optsIn };
-  const optsNoOrder = { ...optsIn };
+async function fetchAllAuthorsWithRefCount(opts = {}) {
   if (opts.order) {
-    delete optsNoOrder.order;
+    // eslint-disable-next-line no-param-reassign
     opts.order = fixAggregateOrderFields(sequelize, opts.order, ["refcount"]);
   }
 
-  const count = await Author.count(optsNoOrder);
   const results = await Author.findAll({
     attributes: {
       include: [
@@ -107,16 +103,16 @@ const fetchAllAuthorsWithRefCountAndCount = async (optsIn = {}) => {
 
   const authors = results.map((author) => author.clean());
 
-  return { count, authors };
-};
+  return authors;
+}
 
 // Fetch the author names and aliases, and create an alphabetized merged list
 // that points any alias records to the actual name.
-const fetchAuthorsNamesAliasesList = async (opts = {}) => {
-  const results = await fetchAllAuthorsWithAliasesAndCount(opts);
+async function fetchAuthorsNamesAliasesList(opts = {}) {
+  const results = await fetchAllAuthorsWithAliases(opts);
   const authors = [];
 
-  for (const author of results.authors) {
+  for (const author of results) {
     const { id, name, aliases } = author;
 
     // Start with the author themselves:
@@ -129,10 +125,10 @@ const fetchAuthorsNamesAliasesList = async (opts = {}) => {
   authors.sort(sortByName);
 
   return authors;
-};
+}
 
 // Create a new author using the content in data.
-const createAuthor = async (data) => {
+async function createAuthor(data) {
   const newId = await sequelize.transaction(async (txn) => {
     const author = await Author.create(
       { name: data.name },
@@ -161,10 +157,10 @@ const createAuthor = async (data) => {
   });
 
   return fetchSingleAuthorSimple(newId);
-};
+}
 
 // Update a single author using the content in data.
-const updateAuthor = async (id, data) => {
+async function updateAuthor(id, data) {
   return Author.findByPk(id, { include: [AuthorAlias] })
     .then((author) => {
       return sequelize.transaction(async (txn) => {
@@ -225,19 +221,19 @@ const updateAuthor = async (id, data) => {
     .then(() => {
       return fetchSingleAuthorSimple(id);
     });
-};
+}
 
 // Delete a single Author from the database.
-const deleteAuthor = async (id) => {
+async function deleteAuthor(id) {
   return Author.destroy({ where: { id } });
-};
+}
 
 module.exports = {
   fetchSingleAuthorSimple,
   fetchSingleAuthorWithRefCount,
   fetchSingleAuthorComplex,
-  fetchAllAuthorsWithAliasesAndCount,
-  fetchAllAuthorsWithRefCountAndCount,
+  fetchAllAuthorsWithAliases,
+  fetchAllAuthorsWithRefCount,
   fetchAuthorsNamesAliasesList,
   createAuthor,
   updateAuthor,
