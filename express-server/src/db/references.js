@@ -47,18 +47,17 @@ const INCLUDE_REFERENCES = {
 };
 
 // Get a single reference with all ancillary data (type, magazine, authors).
-const fetchSingleReferenceComplete = async (id) => {
+async function fetchSingleReferenceComplete(id) {
   const reference = await Reference.findByPk(id, {
     include: includesForReference,
   });
 
-  return reference ? reference.clean() : reference;
-};
+  return reference?.clean();
+}
 
 // Get all the references (based on opts), with ReferenceType, Magazine and
 // Author information. Returns the count, as well.
-const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
-  const count = await Reference.count(opts);
+async function fetchAllReferencesComplete(opts = {}) {
   const results = await Reference.findAll({
     include: includesForReference,
     ...opts,
@@ -66,8 +65,8 @@ const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
 
   const references = results.map((reference) => reference.clean());
 
-  return { count, references };
-};
+  return references;
+}
 
 // // Create a new reference using the content in data.
 // const createReference = async (dataIn) => {
@@ -273,14 +272,16 @@ const fetchAllReferencesCompleteWithCount = async (opts = {}) => {
 // };
 
 // Delete a single Reference from the database.
-const deleteReference = async (id) => Reference.destroy({ where: { id } });
+async function deleteReference(id) {
+  return Reference.destroy({ where: { id } });
+}
 
 module.exports = {
   shallowIncludesForReference,
   includesForReference,
   INCLUDE_REFERENCES,
   fetchSingleReferenceComplete,
-  fetchAllReferencesCompleteWithCount,
+  fetchAllReferencesComplete,
   // createReference,
   // updateReference,
   deleteReference,

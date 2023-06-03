@@ -1088,6 +1088,114 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Issues
+  "/references":
+    x-exegesis-controller: referencesController
+    post:
+      summary: Create a new reference
+      description: Create a new reference using the data in the request body.
+      # operationId: createReference
+      requestBody:
+        description: New reference
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/newReferenceType"
+      responses:
+        "201":
+          description: New reference created
+          content:
+            "application/json":
+              schema:
+                type: object
+                $ref: "#/components/schemas/referenceType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - References
+    get:
+      summary: Fetch all references
+      description: Fetch all references as an array. Includes author, record
+        type and magazine information.
+      operationId: getAllReferences
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All references
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/referenceType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - References
+  "/references/{id}":
+    x-exegesis-controller: referencesController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single reference by ID
+      description: Retrieve a single reference by the ID. Includes author,
+        record type and magazine information.
+      operationId: getReferenceById
+      responses:
+        "200":
+          description: Reference data
+          content:
+            "application/json":
+              schema:
+                type: object
+                $ref: "#/components/schemas/referenceType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - References
+    put:
+      summary: Update a reference
+      description: Update a reference. May result in the creation of new
+        authors and/or a new magazine issue record.
+      # operationId: updateReferenceById
+      requestBody:
+        description: Reference to update
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/updateReferenceType"
+      responses:
+        "200":
+          description: Updated reference
+          content:
+            "application/json":
+              schema:
+                type: object
+                $ref: "#/components/schemas/referenceType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - References
+    delete:
+      summary: Delete a single reference by ID
+      description: Delete a single reference by the ID. Removes any author
+        associations, but does not affect any other related records.
+      operationId: deleteReferenceById
+      responses:
+        "200":
+          description: Reference deleted
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - References
   "/publishers":
     x-exegesis-controller: publishersController
     post:

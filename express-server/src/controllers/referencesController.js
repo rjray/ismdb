@@ -46,9 +46,9 @@ function getAllReferences(context) {
     query.order = fixupOrderField(query.order);
   }
 
-  return References.fetchAllReferencesCompleteWithCount(query)
-    .then((results) => {
-      res.status(200).pureJson(results);
+  return References.fetchAllReferencesComplete(query)
+    .then((references) => {
+      res.status(200).pureJson(references);
     })
     .catch((error) => {
       res.status(500).pureJson({
@@ -75,7 +75,7 @@ function getReferenceById(context) {
   return References.fetchSingleReferenceComplete(id)
     .then((reference) => {
       if (reference) {
-        res.status(200).pureJson({ reference });
+        res.status(200).pureJson(reference);
       } else {
         res.status(404).pureJson({
           error: {
