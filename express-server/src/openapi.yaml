@@ -535,6 +535,17 @@ components:
           properties:
             refcount:
               $ref: "#/components/schemas/countType"
+    tagWithReferencesType:
+      allOf:
+        - $ref: "#/components/schemas/tagType"
+        - type: object
+          required:
+            - references
+          properties:
+            references:
+              type: array
+              items:
+                $ref: "#/components/schemas/referenceType"
     newFeatureTagType:
       type: object
       required:
@@ -1805,6 +1816,34 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Tags
+  "/tags/{id}/withReferences":
+    x-exegesis-controller: tagsController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single tag by ID with all tagged references
+      description: Retrieve a single tag by ID, including all the tagged
+        references as an array.
+      operationId: getTagByIdWithReferences
+      responses:
+        "200":
+          description: Tag data with references
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - tag
+                properties:
+                  tag:
+                    $ref: "#/components/schemas/tagWithReferencesType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+        - References
   "/misc/referencetypes":
     x-exegesis-controller: miscController
     get:

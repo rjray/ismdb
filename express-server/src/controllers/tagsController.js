@@ -1,12 +1,10 @@
 /*
   This is the exegesis controller module for all tag operations (all API
-  paths at/below "/tag").
+  paths at/below "/tags").
  */
 
 const Tags = require("../db/tags");
 const { fixupOrderField, fixupWhereField } = require("../lib/utils");
-
-const canBeNull = new Set(["description", "type"]);
 
 /*
   POST /tags
@@ -34,10 +32,8 @@ function createTag(context) {
 /*
   GET /tags
 
-  Return all tags, possibly limited by params passed in. Also returns a count
-  of all tags that match the query, even if the query itself is governed by
-  skip and/or limit. The returned object has keys "count" (integer) and "tags"
-  (array of tag objects).
+  Return all tags, possibly limited by params passed in. The returned value is
+  an array of tag objects.
  */
 function getAllTags(context) {
   const { query } = context.params;
@@ -46,13 +42,10 @@ function getAllTags(context) {
   if (query.order) {
     query.order = fixupOrderField(query.order);
   }
-  if (query.where) {
-    query.where = fixupWhereField(query.where, canBeNull);
-  }
 
-  return Tags.fetchAllTagsWithCount(query)
-    .then((results) => {
-      res.status(200).pureJson(results);
+  return Tags.fetchAllTags(query)
+    .then((tags) => {
+      res.status(200).pureJson(tags);
     })
     .catch((error) => {
       res.status(500).pureJson({
@@ -67,10 +60,8 @@ function getAllTags(context) {
 /*
   GET /tags/withRefCount
 
-  Return all tags, possibly limited by params passed in. Also returns a count
-  of all tags that match the query, even if the query itself is governed by
-  skip and/or limit. The returned object has keys "count" (integer) and "tags"
-  (array of tag objects). Each tag object has an extra key, "refcount", that
+  Return all tags, possibly limited by params passed in. The returned value is
+  the array of tag objects. Each tag object has an extra key, "refcount", that
   is the number of references tagged by this tag.
  */
 function getAllTagsWithRefCount(context) {
@@ -80,13 +71,10 @@ function getAllTagsWithRefCount(context) {
   if (query.order) {
     query.order = fixupOrderField(query.order);
   }
-  if (query.where) {
-    query.where = fixupWhereField(query.where, canBeNull);
-  }
 
-  return Tags.fetchAllTagsWithRefCountAndCount(query)
-    .then((results) => {
-      res.status(200).pureJson(results);
+  return Tags.fetchAllTagsWithRefCount(query)
+    .then((tags) => {
+      res.status(200).pureJson(tags);
     })
     .catch((error) => {
       res.status(500).pureJson({
@@ -102,11 +90,9 @@ function getAllTagsWithRefCount(context) {
   GET /tags/queryWithRefcount
 
   A specialized form of getAllTagsWithRefCount(), that only queries against
-  the name field. Also returns a count of all tags that match the query, even
-  if the query itself is governed by skip and/or limit. The returned object has
-  keys "count" (integer) and "tags" (array of tag objects). Each tag object has
-  an extra key, "refcount", that is the number of references tagged by this
-  tag.
+  the name field. The returned value is the array of tag objects. Each tag
+  object has an extra key, "refcount", that is the number of references tagged
+  by this tag.
  */
 function getTagsQueryWithRefCount(context) {
   const { query } = context.params;
@@ -122,8 +108,8 @@ function getTagsQueryWithRefCount(context) {
   delete query.query;
 
   return Tags.fetchAllTagsWithRefCountAndCount(query)
-    .then((results) => {
-      res.status(200).pureJson(results);
+    .then((tags) => {
+      res.status(200).pureJson(tags);
     })
     .catch((error) => {
       res.status(500).pureJson({
@@ -148,7 +134,7 @@ function getTagById(context) {
   return Tags.fetchSingleTagSimple(id)
     .then((tag) => {
       if (tag) {
-        res.status(200).pureJson({ tag });
+        res.status(200).pureJson(tag);
       } else {
         res.status(404).pureJson({
           error: {
@@ -182,7 +168,7 @@ function updateTagById(context) {
   return Tags.updateTag(id, requestBody)
     .then((tag) => {
       if (tag) {
-        res.status(200).pureJson({ tag });
+        res.status(200).pureJson(tag);
       } else {
         res.status(404).pureJson({
           error: {
@@ -214,7 +200,7 @@ function deleteTagById(context) {
   return Tags.deleteTag(id)
     .then((number) => {
       if (number) {
-        res.status(200).set("content-type", "text/plain");
+        res.status(200);
       } else {
         res.status(404).pureJson({
           error: {
@@ -237,9 +223,9 @@ function deleteTagById(context) {
 /*
   GET /tags/{id}/withRefCount
 
-  Fetch a single tag by the ID. Returns an object with a single field,
-  "tag", whose value is the tag object. The tag object has an additional field,
-  "refcount" (integer), that has the number of references tagged with this tag.
+  Fetch a single tag by the ID. Returns the tag object. The tag object has an
+  additional field, "refcount" (integer), that has the number of references
+  tagged with this tag.
  */
 function getTagByIdWithRefCount(context) {
   const { id } = context.params.path;
@@ -248,7 +234,7 @@ function getTagByIdWithRefCount(context) {
   return Tags.fetchSingleTagWithRefCount(id)
     .then((tag) => {
       if (tag) {
-        res.status(200).pureJson({ tag });
+        res.status(200).pureJson(tag);
       } else {
         res.status(404).pureJson({
           error: {
@@ -271,9 +257,9 @@ function getTagByIdWithRefCount(context) {
 /*
   GET /tags/{id}/withReferences
 
-  Fetch a single tag by the ID. Returns an object with a single field, "tag",
-  whose value is the tag object. The tag object has an additional field,
-  "references", that is an array of the references tagged with this tag.
+  Fetch a single tag by the ID. Returns the tag object. The tag object has an
+  additional field, "references", that is an array of the references tagged
+  with this tag.
  */
 function getTagByIdWithReferences(context) {
   const { id } = context.params.path;
@@ -282,7 +268,7 @@ function getTagByIdWithReferences(context) {
   return Tags.fetchSingleTagWithReferences(id)
     .then((tag) => {
       if (tag) {
-        res.status(200).pureJson({ tag });
+        res.status(200).pureJson(tag);
       } else {
         res.status(404).pureJson({
           error: {
