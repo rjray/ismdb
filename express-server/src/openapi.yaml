@@ -1002,6 +1002,7 @@ paths:
       tags:
         - Magazines
         - Issues
+        - References
   "/issues":
     x-exegesis-controller: issuesController
     post:
@@ -1049,6 +1050,8 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Issues
+        - Magazines
+        - References
     put:
       summary: Update a magazine issue
       description: Update a magazine issue. Does not affect any associated
@@ -1134,6 +1137,8 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - References
+        - Authors
+        - Magazines
   "/references/{id}":
     x-exegesis-controller: referencesController
     parameters:
@@ -1157,6 +1162,8 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - References
+        - Authors
+        - Magazines
     put:
       summary: Update a reference
       description: Update a reference. May result in the creation of new
@@ -1224,7 +1231,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Publishers
-        - References
     get:
       summary: Fetch all publishers
       description: Fetch all publishers as an array. Includes publishers' data
@@ -1255,7 +1261,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Publishers
-        - References
+        - Series
   "/publishers/withReferences":
     x-exegesis-controller: publishersController
     get:
@@ -1288,6 +1294,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Publishers
+        - Series
         - References
   "/publishers/{id}":
     x-exegesis-controller: publishersController
@@ -1316,7 +1323,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Publishers
-        - References
     put:
       summary: Update a publisher by ID
       description: Update a specific publisher by ID.
@@ -1345,7 +1351,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Publishers
-        - References
     delete:
       summary: Delete a publisher by ID
       description: Delete a specific publisher by ID.
@@ -1359,7 +1364,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Publishers
-        - References
   "/publishers/{id}/withReferences":
     x-exegesis-controller: publishersController
     parameters:
@@ -1367,7 +1371,7 @@ paths:
     get:
       summary: Fetch a single publisher by ID
       description: Retrieve a single publisher by the ID. Includes full
-        publisher information.
+        publisher information and all references and series.
       operationId: getPublisherByIdWithReferences
       responses:
         "200":
@@ -1387,6 +1391,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Publishers
+        - Series
         - References
   "/series":
     x-exegesis-controller: seriesController
@@ -1416,7 +1421,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Series
-        - References
     get:
       summary: Fetch all series
       description: Fetch all series as an array. Includes series data with
@@ -1447,7 +1451,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Series
-        - References
+        - Publishers
   "/series/withReferences":
     x-exegesis-controller: seriesController
     get:
@@ -1480,6 +1484,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Series
+        - Publishers
         - References
   "/series/{id}":
     x-exegesis-controller: seriesController
@@ -1508,7 +1513,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Series
-        - References
+        - Publishers
     put:
       summary: Update a series by ID
       description: Update a specific series by ID.
@@ -1537,7 +1542,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Series
-        - References
     delete:
       summary: Delete a series by ID
       description: Delete a specific series by ID.
@@ -1551,7 +1555,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Series
-        - References
   "/series/{id}/withReferences":
     x-exegesis-controller: seriesController
     parameters:
@@ -1579,6 +1582,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Series
+        - Publishers
         - References
   "/tags":
     x-exegesis-controller: tagsController
