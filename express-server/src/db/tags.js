@@ -64,9 +64,9 @@ async function fetchAllTags(opts = {}) {
 
 // Fetch all tags as an array. Each tag object includes the count of associated
 // references as "refcount".
-async function fetchAllTagsWithRefCount(optsIn = {}) {
-  const opts = { ...optsIn };
+async function fetchAllTagsWithRefCount(opts = {}) {
   if (opts.order) {
+    // eslint-disable-next-line no-param-reassign
     opts.order = fixAggregateOrderFields(sequelize, opts.order, ["refcount"]);
   }
 
