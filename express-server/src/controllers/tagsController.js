@@ -107,7 +107,7 @@ function getTagsQueryWithRefCount(context) {
   query.where = fixupWhereField([`name,substring,${query.query}`]);
   delete query.query;
 
-  return Tags.fetchAllTagsWithRefCountAndCount(query)
+  return Tags.fetchAllTagsWithRefCount(query)
     .then((tags) => {
       res.status(200).pureJson(tags);
     })
