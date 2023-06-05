@@ -4,7 +4,7 @@
  */
 
 const FeatureTags = require("../db/featuretags");
-const { fixupOrderField, fixupWhereField } = require("../lib/utils");
+const { fixupOrderField } = require("../lib/utils");
 
 /*
   POST /featuretags
@@ -74,41 +74,6 @@ function getAllFeatureTagsWithRefCount(context) {
   }
 
   return FeatureTags.fetchAllFeatureTagsWithRefCount(query)
-    .then((featureTags) => {
-      res.status(200).pureJson(featureTags);
-    })
-    .catch((error) => {
-      res.status(500).pureJson({
-        error: {
-          summary: error.name,
-          description: error.message,
-        },
-      });
-    });
-}
-
-/*
-  GET /featuretags/queryWithRefcount
-
-  A specialized form of getAllFeatureTagsWithRefCount(), that only queries
-  against the name field. The returned value is the array of feature tag
-  objects. Each feature tag object has an extra key, "refcount", that is the
-  number of references tagged by this feature tag.
- */
-function getFeatureTagsQueryWithRefCount(context) {
-  const { query } = context.params;
-  const { res } = context;
-
-  if (query.order) {
-    query.order = fixupOrderField(query.order);
-  } else {
-    query.order = ["name"];
-  }
-
-  query.where = fixupWhereField([`name,substring,${query.query}`]);
-  delete query.query;
-
-  return FeatureTags.fetchFeatureAllTagsWithRefCount(query)
     .then((featureTags) => {
       res.status(200).pureJson(featureTags);
     })
@@ -257,7 +222,6 @@ module.exports = {
   createFeatureTag,
   getAllFeatureTags,
   getAllFeatureTagsWithRefCount,
-  getFeatureTagsQueryWithRefCount,
   getFeatureTagById,
   updateFeatureTagById,
   deleteFeatureTagById,
