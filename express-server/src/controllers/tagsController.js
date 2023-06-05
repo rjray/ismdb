@@ -10,7 +10,7 @@ const { fixupOrderField, fixupWhereField } = require("../lib/utils");
   POST /tags
 
   Create a new tag record from the JSON content in the request body. The return
-  value is an object with the key "tag" (new tag object).
+  value is the new tag object.
  */
 function createTag(context) {
   const { res, requestBody } = context;
@@ -124,8 +124,7 @@ function getTagsQueryWithRefCount(context) {
 /*
   GET /tags/{id}
 
-  Fetch a single tag by the ID. Returns an object with the single key "tag",
-  whose value is the tag object.
+  Fetch a single tag by the ID. Returns the tag object.
  */
 function getTagById(context) {
   const { id } = context.params.path;
@@ -158,8 +157,7 @@ function getTagById(context) {
   PUT /tags/{id}
 
   Update the tag specified by the ID parameter, using the data in the request
-  body. The return value is an object with the key "tag" (the updated tag
-  object).
+  body. The return value is the updated tag object.
  */
 function updateTagById(context) {
   const { id } = context.params.path;
