@@ -17,7 +17,7 @@ function createTag(context) {
 
   return Tags.createTag(requestBody)
     .then((tag) => {
-      res.status(201).pureJson({ tag });
+      res.status(201).pureJson(tag);
     })
     .catch((error) => {
       res.status(500).pureJson({
