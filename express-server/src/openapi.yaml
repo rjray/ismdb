@@ -564,6 +564,15 @@ components:
             id:
               $ref: "#/components/schemas/idType"
         - $ref: "#/components/schemas/newFeatureTagType"
+    featureTagWithRefCountType:
+      allOf:
+        - $ref: "#/components/schemas/featureTagType"
+        - type: object
+          required:
+            - refcount
+          properties:
+            refcount:
+              $ref: "#/components/schemas/countType"
     errorObjectType:
       type: object
       required:
@@ -1844,6 +1853,163 @@ paths:
       tags:
         - Tags
         - References
+  "/featuretags":
+    x-exegesis-controller: featureTagsController
+    post:
+      summary: Create a new feature tag
+      description: Create a new feature tag using the data in the request body.
+      operationId: createFeatureTag
+      requestBody:
+        description: Tag to add
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/newFeatureTagType"
+        required: true
+      responses:
+        "201":
+          description: New feature tag created
+          content:
+            "application/json":
+              schema:
+                type: object
+                $ref: "#/components/schemas/featureTagType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - FeatureTags
+    get:
+      summary: Fetch all feature tags
+      description: Fetch feature tags as an array.
+      operationId: getAllFeatureTags
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All feature tags
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/featureTagType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - FeatureTags
+  "/featuretags/withRefCount":
+    x-exegesis-controller: featureTagsController
+    get:
+      summary: Fetch all feature tags with count of tagged references
+      description: Fetch feature tags as an array. Each feature tag structure
+        includes an extra field that counts the number of references tagged by
+        the feature tag.
+      operationId: getAllFeatureTagsWithRefCount
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All feature tags with reference counts
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/featureTagWithRefCountType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - FeatureTags
+  "/featuretags/{id}":
+    x-exegesis-controller: featureTagsController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single feature tag by ID
+      description: Retrieve a single feature tag by the ID.
+      operationId: getFeatureTagById
+      responses:
+        "200":
+          description: Feature tag data
+          content:
+            "application/json":
+              schema:
+                type: object
+                $ref: "#/components/schemas/tagType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - FeatureTags
+    put:
+      summary: Update a feature tag
+      description: Update a feature tag with the information in the request
+        body.
+      operationId: updateFeatureTagById
+      requestBody:
+        description: Feature tag to update
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/featureTagType"
+        required: true
+      responses:
+        "200":
+          description: Updated feature tag data
+          content:
+            "application/json":
+              schema:
+                type: object
+                $ref: "#/components/schemas/featureTagType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - FeatureTags
+    delete:
+      summary: Delete a feature tag by ID
+      description: Delete the specified feature tag. Removes all relational
+        links between the feature tag and any magazine features.
+      operationId: deleteFeatureTagById
+      responses:
+        "200":
+          description: Feature tag deleted
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - FeatureTags
+  "/featuretags/{id}/withRefCount":
+    x-exegesis-controller: featureTagsController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single feature tag by ID with a count of tagged
+        references
+      description: Retrieve a single feature tag by ID, including the count of
+        the references tagged with the feature tag.
+      operationId: getFeatureTagByIdWithRefCount
+      responses:
+        "200":
+          description: Feature tag data with reference count
+          content:
+            "application/json":
+              schema:
+                type: object
+                $ref: "#/components/schemas/featureTagWithRefCountType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - FeatureTags
   "/misc/referencetypes":
     x-exegesis-controller: miscController
     get:
@@ -1963,5 +2129,7 @@ tags:
     description: Operations that pertain to book series
   - name: Tags
     description: Operations that pertain to tags
+  - name: FeatureTags
+    description: Operations that pertain to feature tags
   - name: Miscellaneous
     description: Operations that are not associated with any other group
