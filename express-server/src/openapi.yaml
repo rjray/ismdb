@@ -535,6 +535,17 @@ components:
           properties:
             refcount:
               $ref: "#/components/schemas/countType"
+    tagWithReferencesType:
+      allOf:
+        - $ref: "#/components/schemas/tagType"
+        - type: object
+          required:
+            - references
+          properties:
+            references:
+              type: array
+              items:
+                $ref: "#/components/schemas/referenceType"
     newFeatureTagType:
       type: object
       required:
@@ -553,6 +564,15 @@ components:
             id:
               $ref: "#/components/schemas/idType"
         - $ref: "#/components/schemas/newFeatureTagType"
+    featureTagWithRefCountType:
+      allOf:
+        - $ref: "#/components/schemas/featureTagType"
+        - type: object
+          required:
+            - refcount
+          properties:
+            refcount:
+              $ref: "#/components/schemas/countType"
     errorObjectType:
       type: object
       required:
@@ -1002,6 +1022,7 @@ paths:
       tags:
         - Magazines
         - Issues
+        - References
   "/issues":
     x-exegesis-controller: issuesController
     post:
@@ -1049,6 +1070,8 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Issues
+        - Magazines
+        - References
     put:
       summary: Update a magazine issue
       description: Update a magazine issue. Does not affect any associated
@@ -1134,6 +1157,8 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - References
+        - Authors
+        - Magazines
   "/references/{id}":
     x-exegesis-controller: referencesController
     parameters:
@@ -1157,6 +1182,8 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - References
+        - Authors
+        - Magazines
     put:
       summary: Update a reference
       description: Update a reference. May result in the creation of new
@@ -1224,7 +1251,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Publishers
-        - References
     get:
       summary: Fetch all publishers
       description: Fetch all publishers as an array. Includes publishers' data
@@ -1255,7 +1281,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Publishers
-        - References
+        - Series
   "/publishers/withReferences":
     x-exegesis-controller: publishersController
     get:
@@ -1288,6 +1314,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Publishers
+        - Series
         - References
   "/publishers/{id}":
     x-exegesis-controller: publishersController
@@ -1316,7 +1343,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Publishers
-        - References
     put:
       summary: Update a publisher by ID
       description: Update a specific publisher by ID.
@@ -1345,7 +1371,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Publishers
-        - References
     delete:
       summary: Delete a publisher by ID
       description: Delete a specific publisher by ID.
@@ -1359,7 +1384,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Publishers
-        - References
   "/publishers/{id}/withReferences":
     x-exegesis-controller: publishersController
     parameters:
@@ -1367,7 +1391,7 @@ paths:
     get:
       summary: Fetch a single publisher by ID
       description: Retrieve a single publisher by the ID. Includes full
-        publisher information.
+        publisher information and all references and series.
       operationId: getPublisherByIdWithReferences
       responses:
         "200":
@@ -1387,6 +1411,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Publishers
+        - Series
         - References
   "/series":
     x-exegesis-controller: seriesController
@@ -1416,7 +1441,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Series
-        - References
     get:
       summary: Fetch all series
       description: Fetch all series as an array. Includes series data with
@@ -1447,7 +1471,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Series
-        - References
+        - Publishers
   "/series/withReferences":
     x-exegesis-controller: seriesController
     get:
@@ -1480,6 +1504,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Series
+        - Publishers
         - References
   "/series/{id}":
     x-exegesis-controller: seriesController
@@ -1508,7 +1533,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Series
-        - References
+        - Publishers
     put:
       summary: Update a series by ID
       description: Update a specific series by ID.
@@ -1537,7 +1562,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Series
-        - References
     delete:
       summary: Delete a series by ID
       description: Delete a specific series by ID.
@@ -1551,7 +1575,6 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Series
-        - References
   "/series/{id}/withReferences":
     x-exegesis-controller: seriesController
     parameters:
@@ -1579,6 +1602,7 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Series
+        - Publishers
         - References
   "/tags":
     x-exegesis-controller: tagsController
@@ -1801,6 +1825,191 @@ paths:
           $ref: "#/components/responses/generalErrorResponse"
       tags:
         - Tags
+  "/tags/{id}/withReferences":
+    x-exegesis-controller: tagsController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single tag by ID with all tagged references
+      description: Retrieve a single tag by ID, including all the tagged
+        references as an array.
+      operationId: getTagByIdWithReferences
+      responses:
+        "200":
+          description: Tag data with references
+          content:
+            "application/json":
+              schema:
+                type: object
+                required:
+                  - tag
+                properties:
+                  tag:
+                    $ref: "#/components/schemas/tagWithReferencesType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - Tags
+        - References
+  "/featuretags":
+    x-exegesis-controller: featureTagsController
+    post:
+      summary: Create a new feature tag
+      description: Create a new feature tag using the data in the request body.
+      operationId: createFeatureTag
+      requestBody:
+        description: Tag to add
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/newFeatureTagType"
+        required: true
+      responses:
+        "201":
+          description: New feature tag created
+          content:
+            "application/json":
+              schema:
+                type: object
+                $ref: "#/components/schemas/featureTagType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - FeatureTags
+    get:
+      summary: Fetch all feature tags
+      description: Fetch feature tags as an array.
+      operationId: getAllFeatureTags
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All feature tags
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/featureTagType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - FeatureTags
+  "/featuretags/withRefCount":
+    x-exegesis-controller: featureTagsController
+    get:
+      summary: Fetch all feature tags with count of tagged references
+      description: Fetch feature tags as an array. Each feature tag structure
+        includes an extra field that counts the number of references tagged by
+        the feature tag.
+      operationId: getAllFeatureTagsWithRefCount
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/orderParam"
+      responses:
+        "200":
+          description: All feature tags with reference counts
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/featureTagWithRefCountType"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - FeatureTags
+  "/featuretags/{id}":
+    x-exegesis-controller: featureTagsController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single feature tag by ID
+      description: Retrieve a single feature tag by the ID.
+      operationId: getFeatureTagById
+      responses:
+        "200":
+          description: Feature tag data
+          content:
+            "application/json":
+              schema:
+                type: object
+                $ref: "#/components/schemas/tagType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - FeatureTags
+    put:
+      summary: Update a feature tag
+      description: Update a feature tag with the information in the request
+        body.
+      operationId: updateFeatureTagById
+      requestBody:
+        description: Feature tag to update
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/featureTagType"
+        required: true
+      responses:
+        "200":
+          description: Updated feature tag data
+          content:
+            "application/json":
+              schema:
+                type: object
+                $ref: "#/components/schemas/featureTagType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - FeatureTags
+    delete:
+      summary: Delete a feature tag by ID
+      description: Delete the specified feature tag. Removes all relational
+        links between the feature tag and any magazine features.
+      operationId: deleteFeatureTagById
+      responses:
+        "200":
+          description: Feature tag deleted
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - FeatureTags
+  "/featuretags/{id}/withRefCount":
+    x-exegesis-controller: featureTagsController
+    parameters:
+      - $ref: "#/components/parameters/idParam"
+    get:
+      summary: Fetch a single feature tag by ID with a count of tagged
+        references
+      description: Retrieve a single feature tag by ID, including the count of
+        the references tagged with the feature tag.
+      operationId: getFeatureTagByIdWithRefCount
+      responses:
+        "200":
+          description: Feature tag data with reference count
+          content:
+            "application/json":
+              schema:
+                type: object
+                $ref: "#/components/schemas/featureTagWithRefCountType"
+        "404":
+          $ref: "#/components/responses/generalError404Response"
+        default:
+          $ref: "#/components/responses/generalErrorResponse"
+      tags:
+        - FeatureTags
   "/misc/referencetypes":
     x-exegesis-controller: miscController
     get:
@@ -1920,5 +2129,7 @@ tags:
     description: Operations that pertain to book series
   - name: Tags
     description: Operations that pertain to tags
+  - name: FeatureTags
+    description: Operations that pertain to feature tags
   - name: Miscellaneous
     description: Operations that are not associated with any other group
