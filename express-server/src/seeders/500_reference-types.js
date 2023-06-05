@@ -5,8 +5,8 @@
 module.exports = {
   up: async (queryInterface) => {
     const types = `1,book,Book
-2,article,Magazine Feature
-3,photos,Photo Collection`
+2,magazineFeature,Magazine Feature
+3,photoCollection,Photo Collection`
       .split("\n")
       .map((line) => line.split(","))
       .map(([id, name, description]) => ({
