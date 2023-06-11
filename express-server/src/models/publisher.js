@@ -14,10 +14,14 @@ module.exports = (sequelize, DataTypes, { Publisher: fields }) => {
     clean() {
       const result = this.get();
 
-      if (result.Books) result.books = result.Books.map((b) => b.clean());
-      delete result.Books;
-      if (result.Series) result.series = result.Series.map((s) => s.clean());
-      delete result.Series;
+      if (result.Books) {
+        result.books = result.Books.map((b) => b.clean());
+        delete result.Books;
+      }
+      if (result.Series) {
+        result.series = result.Series.map((s) => s.clean());
+        delete result.Series;
+      }
 
       return result;
     }

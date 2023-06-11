@@ -31,7 +31,8 @@ module.exports = (sequelize, DataTypes, { Reference: fields }) => {
       delete result.ReferenceType;
       delete result.ReferenceTypeId;
 
-      // The two dates are Date objects, convert them to strings.
+      // The two dates are Date objects, convert them to ISO strings so that
+      // they don't stringify automatically.
       for (const date of ["createdAt", "updatedAt"]) {
         if (result.hasOwnProperty(date))
           result[date] = result[date].toISOString();
@@ -44,10 +45,14 @@ module.exports = (sequelize, DataTypes, { Reference: fields }) => {
         }
         delete result[type];
       }
-      if (result.Authors) result.authors = result.Authors.map((a) => a.clean());
-      delete result.Authors;
-      if (result.Tags) result.tags = result.Tags.map((t) => t.clean());
-      delete result.Tags;
+      if (result.Authors) {
+        result.authors = result.Authors.map((a) => a.clean());
+        delete result.Authors;
+      }
+      if (result.Tags) {
+        result.tags = result.Tags.map((t) => t.clean());
+        delete result.Tags;
+      }
       if (result.AuthorsReferences) delete result.AuthorsReferences;
 
       return result;
