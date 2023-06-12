@@ -11,13 +11,14 @@ const {
   Publisher,
   MagazineFeature,
   FeatureTag,
+  FeatureTagsMagazineFeatures,
   PhotoCollection,
   Magazine,
   MagazineIssue,
   Author,
-  // AuthorsReferences,
-  // TagsReferences,
-  // sequelize,
+  AuthorsReferences,
+  TagsReferences,
+  sequelize,
 } = require("../models");
 
 const shallowIncludesForReference = [
@@ -68,146 +69,93 @@ async function fetchAllReferencesComplete(opts = {}) {
   return references;
 }
 
-// // Create a new reference using the content in data.
-// const createReference = async (dataIn) => {
-//   const data = { ...dataIn };
+// Create the linkage for a new reference to a Book structure.
+async function createReferenceBook(transaction, referenceId, data) {
+  const { publisherId, seriesId } = data;
 
-//   // The notifications array will tell the front-end if anything extra was
-//   // done, such as creating new authors and/or tags.
-//   const notifications = [];
-//   // Keep a count of any added authors, so that the front-end can know to
-//   // invalidate the cache of author data.
-//   let addedAuthors = 0;
+  return Book.create({ referenceId, publisherId, seriesId }, { transaction });
+}
 
-//   // Remove the authors, that will be processed separately.
-//   const authors = data.authors.filter((author) => !author.deleted);
-//   delete data.authors;
+// Create the linkage for a new reference to a MagazineFeature structure.
+async function createReferenceMagazineFeature(transaction, referenceId, data) {
+  const { magazineIssueId, featureTags } = data;
 
-//   // Likewise, tags will be handled separately.
-//   const { tags } = data;
-//   delete data.tags;
+  const magazineFeature = MagazineFeature.create(
+    { referenceId, magazineIssueId },
+    { transaction }
+  );
+  const magazineFeatureId = magazineFeature.id;
 
-//   // Convert this one.
-//   data.ReferenceTypeId = parseInt(data.ReferenceTypeId, 10);
+  const newFeatureTags = featureTags.map((featureTagId) => ({
+    featureTagId,
+    magazineFeatureId,
+  }));
+  FeatureTagsMagazineFeatures.bulkCreate(newFeatureTags, { transaction });
 
-//   // These are not used directly in the creation of a Reference instance, but
-//   // will be needed if the record type is a magazine.
-//   const magazineIssueNumber = data.MagazineIssueNumber;
-//   delete data.MagazineIssueNumber;
-//   const magazineId = data.MagazineId;
-//   delete data.MagazineId;
+  return magazineFeature;
+}
 
-//   const newId = await sequelize.transaction(async (txn) => {
-//     // Start by leveling things out a bit based on the record type.
-//     if (data.ReferenceTypeId === 1) {
-//       // A book. Clear magazine-related values.
-//       data.MagazineIssueId = null;
-//     } else if (data.ReferenceTypeId === 2 || data.ReferenceTypeId === 3) {
-//       // A magazine entry. Make sure ISBN is cleared, and convert the magazine
-//       // ID and issue number to the ID of a MagazineIssue instance.
-//       data.isbn = null;
+// Create the linkage for a new reference to a PhotoCollection structure.
+async function createReferencePhotoCollection(transaction, referenceId, data) {
+  const { photosLocation: location, photosMedia: media } = data;
 
-//       const magazineIssue = await MagazineIssue.findOne(
-//         { where: { magazineId, number: magazineIssueNumber } },
-//         { transaction: txn }
-//       );
-//       if (magazineIssue) {
-//         // It already exists
-//         data.MagazineIssueId = magazineIssue.id;
-//       } else {
-//         // Not found, so create it
-//         const newMagazineIssue = await MagazineIssue.create(
-//           { MagazineId: magazineId, number: magazineIssueNumber },
-//           { transaction: txn }
-//         ).catch((error) => {
-//           if (error.hasOwnProperty("errors")) {
-//             const specific = error.errors[0];
-//             throw new Error(specific.message);
-//           } else {
-//             throw new Error(error.message);
-//           }
-//         });
-//         data.MagazineIssueId = newMagazineIssue.id;
-//       }
-//     } else {
-//       // Something other than a book or magazine entry. Clear out those fields.
-//       data.isbn = null;
-//       data.MagazineIssueId = null;
-//     }
+  return PhotoCollection.create(
+    { referenceId, location, media },
+    { transaction }
+  );
+}
 
-//     // Should be able to create the Reference instance, now.
-//     const newReference = await Reference.create(data, {
-//       transaction: txn,
-//     }).catch((error) => {
-//       if (error.hasOwnProperty("errors")) {
-//         const specific = error.errors[0];
-//         throw new Error(specific.message);
-//       } else {
-//         throw new Error(error.message);
-//       }
-//     });
+// Create a new reference using the content in data.
+async function createReference(data) {
+  // Pull out basic data (name, language, authors and tags).
+  const { name, language, authors, tags } = data;
 
-//     // Connect the authors to the new reference, creating new ones as needed.
-//     const newAuthors = [];
-//     for (const author of authors) {
-//       if (author.id) {
-//         // This is an existing author, so just create the new AuthorsReferences
-//         // struct directly from the data.
-//         newAuthors.push({
-//           authorId: author.id,
-//           referenceId: newReference.id,
-//         });
-//       } else {
-//         // A new author. Must be created.
-//         // eslint-disable-next-line no-await-in-loop
-//         const newAuthor = await Author.create({ name: author.name });
-//         notifications.push({
-//           type: "success",
-//           summary: "Author creation success",
-//           message: `Author "${author.name}" successfully created`,
-//         });
-//         newAuthors.push({
-//           authorId: newAuthor.id,
-//           referenceId: newReference.id,
-//         });
-//         addedAuthors++;
-//       }
-//     }
-//     await AuthorsReferences.bulkCreate(newAuthors, { transaction: txn });
+  // Convert this one.
+  const referenceTypeId = parseInt(data.referenceTypeId, 10);
 
-//     const newTags = [];
-//     for (const tag of tags) {
-//       if (tag.id) {
-//         // This is an existing tag, so just create the new TagsReferences struct
-//         // directly from the data.
-//         newTags.push({
-//           tagId: tag.id,
-//           referenceId: newReference.id,
-//         });
-//       } else {
-//         // A new tag. Needs to be created.
-//         // eslint-disable-next-line no-await-in-loop
-//         const newTag = await Tag.create({ name: tag.name });
-//         notifications.push({
-//           type: "success",
-//           summary: "Tag creation success",
-//           message: `Tag "${tag.name}" successfully created`,
-//         });
-//         newTags.push({
-//           tagId: newTag.id,
-//           referenceId: newReference.id,
-//         });
-//       }
-//     }
-//     await TagsReferences.bulkCreate(newTags, { transaction: txn });
+  const newReferenceId = await sequelize.transaction(async (transaction) => {
+    // Start with the basic Reference record.
+    const reference = await Reference.create(
+      { name, language, referenceTypeId },
+      { transaction }
+    ).catch((error) => {
+      if (error.hasOwnProperty("errors")) {
+        const specific = error.errors[0];
+        throw new Error(specific.message);
+      } else {
+        throw new Error(error.message);
+      }
+    });
+    const referenceId = reference.id;
 
-//     return newReference.id;
-//   });
+    // Connect the authors to the new reference.
+    const newAuthors = authors.map((authorId) => ({ authorId, referenceId }));
+    await AuthorsReferences.bulkCreate(newAuthors, { transaction });
 
-//   const reference = await fetchSingleReferenceComplete(newId);
+    // Connect the tags.
+    const newTags = tags.map((tagId) => ({ tagId, referenceId }));
+    await TagsReferences.bulkCreate(newTags, { transaction });
 
-//   return { reference, notifications, addedAuthors };
-// };
+    // Based on the type of reference, create the secondary record.
+    switch (referenceTypeId) {
+      case 1: // Book
+        createReferenceBook(transaction, referenceId, data);
+        break;
+      case 2: // MagazineFeature
+        createReferenceMagazineFeature(transaction, referenceId, data);
+        break;
+      case 3: // PhotoCollection
+        createReferencePhotoCollection(transaction, referenceId, data);
+        break;
+      default:
+        throw new Error("Unknown Reference type passed in");
+    }
+
+    return referenceId;
+  });
+
+  return fetchSingleReferenceComplete(newReferenceId);
+}
 
 // // Update the "basic" reference information.
 // const updateReferenceBasicInfo = async (reference, data, transaction) => {
@@ -282,7 +230,7 @@ module.exports = {
   INCLUDE_REFERENCES,
   fetchSingleReferenceComplete,
   fetchAllReferencesComplete,
-  // createReference,
+  createReference,
   // updateReference,
   deleteReference,
 };

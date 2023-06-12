@@ -10,24 +10,24 @@ const { fixupOrderField } = require("../lib/utils");
   POST /references
 
   Create a new reference record from the content in the request body. The
-  return value is an object with the key "reference" (new reference).
+  return value is the new reference.
  */
-// function createReference(context) {
-//   const { res, requestBody } = context;
+function createReference(context) {
+  const { res, requestBody } = context;
 
-//   return References.createReference(requestBody)
-//     .then((response) => {
-//       res.status(201).pureJson(response);
-//     })
-//     .catch((error) => {
-//       res.status(500).pureJson({
-//         error: {
-//           summary: error.name,
-//           description: error.message,
-//         },
-//       });
-//     });
-// }
+  return References.createReference(requestBody)
+    .then((response) => {
+      res.status(201).pureJson(response);
+    })
+    .catch((error) => {
+      res.status(500).pureJson({
+        error: {
+          summary: error.name,
+          description: error.message,
+        },
+      });
+    });
+}
 
 /*
   GET /references
@@ -162,7 +162,7 @@ function deleteReferenceById(context) {
 }
 
 module.exports = {
-  // createReference,
+  createReference,
   getAllReferences,
   getReferenceById,
   // updateReferenceById,
