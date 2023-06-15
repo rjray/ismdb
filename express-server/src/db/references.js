@@ -71,9 +71,12 @@ async function fetchAllReferencesComplete(opts = {}) {
 
 // Create the linkage for a new reference to a Book structure.
 async function createReferenceBook(transaction, referenceId, data) {
-  const { publisherId, seriesId } = data;
+  const { isbn, publisherId, seriesId, seriesNumber } = data;
 
-  return Book.create({ referenceId, publisherId, seriesId }, { transaction });
+  return Book.create(
+    { referenceId, isbn, publisherId, seriesId, seriesNumber },
+    { transaction }
+  );
 }
 
 // Create the linkage for a new reference to a MagazineFeature structure.
@@ -84,11 +87,10 @@ async function createReferenceMagazineFeature(transaction, referenceId, data) {
     { referenceId, magazineIssueId },
     { transaction }
   );
-  const magazineFeatureId = magazineFeature.id;
 
   const newFeatureTags = featureTags.map((featureTagId) => ({
     featureTagId,
-    magazineFeatureId,
+    referenceId,
   }));
   FeatureTagsMagazineFeatures.bulkCreate(newFeatureTags, { transaction });
 
