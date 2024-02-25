@@ -1,0 +1,4 @@
+.read schema.sql
+.import --csv feature_tags.csv FeatureTags
+.import --csv tags.csv Tags
+.import --csv reference_types.csv ReferenceTypes

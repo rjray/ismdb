@@ -1,0 +1,67 @@
+1,aircraft,meta,An aircraft subject
+2,armor,meta,A ground vehicle subject
+3,figures,meta,A figurine subject
+4,scifi,meta,A science fiction/fantasy subject
+5,ships,meta,A naval/nautical subject
+6,techniques,meta,An entry focusing on techniques
+7,automotive,meta,A civilian ground vehicle subject
+8,diorama,meta,A diorama subject
+9,american,nationality,Manufactured or operated by the USA
+10,australian,nationality,Manufactured or operated by Australia
+11,austrian,nationality,Manufactured or operated by Austria
+12,belgian,nationality,Manufactured or operated by Belgium
+13,canadian,nationality,Manufactured or operated by Canada
+14,chinese,nationality,Manufactured or operated by China
+15,czech,nationality,Manufactured or operated by the Czech Republic
+16,egyptian,nationality,Manufactured or operated by Egypt
+17,finnish,nationality,Manufactured or operated by Finland
+18,french,nationality,Manufactured or operated by France
+19,german,nationality,Manufactured or operated by Germany
+20,greek,nationality,Manufactured or operated by Greece
+21,indian,nationality,Manufactured or operated by India
+22,iranian,nationality,Manufactured or operated by Iran
+23,iraqi,nationality,Manufactured or operated by Iraq
+24,irish,nationality,Manufactured or operated by Ireland
+25,israeli,nationality,Manufactured or operated by Israel
+26,italian,nationality,Manufactured or operated by Italy
+27,japanese,nationality,Manufactured or operated by Japan
+28,lebanese,nationality,Manufactured or operated by Lebanon
+29,libyan,nationality,Manufactured or operated by Libya
+30,mexican,nationality,Manufactured or operated by Mexico
+31,dutch,nationality,Manufactured or operated by The Netherlands
+32,pakistani,nationality,Manufactured or operated by Pakistan
+33,palestinian,nationality,Manufactured or operated by Palestine
+34,polish,nationality,Manufactured or operated by Poland
+35,russian,nationality,Manufactured or operated by Russia
+36,saudi,nationality,Manufactured or operated by Saudi Arabia
+37,scottish,nationality,Manufactured or operated by Scotland
+38,spanish,nationality,Manufactured or operated by Spain
+39,swedish,nationality,Manufactured or operated by Sweden
+40,swiss,nationality,Manufactured or operated by Switzerland
+41,syrian,nationality,Manufactured or operated by Syria
+42,turkish,nationality,Manufactured or operated by Turkey
+43,ukrainian,nationality,Manufactured or operated by Ukraine
+44,british,nationality,Manufactured or operated by England
+45,1/6,scale,1/6 scale subject
+46,1/8,scale,1/8 scale subject
+47,1/9,scale,1/9 scale subject
+48,1/12,scale,1/12 scale subject
+49,1/16,scale,1/16 scale subject
+50,1/20,scale,1/20 scale subject
+51,1/24,scale,1/24 scale subject
+52,1/25,scale,1/25 scale subject
+53,1/30,scale,1/30 scale subject
+54,1/32,scale,1/32 scale subject
+55,1/35,scale,1/35 scale subject
+56,1/43,scale,1/43 scale subject
+57,1/48,scale,1/48 scale subject
+58,1/72,scale,1/72 scale subject
+59,1/76,scale,1/76 scale subject
+60,1/96,scale,1/96 scale subject
+61,1/100,scale,1/100 scale subject
+62,1/144,scale,1/144 scale subject
+63,1/150,scale,1/150 scale subject
+64,1/200,scale,1/200 scale subject
+65,1/288,scale,1/288 scale subject
+66,1/350,scale,1/350 scale subject
+67,1/700,scale,1/700 scale subject
