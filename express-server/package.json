@@ -9,38 +9,35 @@
   "scripts": {
     "debug": "cd src && nodemon --exec 'node --inspect' -w openapi.yaml -w . server.js",
     "start": "cd src && nodemon -w openapi.yaml -w . server.js",
-    "reset": "(cd ../db; sqlite3 ismdb.db < create_db.sqlite); (cd src; rm -f *.db; mv ../../db/ismdb.db . ; ../../importer/import_refs.pl ~/work/nmrdb/models.db)",
+    "reset": "(cd ../db; rm -f ismdb.db; sqlite3 ismdb.db < create_db.sqlite); (cd src; rm -f *.db; mv ../../db/ismdb.db . ; ../../importer/import_refs.pl ~/work/nmrdb/models.db)",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Randy J. Ray <rjray@blackperl.com>",
   "license": "MIT",
   "repository": "https://github.com/rjray/ismdb",
   "devDependencies": {
-    "eslint": "^8.41.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-prettier": "^8.8.0",
+    "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-prettier": "^4.2.1",
-    "nodemon": "^2.0.22",
-    "prettier": "^2.8.8",
-    "sequelize-cli": "^6.6.0"
+    "nodemon": "^3.1.0",
+    "prettier": "^3.2.5",
+    "sequelize-cli": "^6.6.2"
   },
   "dependencies": {
-    "bcrypt": "^5.1.0",
+    "bcrypt": "^5.1.1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "date-fns": "^2.30.0",
-    "dotenv": "^16.0.3",
+    "date-fns": "^3.3.1",
+    "dotenv": "^16.4.5",
     "exegesis-express": "^4.0.0",
     "exegesis-passport": "^2.0.1",
     "express": "^4.18.2",
-    "helmet": "^7.0.0",
+    "helmet": "^7.1.0",
     "js-yaml": "^4.1.0",
-    "passport": "^0.6.0",
+    "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
-    "sequelize": "^6.31.1",
-    "sqlite3": "^5.1.6"
+    "sequelize": "^6.37.1",
+    "sqlite3": "^5.1.7"
   }
 }
