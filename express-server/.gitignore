@@ -6,4 +6,7 @@ yarn.lock
 .yarn/install-state.gz
 .pnp.*
 
+# pnpm
+pnpm-lock.yaml
+
 .DS_Store
