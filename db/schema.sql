@@ -44,7 +44,7 @@ CREATE TABLE "References" (
 
 -- PhotoCollections are groupings of photos, either physical or digital.
 CREATE TABLE PhotoCollections (
-       referenceId  INTEGER PRIMARY KEY,
+       referenceId  INTEGER PRIMARY KEY UNIQUE,
        location     TEXT,
        media        TEXT,
        FOREIGN KEY(referenceId) REFERENCES "References"(id)
@@ -74,7 +74,7 @@ CREATE TABLE Series (
 -- Books table. Refers to "References" (non-optional), "Publishers" (optional),
 -- and "Series" (optional).
 CREATE TABLE Books (
-       referenceId  INTEGER PRIMARY KEY,
+       referenceId  INTEGER PRIMARY KEY UNIQUE,
        isbn         TEXT,
        seriesNumber TEXT,
        publisherId  INTEGER,
@@ -116,7 +116,7 @@ CREATE TABLE MagazineIssues (
 -- MagazineFeatures table. Refers to both "References" and "MagazineIssues",
 -- both non-null.
 CREATE TABLE MagazineFeatures (
-       referenceId     INTEGER PRIMARY KEY,
+       referenceId     INTEGER PRIMARY KEY UNIQUE,
        magazineIssueId INTEGER NOT NULL,
        FOREIGN KEY(referenceId) REFERENCES "References"(id)
          ON DELETE CASCADE ON UPDATE CASCADE,
