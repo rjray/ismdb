@@ -1,0 +1,13 @@
+[package]
+name = "ismdb-axum-server"
+version = "0.1.0"
+authors = ["Randy J. Ray <rjray@blackperl.com>"]
+edition = "2021"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = { version = "^0.7.5", features = ["http2", "macros"] }
+sea-orm = { version = "0.12.15", features = ["runtime-tokio-rustls", "sqlx-sqlite", "macros"] }
+sea-orm-cli = "0.12.15"
