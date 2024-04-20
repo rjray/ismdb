@@ -9,5 +9,8 @@ license = "MIT"
 
 [dependencies]
 axum = { version = "^0.7.5", features = ["http2", "macros"] }
+clap = { version = "4.5.4", features = ["env", "cargo"] }
+dotenvy = "0.15.7"
 sea-orm = { version = "0.12.15", features = ["runtime-tokio-rustls", "sqlx-sqlite", "macros"] }
 sea-orm-cli = "0.12.15"
+tokio = { version = "1.37.0", features = ["full"] }
