@@ -13,7 +13,7 @@ impl EntityName for Entity {
 
 #[derive(Clone, Debug, PartialEq, DeriveModel, DeriveActiveModel, Eq)]
 pub struct Model {
-    pub id: Option<i32>,
+    pub id: i32,
     pub issue: String,
     pub magazine_id: Option<i32>,
     pub created_at: DateTime,
@@ -38,7 +38,7 @@ pub enum PrimaryKey {
 }
 
 impl PrimaryKeyTrait for PrimaryKey {
-    type ValueType = Option<i32>;
+    type ValueType = i32;
     fn auto_increment() -> bool {
         false
     }
@@ -54,7 +54,7 @@ impl ColumnTrait for Column {
     type EntityName = Entity;
     fn def(&self) -> ColumnDef {
         match self {
-            Self::Id => ColumnType::Integer.def().null(),
+            Self::Id => ColumnType::Integer.def(),
             Self::Issue => ColumnType::String(None).def(),
             Self::MagazineId => ColumnType::Integer.def().null(),
             Self::CreatedAt => ColumnType::DateTime.def(),
