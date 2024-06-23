@@ -54,7 +54,7 @@ impl ColumnTrait for Column {
     type EntityName = Entity;
     fn def(&self) -> ColumnDef {
         match self {
-            Self::Id => ColumnType::Integer.def(),
+            Self::Id => ColumnType::Integer.def().unique(),
             Self::Issue => ColumnType::String(None).def(),
             Self::MagazineId => ColumnType::Integer.def().null(),
             Self::CreatedAt => ColumnType::DateTime.def(),
