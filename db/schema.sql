@@ -23,7 +23,7 @@ PRAGMA foreign_keys = ON;
 
 -- ReferenceTypes delineate references as being books, articles, etc.
 CREATE TABLE "ReferenceTypes" (
-       id          INTEGER PRIMARY KEY NOT NULL,
+       id          INTEGER PRIMARY KEY UNIQUE NOT NULL,
        name        TEXT UNIQUE NOT NULL,
        description TEXT NOT NULL,
        notes       TEXT
@@ -31,7 +31,7 @@ CREATE TABLE "ReferenceTypes" (
 
 -- References are the building block of the database, the primary reason for it.
 CREATE TABLE "References" (
-       id              INTEGER PRIMARY KEY NOT NULL,
+       id              INTEGER PRIMARY KEY UNIQUE NOT NULL,
        name            TEXT NOT NULL,
        language        TEXT,
        createdAt       DATETIME NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE PhotoCollections (
 
 -- Publishers are entities that produce books.
 CREATE TABLE Publishers (
-       id    INTEGER PRIMARY KEY NOT NULL,
+       id    INTEGER PRIMARY KEY UNIQUE NOT NULL,
        name  TEXT NOT NULL,
        notes TEXT
 );
@@ -63,7 +63,7 @@ CREATE TABLE Publishers (
 -- Series are (optional) groupings of related books. They also reference a
 -- Publisher.
 CREATE TABLE Series (
-       id          INTEGER PRIMARY KEY NOT NULL,
+       id          INTEGER PRIMARY KEY UNIQUE NOT NULL,
        name        TEXT NOT NULL,
        notes       TEXT,
        publisherId INTEGER,
@@ -92,7 +92,7 @@ CREATE TABLE Books (
 
 -- Magazines are the base data for a given serial publication.
 CREATE TABLE Magazines (
-       id        INTEGER PRIMARY KEY NOT NULL,
+       id        INTEGER PRIMARY KEY UNIQUE NOT NULL,
        name      TEXT NOT NULL,
        language  TEXT,
        aliases   TEXT,
@@ -104,7 +104,7 @@ CREATE TABLE Magazines (
 -- MagazineIssues represent single instances of Magazines, so that the features
 -- can be associated with a specific issue.
 CREATE TABLE MagazineIssues (
-       id         INTEGER PRIMARY KEY NOT NULL,
+       id         INTEGER PRIMARY KEY UNIQUE NOT NULL,
        issue      TEXT NOT NULL,
        magazineId INTEGER,
        createdAt  DATETIME NOT NULL,
@@ -134,7 +134,7 @@ CREATE TABLE MagazineFeatures (
 
 -- Authors are the credited creators of a given reference.
 CREATE TABLE Authors (
-       id        INTEGER PRIMARY KEY NOT NULL,
+       id        INTEGER PRIMARY KEY UNIQUE NOT NULL,
        name      TEXT UNIQUE NOT NULL,
        createdAt DATETIME NOT NULL,
        updatedAt DATETIME NOT NULL
@@ -142,7 +142,7 @@ CREATE TABLE Authors (
 
 -- AuthorAliases allows for a given author to be known by some variations.
 CREATE TABLE AuthorAliases (
-       id       INTEGER PRIMARY KEY NOT NULL,
+       id       INTEGER PRIMARY KEY UNIQUE NOT NULL,
        name     TEXT NOT NULL,
        authorId INTEGER NOT NULL,
        FOREIGN KEY(authorId) REFERENCES "Authors"(id)
@@ -177,7 +177,7 @@ CREATE INDEX authors_references_reference ON AuthorsReferences(referenceId);
 
 -- Tags are the search-terms used to find references.
 CREATE TABLE Tags (
-       id          INTEGER PRIMARY KEY NOT NULL,
+       id          INTEGER PRIMARY KEY UNIQUE NOT NULL,
        name        TEXT UNIQUE NOT NULL,
        type        TEXT,
        description TEXT
@@ -200,7 +200,7 @@ CREATE INDEX tags_references_reference ON TagsReferences(referenceId);
 
 -- FeatureTags classify MagazineFeatures records.
 CREATE TABLE FeatureTags (
-       id          INTEGER PRIMARY KEY NOT NULL,
+       id          INTEGER PRIMARY KEY UNIQUE NOT NULL,
        name        TEXT UNIQUE NOT NULL,
        description TEXT
 );
@@ -231,7 +231,7 @@ CREATE INDEX featuretags_magazinefeatures_magazinefeature ON
 -- Users table has basic data, but the important parts are the user-name and the
 -- password.
 CREATE TABLE Users (
-       id        INTEGER PRIMARY KEY NOT NULL,
+       id        INTEGER PRIMARY KEY UNIQUE NOT NULL,
        name      TEXT NOT NULL,
        email     TEXT UNIQUE NOT NULL,
        username  TEXT UNIQUE NOT NULL,
