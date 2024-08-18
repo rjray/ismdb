@@ -68,7 +68,7 @@ CREATE TABLE Series (
        notes       TEXT,
        publisherId INTEGER,
        FOREIGN KEY(publisherId) REFERENCES "Publishers"(id)
-         ON UPDATE CASCADE
+         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Books table. Refers to "References" (non-optional), "Publishers" (optional),
@@ -82,9 +82,9 @@ CREATE TABLE Books (
        FOREIGN KEY(referenceId) REFERENCES "References"(id)
          ON DELETE CASCADE ON UPDATE CASCADE,
        FOREIGN KEY(publisherId) REFERENCES "Publishers"(id)
-         ON UPDATE CASCADE,
+         ON DELETE SET NULL,
        FOREIGN KEY(seriesId) REFERENCES "Series"(id)
-         ON UPDATE CASCADE
+         ON DELETE SET NULL
 );
 
 -- For the MagazineFeature table, it is necessary to first define Magazines and
@@ -231,7 +231,7 @@ CREATE INDEX featuretags_magazinefeatures_magazinefeature ON
 -- Users table has basic data, but the important parts are the user-name and the
 -- password.
 CREATE TABLE Users (
-       id        INTEGER PRIMARY KEY UNIQUE NOT NULL,
+       id        INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
        name      TEXT NOT NULL,
        email     TEXT UNIQUE NOT NULL,
        username  TEXT UNIQUE NOT NULL,
